@@ -1,0 +1,190 @@
+// use prisma-8
+
+enum UserRole {
+  PLATFORM_OWNER
+  PLATFORM_ADMIN
+  SCHOOL_OWNER
+  SCHOOL_ADMIN
+  TEACHER
+  PARENT
+  STUDENT
+}
+
+enum SchoolStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model School {
+  id          Int          @id @default(autoincrement())
+  name        String
+  slug        String       @unique
+  email       String?
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  country     String       @default("Nigeria")
+  status      SchoolStatus @default(ACTIVE)
+  users       User[]
+  students    Student[]
+  teachers    Teacher[]
+  parents     Parent[]
+  classes     SchoolClass[]
+  subjects    Subject[]
+  sessions    AcademicSession[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  school      School?   @relation(fields: [schoolId], references: [id])
+  schoolId    Int?
+  email       String    @unique
+  password    String
+  name        String?
+  phone       String?
+  role        UserRole
+  student     Student?
+  teacher     Teacher?
+  parent      Parent?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
+
+model Student {
+  id              Int       @id @default(autoincrement())
+  school          School    @relation(fields: [schoolId], references: [id])
+  schoolId        Int
+  user            User?     @relation(fields: [userId], references: [id])
+  userId          Int?      @unique
+  admissionNumber String
+  firstName       String
+  middleName      String?
+  lastName        String
+  gender          Gender
+  dateOfBirth     DateTime?
+  email           String?
+  phone           String?
+  address         String?
+  class           SchoolClass? @relation(fields: [classId], references: [id])
+  classId         Int?
+  parents         ParentStudent[]
+  createdAt       TimestamptzString @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  @@unique([schoolId, admissionNumber])
+  @@index([schoolId])
+}
+
+model Teacher {
+  id          Int       @id @default(autoincrement())
+  school      School    @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      Int?      @unique
+  employeeId  String
+  firstName   String
+  lastName    String
+  phone       String?
+  email       String?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@unique([schoolId, employeeId])
+  @@index([schoolId])
+}
+
+model Parent {
+  id          Int       @id @default(autoincrement())
+  school      School    @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      Int?      @unique
+  firstName   String
+  lastName    String
+  phone       String?
+  email       String?
+  address     String?
+  children    ParentStudent[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([schoolId])
+}
+
+model ParentStudent {
+  parent    Parent  @relation(fields: [parentId], references: [id])
+  parentId  Int
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+
+  @@id([parentId, studentId])
+}
+
+model SchoolClass {
+  id          Int       @id @default(autoincrement())
+  school      School    @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  name        String
+  level       String?
+  description String?
+  students    Student[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+}
+
+model Subject {
+  id          Int       @id @default(autoincrement())
+  school      School    @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  name        String
+  code        String?
+  description String?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+}
+
+model AcademicSession {
+  id        Int       @id @default(autoincrement())
+  school    School    @relation(fields: [schoolId], references: [id])
+  schoolId  Int
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean   @default(false)
+  terms     Term[]
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+}
+
+model Term {
+  id          Int             @id @default(autoincrement())
+  session     AcademicSession @relation(fields: [sessionId], references: [id])
+  sessionId   Int
+  name        String
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean         @default(false)
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@unique([sessionId, name])
+  @@index([sessionId])
+}
