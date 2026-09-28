@@ -1413,10 +1413,31 @@
                   "kind": "scalar"
                 }
               },
+              "emailVerifiedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastLoginAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -1427,7 +1448,7 @@
                   "kind": "scalar"
                 }
               },
-              "password": {
+              "passwordHash": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -1543,14 +1564,23 @@
                 "email": {
                   "column": "email"
                 },
+                "emailVerifiedAt": {
+                  "column": "emailVerifiedAt"
+                },
                 "id": {
                   "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "lastLoginAt": {
+                  "column": "lastLoginAt"
                 },
                 "name": {
                   "column": "name"
                 },
-                "password": {
-                  "column": "password"
+                "passwordHash": {
+                  "column": "passwordHash"
                 },
                 "phone": {
                   "column": "phone"
@@ -2579,6 +2609,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "emailVerifiedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -2588,12 +2623,26 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "lastLoginAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
                 },
-                "password": {
+                "passwordHash": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
@@ -2701,7 +2750,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "335015b4b223abb4b7862dbde7dde99fc44ee85a33bac9ffbbc77568c7b070b4"
+    "storageHash": "74bce52438526ea6a2df412acad64436e63ffe2257814e5e08ee4ea35330e33c"
   },
   "execution": {
     "executionHash": "ffece99c495700c6bfba25e09a08e31dc34632bab65bdd01e535f513076b3c14",
