@@ -1,13 +1,25 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { auth } from "@/auth";
 import { db } from "@/prisma/db";
+import { hashPassword } from "@/lib/auth/password";
 import { createSchoolSchema } from "@/lib/validation/school";
+import { createSchoolOwnerSchema } from "@/lib/validation/school-owner";
 
 async function createSchool(formData: FormData) {
   "use server";
 
-  const result = createSchoolSchema.safeParse({
+  const session = await auth();
+
+  if (
+    !session?.user ||
+    !["PLATFORM_OWNER", "PLATFORM_ADMIN"].includes(session.user.role)
+  ) {
+    throw new Error("Unauthorized.");
+  }
+
+  const schoolResult = createSchoolSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
     email: formData.get("email"),
@@ -17,30 +29,65 @@ async function createSchool(formData: FormData) {
     state: formData.get("state"),
   });
 
-  if (!result.success) {
-    throw new Error(result.error.issues[0]?.message ?? "Invalid school data.");
+  if (!schoolResult.success) {
+    throw new Error(
+      schoolResult.error.issues[0]?.message ?? "Invalid school data.",
+    );
   }
 
-  const data = result.data;
+  const ownerResult = createSchoolOwnerSchema.safeParse({
+    name: formData.get("ownerName"),
+    email: formData.get("ownerEmail"),
+    password: formData.get("ownerPassword"),
+  });
+
+  if (!ownerResult.success) {
+    throw new Error(
+      ownerResult.error.issues[0]?.message ??
+        "Invalid school owner information.",
+    );
+  }
+
+  const schoolData = schoolResult.data;
+  const ownerData = ownerResult.data;
 
   const existingSchool = await db.orm.public.School.where((school) =>
-    school.slug.eq(data.slug),
+    school.slug.eq(schoolData.slug),
   ).first();
 
   if (existingSchool) {
     throw new Error("A school with this slug already exists.");
   }
 
-  await db.orm.public.School.create({
-    name: data.name,
-    slug: data.slug,
-    email: data.email || null,
-    phone: data.phone || null,
-    address: data.address || null,
-    city: data.city || null,
-    state: data.state || null,
+  const existingUser = await db.orm.public.User.where((user) =>
+    user.email.eq(ownerData.email),
+  ).first();
+
+  if (existingUser) {
+    throw new Error("A user with this email already exists.");
+  }
+
+  const school = await db.orm.public.School.create({
+    name: schoolData.name,
+    slug: schoolData.slug,
+    email: schoolData.email || null,
+    phone: schoolData.phone || null,
+    address: schoolData.address || null,
+    city: schoolData.city || null,
+    state: schoolData.state || null,
     country: "Nigeria",
     status: "ACTIVE",
+  });
+
+  const passwordHash = await hashPassword(ownerData.password);
+
+  await db.orm.public.User.create({
+    name: ownerData.name,
+    email: ownerData.email,
+    passwordHash,
+    role: "SCHOOL_OWNER",
+    schoolId: school.id,
+    isActive: true,
   });
 
   redirect("/dashboard/schools");
@@ -60,7 +107,7 @@ export default function NewSchoolPage() {
         <h1 className="mt-4 text-2xl font-bold">Add School</h1>
 
         <p className="mt-1 text-sm text-gray-500">
-          Register a new school on the platform.
+          Register a new school and its school owner.
         </p>
       </div>
 
@@ -68,6 +115,13 @@ export default function NewSchoolPage() {
         action={createSchool}
         className="space-y-6 rounded-lg border bg-white p-6"
       >
+        <div>
+          <h2 className="text-lg font-semibold">School Information</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Basic information about the school.
+          </p>
+        </div>
+
         <div>
           <label htmlFor="name" className="mb-2 block text-sm font-medium">
             School Name
@@ -104,7 +158,7 @@ export default function NewSchoolPage() {
 
         <div>
           <label htmlFor="email" className="mb-2 block text-sm font-medium">
-            Email
+            School Email
           </label>
 
           <input
@@ -118,7 +172,7 @@ export default function NewSchoolPage() {
 
         <div>
           <label htmlFor="phone" className="mb-2 block text-sm font-medium">
-            Phone
+            School Phone
           </label>
 
           <input
@@ -172,6 +226,66 @@ export default function NewSchoolPage() {
               className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
             />
           </div>
+        </div>
+
+        <div className="border-t pt-6">
+          <h2 className="text-lg font-semibold">School Owner</h2>
+
+          <p className="mt-1 text-sm text-gray-500">
+            This account will manage the school after registration.
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="ownerName" className="mb-2 block text-sm font-medium">
+            Owner Name
+          </label>
+
+          <input
+            id="ownerName"
+            name="ownerName"
+            type="text"
+            required
+            placeholder="John Doe"
+            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="ownerEmail"
+            className="mb-2 block text-sm font-medium"
+          >
+            Owner Email
+          </label>
+
+          <input
+            id="ownerEmail"
+            name="ownerEmail"
+            type="email"
+            required
+            placeholder="owner@example.com"
+            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="ownerPassword"
+            className="mb-2 block text-sm font-medium"
+          >
+            Temporary Password
+          </label>
+
+          <input
+            id="ownerPassword"
+            name="ownerPassword"
+            type="password"
+            required
+            minLength={8}
+            placeholder="At least 8 characters"
+            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+          />
         </div>
 
         <div className="flex justify-end gap-3 border-t pt-6">
