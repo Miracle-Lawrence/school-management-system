@@ -2,57 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
+import { db } from "@/prisma/db";
 import { createStudent } from "@/lib/services/student.service";
 import { createStudentSchema } from "@/lib/validation/student";
-import { db } from "@/prisma/db";
-
-async function createStudentAction(formData: FormData) {
-  "use server";
-
-  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
-  const schoolId = session.user.schoolId;
-
-  if (!schoolId) {
-    throw new Error("School context is required.");
-  }
-
-  const result = createStudentSchema.safeParse({
-    admissionNumber: formData.get("admissionNumber"),
-    firstName: formData.get("firstName"),
-    middleName: formData.get("middleName"),
-    lastName: formData.get("lastName"),
-    gender: formData.get("gender"),
-    dateOfBirth: formData.get("dateOfBirth"),
-    email: formData.get("email"),
-    phone: formData.get("phone"),
-    address: formData.get("address"),
-    classId: formData.get("classId"),
-  });
-
-  if (!result.success) {
-    throw new Error(
-      result.error.issues[0]?.message ?? "Invalid student information.",
-    );
-  }
-
-  const data = result.data;
-
-  await createStudent(schoolId, {
-    admissionNumber: data.admissionNumber,
-    firstName: data.firstName,
-    middleName: data.middleName || undefined,
-    lastName: data.lastName,
-    gender: data.gender,
-    dateOfBirth: data.dateOfBirth || undefined,
-    email: data.email || undefined,
-    phone: data.phone || undefined,
-    address: data.address || undefined,
-    classId: data.classId ? Number(data.classId) : undefined,
-  });
-
-  redirect("/school/students");
-}
 
 export default async function NewStudentPage() {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
@@ -67,17 +19,52 @@ export default async function NewStudentPage() {
     schoolClass.schoolId.eq(schoolId),
   ).all();
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-6">
-        <Link
-          href="/school/students"
-          className="text-sm text-gray-500 hover:text-black"
-        >
-          ← Back to Students
-        </Link>
+  async function createStudentAction(formData: FormData) {
+    "use server";
 
-        <h1 className="mt-4 text-2xl font-bold">Add Student</h1>
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      throw new Error("School context is required.");
+    }
+
+    const result = createStudentSchema.safeParse({
+      admissionNumber: formData.get("admissionNumber"),
+      firstName: formData.get("firstName"),
+      middleName: formData.get("middleName"),
+      lastName: formData.get("lastName"),
+      gender: formData.get("gender"),
+      dateOfBirth: formData.get("dateOfBirth"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+      classId: formData.get("classId"),
+    });
+
+    if (!result.success) {
+      throw new Error(
+        result.error.issues[0]?.message ?? "Invalid student information.",
+      );
+    }
+
+    const classId = result.data.classId
+      ? Number(result.data.classId)
+      : undefined;
+
+    await createStudent(schoolId, {
+      ...result.data,
+      classId,
+    });
+
+    redirect("/school/students");
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Add Student</h1>
 
         <p className="mt-1 text-sm text-gray-500">
           Add a new student to your school.
@@ -89,55 +76,24 @@ export default async function NewStudentPage() {
         className="space-y-6 rounded-lg border bg-white p-6"
       >
         <div>
-          <h2 className="text-lg font-semibold">Student Information</h2>
+          <label
+            htmlFor="admissionNumber"
+            className="mb-2 block text-sm font-medium"
+          >
+            Admission Number
+          </label>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Enter the student's basic information.
-          </p>
+          <input
+            id="admissionNumber"
+            name="admissionNumber"
+            type="text"
+            required
+            placeholder="e.g. STU-002"
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="admissionNumber"
-              className="mb-2 block text-sm font-medium"
-            >
-              Admission Number
-            </label>
-
-            <input
-              id="admissionNumber"
-              name="admissionNumber"
-              type="text"
-              required
-              placeholder="STU-001"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="gender" className="mb-2 block text-sm font-medium">
-              Gender
-            </label>
-
-            <select
-              id="gender"
-              name="gender"
-              required
-              defaultValue=""
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
-            >
-              <option value="" disabled>
-                Select gender
-              </option>
-
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2">
           <div>
             <label
               htmlFor="firstName"
@@ -151,25 +107,7 @@ export default async function NewStudentPage() {
               name="firstName"
               type="text"
               required
-              placeholder="John"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="middleName"
-              className="mb-2 block text-sm font-medium"
-            >
-              Middle Name
-            </label>
-
-            <input
-              id="middleName"
-              name="middleName"
-              type="text"
-              placeholder="Michael"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+              className="w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
 
@@ -186,13 +124,45 @@ export default async function NewStudentPage() {
               name="lastName"
               type="text"
               required
-              placeholder="Doe"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+              className="w-full rounded-md border px-3 py-2 text-sm"
             />
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="middleName"
+            className="mb-2 block text-sm font-medium"
+          >
+            Middle Name
+          </label>
+
+          <input
+            id="middleName"
+            name="middleName"
+            type="text"
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label htmlFor="gender" className="mb-2 block text-sm font-medium">
+              Gender
+            </label>
+
+            <select
+              id="gender"
+              name="gender"
+              required
+              className="w-full rounded-md border px-3 py-2 text-sm"
+            >
+              <option value="">Select gender</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+            </select>
+          </div>
+
           <div>
             <label
               htmlFor="dateOfBirth"
@@ -205,44 +175,29 @@ export default async function NewStudentPage() {
               id="dateOfBirth"
               name="dateOfBirth"
               type="date"
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+              className="w-full rounded-md border px-3 py-2 text-sm"
             />
-          </div>
-
-          <div>
-            <label htmlFor="classId" className="mb-2 block text-sm font-medium">
-              Class
-            </label>
-
-            <select
-              id="classId"
-              name="classId"
-              defaultValue=""
-              className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
-            >
-              <option value="">Not assigned</option>
-
-              {classes.map((schoolClass) => (
-                <option key={schoolClass.id} value={schoolClass.id}>
-                  {schoolClass.name}
-                </option>
-              ))}
-            </select>
-
-            {classes.length === 0 && (
-              <p className="mt-1 text-xs text-gray-500">
-                No classes have been created yet.
-              </p>
-            )}
           </div>
         </div>
 
-        <div className="border-t pt-6">
-          <h2 className="text-lg font-semibold">Contact Information</h2>
+        <div>
+          <label htmlFor="classId" className="mb-2 block text-sm font-medium">
+            Class
+          </label>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Optional contact details for the student.
-          </p>
+          <select
+            id="classId"
+            name="classId"
+            className="w-full rounded-md border px-3 py-2 text-sm"
+          >
+            <option value="">Not assigned</option>
+
+            {classes.map((schoolClass) => (
+              <option key={schoolClass.id} value={schoolClass.id}>
+                {schoolClass.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -254,8 +209,7 @@ export default async function NewStudentPage() {
             id="email"
             name="email"
             type="email"
-            placeholder="student@example.com"
-            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+            className="w-full rounded-md border px-3 py-2 text-sm"
           />
         </div>
 
@@ -268,8 +222,7 @@ export default async function NewStudentPage() {
             id="phone"
             name="phone"
             type="tel"
-            placeholder="08012345678"
-            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+            className="w-full rounded-md border px-3 py-2 text-sm"
           />
         </div>
 
@@ -282,25 +235,24 @@ export default async function NewStudentPage() {
             id="address"
             name="address"
             rows={3}
-            placeholder="Student address"
-            className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2"
+            className="w-full rounded-md border px-3 py-2 text-sm"
           />
         </div>
 
-        <div className="flex justify-end gap-3 border-t pt-6">
-          <Link
-            href="/school/students"
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
-          >
-            Cancel
-          </Link>
-
+        <div className="flex gap-3">
           <button
             type="submit"
             className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
             Create Student
           </button>
+
+          <Link
+            href="/school/students"
+            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+          >
+            Cancel
+          </Link>
         </div>
       </form>
     </div>
