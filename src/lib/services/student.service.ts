@@ -1,4 +1,3 @@
-import { Temporal } from "@js-temporal/polyfill";
 import { db } from "@/prisma/db";
 
 type CreateStudentData = {
