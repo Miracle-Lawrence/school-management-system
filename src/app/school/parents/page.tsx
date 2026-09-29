@@ -70,7 +70,12 @@ export default async function ParentsPage() {
                 {parents.map((parent) => (
                   <tr key={parent.id} className="border-b last:border-0">
                     <td className="px-6 py-4 font-medium">
-                      {parent.firstName} {parent.lastName}
+                      <Link
+                        href={`/school/parents/${parent.id}`}
+                        className="hover:underline"
+                      >
+                        {parent.firstName} {parent.lastName}
+                      </Link>
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">
