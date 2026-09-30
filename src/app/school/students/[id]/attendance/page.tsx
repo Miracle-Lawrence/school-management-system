@@ -233,6 +233,29 @@ export default async function StudentAttendancePage({
                 Clear
               </Link>
             )}
+
+            <a
+              href={`/api/school/students/${studentId}/attendance/pdf${
+                date || selectedSessionId || selectedTermId
+                  ? `?${new URLSearchParams({
+                      ...(date ? { date } : {}),
+                      ...(selectedSessionId
+                        ? {
+                            sessionId: String(selectedSessionId),
+                          }
+                        : {}),
+                      ...(selectedTermId
+                        ? {
+                            termId: String(selectedTermId),
+                          }
+                        : {}),
+                    }).toString()}`
+                  : ""
+              }`}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Download PDF
+            </a>
           </div>
         </form>
       </div>
