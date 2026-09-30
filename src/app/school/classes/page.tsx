@@ -70,10 +70,24 @@ export default async function ClassesPage() {
                     <td className="px-6 py-4 font-medium">
                       <div className="flex items-center gap-4">
                         <Link
-                          href={`/school/classes/${schoolClass.id}/subjects`}
+                          href={`/school/classes/${schoolClass.id}/students`}
                           className="font-medium hover:underline"
                         >
                           {schoolClass.name}
+                        </Link>
+
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/students`}
+                          className="text-sm text-gray-600 hover:underline"
+                        >
+                          Students
+                        </Link>
+
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/subjects`}
+                          className="text-sm text-gray-600 hover:underline"
+                        >
+                          Subjects
                         </Link>
 
                         <Link
