@@ -67,6 +67,46 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("The term is not active.");
   }
 
+  /*
+   * Make sure the attendance date falls
+   * inside the active academic session.
+   */
+  const attendanceDate = globalThis.Temporal.PlainDate.from(date);
+
+  const sessionStart = globalThis.Temporal.PlainDate.from(
+    academicSession.startDate.toString().slice(0, 10),
+  );
+
+  const sessionEnd = globalThis.Temporal.PlainDate.from(
+    academicSession.endDate.toString().slice(0, 10),
+  );
+
+  if (
+    globalThis.Temporal.PlainDate.compare(attendanceDate, sessionStart) < 0 ||
+    globalThis.Temporal.PlainDate.compare(attendanceDate, sessionEnd) > 0
+  ) {
+    throw new Error("Attendance date must be within the academic session.");
+  }
+
+  /*
+   * Make sure the attendance date falls
+   * inside the active term.
+   */
+  const termStart = globalThis.Temporal.PlainDate.from(
+    term.startDate.toString().slice(0, 10),
+  );
+
+  const termEnd = globalThis.Temporal.PlainDate.from(
+    term.endDate.toString().slice(0, 10),
+  );
+
+  if (
+    globalThis.Temporal.PlainDate.compare(attendanceDate, termStart) < 0 ||
+    globalThis.Temporal.PlainDate.compare(attendanceDate, termEnd) > 0
+  ) {
+    throw new Error("Attendance date must be within the active term.");
+  }
+
   const recorder = await db.orm.public.User.where((user) =>
     user.id.eq(recordedById),
   ).first();

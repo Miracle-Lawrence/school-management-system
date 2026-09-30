@@ -82,6 +82,26 @@ export default function AttendanceForm({
     }));
   }
 
+  function markAllPresent() {
+    const updatedAttendance: Record<number, AttendanceStatus> = {};
+
+    for (const student of students) {
+      updatedAttendance[student.id] = "PRESENT";
+    }
+
+    setAttendance(updatedAttendance);
+  }
+
+  function markAllAbsent() {
+    const updatedAttendance: Record<number, AttendanceStatus> = {};
+
+    for (const student of students) {
+      updatedAttendance[student.id] = "ABSENT";
+    }
+
+    setAttendance(updatedAttendance);
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -158,14 +178,32 @@ export default function AttendanceForm({
         <p className="mb-4 text-sm text-gray-500">Loading attendance...</p>
       )}
 
+      <div className="mb-4 flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={markAllPresent}
+          disabled={loading || saving || students.length === 0}
+          className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
+        >
+          Mark All Present
+        </button>
+
+        <button
+          type="button"
+          onClick={markAllAbsent}
+          disabled={loading || saving || students.length === 0}
+          className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50 disabled:opacity-50"
+        >
+          Mark All Absent
+        </button>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b">
               <th className="px-3 py-3">Admission Number</th>
-
               <th className="px-3 py-3">Student</th>
-
               <th className="px-3 py-3">Status</th>
             </tr>
           </thead>
@@ -194,7 +232,7 @@ export default function AttendanceForm({
                         )
                       }
                       className="rounded-md border px-3 py-2"
-                      disabled={loading}
+                      disabled={loading || saving}
                     >
                       {statuses.map((status) => (
                         <option key={status} value={status}>

@@ -87,6 +87,13 @@ export default async function StudentDetailsPage({
           <p className="mt-1 text-sm text-gray-500">
             Student details and class assignment.
           </p>
+
+          <Link
+            href={`/school/students/${student.id}/attendance`}
+            className="mt-4 inline-block text-sm font-medium text-blue-600 hover:underline"
+          >
+            View Attendance →
+          </Link>
         </div>
       </div>
 

@@ -103,12 +103,18 @@ export default async function ClassesPage() {
                         >
                           Attendance
                         </Link>
-                        
+
                         <Link
                           href={`/school/classes/${schoolClass.id}/attendance/history`}
                           className="text-blue-600 hover:underline"
                         >
                           History
+                        </Link>
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/attendance/summary`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Summary
                         </Link>
                       </div>
                     </td>

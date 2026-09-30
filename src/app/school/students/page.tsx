@@ -73,6 +73,8 @@ export default async function StudentsPage() {
                   <th className="px-6 py-4 font-semibold">Class</th>
 
                   <th className="px-6 py-4 font-semibold">Phone</th>
+
+                  <th className="px-6 py-4 font-semibold">Attendance</th>
                 </tr>
               </thead>
 
@@ -104,6 +106,15 @@ export default async function StudentsPage() {
 
                     <td className="px-6 py-4 text-gray-600">
                       {student.phone ?? "—"}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <Link
+                        href={`/school/students/${student.id}/attendance`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        View
+                      </Link>
                     </td>
                   </tr>
                 ))}
