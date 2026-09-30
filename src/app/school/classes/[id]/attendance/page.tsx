@@ -33,17 +33,17 @@ export default async function ClassAttendancePage({ params }: PageProps) {
     throw new Error("Class not found.");
   }
 
- const studentRecords = await db.orm.public.Student.where((student) =>
-   student.classId.eq(classId),
- ).all();
+  const studentRecords = await db.orm.public.Student.where((student) =>
+    student.classId.eq(classId),
+  ).all();
 
- const students = studentRecords.map((student) => ({
-   id: student.id,
-   admissionNumber: student.admissionNumber,
-   firstName: student.firstName,
-   middleName: student.middleName,
-   lastName: student.lastName,
- }));
+  const students = studentRecords.map((student) => ({
+    id: student.id,
+    admissionNumber: student.admissionNumber,
+    firstName: student.firstName,
+    middleName: student.middleName,
+    lastName: student.lastName,
+  }));
 
   const academicSessions = await db.orm.public.AcademicSession.where(
     (academicSession) => academicSession.schoolId.eq(schoolId),

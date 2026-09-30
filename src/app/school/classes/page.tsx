@@ -103,6 +103,13 @@ export default async function ClassesPage() {
                         >
                           Attendance
                         </Link>
+                        
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/attendance/history`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          History
+                        </Link>
                       </div>
                     </td>
 

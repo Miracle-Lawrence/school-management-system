@@ -79,16 +79,21 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     attendance.studentId.eq(studentId),
   ).all();
 
-  const duplicate = existingRecords.some(
+  const existingRecord = existingRecords.find(
     (attendance) =>
       attendance.classId === classId &&
       attendance.date.toString().slice(0, 10) === date,
   );
 
-  if (duplicate) {
-    throw new Error(
-      "Attendance has already been recorded for this student on this date.",
-    );
+  if (existingRecord) {
+    return db.orm.public.Attendance.where((attendance) =>
+      attendance.id.eq(existingRecord.id),
+    ).update({
+      termId,
+      recordedById,
+      status,
+      notes: notes || null,
+    });
   }
 
   return db.orm.public.Attendance.create({

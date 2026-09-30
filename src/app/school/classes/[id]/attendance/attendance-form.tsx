@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Student = {
   id: number;
@@ -29,9 +29,51 @@ export default function AttendanceForm({
   const [attendance, setAttendance] = useState<
     Record<number, AttendanceStatus>
   >({});
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!date) {
+      setAttendance({});
+      return;
+    }
+
+    async function loadAttendance() {
+      setLoading(true);
+      setError("");
+      setMessage("");
+
+      try {
+        const response = await fetch(
+          `/api/school/attendance?classId=${classId}&termId=${termId}&date=${date}`,
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load attendance.");
+        }
+
+        const existingAttendance: Record<number, AttendanceStatus> = {};
+
+        for (const record of data.records) {
+          existingAttendance[record.studentId] = record.status;
+        }
+
+        setAttendance(existingAttendance);
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Failed to load attendance.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAttendance();
+  }, [date, classId, termId]);
 
   function updateStatus(studentId: number, status: AttendanceStatus) {
     setAttendance((current) => ({
@@ -83,7 +125,7 @@ export default function AttendanceForm({
         throw new Error(data.error || "Failed to save attendance.");
       }
 
-      setMessage("Attendance has been recorded successfully.");
+      setMessage("Attendance has been saved successfully.");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to save attendance.",
@@ -111,6 +153,10 @@ export default function AttendanceForm({
           className="mt-2 rounded-md border px-3 py-2"
         />
       </div>
+
+      {loading && (
+        <p className="mb-4 text-sm text-gray-500">Loading attendance...</p>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
@@ -148,6 +194,7 @@ export default function AttendanceForm({
                         )
                       }
                       className="rounded-md border px-3 py-2"
+                      disabled={loading}
                     >
                       {statuses.map((status) => (
                         <option key={status} value={status}>
@@ -177,7 +224,7 @@ export default function AttendanceForm({
 
       <button
         type="submit"
-        disabled={saving}
+        disabled={saving || loading}
         className="mt-6 rounded-md bg-black px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {saving ? "Saving..." : "Save Attendance"}
