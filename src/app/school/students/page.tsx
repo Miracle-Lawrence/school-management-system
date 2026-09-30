@@ -82,9 +82,14 @@ export default async function StudentsPage() {
                     <td className="px-6 py-4">{student.admissionNumber}</td>
 
                     <td className="px-6 py-4 font-medium">
-                      {student.firstName}{" "}
-                      {student.middleName ? `${student.middleName} ` : ""}
-                      {student.lastName}
+                      <Link
+                        href={`/school/students/${student.id}`}
+                        className="font-medium hover:underline"
+                      >
+                        {student.firstName}{" "}
+                        {student.middleName ? `${student.middleName} ` : ""}
+                        {student.lastName}
+                      </Link>
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">
