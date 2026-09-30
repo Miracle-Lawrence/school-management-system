@@ -68,12 +68,21 @@ export default async function ClassesPage() {
                 {classes.map((schoolClass) => (
                   <tr key={schoolClass.id} className="border-b last:border-0">
                     <td className="px-6 py-4 font-medium">
-                      <Link
-                        href={`/school/classes/${schoolClass.id}/subjects`}
-                        className="hover:underline"
-                      >
-                        {schoolClass.name}
-                      </Link>
+                      <div className="flex items-center gap-4">
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/subjects`}
+                          className="font-medium hover:underline"
+                        >
+                          {schoolClass.name}
+                        </Link>
+
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/teachers`}
+                          className="text-sm text-gray-600 hover:underline"
+                        >
+                          Teachers
+                        </Link>
+                      </div>
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">

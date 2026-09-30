@@ -39,6 +39,7 @@ model School {
   classes     SchoolClass[]
   subjects    Subject[]
   classSubjects ClassSubject[]
+  teacherAssignments TeacherAssignment[]
   sessions    AcademicSession[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
@@ -99,6 +100,7 @@ model Teacher {
   lastName    String
   phone       String?
   email       String?
+  assignments TeacherAssignment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -142,6 +144,7 @@ model SchoolClass {
   description String?
   students    Student[]
   classSubjects ClassSubject[]
+  teacherAssignments TeacherAssignment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -157,6 +160,7 @@ model Subject {
   code        String?
   description String?
   classSubjects ClassSubject[]
+  teacherAssignments TeacherAssignment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -177,6 +181,26 @@ model ClassSubject {
 
   @@unique([classId, subjectId])
   @@index([schoolId])
+  @@index([classId])
+  @@index([subjectId])
+}
+
+model TeacherAssignment {
+  id        Int         @id @default(autoincrement())
+  school    School      @relation(fields: [schoolId], references: [id])
+  schoolId  Int
+  teacher   Teacher     @relation(fields: [teacherId], references: [id])
+  teacherId Int
+  class     SchoolClass @relation(fields: [classId], references: [id])
+  classId   Int
+  subject   Subject     @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([teacherId, classId, subjectId])
+  @@index([schoolId])
+  @@index([teacherId])
   @@index([classId])
   @@index([subjectId])
 }
