@@ -8,6 +8,10 @@
       "model": "AcademicSession",
       "namespace": "public"
     },
+    "Attendance": {
+      "model": "Attendance",
+      "namespace": "public"
+    },
     "ClassSubject": {
       "model": "ClassSubject",
       "namespace": "public"
@@ -57,6 +61,27 @@
     "namespaces": {
       "public": {
         "enum": {
+          "AttendanceStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PRESENT",
+                "value": "PRESENT"
+              },
+              {
+                "name": "ABSENT",
+                "value": "ABSENT"
+              },
+              {
+                "name": "LATE",
+                "value": "LATE"
+              },
+              {
+                "name": "EXCUSED",
+                "value": "EXCUSED"
+              }
+            ]
+          },
           "Gender": {
             "codecId": "pg/text@1",
             "members": [
@@ -243,6 +268,214 @@
               },
               "namespaceId": "public",
               "table": "AcademicSession"
+            }
+          },
+          "Attendance": {
+            "fields": {
+              "classId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "date": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "recordedById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AttendanceStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "studentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "termId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "class": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "classId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolClass",
+                  "namespace": "public"
+                }
+              },
+              "recordedBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "recordedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              },
+              "student": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "studentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Student",
+                  "namespace": "public"
+                }
+              },
+              "term": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "termId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Term",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "classId": {
+                  "column": "classId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "date": {
+                  "column": "date"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "recordedById": {
+                  "column": "recordedById"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "studentId": {
+                  "column": "studentId"
+                },
+                "termId": {
+                  "column": "termId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Attendance"
             }
           },
           "ClassSubject": {
@@ -682,6 +915,21 @@
               }
             },
             "relations": {
+              "attendanceRecords": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "Attendance",
+                  "namespace": "public"
+                }
+              },
               "classSubjects": {
                 "cardinality": "1:N",
                 "on": {
@@ -914,6 +1162,21 @@
               }
             },
             "relations": {
+              "attendanceRecords": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "classId"
+                  ]
+                },
+                "to": {
+                  "model": "Attendance",
+                  "namespace": "public"
+                }
+              },
               "classSubjects": {
                 "cardinality": "1:N",
                 "on": {
@@ -1119,6 +1382,21 @@
               }
             },
             "relations": {
+              "attendanceRecords": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "studentId"
+                  ]
+                },
+                "to": {
+                  "model": "Attendance",
+                  "namespace": "public"
+                }
+              },
               "class": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -1728,6 +2006,21 @@
               }
             },
             "relations": {
+              "attendanceRecords": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "termId"
+                  ]
+                },
+                "to": {
+                  "model": "Attendance",
+                  "namespace": "public"
+                }
+              },
               "session": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1883,6 +2176,21 @@
                 },
                 "to": {
                   "model": "Parent",
+                  "namespace": "public"
+                }
+              },
+              "recordedAttendance": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "recordedById"
+                  ]
+                },
+                "to": {
+                  "model": "Attendance",
                   "namespace": "public"
                 }
               },
@@ -2080,6 +2388,232 @@
                   "columns": [
                     "schoolId",
                     "name"
+                  ]
+                }
+              ]
+            },
+            "Attendance": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PRESENT', 'ABSENT', 'LATE', 'EXCUSED')",
+                  "name": "Attendance_status_check_fd2191e7",
+                  "prefix": "Attendance_status_check"
+                }
+              ],
+              "columns": {
+                "classId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "date": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "recordedById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AttendanceStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "studentId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "termId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Attendance"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "studentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Attendance"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Student"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "classId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Attendance"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolClass"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "termId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Attendance"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Term"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "recordedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Attendance"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "classId"
+                  ],
+                  "name": "Attendance_classId_idx_0089e5e7",
+                  "prefix": "Attendance_classId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "date"
+                  ],
+                  "name": "Attendance_date_idx_b4ca319c",
+                  "prefix": "Attendance_date_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "recordedById"
+                  ],
+                  "name": "Attendance_recordedById_idx_6595df66",
+                  "prefix": "Attendance_recordedById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "Attendance_schoolId_idx_82b454d7",
+                  "prefix": "Attendance_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "studentId"
+                  ],
+                  "name": "Attendance_studentId_idx_bf255322",
+                  "prefix": "Attendance_studentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "termId"
+                  ],
+                  "name": "Attendance_termId_idx_1b74c9af",
+                  "prefix": "Attendance_termId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "studentId",
+                    "date",
+                    "classId"
                   ]
                 }
               ]
@@ -3388,6 +3922,15 @@
             }
           },
           "valueSet": {
+            "AttendanceStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PRESENT",
+                "ABSENT",
+                "LATE",
+                "EXCUSED"
+              ]
+            },
             "Gender": {
               "kind": "valueSet",
               "values": [
@@ -3421,10 +3964,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "bc6062b3f6e1da29419bf7b2b1fc45a1cd70f2238f324197d7378db13c120390"
+    "storageHash": "34e192f6b1d6745c4adbfef979177390534935a0a1cdf24eb955b892b762a488"
   },
   "execution": {
-    "executionHash": "4d71d0b1512dcd22819533b5e6185016831329f9a8ca5d9d674cf236cbae7759",
+    "executionHash": "fc520a6ea196cdec71ffbeebbe94c77da9a838083ba0ef08a2b191c4ecf2e807",
     "mutations": {
       "defaults": [
         {
@@ -3440,6 +3983,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "AcademicSession"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "Attendance"
           }
         },
         {

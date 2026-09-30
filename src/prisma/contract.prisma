@@ -21,6 +21,13 @@ enum Gender {
   FEMALE
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 model School {
   id          Int          @id @default(autoincrement())
   name        String
@@ -40,6 +47,7 @@ model School {
   subjects    Subject[]
   classSubjects ClassSubject[]
   teacherAssignments TeacherAssignment[]
+  attendanceRecords Attendance[]
   sessions    AcademicSession[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
@@ -60,6 +68,7 @@ model User {
   student     Student?
   teacher     Teacher?
   parent      Parent?
+  recordedAttendance Attendance[] @relation("AttendanceRecordedBy")
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 }
@@ -82,6 +91,7 @@ model Student {
   class           SchoolClass? @relation(fields: [classId], references: [id])
   classId         Int?
   parents         ParentStudent[]
+  attendanceRecords Attendance[]
   createdAt       TimestamptzString @default(now())
   updatedAt       temporal.updatedAtString()
 
@@ -145,6 +155,7 @@ model SchoolClass {
   students    Student[]
   classSubjects ClassSubject[]
   teacherAssignments TeacherAssignment[]
+  attendanceRecords Attendance[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -229,9 +240,37 @@ model Term {
   startDate   DateTime
   endDate     DateTime
   isActive    Boolean         @default(false)
+  attendanceRecords Attendance[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@unique([sessionId, name])
   @@index([sessionId])
+}
+
+model Attendance {
+  id           Int              @id @default(autoincrement())
+  school       School           @relation(fields: [schoolId], references: [id])
+  schoolId     Int
+  student      Student          @relation(fields: [studentId], references: [id])
+  studentId    Int
+  class        SchoolClass      @relation(fields: [classId], references: [id])
+  classId      Int
+  term         Term             @relation(fields: [termId], references: [id])
+  termId       Int
+  recordedBy   User             @relation("AttendanceRecordedBy", fields: [recordedById], references: [id])
+  recordedById Int
+  date         DateTime
+  status       AttendanceStatus
+  notes        String?
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  @@unique([studentId, date, classId])
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([classId])
+  @@index([termId])
+  @@index([date])
+  @@index([recordedById])
 }
