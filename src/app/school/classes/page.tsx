@@ -68,7 +68,12 @@ export default async function ClassesPage() {
                 {classes.map((schoolClass) => (
                   <tr key={schoolClass.id} className="border-b last:border-0">
                     <td className="px-6 py-4 font-medium">
-                      {schoolClass.name}
+                      <Link
+                        href={`/school/classes/${schoolClass.id}/subjects`}
+                        className="hover:underline"
+                      >
+                        {schoolClass.name}
+                      </Link>
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">
