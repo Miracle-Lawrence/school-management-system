@@ -96,6 +96,13 @@ export default async function ClassesPage() {
                         >
                           Teachers
                         </Link>
+
+                        <Link
+                          href={`/school/classes/${schoolClass.id}/attendance`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Attendance
+                        </Link>
                       </div>
                     </td>
 
