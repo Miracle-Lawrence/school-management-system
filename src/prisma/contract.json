@@ -8,6 +8,10 @@
       "model": "AcademicSession",
       "namespace": "public"
     },
+    "ClassSubject": {
+      "model": "ClassSubject",
+      "namespace": "public"
+    },
     "Parent": {
       "model": "Parent",
       "namespace": "public"
@@ -235,6 +239,126 @@
               },
               "namespaceId": "public",
               "table": "AcademicSession"
+            }
+          },
+          "ClassSubject": {
+            "fields": {
+              "classId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "subjectId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "class": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "classId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolClass",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              },
+              "subject": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "subjectId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Subject",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "classId": {
+                  "column": "classId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "subjectId": {
+                  "column": "subjectId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ClassSubject"
             }
           },
           "Parent": {
@@ -554,6 +678,21 @@
               }
             },
             "relations": {
+              "classSubjects": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "ClassSubject",
+                  "namespace": "public"
+                }
+              },
               "classes": {
                 "cardinality": "1:N",
                 "on": {
@@ -756,6 +895,21 @@
               }
             },
             "relations": {
+              "classSubjects": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "classId"
+                  ]
+                },
+                "to": {
+                  "model": "ClassSubject",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1100,6 +1254,21 @@
               }
             },
             "relations": {
+              "classSubjects": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "subjectId"
+                  ]
+                },
+                "to": {
+                  "model": "ClassSubject",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1701,6 +1870,137 @@
                   "columns": [
                     "schoolId",
                     "name"
+                  ]
+                }
+              ]
+            },
+            "ClassSubject": {
+              "columns": {
+                "classId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "subjectId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ClassSubject"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "classId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ClassSubject"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolClass"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "subjectId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ClassSubject"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Subject"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "classId"
+                  ],
+                  "name": "ClassSubject_classId_idx_0089e5e7",
+                  "prefix": "ClassSubject_classId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "ClassSubject_schoolId_idx_82b454d7",
+                  "prefix": "ClassSubject_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "subjectId"
+                  ],
+                  "name": "ClassSubject_subjectId_idx_84df2a1d",
+                  "prefix": "ClassSubject_subjectId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "classId",
+                    "subjectId"
                   ]
                 }
               ]
@@ -2750,10 +3050,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "74bce52438526ea6a2df412acad64436e63ffe2257814e5e08ee4ea35330e33c"
+    "storageHash": "e770bd0522e80b22428852725d93f17fa6884cdbc160f88bcc8ff50db24194db"
   },
   "execution": {
-    "executionHash": "ffece99c495700c6bfba25e09a08e31dc34632bab65bdd01e535f513076b3c14",
+    "executionHash": "f9d33093813de5fed56efa24577165e951199a4cf3c89aae81e3ddd08f89629f",
     "mutations": {
       "defaults": [
         {
@@ -2769,6 +3069,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "AcademicSession"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "ClassSubject"
           }
         },
         {

@@ -38,6 +38,7 @@ model School {
   parents     Parent[]
   classes     SchoolClass[]
   subjects    Subject[]
+  classSubjects ClassSubject[]
   sessions    AcademicSession[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
@@ -140,6 +141,7 @@ model SchoolClass {
   level       String?
   description String?
   students    Student[]
+  classSubjects ClassSubject[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -154,11 +156,29 @@ model Subject {
   name        String
   code        String?
   description String?
+  classSubjects ClassSubject[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId])
+}
+
+model ClassSubject {
+  id        Int        @id @default(autoincrement())
+  school    School     @relation(fields: [schoolId], references: [id])
+  schoolId  Int
+  class     SchoolClass @relation(fields: [classId], references: [id])
+  classId   Int
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([classId, subjectId])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([subjectId])
 }
 
 model AcademicSession {
