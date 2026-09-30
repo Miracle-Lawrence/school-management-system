@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { assignStudentToClass } from "@/lib/services/student-class.service";
+import { updateStudent } from "@/lib/services/student.service";
+import { createStudentSchema } from "@/lib/validation/student";
 
 type StudentDetailsPageProps = {
   params: Promise<{
@@ -67,6 +69,45 @@ export default async function StudentDetailsPage({
     redirect(`/school/students/${studentId}`);
   }
 
+  async function updateStudentAction(formData: FormData) {
+    "use server";
+
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      throw new Error("School context is required.");
+    }
+
+    const result = createStudentSchema.safeParse({
+      admissionNumber: formData.get("admissionNumber"),
+      firstName: formData.get("firstName"),
+      middleName: formData.get("middleName"),
+      lastName: formData.get("lastName"),
+      gender: formData.get("gender"),
+      dateOfBirth: formData.get("dateOfBirth"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+      classId: "",
+    });
+
+    if (!result.success) {
+      throw new Error(
+        result.error.issues[0]?.message || "Invalid student information.",
+      );
+    }
+
+    await updateStudent(schoolId, studentId, result.data);
+
+    redirect(`/school/students/${studentId}`);
+  }
+
+  const dateOfBirth = student.dateOfBirth
+    ? student.dateOfBirth.toString().slice(0, 10)
+    : "";
+
   return (
     <div className="max-w-4xl space-y-8">
       <div>
@@ -112,6 +153,12 @@ export default async function StudentDetailsPage({
               <dt className="text-gray-500">Gender</dt>
 
               <dd className="mt-1 font-medium">{student.gender}</dd>
+            </div>
+
+            <div>
+              <dt className="text-gray-500">Date of Birth</dt>
+
+              <dd className="mt-1 font-medium">{dateOfBirth || "—"}</dd>
             </div>
 
             <div>
@@ -185,6 +232,156 @@ export default async function StudentDetailsPage({
           )}
         </div>
       </div>
+
+      <details className="rounded-lg border bg-white">
+        <summary className="cursor-pointer px-6 py-4 font-semibold">
+          Edit Student Information
+        </summary>
+
+        <form action={updateStudentAction} className="space-y-6 border-t p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="admissionNumber"
+                className="block text-sm font-medium"
+              >
+                Admission Number
+              </label>
+
+              <input
+                id="admissionNumber"
+                name="admissionNumber"
+                defaultValue={student.admissionNumber}
+                required
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="gender" className="block text-sm font-medium">
+                Gender
+              </label>
+
+              <select
+                id="gender"
+                name="gender"
+                defaultValue={student.gender}
+                required
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium">
+                First Name
+              </label>
+
+              <input
+                id="firstName"
+                name="firstName"
+                defaultValue={student.firstName}
+                required
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="middleName" className="block text-sm font-medium">
+                Middle Name
+              </label>
+
+              <input
+                id="middleName"
+                name="middleName"
+                defaultValue={student.middleName || ""}
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium">
+                Last Name
+              </label>
+
+              <input
+                id="lastName"
+                name="lastName"
+                defaultValue={student.lastName}
+                required
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="dateOfBirth"
+                className="block text-sm font-medium"
+              >
+                Date of Birth
+              </label>
+
+              <input
+                id="dateOfBirth"
+                name="dateOfBirth"
+                type="date"
+                defaultValue={dateOfBirth}
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium">
+                Email
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                defaultValue={student.email || ""}
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium">
+                Phone
+              </label>
+
+              <input
+                id="phone"
+                name="phone"
+                defaultValue={student.phone || ""}
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium">
+              Address
+            </label>
+
+            <textarea
+              id="address"
+              name="address"
+              defaultValue={student.address || ""}
+              rows={3}
+              className="mt-2 w-full rounded-md border px-3 py-2"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            Save Changes
+          </button>
+        </form>
+      </details>
     </div>
   );
 }
