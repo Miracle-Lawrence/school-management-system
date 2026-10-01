@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'e8f977fec7c3fcf29b0c5bab47f48b50ecaaff2e7d4f38f9d484c6faa44457a8'>;
+  StorageHashBase<'2dedc90337bbc3813bedba293a7604ed2c4938ca298e43c5b7270cccd3c45ee0'>;
 export type ExecutionHash =
-  ExecutionHashBase<'6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f'>;
+  ExecutionHashBase<'6f90c1605841c2b2efd23fdfd8e943510a9bda8bfecf258ec85317ea02d47a5d'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -306,19 +306,6 @@ export type FieldOutputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly GradeScale: {
-      readonly code: CodecTypes['pg/text@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'];
-      readonly minScore: CodecTypes['pg/float8@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -334,47 +321,6 @@ export type FieldOutputTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['output'];
       readonly studentId: CodecTypes['pg/int4@1']['output'];
-    };
-    readonly ReportComponent: {
-      readonly assessmentType:
-        'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
-      readonly configurationId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isRequired: CodecTypes['pg/bool@1']['output'];
-      readonly isVisible: CodecTypes['pg/bool@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly type: 'ASSESSMENT' | 'CALCULATED';
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly weight: CodecTypes['pg/float8@1']['output'] | null;
-    };
-    readonly ReportComponentRule: {
-      readonly componentId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly sourceComponentId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly weight: CodecTypes['pg/float8@1']['output'] | null;
-    };
-    readonly ReportConfiguration: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly ResultComponentScore: {
-      readonly componentId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
-      readonly score: CodecTypes['pg/float8@1']['output'];
-      readonly subjectResultId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly School: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
@@ -416,21 +362,6 @@ export type FieldOutputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
-    readonly StudentTermResult: {
-      readonly averageScore: CodecTypes['pg/float8@1']['output'];
-      readonly classId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly grade: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly position: CodecTypes['pg/int4@1']['output'] | null;
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly totalScore: CodecTypes['pg/float8@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Subject: {
       readonly code: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -438,20 +369,6 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly SubjectResult: {
-      readonly classId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly grade: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly subjectId: CodecTypes['pg/int4@1']['output'];
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly totalScore: CodecTypes['pg/float8@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Teacher: {
@@ -566,19 +483,6 @@ export type FieldInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly GradeScale: {
-      readonly code: CodecTypes['pg/text@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'];
-      readonly minScore: CodecTypes['pg/float8@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -594,47 +498,6 @@ export type FieldInputTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['input'];
       readonly studentId: CodecTypes['pg/int4@1']['input'];
-    };
-    readonly ReportComponent: {
-      readonly assessmentType:
-        'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
-      readonly configurationId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isRequired: CodecTypes['pg/bool@1']['input'];
-      readonly isVisible: CodecTypes['pg/bool@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly type: 'ASSESSMENT' | 'CALCULATED';
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly weight: CodecTypes['pg/float8@1']['input'] | null;
-    };
-    readonly ReportComponentRule: {
-      readonly componentId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly sourceComponentId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly weight: CodecTypes['pg/float8@1']['input'] | null;
-    };
-    readonly ReportConfiguration: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly ResultComponentScore: {
-      readonly componentId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
-      readonly score: CodecTypes['pg/float8@1']['input'];
-      readonly subjectResultId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly School: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
@@ -676,21 +539,6 @@ export type FieldInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
-    readonly StudentTermResult: {
-      readonly averageScore: CodecTypes['pg/float8@1']['input'];
-      readonly classId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly grade: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly position: CodecTypes['pg/int4@1']['input'] | null;
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly totalScore: CodecTypes['pg/float8@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly Subject: {
       readonly code: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -698,20 +546,6 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly SubjectResult: {
-      readonly classId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly grade: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly subjectId: CodecTypes['pg/int4@1']['input'];
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly totalScore: CodecTypes['pg/float8@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Teacher: {
@@ -826,19 +660,6 @@ export type StorageColumnTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly GradeScale: {
-      readonly code: CodecTypes['pg/text@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'];
-      readonly minScore: CodecTypes['pg/float8@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -854,47 +675,6 @@ export type StorageColumnTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['output'];
       readonly studentId: CodecTypes['pg/int4@1']['output'];
-    };
-    readonly ReportComponent: {
-      readonly assessmentType:
-        'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
-      readonly configurationId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isRequired: CodecTypes['pg/bool@1']['output'];
-      readonly isVisible: CodecTypes['pg/bool@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly type: 'ASSESSMENT' | 'CALCULATED';
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly weight: CodecTypes['pg/float8@1']['output'] | null;
-    };
-    readonly ReportComponentRule: {
-      readonly componentId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly sourceComponentId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly weight: CodecTypes['pg/float8@1']['output'] | null;
-    };
-    readonly ReportConfiguration: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
-      readonly name: CodecTypes['pg/text@1']['output'];
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly ResultComponentScore: {
-      readonly componentId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
-      readonly score: CodecTypes['pg/float8@1']['output'];
-      readonly subjectResultId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly School: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
@@ -936,21 +716,6 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
-    readonly StudentTermResult: {
-      readonly averageScore: CodecTypes['pg/float8@1']['output'];
-      readonly classId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly grade: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly position: CodecTypes['pg/int4@1']['output'] | null;
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly totalScore: CodecTypes['pg/float8@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly Subject: {
       readonly code: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -958,20 +723,6 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
-    readonly SubjectResult: {
-      readonly classId: CodecTypes['pg/int4@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly grade: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly remark: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly subjectId: CodecTypes['pg/int4@1']['output'];
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly totalScore: CodecTypes['pg/float8@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Teacher: {
@@ -1086,19 +837,6 @@ export type StorageColumnInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly GradeScale: {
-      readonly code: CodecTypes['pg/text@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'];
-      readonly minScore: CodecTypes['pg/float8@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1114,47 +852,6 @@ export type StorageColumnInputTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['input'];
       readonly studentId: CodecTypes['pg/int4@1']['input'];
-    };
-    readonly ReportComponent: {
-      readonly assessmentType:
-        'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
-      readonly configurationId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isRequired: CodecTypes['pg/bool@1']['input'];
-      readonly isVisible: CodecTypes['pg/bool@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly type: 'ASSESSMENT' | 'CALCULATED';
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly weight: CodecTypes['pg/float8@1']['input'] | null;
-    };
-    readonly ReportComponentRule: {
-      readonly componentId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly sourceComponentId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly weight: CodecTypes['pg/float8@1']['input'] | null;
-    };
-    readonly ReportConfiguration: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
-      readonly name: CodecTypes['pg/text@1']['input'];
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly ResultComponentScore: {
-      readonly componentId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
-      readonly score: CodecTypes['pg/float8@1']['input'];
-      readonly subjectResultId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly School: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
@@ -1196,21 +893,6 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
-    readonly StudentTermResult: {
-      readonly averageScore: CodecTypes['pg/float8@1']['input'];
-      readonly classId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly grade: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly position: CodecTypes['pg/int4@1']['input'] | null;
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly totalScore: CodecTypes['pg/float8@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly Subject: {
       readonly code: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1218,20 +900,6 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
-    readonly SubjectResult: {
-      readonly classId: CodecTypes['pg/int4@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly grade: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly remark: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly subjectId: CodecTypes['pg/int4@1']['input'];
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly totalScore: CodecTypes['pg/float8@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Teacher: {
@@ -1369,21 +1037,6 @@ export namespace Models {
     subject: public_Subject;
     readonly [RelationKeys]?: 'class' | 'school' | 'subject';
   };
-  export type public_GradeScale = {
-    code: CodecTypes['pg/text@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    displayOrder: CodecTypes['pg/int4@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    isActive: CodecTypes['pg/bool@1']['output'];
-    maxScore: CodecTypes['pg/float8@1']['output'];
-    minScore: CodecTypes['pg/float8@1']['output'];
-    name: CodecTypes['pg/text@1']['output'];
-    remark: CodecTypes['pg/text@1']['output'] | null;
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    school: public_School;
-    readonly [RelationKeys]?: 'school';
-  };
   export type public_Parent = {
     address: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1407,61 +1060,6 @@ export namespace Models {
     student: public_Student;
     readonly [RelationKeys]?: 'parent' | 'student';
   };
-  export type public_ReportComponent = {
-    assessmentType:
-      'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
-    configurationId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    displayOrder: CodecTypes['pg/int4@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    isRequired: CodecTypes['pg/bool@1']['output'];
-    isVisible: CodecTypes['pg/bool@1']['output'];
-    maxScore: CodecTypes['pg/float8@1']['output'] | null;
-    name: CodecTypes['pg/text@1']['output'];
-    type: 'ASSESSMENT' | 'CALCULATED';
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    weight: CodecTypes['pg/float8@1']['output'] | null;
-    configuration: public_ReportConfiguration;
-    resultScores: public_ResultComponentScore[];
-    rules: public_ReportComponentRule[];
-    usedInRules: public_ReportComponentRule[];
-    readonly [RelationKeys]?: 'configuration' | 'resultScores' | 'rules' | 'usedInRules';
-  };
-  export type public_ReportComponentRule = {
-    componentId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    sourceComponentId: CodecTypes['pg/int4@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    weight: CodecTypes['pg/float8@1']['output'] | null;
-    component: public_ReportComponent;
-    sourceComponent: public_ReportComponent;
-    readonly [RelationKeys]?: 'component' | 'sourceComponent';
-  };
-  export type public_ReportConfiguration = {
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    isActive: CodecTypes['pg/bool@1']['output'];
-    name: CodecTypes['pg/text@1']['output'];
-    reportType: 'MID_TERM' | 'TERMINAL';
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    components: public_ReportComponent[];
-    school: public_School;
-    readonly [RelationKeys]?: 'components' | 'school';
-  };
-  export type public_ResultComponentScore = {
-    componentId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    maxScore: CodecTypes['pg/float8@1']['output'] | null;
-    score: CodecTypes['pg/float8@1']['output'];
-    subjectResultId: CodecTypes['pg/int4@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    component: public_ReportComponent;
-    subjectResult: public_SubjectResult;
-    readonly [RelationKeys]?: 'component' | 'subjectResult';
-  };
   export type public_School = {
     address: CodecTypes['pg/text@1']['output'] | null;
     city: CodecTypes['pg/text@1']['output'] | null;
@@ -1479,13 +1077,9 @@ export namespace Models {
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
     classes: public_SchoolClass[];
-    gradeScales: public_GradeScale[];
     parents: public_Parent[];
-    reportConfigurations: public_ReportConfiguration[];
     sessions: public_AcademicSession[];
-    studentTermResults: public_StudentTermResult[];
     students: public_Student[];
-    subjectResults: public_SubjectResult[];
     subjects: public_Subject[];
     teacherAssignments: public_TeacherAssignment[];
     teachers: public_Teacher[];
@@ -1495,13 +1089,9 @@ export namespace Models {
       | 'attendanceRecords'
       | 'classSubjects'
       | 'classes'
-      | 'gradeScales'
       | 'parents'
-      | 'reportConfigurations'
       | 'sessions'
-      | 'studentTermResults'
       | 'students'
-      | 'subjectResults'
       | 'subjects'
       | 'teacherAssignments'
       | 'teachers'
@@ -1519,18 +1109,14 @@ export namespace Models {
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
     school: public_School;
-    studentTermResults: public_StudentTermResult[];
     students: public_Student[];
-    subjectResults: public_SubjectResult[];
     teacherAssignments: public_TeacherAssignment[];
     readonly [RelationKeys]?:
       | 'assessments'
       | 'attendanceRecords'
       | 'classSubjects'
       | 'school'
-      | 'studentTermResults'
       | 'students'
-      | 'subjectResults'
       | 'teacherAssignments';
   };
   export type public_Student = {
@@ -1554,38 +1140,9 @@ export namespace Models {
     class: public_SchoolClass | null;
     parents: public_ParentStudent[];
     school: public_School;
-    studentTermResults: public_StudentTermResult[];
-    subjectResults: public_SubjectResult[];
     user: public_User | null;
     readonly [RelationKeys]?:
-      | 'assessmentScores'
-      | 'attendanceRecords'
-      | 'class'
-      | 'parents'
-      | 'school'
-      | 'studentTermResults'
-      | 'subjectResults'
-      | 'user';
-  };
-  export type public_StudentTermResult = {
-    averageScore: CodecTypes['pg/float8@1']['output'];
-    classId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    grade: CodecTypes['pg/text@1']['output'] | null;
-    id: CodecTypes['pg/int4@1']['output'];
-    position: CodecTypes['pg/int4@1']['output'] | null;
-    remark: CodecTypes['pg/text@1']['output'] | null;
-    reportType: 'MID_TERM' | 'TERMINAL';
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    studentId: CodecTypes['pg/int4@1']['output'];
-    termId: CodecTypes['pg/int4@1']['output'];
-    totalScore: CodecTypes['pg/float8@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    class: public_SchoolClass;
-    school: public_School;
-    student: public_Student;
-    term: public_Term;
-    readonly [RelationKeys]?: 'class' | 'school' | 'student' | 'term';
+      'assessmentScores' | 'attendanceRecords' | 'class' | 'parents' | 'school' | 'user';
   };
   export type public_Subject = {
     code: CodecTypes['pg/text@1']['output'] | null;
@@ -1598,32 +1155,8 @@ export namespace Models {
     assessments: public_Assessment[];
     classSubjects: public_ClassSubject[];
     school: public_School;
-    subjectResults: public_SubjectResult[];
     teacherAssignments: public_TeacherAssignment[];
-    readonly [RelationKeys]?:
-      'assessments' | 'classSubjects' | 'school' | 'subjectResults' | 'teacherAssignments';
-  };
-  export type public_SubjectResult = {
-    classId: CodecTypes['pg/int4@1']['output'];
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    grade: CodecTypes['pg/text@1']['output'] | null;
-    id: CodecTypes['pg/int4@1']['output'];
-    remark: CodecTypes['pg/text@1']['output'] | null;
-    reportType: 'MID_TERM' | 'TERMINAL';
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    studentId: CodecTypes['pg/int4@1']['output'];
-    subjectId: CodecTypes['pg/int4@1']['output'];
-    termId: CodecTypes['pg/int4@1']['output'];
-    totalScore: CodecTypes['pg/float8@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    class: public_SchoolClass;
-    componentScores: public_ResultComponentScore[];
-    school: public_School;
-    student: public_Student;
-    subject: public_Subject;
-    term: public_Term;
-    readonly [RelationKeys]?:
-      'class' | 'componentScores' | 'school' | 'student' | 'subject' | 'term';
+    readonly [RelationKeys]?: 'assessments' | 'classSubjects' | 'school' | 'teacherAssignments';
   };
   export type public_Teacher = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1667,10 +1200,7 @@ export namespace Models {
     assessments: public_Assessment[];
     attendanceRecords: public_Attendance[];
     session: public_AcademicSession;
-    studentTermResults: public_StudentTermResult[];
-    subjectResults: public_SubjectResult[];
-    readonly [RelationKeys]?:
-      'assessments' | 'attendanceRecords' | 'session' | 'studentTermResults' | 'subjectResults';
+    readonly [RelationKeys]?: 'assessments' | 'attendanceRecords' | 'session';
   };
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1710,19 +1240,12 @@ export declare const models: {
     AssessmentScore: Models.public_AssessmentScore;
     Attendance: Models.public_Attendance;
     ClassSubject: Models.public_ClassSubject;
-    GradeScale: Models.public_GradeScale;
     Parent: Models.public_Parent;
     ParentStudent: Models.public_ParentStudent;
-    ReportComponent: Models.public_ReportComponent;
-    ReportComponentRule: Models.public_ReportComponentRule;
-    ReportConfiguration: Models.public_ReportConfiguration;
-    ResultComponentScore: Models.public_ResultComponentScore;
     School: Models.public_School;
     SchoolClass: Models.public_SchoolClass;
     Student: Models.public_Student;
-    StudentTermResult: Models.public_StudentTermResult;
     Subject: Models.public_Subject;
-    SubjectResult: Models.public_SubjectResult;
     Teacher: Models.public_Teacher;
     TeacherAssignment: Models.public_TeacherAssignment;
     Term: Models.public_Term;
@@ -2351,98 +1874,6 @@ type ContractBase = Omit<
                 },
               ];
             };
-            readonly GradeScale: {
-              columns: {
-                readonly code: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly displayOrder: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly isActive: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly maxScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly minScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly name: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly remark: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly schoolId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['schoolId', 'code'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'GradeScale_schoolId_idx_82b454d7';
-                  readonly prefix: 'GradeScale_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'GradeScale';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
             readonly Parent: {
               columns: {
                 readonly address: {
@@ -2589,348 +2020,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Student';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly ReportComponent: {
-              columns: {
-                readonly assessmentType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly configurationId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly displayOrder: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly isRequired: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly isVisible: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly maxScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: true;
-                };
-                readonly name: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly type: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-                readonly weight: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: true;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['configurationId', 'name'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'ReportComponent_configurationId_idx_9f879af3';
-                  readonly prefix: 'ReportComponent_configurationId_idx';
-                  readonly columns: readonly ['configurationId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponent';
-                    readonly columns: readonly ['configurationId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportConfiguration';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly ReportComponentRule: {
-              columns: {
-                readonly componentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly sourceComponentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-                readonly weight: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: true;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [
-                { readonly columns: readonly ['componentId', 'sourceComponentId'] },
-              ];
-              indexes: readonly [
-                {
-                  readonly name: 'ReportComponentRule_componentId_idx_34539a70';
-                  readonly prefix: 'ReportComponentRule_componentId_idx';
-                  readonly columns: readonly ['componentId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'ReportComponentRule_sourceComponentId_idx_11805e31';
-                  readonly prefix: 'ReportComponentRule_sourceComponentId_idx';
-                  readonly columns: readonly ['sourceComponentId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponentRule';
-                    readonly columns: readonly ['componentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponent';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponentRule';
-                    readonly columns: readonly ['sourceComponentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponent';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly ReportConfiguration: {
-              columns: {
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly isActive: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly name: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly reportType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly schoolId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['schoolId', 'reportType'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'ReportConfiguration_schoolId_idx_82b454d7';
-                  readonly prefix: 'ReportConfiguration_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportConfiguration';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly ResultComponentScore: {
-              columns: {
-                readonly componentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly maxScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: true;
-                };
-                readonly score: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly subjectResultId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['subjectResultId', 'componentId'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'ResultComponentScore_componentId_idx_34539a70';
-                  readonly prefix: 'ResultComponentScore_componentId_idx';
-                  readonly columns: readonly ['componentId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'ResultComponentScore_subjectResultId_idx_9e6706b5';
-                  readonly prefix: 'ResultComponentScore_subjectResultId_idx';
-                  readonly columns: readonly ['subjectResultId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ResultComponentScore';
-                    readonly columns: readonly ['subjectResultId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ResultComponentScore';
-                    readonly columns: readonly ['componentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComponent';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -3226,160 +2315,6 @@ type ContractBase = Omit<
                 },
               ];
             };
-            readonly StudentTermResult: {
-              columns: {
-                readonly averageScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly classId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly grade: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly position: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: true;
-                };
-                readonly remark: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly reportType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly schoolId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly studentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly termId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly totalScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [
-                { readonly columns: readonly ['studentId', 'termId', 'reportType'] },
-              ];
-              indexes: readonly [
-                {
-                  readonly name: 'StudentTermResult_classId_idx_0089e5e7';
-                  readonly prefix: 'StudentTermResult_classId_idx';
-                  readonly columns: readonly ['classId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'StudentTermResult_schoolId_idx_82b454d7';
-                  readonly prefix: 'StudentTermResult_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'StudentTermResult_studentId_idx_bf255322';
-                  readonly prefix: 'StudentTermResult_studentId_idx';
-                  readonly columns: readonly ['studentId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'StudentTermResult_termId_idx_1b74c9af';
-                  readonly prefix: 'StudentTermResult_termId_idx';
-                  readonly columns: readonly ['termId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'StudentTermResult';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'StudentTermResult';
-                    readonly columns: readonly ['studentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Student';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'StudentTermResult';
-                    readonly columns: readonly ['classId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SchoolClass';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'StudentTermResult';
-                    readonly columns: readonly ['termId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Term';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
             readonly Subject: {
               columns: {
                 readonly code: {
@@ -3443,173 +2378,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly SubjectResult: {
-              columns: {
-                readonly classId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly grade: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly remark: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly reportType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly schoolId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly studentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly subjectId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly termId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly totalScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [
-                { readonly columns: readonly ['studentId', 'subjectId', 'termId', 'reportType'] },
-              ];
-              indexes: readonly [
-                {
-                  readonly name: 'SubjectResult_classId_idx_0089e5e7';
-                  readonly prefix: 'SubjectResult_classId_idx';
-                  readonly columns: readonly ['classId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'SubjectResult_schoolId_idx_82b454d7';
-                  readonly prefix: 'SubjectResult_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'SubjectResult_studentId_idx_bf255322';
-                  readonly prefix: 'SubjectResult_studentId_idx';
-                  readonly columns: readonly ['studentId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'SubjectResult_subjectId_idx_84df2a1d';
-                  readonly prefix: 'SubjectResult_subjectId_idx';
-                  readonly columns: readonly ['subjectId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'SubjectResult_termId_idx_1b74c9af';
-                  readonly prefix: 'SubjectResult_termId_idx';
-                  readonly columns: readonly ['termId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['studentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Student';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['classId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SchoolClass';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['subjectId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Subject';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'SubjectResult';
-                    readonly columns: readonly ['termId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Term';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -4033,18 +2801,6 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['MALE', 'FEMALE'];
             };
-            readonly GradeCalculationType: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['PERCENTAGE', 'RAW_SCORE'];
-            };
-            readonly ReportComponentType: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['ASSESSMENT', 'CALCULATED'];
-            };
-            readonly ReportType: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['MID_TERM', 'TERMINAL'];
-            };
             readonly SchoolStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['ACTIVE', 'SUSPENDED', 'INACTIVE'];
@@ -4092,30 +2848,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ClassSubject';
     };
-    readonly GradeScale: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'GradeScale';
-    };
     readonly Parent: { readonly namespace: 'public' & NamespaceId; readonly model: 'Parent' };
     readonly ParentStudent: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ParentStudent';
-    };
-    readonly ReportComponent: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ReportComponent';
-    };
-    readonly ReportComponentRule: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ReportComponentRule';
-    };
-    readonly ReportConfiguration: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ReportConfiguration';
-    };
-    readonly ResultComponentScore: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ResultComponentScore';
     };
     readonly School: { readonly namespace: 'public' & NamespaceId; readonly model: 'School' };
     readonly SchoolClass: {
@@ -4123,15 +2859,7 @@ type ContractBase = Omit<
       readonly model: 'SchoolClass';
     };
     readonly Student: { readonly namespace: 'public' & NamespaceId; readonly model: 'Student' };
-    readonly StudentTermResult: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'StudentTermResult';
-    };
     readonly Subject: { readonly namespace: 'public' & NamespaceId; readonly model: 'Subject' };
-    readonly SubjectResult: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'SubjectResult';
-    };
     readonly Teacher: { readonly namespace: 'public' & NamespaceId; readonly model: 'Teacher' };
     readonly TeacherAssignment: {
       readonly namespace: 'public' & NamespaceId;
@@ -4675,91 +3403,6 @@ type ContractBase = Omit<
               };
             };
           };
-          readonly GradeScale: {
-            readonly fields: {
-              readonly code: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly displayOrder: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly isActive: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly maxScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly minScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly name: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly remark: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'GradeScale';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly code: { readonly column: 'code' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly displayOrder: { readonly column: 'displayOrder' };
-                readonly id: { readonly column: 'id' };
-                readonly isActive: { readonly column: 'isActive' };
-                readonly maxScore: { readonly column: 'maxScore' };
-                readonly minScore: { readonly column: 'minScore' };
-                readonly name: { readonly column: 'name' };
-                readonly remark: { readonly column: 'remark' };
-                readonly schoolId: { readonly column: 'schoolId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
           readonly Parent: {
             readonly fields: {
               readonly address: {
@@ -4906,354 +3549,6 @@ type ContractBase = Omit<
               };
             };
           };
-          readonly ReportComponent: {
-            readonly fields: {
-              readonly assessmentType: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly configurationId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly displayOrder: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly isRequired: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly isVisible: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly maxScore: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly name: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly type: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly weight: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-            };
-            readonly relations: {
-              readonly configuration: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportConfiguration';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['configurationId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly resultScores: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ResultComponentScore';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['componentId'];
-                };
-              };
-              readonly rules: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponentRule';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['componentId'];
-                };
-              };
-              readonly usedInRules: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponentRule';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['sourceComponentId'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'ReportComponent';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly assessmentType: { readonly column: 'assessmentType' };
-                readonly configurationId: { readonly column: 'configurationId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly displayOrder: { readonly column: 'displayOrder' };
-                readonly id: { readonly column: 'id' };
-                readonly isRequired: { readonly column: 'isRequired' };
-                readonly isVisible: { readonly column: 'isVisible' };
-                readonly maxScore: { readonly column: 'maxScore' };
-                readonly name: { readonly column: 'name' };
-                readonly type: { readonly column: 'type' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-                readonly weight: { readonly column: 'weight' };
-              };
-            };
-          };
-          readonly ReportComponentRule: {
-            readonly fields: {
-              readonly componentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly sourceComponentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly weight: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-            };
-            readonly relations: {
-              readonly component: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponent';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['componentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly sourceComponent: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponent';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['sourceComponentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'ReportComponentRule';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly componentId: { readonly column: 'componentId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly id: { readonly column: 'id' };
-                readonly sourceComponentId: { readonly column: 'sourceComponentId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-                readonly weight: { readonly column: 'weight' };
-              };
-            };
-          };
-          readonly ReportConfiguration: {
-            readonly fields: {
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly isActive: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly name: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly reportType: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly components: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponent';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['configurationId'];
-                };
-              };
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'ReportConfiguration';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly id: { readonly column: 'id' };
-                readonly isActive: { readonly column: 'isActive' };
-                readonly name: { readonly column: 'name' };
-                readonly reportType: { readonly column: 'reportType' };
-                readonly schoolId: { readonly column: 'schoolId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly ResultComponentScore: {
-            readonly fields: {
-              readonly componentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly maxScore: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly score: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly subjectResultId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly component: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComponent';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['componentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly subjectResult: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['subjectResultId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'ResultComponentScore';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly componentId: { readonly column: 'componentId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly id: { readonly column: 'id' };
-                readonly maxScore: { readonly column: 'maxScore' };
-                readonly score: { readonly column: 'score' };
-                readonly subjectResultId: { readonly column: 'subjectResultId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
           readonly School: {
             readonly fields: {
               readonly address: {
@@ -5356,32 +3651,10 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
-              readonly gradeScales: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'GradeScale';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
               readonly parents: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Parent';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
-              readonly reportConfigurations: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportConfiguration';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -5400,32 +3673,10 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
-              readonly studentTermResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'StudentTermResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
               readonly students: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Student';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
-              readonly subjectResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -5577,32 +3828,10 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly studentTermResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'StudentTermResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['classId'];
-                };
-              };
               readonly students: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Student';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['classId'];
-                };
-              };
-              readonly subjectResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -5766,28 +3995,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly studentTermResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'StudentTermResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['studentId'];
-                };
-              };
-              readonly subjectResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['studentId'];
-                };
-              };
               readonly user: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
@@ -5817,134 +4024,6 @@ type ContractBase = Omit<
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly userId: { readonly column: 'userId' };
-              };
-            };
-          };
-          readonly StudentTermResult: {
-            readonly fields: {
-              readonly averageScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly classId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly grade: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly position: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly remark: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly reportType: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly studentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly termId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly totalScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly class: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SchoolClass';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['classId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly student: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Student';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['studentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly term: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['termId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'StudentTermResult';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly averageScore: { readonly column: 'averageScore' };
-                readonly classId: { readonly column: 'classId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly grade: { readonly column: 'grade' };
-                readonly id: { readonly column: 'id' };
-                readonly position: { readonly column: 'position' };
-                readonly remark: { readonly column: 'remark' };
-                readonly reportType: { readonly column: 'reportType' };
-                readonly schoolId: { readonly column: 'schoolId' };
-                readonly studentId: { readonly column: 'studentId' };
-                readonly termId: { readonly column: 'termId' };
-                readonly totalScore: { readonly column: 'totalScore' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -6020,17 +4099,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly subjectResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['subjectId'];
-                };
-              };
               readonly teacherAssignments: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -6053,152 +4121,6 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly schoolId: { readonly column: 'schoolId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly SubjectResult: {
-            readonly fields: {
-              readonly classId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly grade: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly remark: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly reportType: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly studentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly subjectId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly termId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly totalScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly class: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SchoolClass';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['classId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly componentScores: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ResultComponentScore';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['subjectResultId'];
-                };
-              };
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly student: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Student';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['studentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly subject: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Subject';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['subjectId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly term: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['termId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'SubjectResult';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly classId: { readonly column: 'classId' };
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly grade: { readonly column: 'grade' };
-                readonly id: { readonly column: 'id' };
-                readonly remark: { readonly column: 'remark' };
-                readonly reportType: { readonly column: 'reportType' };
-                readonly schoolId: { readonly column: 'schoolId' };
-                readonly studentId: { readonly column: 'studentId' };
-                readonly subjectId: { readonly column: 'subjectId' };
-                readonly termId: { readonly column: 'termId' };
-                readonly totalScore: { readonly column: 'totalScore' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -6486,28 +4408,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
-              readonly studentTermResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'StudentTermResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['termId'];
-                };
-              };
-              readonly subjectResults: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'SubjectResult';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['termId'];
-                };
-              };
             };
             readonly storage: {
               readonly table: 'Term';
@@ -6708,27 +4608,6 @@ type ContractBase = Omit<
               { readonly name: 'FEMALE'; readonly value: 'FEMALE' },
             ];
           };
-          readonly GradeCalculationType: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'PERCENTAGE'; readonly value: 'PERCENTAGE' },
-              { readonly name: 'RAW_SCORE'; readonly value: 'RAW_SCORE' },
-            ];
-          };
-          readonly ReportComponentType: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'ASSESSMENT'; readonly value: 'ASSESSMENT' },
-              { readonly name: 'CALCULATED'; readonly value: 'CALCULATED' },
-            ];
-          };
-          readonly ReportType: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'MID_TERM'; readonly value: 'MID_TERM' },
-              { readonly name: 'TERMINAL'; readonly value: 'TERMINAL' },
-            ];
-          };
           readonly SchoolStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -6829,52 +4708,7 @@ type ContractBase = Omit<
           readonly ref: {
             readonly column: 'updatedAt';
             readonly namespace: 'public';
-            readonly table: 'GradeScale';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
             readonly table: 'Parent';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'ReportComponent';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'ReportComponentRule';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'ReportConfiguration';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'ResultComponentScore';
           };
         },
         {
@@ -6910,25 +4744,7 @@ type ContractBase = Omit<
           readonly ref: {
             readonly column: 'updatedAt';
             readonly namespace: 'public';
-            readonly table: 'StudentTermResult';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
             readonly table: 'Subject';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'SubjectResult';
           };
         },
         {

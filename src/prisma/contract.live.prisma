@@ -1,0 +1,259 @@
+// use prisma-8
+// Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
+
+model School {
+  id                 Int                 @id(map: "School_pkey") @default(autoincrement())
+  address            String?
+  city               String?
+  country            String              @default("Nigeria")
+  createdAt          Timestamptz         @default(now())
+  email              String?
+  name               String
+  phone              String?
+  slug               String              @unique(map: "School_slug_key")
+  state              String?
+  status             String              @default("ACTIVE")
+  updatedAt          Timestamptz
+  academicSessions   AcademicSession[]
+  attendances        Attendance[]
+  classSubjects      ClassSubject[]
+  parents            Parent[]
+  schoolClasses      SchoolClass[]
+  students           Student[]
+  subjects           Subject[]
+  teachers           Teacher[]
+  teacherAssignments TeacherAssignment[]
+  users              User[]
+
+  @@check(expression: "(status = ANY (ARRAY['ACTIVE'::text, 'SUSPENDED'::text, 'INACTIVE'::text]))", map: "School_status_check_b93c425b")
+}
+
+model AcademicSession {
+  id        Int         @id(map: "AcademicSession_pkey") @default(autoincrement())
+  createdAt Timestamptz @default(now())
+  endDate   Timestamptz
+  isActive  Boolean     @default(false)
+  name      String
+  schoolId  Int
+  startDate Timestamptz
+  updatedAt Timestamptz
+  terms     Term[]
+  school    School      @relation(fields: [schoolId], references: [id], map: "AcademicSession_schoolId_fkey")
+
+  @@unique([schoolId, name], map: "AcademicSession_schoolId_name_key")
+  @@index([schoolId], name: "AcademicSession_schoolId_idx")
+}
+
+model SchoolClass {
+  id                 Int                 @id(map: "SchoolClass_pkey") @default(autoincrement())
+  createdAt          Timestamptz         @default(now())
+  description        String?
+  level              String?
+  name               String
+  schoolId           Int
+  updatedAt          Timestamptz
+  attendances        Attendance[]
+  classSubjects      ClassSubject[]
+  students           Student[]
+  teacherAssignments TeacherAssignment[]
+  school             School              @relation(fields: [schoolId], references: [id], map: "SchoolClass_schoolId_fkey")
+
+  @@unique([schoolId, name], map: "SchoolClass_schoolId_name_key")
+  @@index([schoolId], name: "SchoolClass_schoolId_idx")
+}
+
+model User {
+  id              Int          @id(map: "User_pkey") @default(autoincrement())
+  createdAt       Timestamptz  @default(now())
+  email           String       @unique(map: "User_email_key")
+  emailVerifiedAt Timestamptz?
+  isActive        Boolean      @default(true)
+  lastLoginAt     Timestamptz?
+  name            String?
+  passwordHash    String
+  phone           String?
+  role            String
+  schoolId        Int?
+  updatedAt       Timestamptz
+  attendances     Attendance[]
+  parent          Parent?
+  student         Student?
+  teacher         Teacher?
+  school          School?      @relation(fields: [schoolId], references: [id], map: "User_schoolId_fkey")
+
+  @@index([schoolId], name: "User_schoolId_idx")
+  @@check(expression: "(role = ANY (ARRAY['PLATFORM_OWNER'::text, 'PLATFORM_ADMIN'::text, 'SCHOOL_OWNER'::text, 'SCHOOL_ADMIN'::text, 'TEACHER'::text, 'PARENT'::text, 'STUDENT'::text]))", map: "User_role_check_64d34906")
+}
+
+model Student {
+  id              Int             @id(map: "Student_pkey") @default(autoincrement())
+  address         String?
+  admissionNumber String
+  classId         Int?
+  createdAt       Timestamptz     @default(now())
+  dateOfBirth     Timestamptz?
+  email           String?
+  firstName       String
+  gender          String
+  lastName        String
+  middleName      String?
+  phone           String?
+  schoolId        Int
+  updatedAt       Timestamptz
+  userId          Int?            @unique(map: "Student_userId_key")
+  attendances     Attendance[]
+  parentStudents  ParentStudent[]
+  class           SchoolClass?    @relation(fields: [classId], references: [id], map: "Student_classId_fkey")
+  school          School          @relation(fields: [schoolId], references: [id], map: "Student_schoolId_fkey")
+  user            User?           @relation(fields: [userId], references: [id], map: "Student_userId_fkey")
+
+  @@unique([schoolId, admissionNumber], map: "Student_schoolId_admissionNumber_key")
+  @@index([classId], name: "Student_classId_idx")
+  @@index([schoolId], name: "Student_schoolId_idx")
+  @@check(expression: "(gender = ANY (ARRAY['MALE'::text, 'FEMALE'::text]))", map: "Student_gender_check_9e8dd636")
+}
+
+model Term {
+  id          Int             @id(map: "Term_pkey") @default(autoincrement())
+  createdAt   Timestamptz     @default(now())
+  endDate     Timestamptz
+  isActive    Boolean         @default(false)
+  name        String
+  sessionId   Int
+  startDate   Timestamptz
+  updatedAt   Timestamptz
+  attendances Attendance[]
+  session     AcademicSession @relation(fields: [sessionId], references: [id], map: "Term_sessionId_fkey")
+
+  @@unique([sessionId, name], map: "Term_sessionId_name_key")
+  @@index([sessionId], name: "Term_sessionId_idx")
+}
+
+model Attendance {
+  id           Int         @id(map: "Attendance_pkey") @default(autoincrement())
+  classId      Int
+  createdAt    Timestamptz @default(now())
+  date         Timestamptz
+  notes        String?
+  recordedById Int
+  schoolId     Int
+  status       String
+  studentId    Int
+  termId       Int
+  updatedAt    Timestamptz
+  class        SchoolClass @relation(fields: [classId], references: [id], map: "Attendance_classId_fkey")
+  recordedBy   User        @relation(fields: [recordedById], references: [id], map: "Attendance_recordedById_fkey")
+  school       School      @relation(fields: [schoolId], references: [id], map: "Attendance_schoolId_fkey")
+  student      Student     @relation(fields: [studentId], references: [id], map: "Attendance_studentId_fkey")
+  term         Term        @relation(fields: [termId], references: [id], map: "Attendance_termId_fkey")
+
+  @@unique([studentId, date, classId], map: "Attendance_studentId_date_classId_key")
+  @@index([classId], name: "Attendance_classId_idx")
+  @@index([date], name: "Attendance_date_idx")
+  @@index([recordedById], name: "Attendance_recordedById_idx")
+  @@index([schoolId], name: "Attendance_schoolId_idx")
+  @@index([studentId], name: "Attendance_studentId_idx")
+  @@index([termId], name: "Attendance_termId_idx")
+  @@check(expression: "(status = ANY (ARRAY['PRESENT'::text, 'ABSENT'::text, 'LATE'::text, 'EXCUSED'::text]))", map: "Attendance_status_check_fd2191e7")
+}
+
+model Subject {
+  id                 Int                 @id(map: "Subject_pkey") @default(autoincrement())
+  code               String?
+  createdAt          Timestamptz         @default(now())
+  description        String?
+  name               String
+  schoolId           Int
+  updatedAt          Timestamptz
+  classSubjects      ClassSubject[]
+  teacherAssignments TeacherAssignment[]
+  school             School              @relation(fields: [schoolId], references: [id], map: "Subject_schoolId_fkey")
+
+  @@unique([schoolId, name], map: "Subject_schoolId_name_key")
+  @@index([schoolId], name: "Subject_schoolId_idx")
+}
+
+model ClassSubject {
+  id        Int         @id(map: "ClassSubject_pkey") @default(autoincrement())
+  classId   Int
+  createdAt Timestamptz @default(now())
+  schoolId  Int
+  subjectId Int
+  updatedAt Timestamptz
+  class     SchoolClass @relation(fields: [classId], references: [id], map: "ClassSubject_classId_fkey")
+  school    School      @relation(fields: [schoolId], references: [id], map: "ClassSubject_schoolId_fkey")
+  subject   Subject     @relation(fields: [subjectId], references: [id], map: "ClassSubject_subjectId_fkey")
+
+  @@unique([classId, subjectId], map: "ClassSubject_classId_subjectId_key")
+  @@index([classId], name: "ClassSubject_classId_idx")
+  @@index([schoolId], name: "ClassSubject_schoolId_idx")
+  @@index([subjectId], name: "ClassSubject_subjectId_idx")
+}
+
+model Parent {
+  id             Int             @id(map: "Parent_pkey") @default(autoincrement())
+  address        String?
+  createdAt      Timestamptz     @default(now())
+  email          String?
+  firstName      String
+  lastName       String
+  phone          String?
+  schoolId       Int
+  updatedAt      Timestamptz
+  userId         Int?            @unique(map: "Parent_userId_key")
+  parentStudents ParentStudent[]
+  school         School          @relation(fields: [schoolId], references: [id], map: "Parent_schoolId_fkey")
+  user           User?           @relation(fields: [userId], references: [id], map: "Parent_userId_fkey")
+
+  @@index([schoolId], name: "Parent_schoolId_idx")
+}
+
+model ParentStudent {
+  parentId  Int
+  studentId Int
+  parent    Parent  @relation(fields: [parentId], references: [id], map: "ParentStudent_parentId_fkey")
+  student   Student @relation(fields: [studentId], references: [id], map: "ParentStudent_studentId_fkey")
+
+  @@id([parentId, studentId], map: "ParentStudent_pkey")
+  @@index([parentId], name: "ParentStudent_parentId_idx")
+  @@index([studentId], name: "ParentStudent_studentId_idx")
+}
+
+model Teacher {
+  id                 Int                 @id(map: "Teacher_pkey") @default(autoincrement())
+  createdAt          Timestamptz         @default(now())
+  email              String?
+  employeeId         String
+  firstName          String
+  lastName           String
+  phone              String?
+  schoolId           Int
+  updatedAt          Timestamptz
+  userId             Int?                @unique(map: "Teacher_userId_key")
+  teacherAssignments TeacherAssignment[]
+  school             School              @relation(fields: [schoolId], references: [id], map: "Teacher_schoolId_fkey")
+  user               User?               @relation(fields: [userId], references: [id], map: "Teacher_userId_fkey")
+
+  @@unique([schoolId, employeeId], map: "Teacher_schoolId_employeeId_key")
+  @@index([schoolId], name: "Teacher_schoolId_idx")
+}
+
+model TeacherAssignment {
+  id        Int         @id(map: "TeacherAssignment_pkey") @default(autoincrement())
+  classId   Int
+  createdAt Timestamptz @default(now())
+  schoolId  Int
+  subjectId Int
+  teacherId Int
+  updatedAt Timestamptz
+  class     SchoolClass @relation(fields: [classId], references: [id], map: "TeacherAssignment_classId_fkey")
+  school    School      @relation(fields: [schoolId], references: [id], map: "TeacherAssignment_schoolId_fkey")
+  subject   Subject     @relation(fields: [subjectId], references: [id], map: "TeacherAssignment_subjectId_fkey")
+  teacher   Teacher     @relation(fields: [teacherId], references: [id], map: "TeacherAssignment_teacherId_fkey")
+
+  @@unique([teacherId, classId, subjectId], map: "TeacherAssignment_teacherId_classId_subjectId_key")
+  @@index([classId], name: "TeacherAssignment_classId_idx")
+  @@index([schoolId], name: "TeacherAssignment_schoolId_idx")
+  @@index([subjectId], name: "TeacherAssignment_subjectId_idx")
+  @@index([teacherId], name: "TeacherAssignment_teacherId_idx")
+}

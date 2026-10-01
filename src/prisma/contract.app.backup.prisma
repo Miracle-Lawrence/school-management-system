@@ -38,21 +38,6 @@ enum AssessmentType {
   OTHER
 }
 
-enum ReportType {
-  MID_TERM
-  TERMINAL
-}
-
-enum ReportComponentType {
-  ASSESSMENT
-  CALCULATED
-}
-
-enum GradeCalculationType {
-  PERCENTAGE
-  RAW_SCORE
-}
-
 model School {
   id          Int          @id @default(autoincrement())
   name        String
@@ -72,194 +57,11 @@ model School {
   subjects    Subject[]
   classSubjects ClassSubject[]
   assessments Assessment[]
-  reportConfigurations ReportConfiguration[]
   teacherAssignments TeacherAssignment[]
   attendanceRecords Attendance[]
   sessions    AcademicSession[]
-  gradeScales GradeScale[]
-  subjectResults SubjectResult[]
-  studentTermResults StudentTermResult[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
-}
-
-model ReportConfiguration {
-  id        Int        @id @default(autoincrement())
-
-  school    School     @relation(fields: [schoolId], references: [id])
-  schoolId  Int
-
-  reportType ReportType
-
-  name      String
-  isActive  Boolean    @default(true)
-
-  components ReportComponent[]
-
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-
-  @@unique([schoolId, reportType])
-  @@index([schoolId])
-}
-
-model ReportComponent {
-  id              Int                 @id @default(autoincrement())
-
-  configuration   ReportConfiguration @relation(fields: [configurationId], references: [id])
-  configurationId Int
-
-  name            String
-  type            ReportComponentType
-
-  assessmentType  AssessmentType?
-
-  rules        ReportComponentRule[] @relation("ComponentRules")
-  usedInRules ReportComponentRule[] @relation("RuleSourceComponent")
-  resultScores ResultComponentScore[]
-
-  maxScore        Float?
-  weight          Float?
-
-  displayOrder    Int
-  isRequired      Boolean             @default(true)
-  isVisible       Boolean             @default(true)
-
-  createdAt       TimestamptzString   @default(now())
-  updatedAt       temporal.updatedAtString()
-
-  @@unique([configurationId, name])
-  @@index([configurationId])
-}
-
-model ReportComponentRule {
-  id                Int             @id @default(autoincrement())
-
-  component         ReportComponent @relation("ComponentRules", fields: [componentId], references: [id])
-  componentId       Int
-
-  sourceComponent   ReportComponent @relation("RuleSourceComponent", fields: [sourceComponentId], references: [id])
-  sourceComponentId Int
-
-  weight            Float?
-
-  createdAt         TimestamptzString @default(now())
-  updatedAt         temporal.updatedAtString()
-
-  @@unique([componentId, sourceComponentId])
-  @@index([componentId])
-  @@index([sourceComponentId])
-}
-
-model GradeScale {
-  id          Int                 @id @default(autoincrement())
-
-  school      School              @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-
-  name        String
-  code        String
-  minScore    Float
-  maxScore    Float
-  remark      String?
-  displayOrder Int
-  isActive    Boolean             @default(true)
-
-  createdAt   TimestamptzString   @default(now())
-  updatedAt   temporal.updatedAtString()
-
-  @@unique([schoolId, code])
-  @@index([schoolId])
-}
-
-model SubjectResult {
-  id          Int       @id @default(autoincrement())
-
-  school      School    @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-
-  student     Student   @relation(fields: [studentId], references: [id])
-  studentId   Int
-
-  class       SchoolClass @relation(fields: [classId], references: [id])
-  classId     Int
-
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  subjectId   Int
-
-  term        Term      @relation(fields: [termId], references: [id])
-  termId      Int
-
-  totalScore  Float
-
-  grade       String?
-  remark      String?
-  componentScores ResultComponentScore[]
-
-  reportType ReportType
-
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
-
-  @@unique([studentId, subjectId, termId, reportType])
-  @@index([schoolId])
-  @@index([studentId])
-  @@index([classId])
-  @@index([subjectId])
-  @@index([termId])
-}
-
-model ResultComponentScore {
-  id              Int             @id @default(autoincrement())
-
-  subjectResult   SubjectResult   @relation(fields: [subjectResultId], references: [id])
-  subjectResultId Int
-
-  component       ReportComponent @relation(fields: [componentId], references: [id])
-  componentId     Int
-
-  score           Float
-  maxScore        Float?
-
-  createdAt       TimestamptzString @default(now())
-  updatedAt       temporal.updatedAtString()
-
-  @@unique([subjectResultId, componentId])
-  @@index([subjectResultId])
-  @@index([componentId])
-}
-
-model StudentTermResult {
-  id          Int         @id @default(autoincrement())
-
-  school      School      @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-
-  student     Student     @relation(fields: [studentId], references: [id])
-  studentId   Int
-
-  class       SchoolClass @relation(fields: [classId], references: [id])
-  classId     Int
-
-  term        Term        @relation(fields: [termId], references: [id])
-  termId      Int
-
-  totalScore  Float
-  averageScore Float
-
-  position    Int?
-  grade       String?
-  remark      String?
-  reportType ReportType
-
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
-
-  @@unique([studentId, termId, reportType])
-  @@index([schoolId])
-  @@index([studentId])
-  @@index([classId])
-  @@index([termId])
 }
 
 model User {
@@ -303,8 +105,6 @@ model Student {
   parents         ParentStudent[]
   attendanceRecords Attendance[]
   assessmentScores AssessmentScore[]
-  subjectResults SubjectResult[]
-  studentTermResults StudentTermResult[]
   createdAt       TimestamptzString @default(now())
   updatedAt       temporal.updatedAtString()
 
@@ -370,8 +170,6 @@ model SchoolClass {
   teacherAssignments TeacherAssignment[]
   attendanceRecords Attendance[]
   assessments Assessment[]
-  subjectResults SubjectResult[]
-  studentTermResults StudentTermResult[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -389,7 +187,6 @@ model Subject {
   classSubjects ClassSubject[]
   teacherAssignments TeacherAssignment[]
   assessments Assessment[]
-  subjectResults SubjectResult[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -460,8 +257,6 @@ model Term {
   isActive    Boolean         @default(false)
   attendanceRecords Attendance[]
   assessments Assessment[]
-  subjectResults SubjectResult[]
-  studentTermResults StudentTermResult[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
