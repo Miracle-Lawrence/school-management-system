@@ -73,8 +73,13 @@ export default async function TeachersPage() {
                       {teacher.employeeId}
                     </td>
 
-                    <td className="px-6 py-4">
-                      {teacher.firstName} {teacher.lastName}
+                    <td className="px-6 py-4 font-medium">
+                      <Link
+                        href={`/school/teachers/${teacher.id}`}
+                        className="hover:underline"
+                      >
+                        {teacher.firstName} {teacher.lastName}
+                      </Link>
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">

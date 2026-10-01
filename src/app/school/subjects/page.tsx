@@ -67,8 +67,14 @@ export default async function SubjectsPage() {
               <tbody>
                 {subjects.map((subject) => (
                   <tr key={subject.id} className="border-b last:border-0">
-                    <td className="px-6 py-4 font-medium">{subject.name}</td>
-
+                    <td className="px-6 py-4 font-medium">
+                      <Link
+                        href={`/school/subjects/${subject.id}`}
+                        className="hover:underline"
+                      >
+                        {subject.name}
+                      </Link>
+                    </td>
                     <td className="px-6 py-4 text-gray-600">
                       {subject.code ?? "—"}
                     </td>

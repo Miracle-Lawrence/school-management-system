@@ -16,6 +16,25 @@ export default async function ParentsPage() {
     parent.schoolId.eq(schoolId),
   ).all();
 
+  const parentStudents = await db.orm.public.ParentStudent.all();
+
+  const childrenCount = new Map<number, number>();
+
+  for (const relationship of parentStudents) {
+    const parent = parents.find(
+      (parent) => parent.id === relationship.parentId,
+    );
+
+    if (!parent) {
+      continue;
+    }
+
+    childrenCount.set(
+      relationship.parentId,
+      (childrenCount.get(relationship.parentId) ?? 0) + 1,
+    );
+  }
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -62,35 +81,43 @@ export default async function ParentsPage() {
 
                   <th className="px-6 py-4 font-semibold">Phone</th>
 
+                  <th className="px-6 py-4 font-semibold">Children</th>
+
                   <th className="px-6 py-4 font-semibold">Address</th>
                 </tr>
               </thead>
 
               <tbody>
-                {parents.map((parent) => (
-                  <tr key={parent.id} className="border-b last:border-0">
-                    <td className="px-6 py-4 font-medium">
-                      <Link
-                        href={`/school/parents/${parent.id}`}
-                        className="hover:underline"
-                      >
-                        {parent.firstName} {parent.lastName}
-                      </Link>
-                    </td>
+                {parents.map((parent) => {
+                  const count = childrenCount.get(parent.id) ?? 0;
 
-                    <td className="px-6 py-4 text-gray-600">
-                      {parent.email ?? "—"}
-                    </td>
+                  return (
+                    <tr key={parent.id} className="border-b last:border-0">
+                      <td className="px-6 py-4 font-medium">
+                        <Link
+                          href={`/school/parents/${parent.id}`}
+                          className="hover:underline"
+                        >
+                          {parent.firstName} {parent.lastName}
+                        </Link>
+                      </td>
 
-                    <td className="px-6 py-4 text-gray-600">
-                      {parent.phone ?? "—"}
-                    </td>
+                      <td className="px-6 py-4 text-gray-600">
+                        {parent.email ?? "—"}
+                      </td>
 
-                    <td className="px-6 py-4 text-gray-600">
-                      {parent.address ?? "—"}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-6 py-4 text-gray-600">
+                        {parent.phone ?? "—"}
+                      </td>
+
+                      <td className="px-6 py-4 text-gray-600">{count}</td>
+
+                      <td className="px-6 py-4 text-gray-600">
+                        {parent.address ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
 
 import { requireRole } from "@/lib/auth/authorization";
+import { updateClass } from "@/lib/services/class.service";
 import { db } from "@/prisma/db";
 
 type PageProps = {
@@ -8,6 +11,12 @@ type PageProps = {
     id: string;
   }>;
 };
+
+const updateClassSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  level: z.string().trim().max(50).optional().or(z.literal("")),
+  description: z.string().trim().max(250).optional().or(z.literal("")),
+});
 
 export default async function ClassDetailsPage({ params }: PageProps) {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
@@ -44,6 +53,34 @@ export default async function ClassDetailsPage({ params }: PageProps) {
   const teacherAssignments = await db.orm.public.TeacherAssignment.where(
     (assignment) => assignment.classId.eq(classId),
   ).all();
+
+  async function updateClassAction(formData: FormData) {
+    "use server";
+
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      throw new Error("School context is required.");
+    }
+
+    const result = updateClassSchema.safeParse({
+      name: formData.get("name"),
+      level: formData.get("level"),
+      description: formData.get("description"),
+    });
+
+    if (!result.success) {
+      throw new Error(
+        result.error.issues[0]?.message || "Invalid class information.",
+      );
+    }
+
+    await updateClass(schoolId, classId, result.data);
+
+    redirect(`/school/classes/${classId}`);
+  }
 
   return (
     <div className="space-y-6">
@@ -155,6 +192,64 @@ export default async function ClassDetailsPage({ params }: PageProps) {
           </p>
         </Link>
       </div>
+
+      <details className="rounded-lg border bg-white">
+        <summary className="cursor-pointer px-6 py-4 font-semibold">
+          Edit Class Information
+        </summary>
+
+        <form action={updateClassAction} className="space-y-6 border-t p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium">
+                Class Name
+              </label>
+
+              <input
+                id="name"
+                name="name"
+                defaultValue={schoolClass.name}
+                required
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="level" className="block text-sm font-medium">
+                Level
+              </label>
+
+              <input
+                id="level"
+                name="level"
+                defaultValue={schoolClass.level ?? ""}
+                className="mt-2 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium">
+              Description
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              defaultValue={schoolClass.description ?? ""}
+              rows={3}
+              className="mt-2 w-full rounded-md border px-3 py-2"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            Save Changes
+          </button>
+        </form>
+      </details>
     </div>
   );
 }
