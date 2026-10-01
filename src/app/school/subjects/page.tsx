@@ -17,69 +17,106 @@ export default async function SubjectsPage() {
   ).all();
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Page heading */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Subjects</h1>
+          <p className="text-sm font-semibold text-blue-600">
+            Academic Management
+          </p>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Subjects
+          </h1>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
             Manage the subjects offered by your school.
           </p>
         </div>
 
         <Link
           href="/school/subjects/new"
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
         >
-          Add Subject
+          + Add Subject
         </Link>
       </div>
 
-      <div className="overflow-hidden rounded-lg border bg-white">
-        {subjects.length === 0 ? (
-          <div className="p-8 text-center">
-            <h2 className="font-semibold">No subjects yet</h2>
+      {/* Subject count */}
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+        <p className="text-sm text-slate-600">Total subjects</p>
 
-            <p className="mt-2 text-sm text-gray-500">
-              Create your first subject to get started.
+        <p className="mt-1 text-2xl font-bold text-slate-900">
+          {subjects.length}
+        </p>
+      </div>
+
+      {/* Subjects table */}
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        {subjects.length === 0 ? (
+          <div className="px-6 py-12 text-center sm:px-8">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <span className="text-xl font-bold">S</span>
+            </div>
+
+            <h2 className="mt-4 text-lg font-semibold text-slate-900">
+              No subjects yet
+            </h2>
+
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+              Create your first subject to begin organizing your school's
+              academic curriculum.
             </p>
 
             <Link
               href="/school/subjects/new"
-              className="mt-4 inline-block rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              className="mt-5 inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
-              Add Subject
+              + Add Subject
             </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b bg-gray-50">
+            <table className="w-full min-w-[700px] text-left text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Subject</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Subject
+                  </th>
 
-                  <th className="px-6 py-4 font-semibold">Code</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Code
+                  </th>
 
-                  <th className="px-6 py-4 font-semibold">Description</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Description
+                  </th>
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {subjects.map((subject) => (
-                  <tr key={subject.id} className="border-b last:border-0">
-                    <td className="px-6 py-4 font-medium">
+                  <tr key={subject.id} className="transition hover:bg-slate-50">
+                    <td className="px-6 py-4">
                       <Link
                         href={`/school/subjects/${subject.id}`}
-                        className="hover:underline"
+                        className="font-semibold text-slate-900 transition hover:text-blue-600"
                       >
                         {subject.name}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {subject.code ?? "—"}
+
+                    <td className="px-6 py-4">
+                      {subject.code ? (
+                        <span className="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                          {subject.code}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-slate-600">
                       {subject.description ?? "—"}
                     </td>
                   </tr>

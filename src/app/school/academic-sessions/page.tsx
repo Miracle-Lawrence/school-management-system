@@ -17,85 +17,117 @@ export default async function AcademicSessionsPage() {
   ).all();
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Page heading */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Academic Sessions</h1>
+          <p className="text-sm font-semibold text-blue-600">
+            Academic Management
+          </p>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Manage your school's academic sessions.
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Academic Sessions
+          </h1>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Manage your school's academic sessions and school years.
           </p>
         </div>
 
         <Link
           href="/school/academic-sessions/new"
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
         >
-          Add Session
+          + Add Session
         </Link>
       </div>
 
-      <div className="overflow-hidden rounded-lg border bg-white">
-        {sessions.length === 0 ? (
-          <div className="p-8 text-center">
-            <h2 className="font-semibold">No academic sessions yet</h2>
+      {/* Summary */}
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+        <p className="text-sm text-slate-600">Total academic sessions</p>
 
-            <p className="mt-2 text-sm text-gray-500">
-              Create your first academic session to get started.
+        <p className="mt-1 text-2xl font-bold text-slate-900">
+          {sessions.length}
+        </p>
+      </div>
+
+      {/* Sessions */}
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        {sessions.length === 0 ? (
+          <div className="px-6 py-12 text-center sm:px-8">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <span className="text-xl font-bold">A</span>
+            </div>
+
+            <h2 className="mt-4 text-lg font-semibold text-slate-900">
+              No academic sessions yet
+            </h2>
+
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+              Create your first academic session to start managing your school's
+              academic calendar.
             </p>
 
             <Link
               href="/school/academic-sessions/new"
-              className="mt-4 inline-block rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              className="mt-5 inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
-              Add Session
+              + Add Session
             </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b bg-gray-50">
+            <table className="w-full min-w-[750px] text-left text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Session</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Session
+                  </th>
 
-                  <th className="px-6 py-4 font-semibold">Start Date</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Start Date
+                  </th>
 
-                  <th className="px-6 py-4 font-semibold">End Date</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    End Date
+                  </th>
 
-                  <th className="px-6 py-4 font-semibold">Status</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Status
+                  </th>
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {sessions.map((academicSession) => (
                   <tr
                     key={academicSession.id}
-                    className="border-b last:border-0"
+                    className="transition hover:bg-slate-50"
                   >
-                    <td className="px-6 py-4 font-medium">
+                    <td className="px-6 py-4">
                       <Link
                         href={`/school/academic-sessions/${academicSession.id}`}
-                        className="hover:underline"
+                        className="font-semibold text-slate-900 transition hover:text-blue-600"
                       >
                         {academicSession.name}
                       </Link>
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-slate-600">
                       {academicSession.startDate.toString().slice(0, 10)}
                     </td>
 
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-slate-600">
                       {academicSession.endDate.toString().slice(0, 10)}
                     </td>
 
                     <td className="px-6 py-4">
                       {academicSession.isActive ? (
-                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                        <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                           Active
                         </span>
                       ) : (
-                        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
                           Inactive
                         </span>
                       )}

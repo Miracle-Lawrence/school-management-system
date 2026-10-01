@@ -28,6 +28,16 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum AssessmentType {
+  ASSIGNMENT
+  TEST
+  CA
+  EXAM
+  PROJECT
+  PRACTICAL
+  OTHER
+}
+
 model School {
   id          Int          @id @default(autoincrement())
   name        String
@@ -46,6 +56,7 @@ model School {
   classes     SchoolClass[]
   subjects    Subject[]
   classSubjects ClassSubject[]
+  assessments Assessment[]
   teacherAssignments TeacherAssignment[]
   attendanceRecords Attendance[]
   sessions    AcademicSession[]
@@ -68,6 +79,7 @@ model User {
   student     Student?
   teacher     Teacher?
   parent      Parent?
+  createdAssessments Assessment[] @relation("AssessmentCreatedBy")
   recordedAttendance Attendance[] @relation("AttendanceRecordedBy")
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
@@ -92,6 +104,7 @@ model Student {
   classId         Int?
   parents         ParentStudent[]
   attendanceRecords Attendance[]
+  assessmentScores AssessmentScore[]
   createdAt       TimestamptzString @default(now())
   updatedAt       temporal.updatedAtString()
 
@@ -156,6 +169,7 @@ model SchoolClass {
   classSubjects ClassSubject[]
   teacherAssignments TeacherAssignment[]
   attendanceRecords Attendance[]
+  assessments Assessment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -172,6 +186,7 @@ model Subject {
   description String?
   classSubjects ClassSubject[]
   teacherAssignments TeacherAssignment[]
+  assessments Assessment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
@@ -241,11 +256,69 @@ model Term {
   endDate     DateTime
   isActive    Boolean         @default(false)
   attendanceRecords Attendance[]
+  assessments Assessment[]
   createdAt   TimestamptzString @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@unique([sessionId, name])
   @@index([sessionId])
+}
+
+model Assessment {
+  id          Int             @id @default(autoincrement())
+
+  school      School          @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+
+  class       SchoolClass     @relation(fields: [classId], references: [id])
+  classId     Int
+
+  subject     Subject         @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+
+  term        Term            @relation(fields: [termId], references: [id])
+  termId      Int
+
+  createdBy   User            @relation("AssessmentCreatedBy", fields: [createdById], references: [id])
+  createdById Int
+
+  title       String
+  type        AssessmentType
+  maxScore    Float
+  weight      Float
+  date        DateTime?
+  description String?
+
+  scores      AssessmentScore[]
+
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([schoolId])
+  @@index([classId])
+  @@index([subjectId])
+  @@index([termId])
+  @@index([createdById])
+}
+
+model AssessmentScore {
+  id           Int        @id @default(autoincrement())
+
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  assessmentId Int
+
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+
+  score        Float
+  remarks      String?
+
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  @@unique([assessmentId, studentId])
+  @@index([assessmentId])
+  @@index([studentId])
 }
 
 model Attendance {

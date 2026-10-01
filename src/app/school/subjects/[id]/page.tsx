@@ -100,98 +100,255 @@ export default async function SubjectDetailsPage({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-5xl space-y-6 px-2 sm:px-4">
+      {/* Back navigation */}
       <div>
         <Link
           href="/school/subjects"
-          className="text-sm text-gray-500 hover:text-gray-900"
+          className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
           ← Back to Subjects
         </Link>
-
-        <div className="mt-4">
-          <h1 className="text-2xl font-bold">{subject.name}</h1>
-
-          <p className="mt-1 text-sm text-gray-500">Subject Details</p>
-        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-lg border bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold">Subject Information</h2>
-
-          <div className="space-y-3 text-sm">
-            <div>
-              <span className="font-medium">Name:</span> {subject.name}
+      {/* Subject profile header */}
+      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xl font-bold text-blue-700">
+              {subject.name.charAt(0).toUpperCase()}
             </div>
 
             <div>
-              <span className="font-medium">Code:</span> {subject.code ?? "—"}
-            </div>
+              <p className="text-sm font-semibold text-blue-600">
+                Academic Management
+              </p>
 
-            <div>
-              <span className="font-medium">Description:</span>{" "}
-              {subject.description ?? "—"}
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                {subject.name}
+              </h1>
+
+              <p className="mt-1 text-sm text-slate-600">
+                {subject.code ? (
+                  <>
+                    Subject Code{" "}
+                    <span className="font-semibold text-slate-800">
+                      {subject.code}
+                    </span>
+                  </>
+                ) : (
+                  "Subject Details"
+                )}
+              </p>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="rounded-lg border bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold">Assigned Classes</h2>
+      {/* Subject information and assigned classes */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Subject information */}
+        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="border-b border-slate-200 px-6 py-5">
+            <h2 className="font-semibold text-slate-900">
+              Subject Information
+            </h2>
 
-          {classSubjects.length === 0 ? (
-            <p className="text-sm text-gray-500">
-              This subject has not been assigned to any class yet.
+            <p className="mt-1 text-sm text-slate-600">
+              Basic information about this subject.
             </p>
+          </div>
+
+          <dl className="space-y-5 px-6 py-6">
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Subject Name
+              </dt>
+
+              <dd className="mt-1 text-sm font-medium text-slate-900">
+                {subject.name}
+              </dd>
+            </div>
+
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Subject Code
+              </dt>
+
+              <dd className="mt-1">
+                {subject.code ? (
+                  <span className="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                    {subject.code}
+                  </span>
+                ) : (
+                  <span className="text-sm text-slate-500">Not provided</span>
+                )}
+              </dd>
+            </div>
+
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Description
+              </dt>
+
+              <dd className="mt-1 text-sm leading-6 text-slate-900">
+                {subject.description ?? "No description provided."}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        {/* Assigned classes */}
+        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+            <div>
+              <h2 className="font-semibold text-slate-900">Assigned Classes</h2>
+
+              <p className="mt-1 text-sm text-slate-600">
+                Classes currently offering this subject.
+              </p>
+            </div>
+
+            <span className="inline-flex min-w-8 items-center justify-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+              {classSubjects.length}
+            </span>
+          </div>
+
+          <div className="p-6">
+            {classSubjects.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                  <span className="text-xl font-bold">C</span>
+                </div>
+
+                <h3 className="mt-4 font-semibold text-slate-900">
+                  No classes assigned
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  This subject has not been assigned to any class yet.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {classSubjects.map((assignment) => (
+                  <div
+                    key={assignment.id}
+                    className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4"
+                  >
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {classMap.get(assignment.classId) ?? "Unknown Class"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-500">
+                        Subject assigned to class
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/school/classes/${assignment.classId}`}
+                      className="text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+                    >
+                      View Class
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Assigned teachers */}
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5 sm:px-8">
+          <div>
+            <h2 className="font-semibold text-slate-900">
+              Teachers Assigned to This Subject
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-600">
+              Teachers currently assigned to teach this subject.
+            </p>
+          </div>
+
+          <span className="inline-flex min-w-8 items-center justify-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+            {teacherAssignments.length}
+          </span>
+        </div>
+
+        <div className="p-6 sm:p-8">
+          {teacherAssignments.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                <span className="text-xl font-bold">T</span>
+              </div>
+
+              <h3 className="mt-4 font-semibold text-slate-900">
+                No teachers assigned
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                No teachers have been assigned to this subject yet.
+              </p>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {classSubjects.map((assignment) => (
-                <div key={assignment.id} className="rounded-md border p-3">
-                  <p className="font-medium">
-                    {classMap.get(assignment.classId) ?? "Unknown Class"}
-                  </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {teacherAssignments.map((assignment) => (
+                <div
+                  key={assignment.id}
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                      {(teacherMap.get(assignment.teacherId) ?? "UT")
+                        .split(" ")
+                        .map((name) => name.charAt(0))
+                        .join("")
+                        .slice(0, 2)}
+                    </div>
+
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {teacherMap.get(assignment.teacherId) ??
+                          "Unknown Teacher"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-600">
+                        Class:{" "}
+                        <span className="font-medium text-slate-800">
+                          {classMap.get(assignment.classId) ?? "Unknown Class"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </div>
+      </section>
 
-      <div className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold">
-          Teachers Assigned to This Subject
-        </h2>
-
-        {teacherAssignments.length === 0 ? (
-          <p className="text-sm text-gray-500">
-            No teachers have been assigned to this subject yet.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {teacherAssignments.map((assignment) => (
-              <div key={assignment.id} className="rounded-md border p-3">
-                <p className="font-medium">
-                  {teacherMap.get(assignment.teacherId) ?? "Unknown Teacher"}
-                </p>
-
-                <p className="mt-1 text-sm text-gray-500">
-                  Class: {classMap.get(assignment.classId) ?? "Unknown Class"}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <details className="rounded-lg border bg-white">
-        <summary className="cursor-pointer px-6 py-4 font-semibold">
+      {/* Edit subject */}
+      <details className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 transition hover:bg-slate-50 sm:px-8">
           Edit Subject Information
+          <p className="mt-1 text-sm font-normal text-slate-600">
+            Update the subject name, code, or description.
+          </p>
         </summary>
 
-        <form action={updateSubjectAction} className="space-y-6 border-t p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <form
+          action={updateSubjectAction}
+          className="space-y-6 border-t border-slate-200 p-6 sm:p-8"
+        >
+          <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium">
+              <label
+                htmlFor="name"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
                 Subject Name
               </label>
 
@@ -200,12 +357,15 @@ export default async function SubjectDetailsPage({
                 name="name"
                 defaultValue={subject.name}
                 required
-                className="mt-2 w-full rounded-md border px-3 py-2"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
             <div>
-              <label htmlFor="code" className="block text-sm font-medium">
+              <label
+                htmlFor="code"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
                 Subject Code
               </label>
 
@@ -213,13 +373,17 @@ export default async function SubjectDetailsPage({
                 id="code"
                 name="code"
                 defaultValue={subject.code ?? ""}
-                className="mt-2 w-full rounded-md border px-3 py-2"
+                placeholder="e.g. MATH"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm uppercase text-slate-900 outline-none transition placeholder:normal-case placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium">
+            <label
+              htmlFor="description"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Description
             </label>
 
@@ -227,17 +391,20 @@ export default async function SubjectDetailsPage({
               id="description"
               name="description"
               defaultValue={subject.description ?? ""}
-              rows={3}
-              className="mt-2 w-full rounded-md border px-3 py-2"
+              rows={4}
+              placeholder="Optional subject description"
+              className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
-          <button
-            type="submit"
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-          >
-            Save Changes
-          </button>
+          <div className="flex justify-end border-t border-slate-200 pt-6">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            >
+              Save Changes
+            </button>
+          </div>
         </form>
       </details>
     </div>

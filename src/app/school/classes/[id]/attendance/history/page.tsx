@@ -122,25 +122,67 @@ export default async function AttendanceHistoryPage({
     .filter((record): record is NonNullable<typeof record> => record !== null)
     .sort((a, b) => b.date.localeCompare(a.date));
 
+  const pdfQuery =
+    date || selectedSessionId || selectedTermId
+      ? `?${new URLSearchParams({
+          ...(date ? { date } : {}),
+          ...(selectedSessionId
+            ? { sessionId: String(selectedSessionId) }
+            : {}),
+          ...(selectedTermId ? { termId: String(selectedTermId) } : {}),
+        }).toString()}`
+      : "";
+
+  const hasFilters = Boolean(date || selectedSessionId || selectedTermId);
+
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-6xl space-y-6 px-2 sm:px-4">
+      {/* Page heading */}
       <div>
         <Link
           href={`/school/classes/${classId}/attendance`}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
           ← Back to Attendance
         </Link>
 
-        <h1 className="mt-2 text-2xl font-bold">Attendance History</h1>
+        <div className="mt-5">
+          <p className="text-sm font-semibold text-blue-600">
+            Class Management
+          </p>
 
-        <p className="text-gray-600">{schoolClass.name}</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Attendance History
+          </h1>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            View attendance records for{" "}
+            <span className="font-semibold text-slate-900">
+              {schoolClass.name}
+            </span>
+            .
+          </p>
+        </div>
       </div>
 
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        <form method="GET" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Filters */}
+      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-6">
+          <h2 className="font-semibold text-slate-900">
+            Filter Attendance Records
+          </h2>
+
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            Filter attendance by academic session, term, or date.
+          </p>
+        </div>
+
+        <form method="GET" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label htmlFor="session" className="block text-sm font-medium">
+            <label
+              htmlFor="session"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Academic Session
             </label>
 
@@ -148,7 +190,7 @@ export default async function AttendanceHistoryPage({
               id="session"
               name="sessionId"
               defaultValue={selectedSessionId ? String(selectedSessionId) : ""}
-              className="mt-2 w-full rounded-md border px-3 py-2"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="">All Sessions</option>
 
@@ -161,12 +203,15 @@ export default async function AttendanceHistoryPage({
           </div>
 
           <div>
-            <label htmlFor="term" className="block text-sm font-medium">
+            <label
+              htmlFor="term"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Term
             </label>
 
             {!selectedSessionId && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mb-2 text-xs text-slate-500">
                 Select an academic session first.
               </p>
             )}
@@ -175,8 +220,8 @@ export default async function AttendanceHistoryPage({
               id="term"
               name="termId"
               defaultValue={selectedTermId ? String(selectedTermId) : ""}
-              className="mt-2 w-full rounded-md border px-3 py-2 disabled:bg-gray-100 disabled:text-gray-500"
               disabled={!selectedSessionId}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
             >
               <option value="">
                 {selectedSessionId ? "All Terms" : "Select a session first"}
@@ -193,7 +238,7 @@ export default async function AttendanceHistoryPage({
           <div>
             <label
               htmlFor="attendance-date"
-              className="block text-sm font-medium"
+              className="mb-2 block text-sm font-semibold text-slate-700"
             >
               Date
             </label>
@@ -203,92 +248,168 @@ export default async function AttendanceHistoryPage({
               name="date"
               type="date"
               defaultValue={date ?? ""}
-              className="mt-2 w-full rounded-md border px-3 py-2"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-1">
             <button
               type="submit"
-              className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
             >
               Filter
             </button>
 
-            {(date || selectedSessionId || selectedTermId) && (
+            {hasFilters && (
               <Link
                 href={`/school/classes/${classId}/attendance/history`}
-                className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Clear
               </Link>
             )}
-
-            <a
-              href={`/api/school/classes/${classId}/attendance/history/pdf${
-                date || selectedSessionId || selectedTermId
-                  ? `?${new URLSearchParams({
-                      ...(date ? { date } : {}),
-                      ...(selectedSessionId
-                        ? { sessionId: String(selectedSessionId) }
-                        : {}),
-                      ...(selectedTermId
-                        ? { termId: String(selectedTermId) }
-                        : {}),
-                    }).toString()}`
-                  : ""
-              }`}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Download PDF
-            </a>
           </div>
         </form>
-      </div>
 
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
-        {records.length === 0 ? (
-          <p className="text-gray-500">
-            No attendance records found for the selected filters.
+        <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              {records.length} {records.length === 1 ? "record" : "records"}{" "}
+              found
+            </p>
+
+            <p className="mt-1 text-xs text-slate-500">
+              Download the current filtered results as a PDF.
+            </p>
+          </div>
+
+          <a
+            href={`/api/school/classes/${classId}/attendance/history/pdf${pdfQuery}`}
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+          >
+            Download PDF
+          </a>
+        </div>
+      </section>
+
+      {/* Attendance records */}
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-6 py-5 sm:px-8">
+          <h2 className="font-semibold text-slate-900">Attendance Records</h2>
+
+          <p className="mt-1 text-sm text-slate-600">
+            Attendance records matching the selected filters.
           </p>
+        </div>
+
+        {records.length === 0 ? (
+          <div className="px-6 py-12 text-center sm:px-8">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <span className="text-xl font-bold">A</span>
+            </div>
+
+            <h3 className="mt-4 text-lg font-semibold text-slate-900">
+              No attendance records found
+            </h3>
+
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+              No attendance records match the selected filters.
+            </p>
+
+            {hasFilters && (
+              <Link
+                href={`/school/classes/${classId}/attendance/history`}
+                className="mt-5 inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Clear Filters
+              </Link>
+            )}
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="px-3 py-3">Date</th>
+            <table className="w-full min-w-[900px] text-left text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50">
+                <tr>
+                  <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Date
+                  </th>
 
-                  <th className="px-3 py-3">Admission Number</th>
+                  <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Admission Number
+                  </th>
 
-                  <th className="px-3 py-3">Student</th>
+                  <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Student
+                  </th>
 
-                  <th className="px-3 py-3">Status</th>
+                  <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Status
+                  </th>
 
-                  <th className="px-3 py-3">Notes</th>
+                  <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    Notes
+                  </th>
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {records.map((record) => (
-                  <tr key={record.id} className="border-b">
-                    <td className="px-3 py-3">{record.date}</td>
-
-                    <td className="px-3 py-3">{record.admissionNumber}</td>
-
-                    <td className="px-3 py-3 font-medium">
-                      {record.studentName}
+                  <tr key={record.id} className="transition hover:bg-slate-50">
+                    <td className="px-5 py-4 font-medium text-slate-700">
+                      {record.date}
                     </td>
 
-                    <td className="px-3 py-3">{record.status}</td>
+                    <td className="px-5 py-4">
+                      <span className="inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                        {record.admissionNumber}
+                      </span>
+                    </td>
 
-                    <td className="px-3 py-3">{record.notes || "—"}</td>
+                    <td className="px-5 py-4">
+                      <Link
+                        href={`/school/students/${record.id}`}
+                        className="font-semibold text-slate-900 transition hover:text-blue-600"
+                      >
+                        {record.studentName}
+                      </Link>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      {record.status === "PRESENT" && (
+                        <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                          Present
+                        </span>
+                      )}
+
+                      {record.status === "ABSENT" && (
+                        <span className="inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                          Absent
+                        </span>
+                      )}
+
+                      {record.status === "LATE" && (
+                        <span className="inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                          Late
+                        </span>
+                      )}
+
+                      {record.status === "EXCUSED" && (
+                        <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                          Excused
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="max-w-sm px-5 py-4 text-slate-600">
+                      {record.notes || "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
