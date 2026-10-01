@@ -97,6 +97,19 @@
     "namespaces": {
       "public": {
         "enum": {
+          "AssessmentAggregationType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "SUM",
+                "value": "SUM"
+              },
+              {
+                "name": "AVERAGE",
+                "value": "AVERAGE"
+              }
+            ]
+          },
           "AssessmentType": {
             "codecId": "pg/text@1",
             "members": [
@@ -1436,6 +1449,19 @@
           },
           "ReportComponent": {
             "fields": {
+              "aggregationType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AssessmentAggregationType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "assessmentType": {
                 "nullable": true,
                 "type": {
@@ -1598,6 +1624,9 @@
             },
             "storage": {
               "fields": {
+                "aggregationType": {
+                  "column": "aggregationType"
+                },
                 "assessmentType": {
                   "column": "assessmentType"
                 },
@@ -5247,6 +5276,11 @@
             "ReportComponent": {
               "checks": [
                 {
+                  "expression": "\"aggregationType\" IN ('SUM', 'AVERAGE')",
+                  "name": "ReportComponent_aggregationType_check_a8fad6eb",
+                  "prefix": "ReportComponent_aggregationType_check"
+                },
+                {
                   "expression": "\"assessmentType\" IN ('ASSIGNMENT', 'TEST', 'CA', 'EXAM', 'PROJECT', 'PRACTICAL', 'OTHER')",
                   "name": "ReportComponent_assessmentType_check_0838403d",
                   "prefix": "ReportComponent_assessmentType_check"
@@ -5258,6 +5292,21 @@
                 }
               ],
               "columns": {
+                "aggregationType": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "SUM"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AssessmentAggregationType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
                 "assessmentType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -7123,6 +7172,13 @@
             }
           },
           "valueSet": {
+            "AssessmentAggregationType": {
+              "kind": "valueSet",
+              "values": [
+                "SUM",
+                "AVERAGE"
+              ]
+            },
             "AssessmentType": {
               "kind": "valueSet",
               "values": [
@@ -7198,7 +7254,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e8f977fec7c3fcf29b0c5bab47f48b50ecaaff2e7d4f38f9d484c6faa44457a8"
+    "storageHash": "065589125e6fcfabeef0138604263915cc6a7c28e0d35d294ed825bd14902ef8"
   },
   "execution": {
     "executionHash": "6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f",

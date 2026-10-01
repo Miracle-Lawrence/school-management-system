@@ -48,6 +48,11 @@ enum ReportComponentType {
   CALCULATED
 }
 
+enum AssessmentAggregationType {
+  SUM
+  AVERAGE
+}
+
 enum GradeCalculationType {
   PERCENTAGE
   RAW_SCORE
@@ -117,6 +122,7 @@ model ReportComponent {
   rules        ReportComponentRule[] @relation("ComponentRules")
   usedInRules ReportComponentRule[] @relation("RuleSourceComponent")
   resultScores ResultComponentScore[]
+  aggregationType AssessmentAggregationType @default(SUM)
 
   maxScore        Float?
   weight          Float?
