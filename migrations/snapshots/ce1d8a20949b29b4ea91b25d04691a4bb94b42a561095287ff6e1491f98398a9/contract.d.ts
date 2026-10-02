@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'55f8c440fd962eec62ce387a0ee74855a3d06da7e0056afe531f67946ca94c70'>;
+  StorageHashBase<'ce1d8a20949b29b4ea91b25d04691a4bb94b42a561095287ff6e1491f98398a9'>;
 export type ExecutionHash =
   ExecutionHashBase<'6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f'>;
 export type ProfileHash =
@@ -447,7 +447,6 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly grade: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly percentageScore: CodecTypes['pg/float8@1']['output'];
       readonly remark: CodecTypes['pg/text@1']['output'] | null;
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
@@ -710,7 +709,6 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly grade: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly percentageScore: CodecTypes['pg/float8@1']['input'];
       readonly remark: CodecTypes['pg/text@1']['input'] | null;
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
@@ -973,7 +971,6 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly grade: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly percentageScore: CodecTypes['pg/float8@1']['output'];
       readonly remark: CodecTypes['pg/text@1']['output'] | null;
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
@@ -1236,7 +1233,6 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly grade: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly percentageScore: CodecTypes['pg/float8@1']['input'];
       readonly remark: CodecTypes['pg/text@1']['input'] | null;
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
@@ -1622,7 +1618,6 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     grade: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
-    percentageScore: CodecTypes['pg/float8@1']['output'];
     remark: CodecTypes['pg/text@1']['output'] | null;
     reportType: 'MID_TERM' | 'TERMINAL';
     schoolId: CodecTypes['pg/int4@1']['output'];
@@ -3507,11 +3502,6 @@ type ContractBase = Omit<
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
                   };
-                };
-                readonly percentageScore: {
-                  readonly nativeType: 'float8';
-                  readonly codecId: 'pg/float8@1';
-                  readonly nullable: false;
                 };
                 readonly remark: {
                   readonly nativeType: 'text';
@@ -6130,10 +6120,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly percentageScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
-              };
               readonly remark: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -6248,7 +6234,6 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly grade: { readonly column: 'grade' };
                 readonly id: { readonly column: 'id' };
-                readonly percentageScore: { readonly column: 'percentageScore' };
                 readonly remark: { readonly column: 'remark' };
                 readonly reportType: { readonly column: 'reportType' };
                 readonly schoolId: { readonly column: 'schoolId' };

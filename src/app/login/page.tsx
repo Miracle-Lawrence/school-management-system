@@ -2,8 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,14 +24,40 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    setLoading(false);
-
     if (!result || result.error) {
+      setLoading(false);
       setError("Invalid email or password.");
       return;
     }
 
-    window.location.href = "/dashboard";
+    const response = await fetch("/api/auth/session");
+    const session = await response.json();
+
+    setLoading(false);
+
+    if (!session?.user?.role) {
+      setError("Unable to determine your account role.");
+      return;
+    }
+
+    switch (session.user.role) {
+      case "PLATFORM_OWNER":
+      case "PLATFORM_ADMIN":
+        router.push("/dashboard");
+        break;
+
+      case "SCHOOL_OWNER":
+      case "SCHOOL_ADMIN":
+      case "TEACHER":
+      case "PARENT":
+      case "STUDENT":
+        router.push("/school/dashboard");
+        break;
+
+      default:
+        setError("Your account role is not supported.");
+        return;
+    }
   }
 
   return (

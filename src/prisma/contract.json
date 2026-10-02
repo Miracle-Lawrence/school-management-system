@@ -1482,6 +1482,13 @@
                   "kind": "scalar"
                 }
               },
+              "countsTowardTotal": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -1632,6 +1639,9 @@
                 },
                 "configurationId": {
                   "column": "configurationId"
+                },
+                "countsTowardTotal": {
+                  "column": "countsTowardTotal"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -3262,6 +3272,13 @@
                   "kind": "scalar"
                 }
               },
+              "percentageScore": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
               "remark": {
                 "nullable": true,
                 "type": {
@@ -3435,6 +3452,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "percentageScore": {
+                  "column": "percentageScore"
                 },
                 "remark": {
                   "column": "remark"
@@ -5323,6 +5343,15 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "countsTowardTotal": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -6472,6 +6501,11 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "percentageScore": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": false
+                },
                 "remark": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -7254,7 +7288,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "065589125e6fcfabeef0138604263915cc6a7c28e0d35d294ed825bd14902ef8"
+    "storageHash": "55f8c440fd962eec62ce387a0ee74855a3d06da7e0056afe531f67946ca94c70"
   },
   "execution": {
     "executionHash": "6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f",

@@ -80,6 +80,13 @@ export default async function SchoolDashboardLayout({
             Academic Sessions
           </Link>
 
+          <Link
+            href="/school/report-settings"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Report Settings
+          </Link>
+
           <div className="my-4 border-t border-slate-800" />
 
           <Link

@@ -169,6 +169,37 @@ export async function getReportConfigurations(schoolId: number) {
 }
 
 /**
+ * Update a report configuration.
+ */
+export async function updateReportConfiguration(
+  schoolId: number,
+  configurationId: number,
+  input: {
+    name?: string;
+    isActive?: boolean;
+  },
+) {
+  const configuration = await validateConfigurationOwnership(
+    configurationId,
+    schoolId,
+  );
+
+  const nextName =
+    input.name !== undefined ? input.name.trim() : configuration.name;
+
+  if (!nextName) {
+    throw new Error("Report configuration name is required.");
+  }
+
+  return db.orm.public.ReportConfiguration.where((item) =>
+    item.id.eq(configurationId),
+  ).update({
+    name: nextName,
+    isActive: input.isActive ?? configuration.isActive,
+  });
+}
+
+/**
  * Create a component inside a report configuration.
  */
 export async function createReportComponent(
@@ -470,6 +501,52 @@ export async function addReportComponentRule(
     componentId: input.componentId,
     sourceComponentId: input.sourceComponentId,
     weight: input.weight,
+  });
+}
+
+export async function updateReportComponentRule(
+  schoolId: number,
+  ruleId: number,
+  weight: number,
+) {
+  const rule = await db.orm.public.ReportComponentRule.where((item) =>
+    item.id.eq(ruleId),
+  ).first();
+
+  if (!rule) {
+    throw new Error("Calculation rule not found.");
+  }
+
+  const { component } = await validateComponentOwnership(
+    rule.componentId,
+    schoolId,
+  );
+
+  if (component.type !== "CALCULATED") {
+    throw new Error(
+      "Calculation rules can only be updated for calculated components.",
+    );
+  }
+
+  validateWeight(weight);
+
+  const existingRules = await db.orm.public.ReportComponentRule.where((item) =>
+    item.componentId.eq(rule.componentId),
+  ).all();
+
+  const currentWeight = existingRules.reduce(
+    (total, item) => total + (item.id === ruleId ? 0 : (item.weight ?? 0)),
+    0,
+  );
+
+  if (currentWeight + weight > 100) {
+    throw new Error("Calculation rule weights cannot exceed 100%.");
+  }
+
+  return db.orm.public.ReportComponentRule.where((item) =>
+    item.id.eq(ruleId),
+  ).update({
+    weight,
   });
 }
 
