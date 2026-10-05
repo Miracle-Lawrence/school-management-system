@@ -306,7 +306,7 @@ export async function validateGradeScaleCoverage(schoolId: number) {
     const previous = sortedScales[index - 1];
     const current = sortedScales[index];
 
-    if (current.minScore > previous.maxScore) {
+    if (current.minScore > previous.maxScore + 1) {
       throw new Error(
         `There is a gap between ${previous.code} and ${current.code}.`,
       );

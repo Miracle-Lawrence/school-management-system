@@ -599,6 +599,7 @@ export async function calculateAndSaveSubjectResult(
       schoolId: input.schoolId,
       classId: input.classId,
       totalScore: calculation.totalScore,
+      percentageScore: calculation.percentageScore,
       grade: calculation.grade,
       remark: calculation.remark,
     });
@@ -751,6 +752,28 @@ export async function calculateAndSaveStudentTermResult(
     throw new Error("No subject results exist for this student.");
   }
 
+  const classSubjects = await db.orm.public.ClassSubject.where((item) =>
+    item.classId.eq(input.classId),
+  ).all();
+
+  const requiredSubjectIds = new Set(
+    classSubjects.map((classSubject) => classSubject.subjectId),
+  );
+
+  const completedSubjectIds = new Set(
+    subjectResults.map((result) => result.subjectId),
+  );
+
+  const missingSubjectIds = [...requiredSubjectIds].filter(
+    (subjectId) => !completedSubjectIds.has(subjectId),
+  );
+
+  if (missingSubjectIds.length > 0) {
+    throw new Error(
+      `Incomplete results. ${missingSubjectIds.length} subject result(s) are missing.`,
+    );
+  }
+
   const totalScore = roundScore(
     subjectResults.reduce((total, result) => total + result.totalScore, 0),
   );
@@ -819,24 +842,22 @@ export async function calculateClassTermResults(
     (student) => student.classId === input.classId,
   );
 
+  
+
   const termResults = [];
 
-  for (const student of classStudents) {
-    try {
-      const result = await calculateAndSaveStudentTermResult({
-        ...input,
-        studentId: student.id,
-      });
+  for (const student of students) {
+    const result = await calculateAndSaveStudentTermResult({
+      schoolId: input.schoolId,
+      studentId: student.id,
+      classId: input.classId,
+      termId: input.termId,
+      reportType: input.reportType,
+    });
 
-      termResults.push(result);
-    } catch {
-      /*
-       * A student without sufficient subject results
-       * is skipped instead of stopping the entire class.
-       */
+    termResults.push(result);
     }
-  }
-
+    
   await assignClassPositions(
     input.schoolId,
     input.classId,

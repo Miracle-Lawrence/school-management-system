@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import Link from "next/link";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { updateSchool } from "@/lib/services/school.service";
@@ -75,6 +76,28 @@ export default async function SchoolSettingsPage() {
         <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
           School Settings
         </h1>
+
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Grading Scale
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-600">
+                Configure the grades, score ranges, and remarks used when
+                calculating student results.
+              </p>
+            </div>
+
+            <Link
+              href="/school/settings/grading"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Manage Grading Scale
+            </Link>
+          </div>
+        </div>
 
         <p className="mt-2 text-sm leading-6 text-slate-600">
           Manage your school's basic information and contact details.

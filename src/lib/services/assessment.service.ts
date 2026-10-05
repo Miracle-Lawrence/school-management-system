@@ -1,4 +1,5 @@
 import { db } from "@/prisma/db";
+import { calculateAndSaveSubjectResult } from "@/lib/services/result-calculation.service";
 
 type CreateAssessmentInput = {
   schoolId: number;
@@ -418,6 +419,9 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     );
   }
 
+  /*
+   * Save or update the assessment score first.
+   */
   const existingScores = await db.orm.public.AssessmentScore.where(
     (scoreRecord) => scoreRecord.assessmentId.eq(assessmentId),
   ).all();
@@ -426,23 +430,78 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     (scoreRecord) => scoreRecord.studentId === studentId,
   );
 
+  let savedScore;
+
   if (existingScore) {
-    return db.orm.public.AssessmentScore.where((scoreRecord) =>
+    savedScore = await db.orm.public.AssessmentScore.where((scoreRecord) =>
       scoreRecord.id.eq(existingScore.id),
     ).update({
       score,
       remarks: remarks?.trim() || null,
     });
+  } else {
+    savedScore = await db.orm.public.AssessmentScore.create({
+      assessmentId,
+      studentId,
+      score,
+      remarks: remarks?.trim() || null,
+    });
   }
 
-  return db.orm.public.AssessmentScore.create({
-    assessmentId,
-    studentId,
-    score,
-    remarks: remarks?.trim() || null,
-  });
-}
+  /*
+   * ------------------------------------------------------------
+   * Recalculate only report configurations that actually use
+   * this assessment type.
+   * ------------------------------------------------------------
+   */
+  const configurations = await db.orm.public.ReportConfiguration.where(
+    (configuration) => configuration.schoolId.eq(schoolId),
+  ).all();
 
+  const activeConfigurations = configurations.filter(
+    (configuration) => configuration.isActive,
+  );
+
+  for (const configuration of activeConfigurations) {
+    const components = await db.orm.public.ReportComponent.where((component) =>
+      component.configurationId.eq(configuration.id),
+    ).all();
+
+    /*
+     * Find whether this report configuration actually uses
+     * the assessment type of the assessment being saved.
+     */
+    const usesAssessmentType = components.some(
+      (component) =>
+        component.type === "ASSESSMENT" &&
+        component.assessmentType === assessment.type,
+    );
+
+    /*
+     * If this report configuration does not use this assessment
+     * type, there is nothing to recalculate for this report.
+     */
+    if (!usesAssessmentType) {
+      continue;
+    }
+
+    /*
+     * The configuration uses this assessment type, so recalculate
+     * the student's complete subject result using ALL configured
+     * components and calculation rules.
+     */
+    await calculateAndSaveSubjectResult({
+      schoolId,
+      studentId,
+      classId: assessment.classId,
+      subjectId: assessment.subjectId,
+      termId: assessment.termId,
+      reportType: configuration.reportType,
+    });
+  }
+
+  return savedScore;
+}
 export async function getAssessmentScores(
   schoolId: number,
   assessmentId: number,
