@@ -2017,6 +2017,13 @@
           },
           "School": {
             "fields": {
+              "accentColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "address": {
                 "nullable": true,
                 "type": {
@@ -2052,10 +2059,31 @@
                   "kind": "scalar"
                 }
               },
+              "faviconUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "logoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "motto": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -2073,8 +2101,43 @@
                   "kind": "scalar"
                 }
               },
+              "primaryColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "principalName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "principalTitle": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "secondaryColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "slug": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "stampUrl": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -2104,6 +2167,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "website": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               }
@@ -2337,6 +2407,9 @@
             },
             "storage": {
               "fields": {
+                "accentColor": {
+                  "column": "accentColor"
+                },
                 "address": {
                   "column": "address"
                 },
@@ -2352,8 +2425,17 @@
                 "email": {
                   "column": "email"
                 },
+                "faviconUrl": {
+                  "column": "faviconUrl"
+                },
                 "id": {
                   "column": "id"
+                },
+                "logoUrl": {
+                  "column": "logoUrl"
+                },
+                "motto": {
+                  "column": "motto"
                 },
                 "name": {
                   "column": "name"
@@ -2361,8 +2443,23 @@
                 "phone": {
                   "column": "phone"
                 },
+                "primaryColor": {
+                  "column": "primaryColor"
+                },
+                "principalName": {
+                  "column": "principalName"
+                },
+                "principalTitle": {
+                  "column": "principalTitle"
+                },
+                "secondaryColor": {
+                  "column": "secondaryColor"
+                },
                 "slug": {
                   "column": "slug"
+                },
+                "stampUrl": {
+                  "column": "stampUrl"
                 },
                 "state": {
                   "column": "state"
@@ -2372,6 +2469,9 @@
                 },
                 "updatedAt": {
                   "column": "updatedAt"
+                },
+                "website": {
+                  "column": "website"
                 }
               },
               "namespaceId": "public",
@@ -5810,6 +5910,11 @@
                 }
               ],
               "columns": {
+                "accentColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "address": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -5843,6 +5948,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "faviconUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -5851,6 +5961,16 @@
                   },
                   "nativeType": "int4",
                   "nullable": false
+                },
+                "logoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "motto": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "name": {
                   "codecId": "pg/text@1",
@@ -5862,10 +5982,35 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "primaryColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "principalName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "principalTitle": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "secondaryColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "stampUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "state": {
                   "codecId": "pg/text@1",
@@ -5891,6 +6036,11 @@
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "website": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [],
@@ -7303,7 +7453,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "45a80aca7e7a268d5500001e8d0a5c3d943a4629db0131b3373072014343f936"
+    "storageHash": "a5bce312503a83c86f9f097d52f6cb576b46a0edc55854803a98cfa622d194a5"
   },
   "execution": {
     "executionHash": "6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f",

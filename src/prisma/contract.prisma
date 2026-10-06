@@ -76,6 +76,16 @@ model School {
   subjects             Subject[]
   classSubjects        ClassSubject[]
   assessments          Assessment[]
+  logoUrl              String?
+  faviconUrl           String?
+  motto                String?
+  primaryColor         String?
+  secondaryColor       String?
+  accentColor          String?
+  website              String?
+  principalName        String?
+  principalTitle       String?
+  stampUrl             String?
   reportConfigurations ReportConfiguration[]
   teacherAssignments   TeacherAssignment[]
   attendanceRecords    Attendance[]

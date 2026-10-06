@@ -5,6 +5,7 @@ import Link from "next/link";
 import { requireRole } from "@/lib/auth/authorization";
 import { updateSchool } from "@/lib/services/school.service";
 import { db } from "@/prisma/db";
+import SchoolBrandingForm from "@/app/school/settings/components/school-branding-form";
 
 const updateSchoolSchema = z.object({
   name: z.string().trim().min(2).max(150),
@@ -14,6 +15,36 @@ const updateSchoolSchema = z.object({
   city: z.string().trim().max(100).optional().or(z.literal("")),
   state: z.string().trim().max(100).optional().or(z.literal("")),
   country: z.string().trim().min(2).max(100),
+
+  logoUrl: z.string().trim().url().optional().or(z.literal("")),
+  faviconUrl: z.string().trim().url().optional().or(z.literal("")),
+  motto: z.string().trim().max(200).optional().or(z.literal("")),
+
+  primaryColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  secondaryColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  accentColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  website: z.string().trim().url().optional().or(z.literal("")),
+  principalName: z.string().trim().max(150).optional().or(z.literal("")),
+  principalTitle: z.string().trim().max(100).optional().or(z.literal("")),
+  stampUrl: z.string().trim().url().optional().or(z.literal("")),
 });
 
 export default async function SchoolSettingsPage() {
@@ -52,6 +83,17 @@ export default async function SchoolSettingsPage() {
       city: formData.get("city"),
       state: formData.get("state"),
       country: formData.get("country"),
+
+      logoUrl: formData.get("logoUrl"),
+      faviconUrl: formData.get("faviconUrl"),
+      motto: formData.get("motto"),
+      primaryColor: formData.get("primaryColor"),
+      secondaryColor: formData.get("secondaryColor"),
+      accentColor: formData.get("accentColor"),
+      website: formData.get("website"),
+      principalName: formData.get("principalName"),
+      principalTitle: formData.get("principalTitle"),
+      stampUrl: formData.get("stampUrl"),
     });
 
     if (!result.success) {
@@ -273,6 +315,18 @@ export default async function SchoolSettingsPage() {
               </div>
             </section>
           </div>
+          <SchoolBrandingForm
+            motto={school.motto ?? ""}
+            logoUrl={school.logoUrl ?? ""}
+            faviconUrl={school.faviconUrl ?? ""}
+            primaryColor={school.primaryColor ?? ""}
+            secondaryColor={school.secondaryColor ?? ""}
+            accentColor={school.accentColor ?? ""}
+            website={school.website ?? ""}
+            principalName={school.principalName ?? ""}
+            principalTitle={school.principalTitle ?? ""}
+            stampUrl={school.stampUrl ?? ""}
+          />
 
           {/* Actions */}
           <div className="mt-8 flex justify-end border-t border-slate-200 pt-6">

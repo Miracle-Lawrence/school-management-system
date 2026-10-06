@@ -8,6 +8,18 @@ type UpdateSchoolData = {
   city?: string;
   state?: string;
   country?: string;
+
+  // School branding
+  logoUrl?: string;
+  faviconUrl?: string;
+  motto?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+  website?: string;
+  principalName?: string;
+  principalTitle?: string;
+  stampUrl?: string;
 };
 
 export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
@@ -27,5 +39,17 @@ export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
     city: data.city || null,
     state: data.state || null,
     country: data.country || school.country,
+
+    // School branding
+    logoUrl: data.logoUrl || null,
+    faviconUrl: data.faviconUrl || null,
+    motto: data.motto || null,
+    primaryColor: data.primaryColor || null,
+    secondaryColor: data.secondaryColor || null,
+    accentColor: data.accentColor || null,
+    website: data.website || null,
+    principalName: data.principalName || null,
+    principalTitle: data.principalTitle || null,
+    stampUrl: data.stampUrl || null,
   });
 }
