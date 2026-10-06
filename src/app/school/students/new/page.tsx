@@ -2,9 +2,16 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
-import { createStudent } from "@/lib/services/student.service";
+import {
+  createStudent,
+  updateStudentPhoto,
+} from "@/lib/services/student.service";
+
+import { saveStudentPhoto } from "@/lib/utils/file-upload";
 import { db } from "@/prisma/db";
 import { createStudentSchema } from "@/lib/validation/student";
+
+
 
 export default async function NewStudentPage() {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
@@ -53,12 +60,20 @@ export default async function NewStudentPage() {
       ? Number(result.data.classId)
       : undefined;
 
-    await createStudent(schoolId, {
-      ...result.data,
-      classId,
-    });
+   const student = await createStudent(schoolId, {
+     ...result.data,
+     classId,
+   });
 
-    redirect("/school/students");
+   const photo = formData.get("photo");
+
+   if (photo instanceof File && photo.size > 0) {
+     const photoUrl = await saveStudentPhoto(photo, schoolId, student.id);
+
+     await updateStudentPhoto(schoolId, student.id, photoUrl);
+   }
+
+   redirect("/school/students");
   }
 
   return (
@@ -221,6 +236,39 @@ export default async function NewStudentPage() {
                 type="date"
                 className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
+            </div>
+          </div>
+
+          {/* Passport Photograph */}
+          <div className="border-t border-slate-200 pt-6">
+            <h2 className="text-base font-semibold text-slate-900">
+              Passport Photograph
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-600">
+              Upload a clear passport photograph for the student's profile and
+              report card.
+            </p>
+
+            <div className="mt-5">
+              <label
+                htmlFor="photo"
+                className="block text-sm font-semibold text-slate-800"
+              >
+                Student Photograph
+              </label>
+
+              <input
+                id="photo"
+                name="photo"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+              />
+
+              <p className="mt-2 text-xs text-slate-500">
+                JPG, PNG, or WEBP. Maximum size: 2 MB.
+              </p>
             </div>
           </div>
 

@@ -118,12 +118,16 @@ export default async function SubjectResultsPage({
   const selectedSubject = subjects.find((item) => item.id === subjectId);
 
   // Load students in the selected class.
-  const students =
+  const allSchoolStudents =
     classId && selectedClass
-      ? await db.orm.public.Student.where(
-          (item) => item.schoolId.eq(schoolId) && item.classId.eq(classId),
+      ? await db.orm.public.Student.where((item) =>
+          item.schoolId.eq(schoolId),
         ).all()
       : [];
+
+  const students = allSchoolStudents.filter(
+    (student) => student.classId === classId,
+  );
 
   students.sort((a, b) => {
     const nameA = `${a.lastName} ${a.firstName}`;
@@ -133,13 +137,17 @@ export default async function SubjectResultsPage({
   });
 
   // Load report configuration for the selected report type.
-  const configuration =
+  const allConfigurations =
     termId && selectedSubject
-      ? await db.orm.public.ReportConfiguration.where(
-          (item) =>
-            item.schoolId.eq(schoolId) && item.reportType.eq(reportType),
-        ).first()
-      : null;
+      ? await db.orm.public.ReportConfiguration.where((item) =>
+          item.schoolId.eq(schoolId),
+        ).all()
+      : [];
+
+  const configuration =
+    allConfigurations.find(
+      (item) => item.reportType === reportType && item.isActive,
+    ) ?? null;
 
   const components = configuration
     ? await db.orm.public.ReportComponent.where((item) =>
@@ -150,17 +158,20 @@ export default async function SubjectResultsPage({
   components.sort((a, b) => a.displayOrder - b.displayOrder);
 
   // Load previously saved results for this class, subject and term.
-  const savedResults =
+  const allSchoolSubjectResults =
     termId && classId && subjectId
-      ? await db.orm.public.SubjectResult.where(
-          (item) =>
-            item.schoolId.eq(schoolId) &&
-            item.classId.eq(classId) &&
-            item.subjectId.eq(subjectId) &&
-            item.termId.eq(termId) &&
-            item.reportType.eq(reportType),
+      ? await db.orm.public.SubjectResult.where((item) =>
+          item.schoolId.eq(schoolId),
         ).all()
       : [];
+
+  const savedResults = allSchoolSubjectResults.filter(
+    (result) =>
+      result.classId === classId &&
+      result.subjectId === subjectId &&
+      result.termId === termId &&
+      result.reportType === reportType,
+  );
 
   const resultByStudent = new Map(
     savedResults.map((result) => [result.studentId, result]),

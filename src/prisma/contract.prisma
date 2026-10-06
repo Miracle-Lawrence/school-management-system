@@ -1,5 +1,4 @@
 // use prisma-8
-
 enum UserRole {
   PLATFORM_OWNER
   PLATFORM_ADMIN
@@ -59,98 +58,98 @@ enum GradeCalculationType {
 }
 
 model School {
-  id          Int          @id @default(autoincrement())
-  name        String
-  slug        String       @unique
-  email       String?
-  phone       String?
-  address     String?
-  city        String?
-  state       String?
-  country     String       @default("Nigeria")
-  status      SchoolStatus @default(ACTIVE)
-  users       User[]
-  students    Student[]
-  teachers    Teacher[]
-  parents     Parent[]
-  classes     SchoolClass[]
-  subjects    Subject[]
-  classSubjects ClassSubject[]
-  assessments Assessment[]
+  id                   Int                        @id @default(autoincrement())
+  name                 String
+  slug                 String                     @unique
+  email                String?
+  phone                String?
+  address              String?
+  city                 String?
+  state                String?
+  country              String                     @default("Nigeria")
+  status               SchoolStatus               @default(ACTIVE)
+  users                User[]
+  students             Student[]
+  teachers             Teacher[]
+  parents              Parent[]
+  classes              SchoolClass[]
+  subjects             Subject[]
+  classSubjects        ClassSubject[]
+  assessments          Assessment[]
   reportConfigurations ReportConfiguration[]
-  teacherAssignments TeacherAssignment[]
-  attendanceRecords Attendance[]
-  sessions    AcademicSession[]
-  gradeScales GradeScale[]
-  subjectResults SubjectResult[]
-  studentTermResults StudentTermResult[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  teacherAssignments   TeacherAssignment[]
+  attendanceRecords    Attendance[]
+  sessions             AcademicSession[]
+  gradeScales          GradeScale[]
+  subjectResults       SubjectResult[]
+  studentTermResults   StudentTermResult[]
+  createdAt            TimestamptzString          @default(now())
+  updatedAt            temporal.updatedAtString()
 }
 
 model ReportConfiguration {
-  id        Int        @id @default(autoincrement())
+  id         Int                        @id @default(autoincrement())
 
-  school    School     @relation(fields: [schoolId], references: [id])
-  schoolId  Int
+  school     School                     @relation(fields:[schoolId], references:[id])
+  schoolId   Int
 
   reportType ReportType
 
-  name      String
-  isActive  Boolean    @default(true)
+  name       String
+  isActive   Boolean                    @default(true)
 
   components ReportComponent[]
 
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  createdAt  TimestamptzString          @default(now())
+  updatedAt  temporal.updatedAtString()
 
   @@unique([schoolId, reportType])
   @@index([schoolId])
 }
 
 model ReportComponent {
-  id              Int                 @id @default(autoincrement())
+  id                Int                        @id @default(autoincrement())
 
-  configuration   ReportConfiguration @relation(fields: [configurationId], references: [id])
-  configurationId Int
+  configuration     ReportConfiguration        @relation(fields:[configurationId], references:[id])
+  configurationId   Int
 
-  name            String
-  type            ReportComponentType
+  name              String
+  type              ReportComponentType
 
-  assessmentType  AssessmentType?
+  assessmentType    AssessmentType?
 
-  rules        ReportComponentRule[] @relation("ComponentRules")
-  usedInRules ReportComponentRule[] @relation("RuleSourceComponent")
-  resultScores ResultComponentScore[]
-  countsTowardTotal Boolean @default(true)
-  aggregationType AssessmentAggregationType @default(SUM)
+  rules             ReportComponentRule[]      @relation("ComponentRules")
+  usedInRules       ReportComponentRule[]      @relation("RuleSourceComponent")
+  resultScores      ResultComponentScore[]
+  countsTowardTotal Boolean                    @default(true)
+  aggregationType   AssessmentAggregationType  @default(SUM)
 
-  maxScore        Float?
-  weight          Float?
+  maxScore          Float?
+  weight            Float?
 
-  displayOrder    Int
-  isRequired      Boolean             @default(true)
-  isVisible       Boolean             @default(true)
+  displayOrder      Int
+  isRequired        Boolean                    @default(true)
+  isVisible         Boolean                    @default(true)
 
-  createdAt       TimestamptzString   @default(now())
-  updatedAt       temporal.updatedAtString()
+  createdAt         TimestamptzString          @default(now())
+  updatedAt         temporal.updatedAtString()
 
   @@unique([configurationId, name])
   @@index([configurationId])
 }
 
 model ReportComponentRule {
-  id                Int             @id @default(autoincrement())
+  id                Int                        @id @default(autoincrement())
 
-  component         ReportComponent @relation("ComponentRules", fields: [componentId], references: [id])
+  component         ReportComponent            @relation("ComponentRules", fields:[componentId], references:[id])
   componentId       Int
 
-  sourceComponent   ReportComponent @relation("RuleSourceComponent", fields: [sourceComponentId], references: [id])
+  sourceComponent   ReportComponent            @relation("RuleSourceComponent", fields:[sourceComponentId], references:[id])
   sourceComponentId Int
 
   weight            Float?
 
-  createdAt         TimestamptzString @default(now())
+  createdAt         TimestamptzString          @default(now())
   updatedAt         temporal.updatedAtString()
 
   @@unique([componentId, sourceComponentId])
@@ -159,55 +158,55 @@ model ReportComponentRule {
 }
 
 model GradeScale {
-  id          Int                 @id @default(autoincrement())
+  id           Int                        @id @default(autoincrement())
 
-  school      School              @relation(fields: [schoolId], references: [id])
-  schoolId    Int
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
 
-  name        String
-  code        String
-  minScore    Float
-  maxScore    Float
-  remark      String?
+  name         String
+  code         String
+  minScore     Float
+  maxScore     Float
+  remark       String?
   displayOrder Int
-  isActive    Boolean             @default(true)
+  isActive     Boolean                    @default(true)
 
-  createdAt   TimestamptzString   @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
 
   @@unique([schoolId, code])
   @@index([schoolId])
 }
 
 model SubjectResult {
-  id          Int       @id @default(autoincrement())
+  id              Int                        @id @default(autoincrement())
 
-  school      School    @relation(fields: [schoolId], references: [id])
-  schoolId    Int
+  school          School                     @relation(fields:[schoolId], references:[id])
+  schoolId        Int
 
-  student     Student   @relation(fields: [studentId], references: [id])
-  studentId   Int
+  student         Student                    @relation(fields:[studentId], references:[id])
+  studentId       Int
 
-  class       SchoolClass @relation(fields: [classId], references: [id])
-  classId     Int
+  class           SchoolClass                @relation(fields:[classId], references:[id])
+  classId         Int
 
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  subjectId   Int
+  subject         Subject                    @relation(fields:[subjectId], references:[id])
+  subjectId       Int
 
-  term        Term      @relation(fields: [termId], references: [id])
-  termId      Int
+  term            Term                       @relation(fields:[termId], references:[id])
+  termId          Int
 
-  totalScore  Float
+  totalScore      Float
   percentageScore Float
 
-  grade       String?
-  remark      String?
+  grade           String?
+  remark          String?
   componentScores ResultComponentScore[]
 
-  reportType ReportType
+  reportType      ReportType
 
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt       TimestamptzString          @default(now())
+  updatedAt       temporal.updatedAtString()
 
   @@unique([studentId, subjectId, termId, reportType])
   @@index([schoolId])
@@ -218,18 +217,18 @@ model SubjectResult {
 }
 
 model ResultComponentScore {
-  id              Int             @id @default(autoincrement())
+  id              Int                        @id @default(autoincrement())
 
-  subjectResult   SubjectResult   @relation(fields: [subjectResultId], references: [id])
+  subjectResult   SubjectResult              @relation(fields:[subjectResultId], references:[id])
   subjectResultId Int
 
-  component       ReportComponent @relation(fields: [componentId], references: [id])
+  component       ReportComponent            @relation(fields:[componentId], references:[id])
   componentId     Int
 
   score           Float
   maxScore        Float?
 
-  createdAt       TimestamptzString @default(now())
+  createdAt       TimestamptzString          @default(now())
   updatedAt       temporal.updatedAtString()
 
   @@unique([subjectResultId, componentId])
@@ -238,30 +237,30 @@ model ResultComponentScore {
 }
 
 model StudentTermResult {
-  id          Int         @id @default(autoincrement())
+  id           Int                        @id @default(autoincrement())
 
-  school      School      @relation(fields: [schoolId], references: [id])
-  schoolId    Int
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
 
-  student     Student     @relation(fields: [studentId], references: [id])
-  studentId   Int
+  student      Student                    @relation(fields:[studentId], references:[id])
+  studentId    Int
 
-  class       SchoolClass @relation(fields: [classId], references: [id])
-  classId     Int
+  class        SchoolClass                @relation(fields:[classId], references:[id])
+  classId      Int
 
-  term        Term        @relation(fields: [termId], references: [id])
-  termId      Int
+  term         Term                       @relation(fields:[termId], references:[id])
+  termId       Int
 
-  totalScore  Float
+  totalScore   Float
   averageScore Float
 
-  position    Int?
-  grade       String?
-  remark      String?
-  reportType ReportType
+  position     Int?
+  grade        String?
+  remark       String?
+  reportType   ReportType
 
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
 
   @@unique([studentId, termId, reportType])
   @@index([schoolId])
@@ -271,68 +270,69 @@ model StudentTermResult {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  school      School?   @relation(fields: [schoolId], references: [id])
-  schoolId    Int?
-  email       String    @unique
-  passwordHash    String
-  name            String?
-  phone           String?
-  role            UserRole
-  isActive        Boolean   @default(true)
-  emailVerifiedAt DateTime?
-  lastLoginAt     DateTime?
-  student     Student?
-  teacher     Teacher?
-  parent      Parent?
-  createdAssessments Assessment[] @relation("AssessmentCreatedBy")
-  recordedAttendance Attendance[] @relation("AttendanceRecordedBy")
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  id                 Int                        @id @default(autoincrement())
+  school             School?                    @relation(fields:[schoolId], references:[id])
+  schoolId           Int?
+  email              String                     @unique
+  passwordHash       String
+  name               String?
+  phone              String?
+  role               UserRole
+  isActive           Boolean                    @default(true)
+  emailVerifiedAt    DateTime?
+  lastLoginAt        DateTime?
+  student            Student?
+  teacher            Teacher?
+  parent             Parent?
+  createdAssessments Assessment[]               @relation("AssessmentCreatedBy")
+  recordedAttendance Attendance[]               @relation("AttendanceRecordedBy")
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 }
 
 model Student {
-  id              Int       @id @default(autoincrement())
-  school          School    @relation(fields: [schoolId], references: [id])
-  schoolId        Int
-  user            User?     @relation(fields: [userId], references: [id])
-  userId          Int?      @unique
-  admissionNumber String
-  firstName       String
-  middleName      String?
-  lastName        String
-  gender          Gender
-  dateOfBirth     DateTime?
-  email           String?
-  phone           String?
-  address         String?
-  class           SchoolClass? @relation(fields: [classId], references: [id])
-  classId         Int?
-  parents         ParentStudent[]
-  attendanceRecords Attendance[]
-  assessmentScores AssessmentScore[]
-  subjectResults SubjectResult[]
+  id                 Int                        @id @default(autoincrement())
+  school             School                     @relation(fields:[schoolId], references:[id])
+  schoolId           Int
+  user               User?                      @relation(fields:[userId], references:[id])
+  userId             Int?                       @unique
+  admissionNumber    String
+  firstName          String
+  middleName         String?
+  lastName           String
+  gender             Gender
+  dateOfBirth        DateTime?
+  email              String?
+  phone              String?
+  address            String?
+  photoUrl           String?
+  class              SchoolClass?               @relation(fields:[classId], references:[id])
+  classId            Int?
+  parents            ParentStudent[]
+  attendanceRecords  Attendance[]
+  assessmentScores   AssessmentScore[]
+  subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
-  createdAt       TimestamptzString @default(now())
-  updatedAt       temporal.updatedAtString()
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 
   @@unique([schoolId, admissionNumber])
   @@index([schoolId])
 }
 
 model Teacher {
-  id          Int       @id @default(autoincrement())
-  school      School    @relation(fields: [schoolId], references: [id])
+  id          Int                        @id @default(autoincrement())
+  school      School                     @relation(fields:[schoolId], references:[id])
   schoolId    Int
-  user        User?     @relation(fields: [userId], references: [id])
-  userId      Int?      @unique
+  user        User?                      @relation(fields:[userId], references:[id])
+  userId      Int?                       @unique
   employeeId  String
   firstName   String
   lastName    String
   phone       String?
   email       String?
   assignments TeacherAssignment[]
-  createdAt   TimestamptzString @default(now())
+  createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@unique([schoolId, employeeId])
@@ -340,80 +340,80 @@ model Teacher {
 }
 
 model Parent {
-  id          Int       @id @default(autoincrement())
-  school      School    @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-  user        User?     @relation(fields: [userId], references: [id])
-  userId      Int?      @unique
-  firstName   String
-  lastName    String
-  phone       String?
-  email       String?
-  address     String?
-  children    ParentStudent[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  id        Int                        @id @default(autoincrement())
+  school    School                     @relation(fields:[schoolId], references:[id])
+  schoolId  Int
+  user      User?                      @relation(fields:[userId], references:[id])
+  userId    Int?                       @unique
+  firstName String
+  lastName  String
+  phone     String?
+  email     String?
+  address   String?
+  children  ParentStudent[]
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
 
   @@index([schoolId])
 }
 
 model ParentStudent {
-  parent    Parent  @relation(fields: [parentId], references: [id])
+  parent    Parent  @relation(fields:[parentId], references:[id])
   parentId  Int
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields:[studentId], references:[id])
   studentId Int
 
   @@id([parentId, studentId])
 }
 
 model SchoolClass {
-  id          Int       @id @default(autoincrement())
-  school      School    @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-  name        String
-  level       String?
-  description String?
-  students    Student[]
-  classSubjects ClassSubject[]
+  id                 Int                        @id @default(autoincrement())
+  school             School                     @relation(fields:[schoolId], references:[id])
+  schoolId           Int
+  name               String
+  level              String?
+  description        String?
+  students           Student[]
+  classSubjects      ClassSubject[]
   teacherAssignments TeacherAssignment[]
-  attendanceRecords Attendance[]
-  assessments Assessment[]
-  subjectResults SubjectResult[]
+  attendanceRecords  Attendance[]
+  assessments        Assessment[]
+  subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId])
 }
 
 model Subject {
-  id          Int       @id @default(autoincrement())
-  school      School    @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-  name        String
-  code        String?
-  description String?
-  classSubjects ClassSubject[]
+  id                 Int                        @id @default(autoincrement())
+  school             School                     @relation(fields:[schoolId], references:[id])
+  schoolId           Int
+  name               String
+  code               String?
+  description        String?
+  classSubjects      ClassSubject[]
   teacherAssignments TeacherAssignment[]
-  assessments Assessment[]
-  subjectResults SubjectResult[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  assessments        Assessment[]
+  subjectResults     SubjectResult[]
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId])
 }
 
 model ClassSubject {
-  id        Int        @id @default(autoincrement())
-  school    School     @relation(fields: [schoolId], references: [id])
+  id        Int                        @id @default(autoincrement())
+  school    School                     @relation(fields:[schoolId], references:[id])
   schoolId  Int
-  class     SchoolClass @relation(fields: [classId], references: [id])
+  class     SchoolClass                @relation(fields:[classId], references:[id])
   classId   Int
-  subject   Subject    @relation(fields: [subjectId], references: [id])
+  subject   Subject                    @relation(fields:[subjectId], references:[id])
   subjectId Int
-  createdAt TimestamptzString @default(now())
+  createdAt TimestamptzString          @default(now())
   updatedAt temporal.updatedAtString()
 
   @@unique([classId, subjectId])
@@ -423,16 +423,16 @@ model ClassSubject {
 }
 
 model TeacherAssignment {
-  id        Int         @id @default(autoincrement())
-  school    School      @relation(fields: [schoolId], references: [id])
+  id        Int                        @id @default(autoincrement())
+  school    School                     @relation(fields:[schoolId], references:[id])
   schoolId  Int
-  teacher   Teacher     @relation(fields: [teacherId], references: [id])
+  teacher   Teacher                    @relation(fields:[teacherId], references:[id])
   teacherId Int
-  class     SchoolClass @relation(fields: [classId], references: [id])
+  class     SchoolClass                @relation(fields:[classId], references:[id])
   classId   Int
-  subject   Subject     @relation(fields: [subjectId], references: [id])
+  subject   Subject                    @relation(fields:[subjectId], references:[id])
   subjectId Int
-  createdAt TimestamptzString @default(now())
+  createdAt TimestamptzString          @default(now())
   updatedAt temporal.updatedAtString()
 
   @@unique([teacherId, classId, subjectId])
@@ -443,15 +443,15 @@ model TeacherAssignment {
 }
 
 model AcademicSession {
-  id        Int       @id @default(autoincrement())
-  school    School    @relation(fields: [schoolId], references: [id])
+  id        Int                        @id @default(autoincrement())
+  school    School                     @relation(fields:[schoolId], references:[id])
   schoolId  Int
   name      String
   startDate DateTime
   endDate   DateTime
-  isActive  Boolean   @default(false)
+  isActive  Boolean                    @default(false)
   terms     Term[]
-  createdAt TimestamptzString @default(now())
+  createdAt TimestamptzString          @default(now())
   updatedAt temporal.updatedAtString()
 
   @@unique([schoolId, name])
@@ -459,40 +459,40 @@ model AcademicSession {
 }
 
 model Term {
-  id          Int             @id @default(autoincrement())
-  session     AcademicSession @relation(fields: [sessionId], references: [id])
-  sessionId   Int
-  name        String
-  startDate   DateTime
-  endDate     DateTime
-  isActive    Boolean         @default(false)
-  attendanceRecords Attendance[]
-  assessments Assessment[]
-  subjectResults SubjectResult[]
+  id                 Int                        @id @default(autoincrement())
+  session            AcademicSession            @relation(fields:[sessionId], references:[id])
+  sessionId          Int
+  name               String
+  startDate          DateTime
+  endDate            DateTime
+  isActive           Boolean                    @default(false)
+  attendanceRecords  Attendance[]
+  assessments        Assessment[]
+  subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 
   @@unique([sessionId, name])
   @@index([sessionId])
 }
 
 model Assessment {
-  id          Int             @id @default(autoincrement())
+  id          Int                        @id @default(autoincrement())
 
-  school      School          @relation(fields: [schoolId], references: [id])
+  school      School                     @relation(fields:[schoolId], references:[id])
   schoolId    Int
 
-  class       SchoolClass     @relation(fields: [classId], references: [id])
+  class       SchoolClass                @relation(fields:[classId], references:[id])
   classId     Int
 
-  subject     Subject         @relation(fields: [subjectId], references: [id])
+  subject     Subject                    @relation(fields:[subjectId], references:[id])
   subjectId   Int
 
-  term        Term            @relation(fields: [termId], references: [id])
+  term        Term                       @relation(fields:[termId], references:[id])
   termId      Int
 
-  createdBy   User            @relation("AssessmentCreatedBy", fields: [createdById], references: [id])
+  createdBy   User                       @relation("AssessmentCreatedBy", fields:[createdById], references:[id])
   createdById Int
 
   title       String
@@ -504,7 +504,7 @@ model Assessment {
 
   scores      AssessmentScore[]
 
-  createdAt   TimestamptzString @default(now())
+  createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@index([schoolId])
@@ -515,18 +515,18 @@ model Assessment {
 }
 
 model AssessmentScore {
-  id           Int        @id @default(autoincrement())
+  id           Int                        @id @default(autoincrement())
 
-  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  assessment   Assessment                 @relation(fields:[assessmentId], references:[id])
   assessmentId Int
 
-  student      Student    @relation(fields: [studentId], references: [id])
+  student      Student                    @relation(fields:[studentId], references:[id])
   studentId    Int
 
   score        Float
   remarks      String?
 
-  createdAt    TimestamptzString @default(now())
+  createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
 
   @@unique([assessmentId, studentId])
@@ -535,21 +535,21 @@ model AssessmentScore {
 }
 
 model Attendance {
-  id           Int              @id @default(autoincrement())
-  school       School           @relation(fields: [schoolId], references: [id])
+  id           Int                        @id @default(autoincrement())
+  school       School                     @relation(fields:[schoolId], references:[id])
   schoolId     Int
-  student      Student          @relation(fields: [studentId], references: [id])
+  student      Student                    @relation(fields:[studentId], references:[id])
   studentId    Int
-  class        SchoolClass      @relation(fields: [classId], references: [id])
+  class        SchoolClass                @relation(fields:[classId], references:[id])
   classId      Int
-  term         Term             @relation(fields: [termId], references: [id])
+  term         Term                       @relation(fields:[termId], references:[id])
   termId       Int
-  recordedBy   User             @relation("AttendanceRecordedBy", fields: [recordedById], references: [id])
+  recordedBy   User                       @relation("AttendanceRecordedBy", fields:[recordedById], references:[id])
   recordedById Int
   date         DateTime
   status       AttendanceStatus
   notes        String?
-  createdAt    TimestamptzString @default(now())
+  createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
 
   @@unique([studentId, date, classId])

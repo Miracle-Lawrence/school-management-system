@@ -584,13 +584,17 @@ export async function calculateAndSaveSubjectResult(
 ) {
   const calculation = await calculateSubject(input);
 
-  let subjectResult = await db.orm.public.SubjectResult.where(
-    (result) =>
-      result.studentId.eq(input.studentId) &&
-      result.subjectId.eq(input.subjectId) &&
-      result.termId.eq(input.termId) &&
-      result.reportType.eq(input.reportType),
-  ).first();
+ const subjectResults = await db.orm.public.SubjectResult.where((result) =>
+   result.studentId.eq(input.studentId),
+ ).all();
+
+ let subjectResult =
+   subjectResults.find(
+     (result) =>
+       result.subjectId === input.subjectId &&
+       result.termId === input.termId &&
+       result.reportType === input.reportType,
+   ) ?? null;
 
   if (subjectResult) {
     subjectResult = await db.orm.public.SubjectResult.where((result) =>
@@ -669,14 +673,19 @@ export async function getStudentSubjectResult(
   termId: number,
   reportType: ReportType,
 ) {
-  const results = await db.orm.public.SubjectResult.where(
-    (result) =>
-      result.schoolId.eq(schoolId) &&
-      result.studentId.eq(studentId) &&
-      result.subjectId.eq(subjectId) &&
-      result.termId.eq(termId) &&
-      result.reportType.eq(reportType),
+  const results = await db.orm.public.SubjectResult.where((result) =>
+    result.studentId.eq(studentId),
   ).all();
+
+  return (
+    results.find(
+      (result) =>
+        result.schoolId === schoolId &&
+        result.subjectId === subjectId &&
+        result.termId === termId &&
+        result.reportType === reportType,
+    ) ?? null
+  );
 
   return results[0] ?? null;
 }
@@ -739,14 +748,17 @@ export async function calculateAndSaveStudentTermResult(
 
   await getSchoolTerm(input.schoolId, input.termId);
 
-  const subjectResults = await db.orm.public.SubjectResult.where(
-    (result) =>
-      result.schoolId.eq(input.schoolId) &&
-      result.studentId.eq(input.studentId) &&
-      result.classId.eq(input.classId) &&
-      result.termId.eq(input.termId) &&
-      result.reportType.eq(input.reportType),
+  const allStudentSubjectResults = await db.orm.public.SubjectResult.where(
+    (result) => result.studentId.eq(input.studentId),
   ).all();
+
+  const subjectResults = allStudentSubjectResults.filter(
+    (result) =>
+      result.schoolId === input.schoolId &&
+      result.classId === input.classId &&
+      result.termId === input.termId &&
+      result.reportType === input.reportType,
+  );
 
   if (subjectResults.length === 0) {
     throw new Error("No subject results exist for this student.");
@@ -787,12 +799,16 @@ export async function calculateAndSaveStudentTermResult(
 
   const gradeResult = await getGradeForScore(input.schoolId, averageScore);
 
-  let studentTermResult = await db.orm.public.StudentTermResult.where(
-    (result) =>
-      result.studentId.eq(input.studentId) &&
-      result.termId.eq(input.termId) &&
-      result.reportType.eq(input.reportType),
-  ).first();
+  const allStudentTermResults = await db.orm.public.StudentTermResult.where(
+    (result) => result.studentId.eq(input.studentId),
+  ).all();
+
+  let studentTermResult =
+    allStudentTermResults.find(
+      (result) =>
+        result.termId === input.termId &&
+        result.reportType === input.reportType,
+    ) ?? null;
 
   if (studentTermResult) {
     studentTermResult = await db.orm.public.StudentTermResult.where((result) =>
@@ -829,10 +845,24 @@ export async function calculateAndSaveStudentTermResult(
  *
  * Position is calculated after all student results exist.
  */
+/**
+ * Calculate overall term results for every student
+ * in a class.
+ *
+ * Students are checked for complete assessment scores
+ * BEFORE subject results are generated.
+ *
+ * Students with missing required assessments remain pending
+ * and do not receive zero SubjectResult records.
+ *
+ * Position is calculated after all completed student
+ * term results exist.
+ */
 export async function calculateClassTermResults(
   input: CalculateClassResultsInput,
 ) {
-  await calculateClassSubjectResults(input);
+  await validateClass(input.schoolId, input.classId);
+  await getSchoolTerm(input.schoolId, input.termId);
 
   const students = await db.orm.public.Student.where((student) =>
     student.schoolId.eq(input.schoolId),
@@ -842,11 +872,90 @@ export async function calculateClassTermResults(
     (student) => student.classId === input.classId,
   );
 
-  
+  const classSubjects = await db.orm.public.ClassSubject.where((item) =>
+    item.classId.eq(input.classId),
+  ).all();
 
-  const termResults = [];
+  const configuration = await getReportConfiguration(
+    input.schoolId,
+    input.reportType,
+  );
 
-  for (const student of students) {
+  const components = await getReportComponents(configuration.id);
+
+  const assessmentComponents = components.filter(
+    (component) =>
+      component.type === "ASSESSMENT" && component.assessmentType,
+  );
+
+  const generatedResults = [];
+  const pendingStudents = [];
+
+  for (const student of classStudents) {
+    let missingSubjectCount = 0;
+
+    /**
+     * First check whether the student has every required
+     * assessment score for every subject.
+     *
+     * We do this BEFORE generating SubjectResult records.
+     */
+    for (const classSubject of classSubjects) {
+      const subjectHasAllRequiredScores = await Promise.all(
+        assessmentComponents.map(async (component) => {
+          const scores = await getStudentAssessmentScores(
+            student.id,
+            input.classId,
+            classSubject.subjectId,
+            input.termId,
+            component.assessmentType!,
+          );
+
+          return scores.length > 0;
+        }),
+      );
+
+      if (!subjectHasAllRequiredScores.every(Boolean)) {
+        missingSubjectCount += 1;
+      }
+    }
+
+    /**
+     * If any subject is incomplete, leave the student pending.
+     *
+     * IMPORTANT:
+     * We do NOT call calculateAndSaveSubjectResult()
+     * for this student.
+     */
+    if (missingSubjectCount > 0) {
+      pendingStudents.push({
+        studentId: student.id,
+        missingSubjectCount,
+      });
+
+      continue;
+    }
+
+    /**
+     * The student has all required assessment scores.
+     *
+     * Now generate/save the SubjectResult for every subject.
+     */
+    for (const classSubject of classSubjects) {
+      await calculateAndSaveSubjectResult({
+        schoolId: input.schoolId,
+        studentId: student.id,
+        classId: input.classId,
+        subjectId: classSubject.subjectId,
+        termId: input.termId,
+        reportType: input.reportType,
+      });
+    }
+
+    /**
+     * Now that all SubjectResults exist, calculate
+     * the student's overall term result.
+     */
     const result = await calculateAndSaveStudentTermResult({
       schoolId: input.schoolId,
       studentId: student.id,
@@ -855,17 +964,25 @@ export async function calculateClassTermResults(
       reportType: input.reportType,
     });
 
-    termResults.push(result);
-    }
-    
-  await assignClassPositions(
-    input.schoolId,
-    input.classId,
-    input.termId,
-    input.reportType,
-  );
+    generatedResults.push(result);
+  }
 
-  return termResults;
+  /**
+   * Only completed students receive positions.
+   */
+  if (generatedResults.length > 0) {
+    await assignClassPositions(
+      input.schoolId,
+      input.classId,
+      input.termId,
+      input.reportType,
+    );
+  }
+
+  return {
+    results: generatedResults,
+    pendingStudents,
+  };
 }
 
 /**

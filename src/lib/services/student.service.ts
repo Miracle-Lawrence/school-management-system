@@ -1,4 +1,5 @@
 import { db } from "@/prisma/db";
+import { deleteUploadedFile } from "@/lib/utils/file-upload";
 
 type CreateStudentData = {
   admissionNumber: string;
@@ -130,4 +131,33 @@ export async function updateStudent(
     address: data.address || null,
     classId,
   });
+}
+
+export async function updateStudentPhoto(
+  schoolId: number,
+  studentId: number,
+  photoUrl: string | null,
+) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  const oldPhotoUrl = student.photoUrl;
+
+  const updatedStudent = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).update({
+    photoUrl,
+  });
+
+  if (oldPhotoUrl && oldPhotoUrl !== photoUrl) {
+    // Delete the old file only after the database update succeeds.
+    await deleteUploadedFile(oldPhotoUrl, schoolId);
+  }
+
+  return updatedStudent;
 }

@@ -63,12 +63,25 @@ export async function generateResultsAction(formData: FormData) {
   let message = "Results generated successfully.";
 
   try {
-    await calculateClassTermResults({
+    const generationResult = await calculateClassTermResults({
       schoolId,
       classId,
       termId,
       reportType: reportType as "MID_TERM" | "TERMINAL",
     });
+
+    const generatedCount = generationResult.results.length;
+    const pendingCount = generationResult.pendingStudents.length;
+
+    if (generatedCount === 0 && pendingCount > 0) {
+      status = "error";
+
+      message = `No results were generated. ${pendingCount} student(s) still have incomplete subject results.`;
+    } else if (pendingCount > 0) {
+      message = `Results generated successfully for ${generatedCount} student(s). ${pendingCount} student(s) remain pending because their subject results are incomplete.`;
+    } else {
+      message = `Results generated successfully for ${generatedCount} student(s).`;
+    }
   } catch (error) {
     status = "error";
 

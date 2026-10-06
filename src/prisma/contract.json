@@ -2673,6 +2673,13 @@
                   "kind": "scalar"
                 }
               },
+              "photoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "schoolId": {
                 "nullable": false,
                 "type": {
@@ -2857,6 +2864,9 @@
                 },
                 "phone": {
                   "column": "phone"
+                },
+                "photoUrl": {
+                  "column": "photoUrl"
                 },
                 "schoolId": {
                   "column": "schoolId"
@@ -6069,6 +6079,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "photoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "schoolId": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -7288,7 +7303,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "55f8c440fd962eec62ce387a0ee74855a3d06da7e0056afe531f67946ca94c70"
+    "storageHash": "45a80aca7e7a268d5500001e8d0a5c3d943a4629db0131b3373072014343f936"
   },
   "execution": {
     "executionHash": "6ac5f48d77f83ce69db0fabf5ede75c18b3b4d6d7fde205f87a185a03372867f",
