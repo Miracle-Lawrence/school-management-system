@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'7eb5bc1b9a30ab60200f30afb3eabfbc0116825d7576d559c36510708fa07f9c'>;
+  StorageHashBase<'b0ae16366ddd635b037e77594ad3e443ba456292ea11300858d6f08e8a7f0d28'>;
 export type ExecutionHash =
-  ExecutionHashBase<'0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039'>;
+  ExecutionHashBase<'9d6781bcee0a723673d6a3d4b35a5d7374c947558f1b9a95089a2bcd0f455a61'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -355,17 +355,6 @@ export type FieldOutputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly value: CodecTypes['pg/text@1']['output'];
     };
-    readonly ReportComment: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly principalComment: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly teacherComment: CodecTypes['pg/text@1']['output'] | null;
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
       readonly assessmentType:
@@ -670,17 +659,6 @@ export type FieldInputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly value: CodecTypes['pg/text@1']['input'];
-    };
-    readonly ReportComment: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly principalComment: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly teacherComment: CodecTypes['pg/text@1']['input'] | null;
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
@@ -987,17 +965,6 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly value: CodecTypes['pg/text@1']['output'];
     };
-    readonly ReportComment: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly principalComment: CodecTypes['pg/text@1']['output'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly studentId: CodecTypes['pg/int4@1']['output'];
-      readonly teacherComment: CodecTypes['pg/text@1']['output'] | null;
-      readonly termId: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
       readonly assessmentType:
@@ -1302,17 +1269,6 @@ export type StorageColumnInputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly value: CodecTypes['pg/text@1']['input'];
-    };
-    readonly ReportComment: {
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly principalComment: CodecTypes['pg/text@1']['input'] | null;
-      readonly reportType: 'MID_TERM' | 'TERMINAL';
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly studentId: CodecTypes['pg/int4@1']['input'];
-      readonly teacherComment: CodecTypes['pg/text@1']['input'] | null;
-      readonly termId: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
@@ -1657,21 +1613,6 @@ export namespace Models {
     school: public_School;
     readonly [RelationKeys]?: 'ratings' | 'school';
   };
-  export type public_ReportComment = {
-    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    principalComment: CodecTypes['pg/text@1']['output'] | null;
-    reportType: 'MID_TERM' | 'TERMINAL';
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    studentId: CodecTypes['pg/int4@1']['output'];
-    teacherComment: CodecTypes['pg/text@1']['output'] | null;
-    termId: CodecTypes['pg/int4@1']['output'];
-    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    school: public_School;
-    student: public_Student;
-    term: public_Term;
-    readonly [RelationKeys]?: 'school' | 'student' | 'term';
-  };
   export type public_ReportComponent = {
     aggregationType: 'SUM' | 'AVERAGE';
     assessmentType:
@@ -1761,7 +1702,6 @@ export namespace Models {
     psychomotorFields: public_PsychomotorField[];
     psychomotorRatingOptions: public_PsychomotorRatingOption[];
     psychomotorRatings: public_StudentPsychomotorRating[];
-    reportComments: public_ReportComment[];
     reportConfigurations: public_ReportConfiguration[];
     sessions: public_AcademicSession[];
     studentTermResults: public_StudentTermResult[];
@@ -1781,7 +1721,6 @@ export namespace Models {
       | 'psychomotorFields'
       | 'psychomotorRatingOptions'
       | 'psychomotorRatings'
-      | 'reportComments'
       | 'reportConfigurations'
       | 'sessions'
       | 'studentTermResults'
@@ -1840,7 +1779,6 @@ export namespace Models {
     class: public_SchoolClass | null;
     parents: public_ParentStudent[];
     psychomotorRatings: public_StudentPsychomotorRating[];
-    reportComments: public_ReportComment[];
     school: public_School;
     studentTermResults: public_StudentTermResult[];
     subjectResults: public_SubjectResult[];
@@ -1851,7 +1789,6 @@ export namespace Models {
       | 'class'
       | 'parents'
       | 'psychomotorRatings'
-      | 'reportComments'
       | 'school'
       | 'studentTermResults'
       | 'subjectResults'
@@ -1975,7 +1912,6 @@ export namespace Models {
     assessments: public_Assessment[];
     attendanceRecords: public_Attendance[];
     psychomotorRatings: public_StudentPsychomotorRating[];
-    reportComments: public_ReportComment[];
     session: public_AcademicSession;
     studentTermResults: public_StudentTermResult[];
     subjectResults: public_SubjectResult[];
@@ -1983,7 +1919,6 @@ export namespace Models {
       | 'assessments'
       | 'attendanceRecords'
       | 'psychomotorRatings'
-      | 'reportComments'
       | 'session'
       | 'studentTermResults'
       | 'subjectResults';
@@ -2031,7 +1966,6 @@ export declare const models: {
     ParentStudent: Models.public_ParentStudent;
     PsychomotorField: Models.public_PsychomotorField;
     PsychomotorRatingOption: Models.public_PsychomotorRatingOption;
-    ReportComment: Models.public_ReportComment;
     ReportComponent: Models.public_ReportComponent;
     ReportComponentRule: Models.public_ReportComponentRule;
     ReportConfiguration: Models.public_ReportConfiguration;
@@ -3063,122 +2997,6 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly ReportComment: {
-              columns: {
-                readonly createdAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly principalComment: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly reportType: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly schoolId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly studentId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly teacherComment: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly termId: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly updatedAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [
-                { readonly columns: readonly ['studentId', 'termId', 'reportType'] },
-              ];
-              indexes: readonly [
-                {
-                  readonly name: 'ReportComment_schoolId_idx_82b454d7';
-                  readonly prefix: 'ReportComment_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'ReportComment_studentId_idx_bf255322';
-                  readonly prefix: 'ReportComment_studentId_idx';
-                  readonly columns: readonly ['studentId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'ReportComment_termId_idx_1b74c9af';
-                  readonly prefix: 'ReportComment_termId_idx';
-                  readonly columns: readonly ['termId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComment';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComment';
-                    readonly columns: readonly ['studentId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Student';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'ReportComment';
-                    readonly columns: readonly ['termId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Term';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -4931,10 +4749,6 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'PsychomotorRatingOption';
     };
-    readonly ReportComment: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ReportComment';
-    };
     readonly ReportComponent: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ReportComponent';
@@ -5906,102 +5720,6 @@ type ContractBase = Omit<
               };
             };
           };
-          readonly ReportComment: {
-            readonly fields: {
-              readonly createdAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly principalComment: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly reportType: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly studentId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly teacherComment: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly termId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly updatedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: {
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly student: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Student';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['studentId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly term: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['termId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'ReportComment';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly createdAt: { readonly column: 'createdAt' };
-                readonly id: { readonly column: 'id' };
-                readonly principalComment: { readonly column: 'principalComment' };
-                readonly reportType: { readonly column: 'reportType' };
-                readonly schoolId: { readonly column: 'schoolId' };
-                readonly studentId: { readonly column: 'studentId' };
-                readonly teacherComment: { readonly column: 'teacherComment' };
-                readonly termId: { readonly column: 'termId' };
-                readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
           readonly ReportComponent: {
             readonly fields: {
               readonly aggregationType: {
@@ -6557,17 +6275,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
-              readonly reportComments: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComment';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
               readonly reportConfigurations: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -6962,17 +6669,6 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'StudentPsychomotorRating';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['studentId'];
-                };
-              };
-              readonly reportComments: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComment';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -7837,17 +7533,6 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['termId'];
                 };
               };
-              readonly reportComments: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'ReportComment';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['termId'];
-                };
-              };
               readonly session: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -8238,15 +7923,6 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'PsychomotorRatingOption';
-          };
-        },
-        {
-          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
-          readonly ref: {
-            readonly column: 'updatedAt';
-            readonly namespace: 'public';
-            readonly table: 'ReportComment';
           };
         },
         {

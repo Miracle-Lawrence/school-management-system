@@ -141,6 +141,28 @@ export default async function SchoolSettingsPage() {
           </div>
         </div>
 
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Psychomotor & Behaviour
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-600">
+                Configure the behaviour and psychomotor fields and rating
+                options used on student report cards.
+              </p>
+            </div>
+
+            <Link
+              href="/school/settings/psychomotor"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Manage Psychomotor
+            </Link>
+          </div>
+        </div>
+
         <p className="mt-2 text-sm leading-6 text-slate-600">
           Manage your school's basic information and contact details.
         </p>

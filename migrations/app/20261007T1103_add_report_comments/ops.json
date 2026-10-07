@@ -1,0 +1,326 @@
+[
+  {
+    "id": "table.ReportComment",
+    "label": "Create table \"ReportComment\"",
+    "summary": "Creates table \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ReportComment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ReportComment\"",
+        "sql": "CREATE TABLE \"public\".\"ReportComment\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"principalComment\" text,\n  \"reportType\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"teacherComment\" text,\n  \"termId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"ReportComment_reportType_check_6c6f706e\" CHECK (\"reportType\" IN ('MID_TERM', 'TERMINAL'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ReportComment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.ReportComment.ReportComment_studentId_termId_reportType_key",
+    "label": "Add unique constraint on \"ReportComment\" (studentId, termId, reportType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "ReportComment_studentId_termId_reportType_key",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ReportComment_studentId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"ReportComment_studentId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\" ADD CONSTRAINT \"ReportComment_studentId_termId_reportType_key\" UNIQUE (\"studentId\", \"termId\", \"reportType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ReportComment_studentId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_schoolId_idx_82b454d7",
+    "label": "Create index \"ReportComment_schoolId_idx_82b454d7\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_schoolId_idx_82b454d7",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"ReportComment_schoolId_idx_82b454d7\" ON \"public\".\"ReportComment\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_studentId_idx_bf255322",
+    "label": "Create index \"ReportComment_studentId_idx_bf255322\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_studentId_idx_bf255322",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"ReportComment_studentId_idx_bf255322\" ON \"public\".\"ReportComment\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_termId_idx_1b74c9af",
+    "label": "Create index \"ReportComment_termId_idx_1b74c9af\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_termId_idx_1b74c9af",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"ReportComment_termId_idx_1b74c9af\" ON \"public\".\"ReportComment\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_schoolId_fkey",
+    "label": "Add foreign key \"ReportComment_schoolId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_schoolId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_studentId_fkey",
+    "label": "Add foreign key \"ReportComment_studentId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_studentId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_termId_fkey",
+    "label": "Add foreign key \"ReportComment_termId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_termId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_termId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_termId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  }
+]

@@ -154,6 +154,39 @@ export default async function ResultsPage() {
         </div>
       </section>
 
+      {/* Psychomotor Assessment Navigation */}
+      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-slate-900">
+                Psychomotor Assessment
+              </h2>
+
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                Student Behaviour
+              </span>
+            </div>
+
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              Record and manage student psychomotor and behavioural ratings for
+              each academic term. Ratings are configured by your school and are
+              separate from academic scores.
+            </p>
+          </div>
+
+          <Link
+            href="/school/results/psychomotor"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700"
+          >
+            Open Psychomotor Assessment
+            <span className="ml-2" aria-hidden="true">
+              →
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* Information */}
       <section className="rounded-xl border border-blue-100 bg-blue-50 p-5">
         <h2 className="text-sm font-semibold text-blue-900">

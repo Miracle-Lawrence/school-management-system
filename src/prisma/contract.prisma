@@ -58,43 +58,48 @@ enum GradeCalculationType {
 }
 
 model School {
-  id                   Int                        @id @default(autoincrement())
-  name                 String
-  slug                 String                     @unique
-  email                String?
-  phone                String?
-  address              String?
-  city                 String?
-  state                String?
-  country              String                     @default("Nigeria")
-  status               SchoolStatus               @default(ACTIVE)
-  users                User[]
-  students             Student[]
-  teachers             Teacher[]
-  parents              Parent[]
-  classes              SchoolClass[]
-  subjects             Subject[]
-  classSubjects        ClassSubject[]
-  assessments          Assessment[]
-  logoUrl              String?
-  faviconUrl           String?
-  motto                String?
-  primaryColor         String?
-  secondaryColor       String?
-  accentColor          String?
-  website              String?
-  principalName        String?
-  principalTitle       String?
-  stampUrl             String?
-  reportConfigurations ReportConfiguration[]
-  teacherAssignments   TeacherAssignment[]
-  attendanceRecords    Attendance[]
-  sessions             AcademicSession[]
-  gradeScales          GradeScale[]
-  subjectResults       SubjectResult[]
-  studentTermResults   StudentTermResult[]
-  createdAt            TimestamptzString          @default(now())
-  updatedAt            temporal.updatedAtString()
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  slug                     String                     @unique
+  email                    String?
+  phone                    String?
+  address                  String?
+  city                     String?
+  state                    String?
+  country                  String                     @default("Nigeria")
+  status                   SchoolStatus               @default(ACTIVE)
+  users                    User[]
+  students                 Student[]
+  teachers                 Teacher[]
+  parents                  Parent[]
+  classes                  SchoolClass[]
+  subjects                 Subject[]
+  classSubjects            ClassSubject[]
+  assessments              Assessment[]
+  logoUrl                  String?
+  faviconUrl               String?
+  motto                    String?
+  primaryColor             String?
+  secondaryColor           String?
+  accentColor              String?
+  website                  String?
+  principalName            String?
+  principalTitle           String?
+  stampUrl                 String?
+  reportConfigurations     ReportConfiguration[]
+  teacherAssignments       TeacherAssignment[]
+  attendanceRecords        Attendance[]
+  sessions                 AcademicSession[]
+  gradeScales              GradeScale[]
+  subjectResults           SubjectResult[]
+  studentTermResults       StudentTermResult[]
+  reportComments           ReportComment[]  
+
+  psychomotorFields        PsychomotorField[]
+  psychomotorRatingOptions PsychomotorRatingOption[]
+  psychomotorRatings       StudentPsychomotorRating[]
+  createdAt                TimestamptzString          @default(now())
+  updatedAt                temporal.updatedAtString()
 }
 
 model ReportConfiguration {
@@ -188,6 +193,77 @@ model GradeScale {
   @@index([schoolId])
 }
 
+model PsychomotorField {
+  id           Int                        @id @default(autoincrement())
+
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
+
+  name         String
+  description  String?
+  displayOrder Int
+  isActive     Boolean                    @default(true)
+
+  ratings      StudentPsychomotorRating[]
+
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+}
+
+model PsychomotorRatingOption {
+  id           Int                        @id @default(autoincrement())
+
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
+
+  label        String
+  value        String
+  displayOrder Int
+  isActive     Boolean                    @default(true)
+
+  ratings      StudentPsychomotorRating[]
+
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  @@unique([schoolId, value])
+  @@index([schoolId])
+}
+
+model StudentPsychomotorRating {
+  id        Int                        @id @default(autoincrement())
+
+  school    School                     @relation(fields:[schoolId], references:[id])
+  schoolId  Int
+
+  student   Student                    @relation(fields:[studentId], references:[id])
+  studentId Int
+
+  term      Term                       @relation(fields:[termId], references:[id])
+  termId    Int
+
+  field     PsychomotorField           @relation(fields:[fieldId], references:[id])
+  fieldId   Int
+
+  rating    PsychomotorRatingOption    @relation(fields:[ratingId], references:[id])
+  ratingId  Int
+
+  comment   String?
+
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([studentId, termId, fieldId])
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([termId])
+  @@index([fieldId])
+  @@index([ratingId])
+}
+
 model SubjectResult {
   id              Int                        @id @default(autoincrement())
 
@@ -279,6 +355,32 @@ model StudentTermResult {
   @@index([termId])
 }
 
+model ReportComment {
+  id               Int        @id @default(autoincrement())
+
+  school           School     @relation(fields:[schoolId], references:[id])
+  schoolId         Int
+
+  student          Student    @relation(fields:[studentId], references:[id])
+  studentId        Int
+
+  term             Term       @relation(fields:[termId], references:[id])
+  termId           Int
+
+  reportType       ReportType
+
+  teacherComment   String?
+  principalComment String?
+
+  createdAt        TimestamptzString @default(now())
+  updatedAt        temporal.updatedAtString()
+
+  @@unique([studentId, termId, reportType])
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([termId])
+}
+
 model User {
   id                 Int                        @id @default(autoincrement())
   school             School?                    @relation(fields:[schoolId], references:[id])
@@ -323,6 +425,8 @@ model Student {
   assessmentScores   AssessmentScore[]
   subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
+  psychomotorRatings StudentPsychomotorRating[]
+  reportComments     ReportComment[]
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
@@ -480,6 +584,8 @@ model Term {
   assessments        Assessment[]
   subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
+  psychomotorRatings StudentPsychomotorRating[]
+  reportComments     ReportComment[]
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
