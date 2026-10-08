@@ -19,6 +19,7 @@ type UpdateSchoolData = {
   website?: string;
   principalName?: string;
   principalTitle?: string;
+  principalSignatureUrl?: string;
   stampUrl?: string;
 };
 
@@ -33,23 +34,43 @@ export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
 
   return db.orm.public.School.where((school) => school.id.eq(schoolId)).update({
     name: data.name,
-    email: data.email || null,
-    phone: data.phone || null,
-    address: data.address || null,
-    city: data.city || null,
-    state: data.state || null,
+    email: data.email !== undefined ? data.email || null : school.email,
+    phone: data.phone !== undefined ? data.phone || null : school.phone,
+    address: data.address !== undefined ? data.address || null : school.address,
+    city: data.city !== undefined ? data.city || null : school.city,
+    state: data.state !== undefined ? data.state || null : school.state,
     country: data.country || school.country,
 
     // School branding
-    logoUrl: data.logoUrl || null,
-    faviconUrl: data.faviconUrl || null,
-    motto: data.motto || null,
-    primaryColor: data.primaryColor || null,
-    secondaryColor: data.secondaryColor || null,
-    accentColor: data.accentColor || null,
-    website: data.website || null,
-    principalName: data.principalName || null,
-    principalTitle: data.principalTitle || null,
-    stampUrl: data.stampUrl || null,
+    logoUrl: data.logoUrl !== undefined ? data.logoUrl : school.logoUrl,
+    faviconUrl:
+      data.faviconUrl !== undefined ? data.faviconUrl : school.faviconUrl,
+    motto: data.motto !== undefined ? data.motto || null : school.motto,
+    primaryColor:
+      data.primaryColor !== undefined
+        ? data.primaryColor || null
+        : school.primaryColor,
+    secondaryColor:
+      data.secondaryColor !== undefined
+        ? data.secondaryColor || null
+        : school.secondaryColor,
+    accentColor:
+      data.accentColor !== undefined
+        ? data.accentColor || null
+        : school.accentColor,
+    website: data.website !== undefined ? data.website || null : school.website,
+    principalName:
+      data.principalName !== undefined
+        ? data.principalName || null
+        : school.principalName,
+    principalTitle:
+      data.principalTitle !== undefined
+        ? data.principalTitle || null
+        : school.principalTitle,
+    principalSignatureUrl:
+      data.principalSignatureUrl !== undefined
+        ? data.principalSignatureUrl
+        : school.principalSignatureUrl,
+    stampUrl: data.stampUrl !== undefined ? data.stampUrl : school.stampUrl,
   });
 }

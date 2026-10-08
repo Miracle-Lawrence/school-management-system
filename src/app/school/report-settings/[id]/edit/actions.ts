@@ -9,6 +9,11 @@ import { updateReportConfiguration } from "@/lib/services/report-configuration.s
 const updateSchema = z.object({
   name: z.string().trim().min(1, "Configuration name is required."),
   isActive: z.boolean(),
+  showClassPosition: z.boolean(),
+  showClassTeacherName: z.boolean(),
+  showPrincipalSignature: z.boolean(),
+  showSchoolStamp: z.boolean(),
+  showAttendance: z.boolean(),
 });
 
 export async function updateReportConfigurationAction(
@@ -26,6 +31,11 @@ export async function updateReportConfigurationAction(
   const parsed = updateSchema.safeParse({
     name: formData.get("name"),
     isActive: formData.get("isActive") === "on",
+    showClassPosition: formData.get("showClassPosition") === "on",
+    showClassTeacherName: formData.get("showClassTeacherName") === "on",
+    showPrincipalSignature: formData.get("showPrincipalSignature") === "on",
+    showSchoolStamp: formData.get("showSchoolStamp") === "on",
+    showAttendance: formData.get("showAttendance") === "on",
   });
 
   if (!parsed.success) {

@@ -4,6 +4,7 @@ type ReportType = "MID_TERM" | "TERMINAL";
 type ReportComponentType = "ASSESSMENT" | "CALCULATED";
 type AssessmentType =
   "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+
 type AssessmentAggregationType = "SUM" | "AVERAGE";
 
 interface CreateReportConfigurationInput {
@@ -23,6 +24,16 @@ interface CreateReportComponentInput {
   displayOrder: number;
   isRequired?: boolean;
   isVisible?: boolean;
+}
+
+interface UpdateReportConfigurationInput {
+  name?: string;
+  isActive?: boolean;
+  showClassPosition?: boolean;
+  showClassTeacherName?: boolean;
+  showPrincipalSignature?: boolean;
+  showSchoolStamp?: boolean;
+  showAttendance?: boolean;
 }
 
 interface UpdateReportComponentInput {
@@ -174,10 +185,7 @@ export async function getReportConfigurations(schoolId: number) {
 export async function updateReportConfiguration(
   schoolId: number,
   configurationId: number,
-  input: {
-    name?: string;
-    isActive?: boolean;
-  },
+  input: UpdateReportConfigurationInput,
 ) {
   const configuration = await validateConfigurationOwnership(
     configurationId,
@@ -196,6 +204,14 @@ export async function updateReportConfiguration(
   ).update({
     name: nextName,
     isActive: input.isActive ?? configuration.isActive,
+    showClassPosition:
+      input.showClassPosition ?? configuration.showClassPosition,
+    showClassTeacherName:
+      input.showClassTeacherName ?? configuration.showClassTeacherName,
+    showPrincipalSignature:
+      input.showPrincipalSignature ?? configuration.showPrincipalSignature,
+    showSchoolStamp: input.showSchoolStamp ?? configuration.showSchoolStamp,
+    showAttendance: input.showAttendance ?? configuration.showAttendance,
   });
 }
 

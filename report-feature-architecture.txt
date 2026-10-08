@@ -1,0 +1,3324 @@
+
+============================================================
+FILE: .\src\lib\services\school.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+type UpdateSchoolData = {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+
+  // School branding
+  logoUrl?: string;
+  faviconUrl?: string;
+  motto?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+  website?: string;
+  principalName?: string;
+  principalTitle?: string;
+  stampUrl?: string;
+};
+
+export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
+  const school = await db.orm.public.School.where((school) =>
+    school.id.eq(schoolId),
+  ).first();
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  return db.orm.public.School.where((school) => school.id.eq(schoolId)).update({
+    name: data.name,
+    email: data.email || null,
+    phone: data.phone || null,
+    address: data.address || null,
+    city: data.city || null,
+    state: data.state || null,
+    country: data.country || school.country,
+
+    // School branding
+    logoUrl: data.logoUrl || null,
+    faviconUrl: data.faviconUrl || null,
+    motto: data.motto || null,
+    primaryColor: data.primaryColor || null,
+    secondaryColor: data.secondaryColor || null,
+    accentColor: data.accentColor || null,
+    website: data.website || null,
+    principalName: data.principalName || null,
+    principalTitle: data.principalTitle || null,
+    stampUrl: data.stampUrl || null,
+  });
+}
+
+============================================================
+FILE: .\src\lib\services\report-card.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+import {
+  getActivePsychomotorFields,
+  getStudentPsychomotorRatings,
+} from "@/lib/services/psychomotor.service";
+
+import { getReportComment } from "@/lib/services/report-comment.service";
+
+type ReportType = "MID_TERM" | "TERMINAL";
+
+export async function getStudentReportCardData(
+  schoolId: number,
+  studentId: number,
+  classId: number,
+  termId: number,
+  reportType: ReportType = "TERMINAL",
+) {
+  /*
+   * ---------------------------------------------------------
+   * 1. Validate school
+   * ---------------------------------------------------------
+   */
+
+  const school = await db.orm.public.School.where((item) =>
+    item.id.eq(schoolId),
+  ).first();
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 2. Validate student
+   * ---------------------------------------------------------
+   */
+
+  const student = await db.orm.public.Student.where((item) =>
+    item.id.eq(studentId),
+  ).first();
+
+  if (
+    !student ||
+    student.schoolId !== schoolId ||
+    student.classId !== classId
+  ) {
+    throw new Error("Invalid student.");
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 3. Validate class
+   * ---------------------------------------------------------
+   */
+
+  const schoolClass = await db.orm.public.SchoolClass.where((item) =>
+    item.id.eq(classId),
+  ).first();
+
+  if (!schoolClass || schoolClass.schoolId !== schoolId) {
+    throw new Error("Invalid class.");
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 4. Validate term and school session
+   * ---------------------------------------------------------
+   */
+
+  const term = await db.orm.public.Term.where((item) =>
+    item.id.eq(termId),
+  ).first();
+
+  if (!term) {
+    throw new Error("Term not found.");
+  }
+
+  const academicSession = await db.orm.public.AcademicSession.where((item) =>
+    item.id.eq(term.sessionId),
+  ).first();
+
+  if (!academicSession || academicSession.schoolId !== schoolId) {
+    throw new Error("Invalid term.");
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 5. Get student's overall term result
+   * ---------------------------------------------------------
+   */
+
+  const allStudentTermResults = await db.orm.public.StudentTermResult.where(
+    (item) => item.studentId.eq(studentId),
+  ).all();
+
+  const studentTermResult =
+    allStudentTermResults.find(
+      (result) =>
+        result.schoolId === schoolId &&
+        result.classId === classId &&
+        result.termId === termId &&
+        result.reportType === reportType,
+    ) ?? null;
+
+  if (!studentTermResult) {
+    throw new Error("No completed term result exists for this student.");
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 6. Get class subjects
+   * ---------------------------------------------------------
+   */
+
+  const classSubjects = await db.orm.public.ClassSubject.where((item) =>
+    item.classId.eq(classId),
+  ).all();
+
+  /*
+   * ---------------------------------------------------------
+   * 7. Get school subjects
+   * ---------------------------------------------------------
+   */
+
+  const subjects = await db.orm.public.Subject.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  /*
+   * ---------------------------------------------------------
+   * 8. Get report configuration
+   * ---------------------------------------------------------
+   */
+
+  const configurations = await db.orm.public.ReportConfiguration.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  const reportConfiguration =
+    configurations.find(
+      (configuration) =>
+        configuration.reportType === reportType && configuration.isActive,
+    ) ?? null;
+
+  if (!reportConfiguration) {
+    throw new Error(
+      "No active report configuration exists for this report type.",
+    );
+  }
+
+  /*
+   * ---------------------------------------------------------
+   * 9. Get report components
+   * ---------------------------------------------------------
+   */
+
+  const reportComponents = await db.orm.public.ReportComponent.where((item) =>
+    item.configurationId.eq(reportConfiguration.id),
+  ).all();
+
+  const sortedReportComponents = [...reportComponents].sort(
+    (a, b) => a.displayOrder - b.displayOrder,
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * 10. Get student's subject results
+   * ---------------------------------------------------------
+   */
+
+  const allSubjectResults = await db.orm.public.SubjectResult.where((item) =>
+    item.studentId.eq(studentId),
+  ).all();
+
+  const subjectResults = allSubjectResults.filter(
+    (result) =>
+      result.schoolId === schoolId &&
+      result.classId === classId &&
+      result.termId === termId &&
+      result.reportType === reportType,
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * 11. Get component scores
+   * ---------------------------------------------------------
+   */
+
+  const allComponentScores = await db.orm.public.ResultComponentScore.all();
+
+  /*
+   * ---------------------------------------------------------
+   * 12. Build academic subject rows
+   * ---------------------------------------------------------
+   */
+
+  const academicResults = classSubjects
+    .map((classSubject) => {
+      const subject = subjects.find(
+        (item) => item.id === classSubject.subjectId,
+      );
+
+      const subjectResult = subjectResults.find(
+        (result) => result.subjectId === classSubject.subjectId,
+      );
+
+      if (!subject || !subjectResult) {
+        return null;
+      }
+
+      const componentScores = allComponentScores
+        .filter((score) => score.subjectResultId === subjectResult.id)
+        .map((score) => {
+          const component = sortedReportComponents.find(
+            (item) => item.id === score.componentId,
+          );
+
+          return {
+            componentId: score.componentId,
+            componentName: component?.name ?? "Component",
+            score: score.score,
+            maxScore: score.maxScore,
+            displayOrder: component?.displayOrder ?? 999,
+            isVisible: component?.isVisible ?? true,
+          };
+        })
+        .filter((component) => component.isVisible)
+        .sort((a, b) => a.displayOrder - b.displayOrder);
+
+      return {
+        subjectId: subject.id,
+        subjectName: subject.name,
+        subjectResultId: subjectResult.id,
+        components: componentScores,
+        totalScore: subjectResult.totalScore,
+        percentageScore: subjectResult.percentageScore,
+        grade: subjectResult.grade,
+        remark: subjectResult.remark,
+      };
+    })
+    .filter((result): result is NonNullable<typeof result> => result !== null);
+
+  /*
+   * ---------------------------------------------------------
+   * 13. Get class average
+   * ---------------------------------------------------------
+   */
+
+  const allClassTermResults = await db.orm.public.StudentTermResult.where(
+    (item) => item.schoolId.eq(schoolId),
+  ).all();
+
+  const classTermResults = allClassTermResults.filter(
+    (result) =>
+      result.classId === classId &&
+      result.termId === termId &&
+      result.reportType === reportType,
+  );
+
+  const classAverage =
+    classTermResults.length > 0
+      ? Math.round(
+          (classTermResults.reduce(
+            (total, result) => total + result.averageScore,
+            0,
+          ) /
+            classTermResults.length +
+            Number.EPSILON) *
+            100,
+        ) / 100
+      : null;
+
+  /*
+   * ---------------------------------------------------------
+   * 14. Get psychomotor data
+   * ---------------------------------------------------------
+   */
+
+  const psychomotorFields = await getActivePsychomotorFields(schoolId);
+
+  const psychomotorRatings = await getStudentPsychomotorRatings(
+    schoolId,
+    studentId,
+    termId,
+  );
+
+  const psychomotorRatingOptions =
+    await db.orm.public.PsychomotorRatingOption.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all();
+
+  const psychomotor = psychomotorFields.map((field) => {
+    const rating = psychomotorRatings.find((item) => item.fieldId === field.id);
+
+    const ratingOption = psychomotorRatingOptions.find(
+      (option) => option.id === rating?.ratingId,
+    );
+
+    return {
+      fieldId: field.id,
+      fieldName: field.name,
+      description: field.description,
+      ratingId: rating?.ratingId ?? null,
+      ratingLabel: ratingOption?.label ?? null,
+      ratingValue: ratingOption?.value ?? null,
+      comment: rating?.comment ?? null,
+    };
+  });
+
+  /*
+   * ---------------------------------------------------------
+   * 15. Get teacher and principal comments
+   * ---------------------------------------------------------
+   */
+
+  const reportComment = await getReportComment(
+    schoolId,
+    studentId,
+    termId,
+    reportType,
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * 16. Return complete report-card data
+   * ---------------------------------------------------------
+   */
+
+  return {
+    school,
+    academicSession,
+    term,
+    schoolClass,
+    student,
+
+    reportConfiguration: {
+      id: reportConfiguration.id,
+      name: reportConfiguration.name,
+      reportType: reportConfiguration.reportType,
+    },
+
+    academic: {
+      subjects: academicResults,
+      totalScore: studentTermResult.totalScore,
+      averageScore: studentTermResult.averageScore,
+      grade: studentTermResult.grade,
+      remark: studentTermResult.remark,
+      position: studentTermResult.position,
+      classSize: classTermResults.length,
+      classAverage,
+    },
+
+    psychomotor,
+
+    comments: {
+      teacherComment: reportComment?.teacherComment ?? null,
+      principalComment: reportComment?.principalComment ?? null,
+    },
+  };
+}
+
+============================================================
+FILE: .\src\lib\services\report-configuration.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+type ReportType = "MID_TERM" | "TERMINAL";
+type ReportComponentType = "ASSESSMENT" | "CALCULATED";
+type AssessmentType =
+  "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+type AssessmentAggregationType = "SUM" | "AVERAGE";
+
+interface CreateReportConfigurationInput {
+  schoolId: number;
+  reportType: ReportType;
+  name: string;
+}
+
+interface CreateReportComponentInput {
+  configurationId: number;
+  name: string;
+  type: ReportComponentType;
+  assessmentType?: AssessmentType;
+  aggregationType?: AssessmentAggregationType;
+  maxScore?: number;
+  weight?: number;
+  displayOrder: number;
+  isRequired?: boolean;
+  isVisible?: boolean;
+}
+
+interface UpdateReportComponentInput {
+  name?: string;
+  assessmentType?: AssessmentType | null;
+  aggregationType?: AssessmentAggregationType;
+  maxScore?: number | null;
+  weight?: number | null;
+  displayOrder?: number;
+  isRequired?: boolean;
+  isVisible?: boolean;
+}
+
+interface CreateComponentRuleInput {
+  componentId: number;
+  sourceComponentId: number;
+  weight: number;
+}
+
+async function getConfigurationById(configurationId: number) {
+  return db.orm.public.ReportConfiguration.where((configuration) =>
+    configuration.id.eq(configurationId),
+  ).first();
+}
+
+async function getComponentById(componentId: number) {
+  return db.orm.public.ReportComponent.where((component) =>
+    component.id.eq(componentId),
+  ).first();
+}
+
+async function validateConfigurationOwnership(
+  configurationId: number,
+  schoolId: number,
+) {
+  const configuration = await getConfigurationById(configurationId);
+
+  if (!configuration || configuration.schoolId !== schoolId) {
+    throw new Error("Invalid report configuration.");
+  }
+
+  return configuration;
+}
+
+async function validateComponentOwnership(
+  componentId: number,
+  schoolId: number,
+) {
+  const component = await getComponentById(componentId);
+
+  if (!component) {
+    throw new Error("Report component not found.");
+  }
+
+  const configuration = await getConfigurationById(component.configurationId);
+
+  if (!configuration || configuration.schoolId !== schoolId) {
+    throw new Error("Invalid report component.");
+  }
+
+  return {
+    component,
+    configuration,
+  };
+}
+
+function validatePositiveNumber(
+  value: number | undefined | null,
+  fieldName: string,
+) {
+  if (value !== undefined && value !== null) {
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new Error(`${fieldName} must be greater than zero.`);
+    }
+  }
+}
+
+function validateWeight(weight: number) {
+  if (!Number.isFinite(weight) || weight <= 0 || weight > 100) {
+    throw new Error("Weight must be greater than 0 and at most 100.");
+  }
+}
+
+/**
+ * Create the report configuration for a school.
+ */
+export async function createReportConfiguration(
+  input: CreateReportConfigurationInput,
+) {
+  const name = input.name.trim();
+
+  if (!name) {
+    throw new Error("Report configuration name is required.");
+  }
+
+  const existingConfigurations = await db.orm.public.ReportConfiguration.where(
+    (configuration) => configuration.schoolId.eq(input.schoolId),
+  ).all();
+
+  const alreadyExists = existingConfigurations.some(
+    (configuration) => configuration.reportType === input.reportType,
+  );
+
+  if (alreadyExists) {
+    throw new Error(
+      `A ${
+        input.reportType === "MID_TERM" ? "mid-term" : "terminal"
+      } report configuration already exists.`,
+    );
+  }
+
+  return db.orm.public.ReportConfiguration.create({
+    schoolId: input.schoolId,
+    reportType: input.reportType,
+    name,
+  });
+}
+
+/**
+ * Get a school's configuration for a specific report type.
+ */
+export async function getReportConfiguration(
+  schoolId: number,
+  reportType: ReportType,
+) {
+  const configurations = await db.orm.public.ReportConfiguration.where(
+    (configuration) => configuration.schoolId.eq(schoolId),
+  ).all();
+
+  return (
+    configurations.find(
+      (configuration) => configuration.reportType === reportType,
+    ) ?? null
+  );
+}
+
+/**
+ * Get all report configurations belonging to a school.
+ */
+export async function getReportConfigurations(schoolId: number) {
+  return db.orm.public.ReportConfiguration.where((configuration) =>
+    configuration.schoolId.eq(schoolId),
+  ).all();
+}
+
+/**
+ * Update a report configuration.
+ */
+export async function updateReportConfiguration(
+  schoolId: number,
+  configurationId: number,
+  input: {
+    name?: string;
+    isActive?: boolean;
+  },
+) {
+  const configuration = await validateConfigurationOwnership(
+    configurationId,
+    schoolId,
+  );
+
+  const nextName =
+    input.name !== undefined ? input.name.trim() : configuration.name;
+
+  if (!nextName) {
+    throw new Error("Report configuration name is required.");
+  }
+
+  return db.orm.public.ReportConfiguration.where((item) =>
+    item.id.eq(configurationId),
+  ).update({
+    name: nextName,
+    isActive: input.isActive ?? configuration.isActive,
+  });
+}
+
+/**
+ * Create a component inside a report configuration.
+ */
+export async function createReportComponent(
+  schoolId: number,
+  input: CreateReportComponentInput,
+) {
+  const configuration = await validateConfigurationOwnership(
+    input.configurationId,
+    schoolId,
+  );
+
+  const name = input.name.trim();
+
+  if (!name) {
+    throw new Error("Report component name is required.");
+  }
+
+  if (input.displayOrder < 1) {
+    throw new Error("Display order must be at least 1.");
+  }
+
+  validatePositiveNumber(input.maxScore, "Maximum score");
+  validatePositiveNumber(input.weight, "Weight");
+
+  if (input.type === "ASSESSMENT") {
+    if (!input.assessmentType) {
+      throw new Error(
+        "Assessment type is required for an assessment component.",
+      );
+    }
+  }
+
+  if (input.type === "CALCULATED") {
+    if (input.assessmentType) {
+      throw new Error(
+        "Assessment type cannot be set on a calculated component.",
+      );
+    }
+  }
+
+  const existingComponents = await db.orm.public.ReportComponent.where(
+    (component) => component.configurationId.eq(configuration.id),
+  ).all();
+
+  const duplicateName = existingComponents.some(
+    (component) => component.name.toLowerCase() === name.toLowerCase(),
+  );
+
+  if (duplicateName) {
+    throw new Error(
+      "A report component with this name already exists in this configuration.",
+    );
+  }
+
+  return db.orm.public.ReportComponent.create({
+    configurationId: configuration.id,
+    name,
+    type: input.type,
+    assessmentType: input.assessmentType ?? null,
+    aggregationType: input.aggregationType ?? "SUM",
+    maxScore: input.maxScore ?? null,
+    weight: input.weight ?? null,
+    displayOrder: input.displayOrder,
+    isRequired: input.isRequired ?? true,
+    isVisible: input.isVisible ?? true,
+  });
+}
+
+/**
+ * Get all components belonging to a school's report configuration.
+ */
+export async function getReportComponents(
+  schoolId: number,
+  configurationId: number,
+) {
+  await validateConfigurationOwnership(configurationId, schoolId);
+
+  const components = await db.orm.public.ReportComponent.where((component) =>
+    component.configurationId.eq(configurationId),
+  ).all();
+
+  return components.sort((a, b) => a.displayOrder - b.displayOrder);
+}
+
+/**
+ * Get a single report component.
+ */
+export async function getReportComponent(
+  schoolId: number,
+  componentId: number,
+) {
+  const { component } = await validateComponentOwnership(componentId, schoolId);
+
+  return component;
+}
+
+/**
+ * Update a report component.
+ */
+export async function updateReportComponent(
+  schoolId: number,
+  componentId: number,
+  input: UpdateReportComponentInput,
+) {
+  const { component, configuration } = await validateComponentOwnership(
+    componentId,
+    schoolId,
+  );
+
+  const nextName =
+    input.name !== undefined ? input.name.trim() : component.name;
+
+  if (!nextName) {
+    throw new Error("Report component name is required.");
+  }
+
+  if (input.displayOrder !== undefined && input.displayOrder < 1) {
+    throw new Error("Display order must be at least 1.");
+  }
+
+  const nextMaxScore =
+    input.maxScore !== undefined ? input.maxScore : component.maxScore;
+
+  const nextWeight =
+    input.weight !== undefined ? input.weight : component.weight;
+
+  validatePositiveNumber(nextMaxScore, "Maximum score");
+  validatePositiveNumber(nextWeight, "Weight");
+
+  if (component.type === "ASSESSMENT") {
+    const nextAssessmentType =
+      input.assessmentType !== undefined
+        ? input.assessmentType
+        : component.assessmentType;
+
+    if (!nextAssessmentType) {
+      throw new Error(
+        "Assessment type is required for an assessment component.",
+      );
+    }
+  }
+
+  if (component.type === "CALCULATED") {
+    if (input.assessmentType !== undefined && input.assessmentType !== null) {
+      throw new Error(
+        "Assessment type cannot be set on a calculated component.",
+      );
+    }
+  }
+
+  const existingComponents = await db.orm.public.ReportComponent.where(
+    (existingComponent) =>
+      existingComponent.configurationId.eq(configuration.id),
+  ).all();
+
+  const duplicateName = existingComponents.some(
+    (existingComponent) =>
+      existingComponent.id !== componentId &&
+      existingComponent.name.toLowerCase() === nextName.toLowerCase(),
+  );
+
+  if (duplicateName) {
+    throw new Error(
+      "A report component with this name already exists in this configuration.",
+    );
+  }
+
+  return db.orm.public.ReportComponent.where((reportComponent) =>
+    reportComponent.id.eq(componentId),
+  ).update({
+    name: nextName,
+    assessmentType:
+      input.assessmentType !== undefined
+        ? input.assessmentType
+        : component.assessmentType,
+    aggregationType: input.aggregationType ?? component.aggregationType,
+    maxScore: nextMaxScore,
+    weight: nextWeight,
+    displayOrder: input.displayOrder ?? component.displayOrder,
+    isRequired: input.isRequired ?? component.isRequired,
+    isVisible: input.isVisible ?? component.isVisible,
+  });
+}
+
+/**
+ * Delete a report component.
+ *
+ * Components that are used by calculation rules cannot be deleted.
+ */
+export async function deleteReportComponent(
+  schoolId: number,
+  componentId: number,
+) {
+  const { component } = await validateComponentOwnership(componentId, schoolId);
+
+  const rulesUsingComponent = await db.orm.public.ReportComponentRule.where(
+    (rule) => rule.sourceComponentId.eq(componentId),
+  ).all();
+
+  if (rulesUsingComponent.length > 0) {
+    throw new Error(
+      "This component is used by another calculated component and cannot be deleted.",
+    );
+  }
+
+  const resultScores = await db.orm.public.ResultComponentScore.where((score) =>
+    score.componentId.eq(componentId),
+  ).all();
+
+  if (resultScores.length > 0) {
+    throw new Error(
+      "This component already has result scores and cannot be deleted.",
+    );
+  }
+
+  const rulesOwnedByComponent = await db.orm.public.ReportComponentRule.where(
+    (rule) => rule.componentId.eq(componentId),
+  ).all();
+
+  for (const rule of rulesOwnedByComponent) {
+    await db.orm.public.ReportComponentRule.where((reportComponentRule) =>
+      reportComponentRule.id.eq(rule.id),
+    ).delete();
+  }
+
+  return db.orm.public.ReportComponent.where((reportComponent) =>
+    reportComponent.id.eq(component.id),
+  ).delete();
+}
+
+/**
+ * Add a calculation rule to a calculated component.
+ *
+ * The source component contributes the specified percentage
+ * to the calculated component.
+ */
+export async function addReportComponentRule(
+  schoolId: number,
+  input: CreateComponentRuleInput,
+) {
+  const { component, configuration } = await validateComponentOwnership(
+    input.componentId,
+    schoolId,
+  );
+
+  if (component.type !== "CALCULATED") {
+    throw new Error(
+      "Calculation rules can only be added to calculated components.",
+    );
+  }
+
+  if (input.componentId === input.sourceComponentId) {
+    throw new Error("A component cannot use itself as a calculation source.");
+  }
+
+  validateWeight(input.weight);
+
+  const { component: sourceComponent } = await validateComponentOwnership(
+    input.sourceComponentId,
+    schoolId,
+  );
+
+  const sourceConfiguration = await getConfigurationById(
+    sourceComponent.configurationId,
+  );
+
+  if (!sourceConfiguration || sourceConfiguration.id !== configuration.id) {
+    throw new Error(
+      "Source component must belong to the same report configuration.",
+    );
+  }
+
+  const existingRules = await db.orm.public.ReportComponentRule.where((rule) =>
+    rule.componentId.eq(input.componentId),
+  ).all();
+
+  const duplicateSource = existingRules.some(
+    (rule) => rule.sourceComponentId === input.sourceComponentId,
+  );
+
+  if (duplicateSource) {
+    throw new Error(
+      "This source component is already part of the calculation.",
+    );
+  }
+
+  const currentWeight = existingRules.reduce(
+    (total, rule) => total + (rule.weight ?? 0),
+    0,
+  );
+
+  const nextWeight = currentWeight + input.weight;
+
+  if (nextWeight > 100) {
+    throw new Error("Calculation rule weights cannot exceed 100%.");
+  }
+
+  return db.orm.public.ReportComponentRule.create({
+    componentId: input.componentId,
+    sourceComponentId: input.sourceComponentId,
+    weight: input.weight,
+  });
+}
+
+export async function updateReportComponentRule(
+  schoolId: number,
+  ruleId: number,
+  weight: number,
+) {
+  const rule = await db.orm.public.ReportComponentRule.where((item) =>
+    item.id.eq(ruleId),
+  ).first();
+
+  if (!rule) {
+    throw new Error("Calculation rule not found.");
+  }
+
+  const { component } = await validateComponentOwnership(
+    rule.componentId,
+    schoolId,
+  );
+
+  if (component.type !== "CALCULATED") {
+    throw new Error(
+      "Calculation rules can only be updated for calculated components.",
+    );
+  }
+
+  validateWeight(weight);
+
+  const existingRules = await db.orm.public.ReportComponentRule.where((item) =>
+    item.componentId.eq(rule.componentId),
+  ).all();
+
+  const currentWeight = existingRules.reduce(
+    (total, item) => total + (item.id === ruleId ? 0 : (item.weight ?? 0)),
+    0,
+  );
+
+  if (currentWeight + weight > 100) {
+    throw new Error("Calculation rule weights cannot exceed 100%.");
+  }
+
+  return db.orm.public.ReportComponentRule.where((item) =>
+    item.id.eq(ruleId),
+  ).update({
+    weight,
+  });
+}
+
+/**
+ * Get calculation rules belonging to a component.
+ */
+export async function getReportComponentRules(
+  schoolId: number,
+  componentId: number,
+) {
+  await validateComponentOwnership(componentId, schoolId);
+
+  return db.orm.public.ReportComponentRule.where((rule) =>
+    rule.componentId.eq(componentId),
+  ).all();
+}
+
+/**
+ * Remove a calculation rule.
+ */
+export async function deleteReportComponentRule(
+  schoolId: number,
+  ruleId: number,
+) {
+  const rule = await db.orm.public.ReportComponentRule.where((item) =>
+    item.id.eq(ruleId),
+  ).first();
+
+  if (!rule) {
+    throw new Error("Calculation rule not found.");
+  }
+
+  await validateComponentOwnership(rule.componentId, schoolId);
+
+  return db.orm.public.ReportComponentRule.where((reportComponentRule) =>
+    reportComponentRule.id.eq(rule.id),
+  ).delete();
+}
+
+/**
+ * Validate that a calculated component has a complete
+ * and valid set of calculation rules.
+ *
+ * This should be called before calculating student results.
+ */
+export async function validateCalculatedComponent(
+  schoolId: number,
+  componentId: number,
+) {
+  const { component } = await validateComponentOwnership(componentId, schoolId);
+
+  if (component.type !== "CALCULATED") {
+    throw new Error("Only calculated components require calculation rules.");
+  }
+
+  const rules = await db.orm.public.ReportComponentRule.where((rule) =>
+    rule.componentId.eq(componentId),
+  ).all();
+
+  if (rules.length === 0) {
+    throw new Error(
+      `Calculated component "${component.name}" must have at least one calculation rule.`,
+    );
+  }
+
+  const totalWeight = rules.reduce(
+    (total, rule) => total + (rule.weight ?? 0),
+    0,
+  );
+
+  if (Math.abs(totalWeight - 100) > 0.0001) {
+    throw new Error(
+      `Calculation rule weights for "${component.name}" must total 100%. Current total: ${totalWeight}%.`,
+    );
+  }
+
+  return true;
+}
+
+============================================================
+FILE: .\src\lib\services\teacher.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+type CreateTeacherData = {
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  email?: string;
+};
+
+export async function createTeacher(schoolId: number, data: CreateTeacherData) {
+  const existingTeachers = await db.orm.public.Teacher.where((teacher) =>
+    teacher.schoolId.eq(schoolId),
+  ).all();
+
+  const existingTeacher = existingTeachers.find(
+    (teacher) =>
+      teacher.employeeId.toLowerCase() === data.employeeId.toLowerCase(),
+  );
+
+  if (existingTeacher) {
+    throw new Error("A teacher with this employee ID already exists.");
+  }
+
+  const teacher = await db.orm.public.Teacher.create({
+    schoolId,
+    employeeId: data.employeeId,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    phone: data.phone || null,
+    email: data.email || null,
+  });
+
+  return teacher;
+}
+
+type UpdateTeacherData = {
+  employeeId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  email?: string;
+};
+
+export async function updateTeacher(
+  schoolId: number,
+  teacherId: number,
+  data: UpdateTeacherData,
+) {
+  const teacher = await db.orm.public.Teacher.where((teacher) =>
+    teacher.id.eq(teacherId),
+  ).first();
+
+  if (!teacher || teacher.schoolId !== schoolId) {
+    throw new Error("Teacher not found.");
+  }
+
+  const existingTeachers = await db.orm.public.Teacher.where((teacher) =>
+    teacher.schoolId.eq(schoolId),
+  ).all();
+
+  const duplicateTeacher = existingTeachers.find(
+    (existingTeacher) =>
+      existingTeacher.id !== teacherId &&
+      existingTeacher.employeeId.toLowerCase() ===
+        data.employeeId.toLowerCase(),
+  );
+
+  if (duplicateTeacher) {
+    throw new Error("A teacher with this employee ID already exists.");
+  }
+
+  return db.orm.public.Teacher.where((teacher) =>
+    teacher.id.eq(teacherId),
+  ).update({
+    employeeId: data.employeeId,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    phone: data.phone || null,
+    email: data.email || null,
+  });
+}
+
+============================================================
+FILE: .\src\lib\services\class.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+type CreateClassData = {
+  name: string;
+  level?: string;
+  description?: string;
+};
+
+export async function createClass(schoolId: number, data: CreateClassData) {
+  const existingClasses = await db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.schoolId.eq(schoolId),
+  ).all();
+
+  const existingClass = existingClasses.find(
+    (schoolClass) => schoolClass.name.toLowerCase() === data.name.toLowerCase(),
+  );
+
+  if (existingClass) {
+    throw new Error("A class with this name already exists.");
+  }
+
+  const schoolClass = await db.orm.public.SchoolClass.create({
+    schoolId,
+    name: data.name,
+    level: data.level || null,
+    description: data.description || null,
+  });
+
+  return schoolClass;
+}
+
+type UpdateClassData = {
+  name: string;
+  level?: string;
+  description?: string;
+};
+
+export async function updateClass(
+  schoolId: number,
+  classId: number,
+  data: UpdateClassData,
+) {
+  const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.id.eq(classId),
+  ).first();
+
+  if (!schoolClass || schoolClass.schoolId !== schoolId) {
+    throw new Error("Class not found.");
+  }
+
+  const existingClasses = await db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.schoolId.eq(schoolId),
+  ).all();
+
+  const duplicateClass = existingClasses.find(
+    (existingClass) =>
+      existingClass.id !== classId &&
+      existingClass.name.toLowerCase() === data.name.toLowerCase(),
+  );
+
+  if (duplicateClass) {
+    throw new Error("A class with this name already exists.");
+  }
+
+  return db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.id.eq(classId),
+  ).update({
+    name: data.name,
+    level: data.level || null,
+    description: data.description || null,
+  });
+}
+
+============================================================
+FILE: .\src\lib\services\student.service.ts
+============================================================
+import { db } from "@/prisma/db";
+import { deleteUploadedFile } from "@/lib/utils/file-upload";
+
+type CreateStudentData = {
+  admissionNumber: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  gender: "MALE" | "FEMALE";
+  dateOfBirth?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  classId?: number;
+};
+
+export async function createStudent(schoolId: number, data: CreateStudentData) {
+  const existingStudents = await db.orm.public.Student.where((student) =>
+    student.schoolId.eq(schoolId),
+  ).all();
+
+  const existingStudent = existingStudents.find(
+    (student) => student.admissionNumber === data.admissionNumber,
+  );
+
+  if (existingStudent) {
+    throw new Error("A student with this admission number already exists.");
+  }
+
+  const classId = data.classId;
+
+  if (classId !== undefined) {
+    const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
+      schoolClass.id.eq(classId),
+    ).first();
+
+    if (!schoolClass || schoolClass.schoolId !== schoolId) {
+      throw new Error("Invalid class.");
+    }
+  }
+
+  const student = await db.orm.public.Student.create({
+    schoolId,
+    admissionNumber: data.admissionNumber,
+    firstName: data.firstName,
+    middleName: data.middleName || null,
+    lastName: data.lastName,
+    gender: data.gender,
+    dateOfBirth: data.dateOfBirth
+      ? Temporal.Instant.from(`${data.dateOfBirth}T00:00:00Z`)
+      : null,
+    email: data.email || null,
+    phone: data.phone || null,
+    address: data.address || null,
+    classId: data.classId ?? null,
+  });
+
+  return student;
+}
+
+export async function updateStudent(
+  schoolId: number,
+  studentId: number,
+  data: {
+    admissionNumber: string;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    gender: "MALE" | "FEMALE";
+    dateOfBirth?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    classId?: string;
+  },
+) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  const duplicate = await db.orm.public.Student.where((student) =>
+    student.admissionNumber.eq(data.admissionNumber),
+  ).all();
+
+  const duplicateInSchool = duplicate.find(
+    (existingStudent) =>
+      existingStudent.schoolId === schoolId && existingStudent.id !== studentId,
+  );
+
+  if (duplicateInSchool) {
+    throw new Error("A student with this admission number already exists.");
+  }
+
+  let classId: number | null = null;
+
+  if (data.classId) {
+    classId = Number(data.classId);
+
+    if (!Number.isInteger(classId)) {
+      throw new Error("Invalid class.");
+    }
+
+    const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
+      schoolClass.id.eq(classId!),
+    ).first();
+
+    if (!schoolClass || schoolClass.schoolId !== schoolId) {
+      throw new Error("Invalid class.");
+    }
+  }
+
+  const dateOfBirth = data.dateOfBirth
+    ? globalThis.Temporal.Instant.from(`${data.dateOfBirth}T00:00:00Z`)
+    : null;
+
+  return db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).update({
+    admissionNumber: data.admissionNumber,
+    firstName: data.firstName,
+    middleName: data.middleName || null,
+    lastName: data.lastName,
+    gender: data.gender,
+    dateOfBirth,
+    email: data.email || null,
+    phone: data.phone || null,
+    address: data.address || null,
+    classId,
+  });
+}
+
+export async function updateStudentPhoto(
+  schoolId: number,
+  studentId: number,
+  photoUrl: string | null,
+) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  const oldPhotoUrl = student.photoUrl;
+
+  const updatedStudent = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).update({
+    photoUrl,
+  });
+
+  if (oldPhotoUrl && oldPhotoUrl !== photoUrl) {
+    // Delete the old file only after the database update succeeds.
+    await deleteUploadedFile(oldPhotoUrl, schoolId);
+  }
+
+  return updatedStudent;
+}
+
+============================================================
+FILE: .\src\lib\services\psychomotor.service.ts
+============================================================
+import { db } from "@/prisma/db";
+
+import type {
+  PsychomotorFieldInput,
+  PsychomotorRatingOptionInput,
+  StudentPsychomotorRatingInput,
+} from "@/lib/validation/psychomotor";
+
+/**
+ * ---------------------------------------------------------------------------
+ * Psychomotor Fields
+ * ---------------------------------------------------------------------------
+ */
+
+export async function getPsychomotorFields(schoolId: number) {
+  const fields = await db.orm.public.PsychomotorField.where((field) =>
+    field.schoolId.eq(schoolId),
+  ).all();
+
+  return fields.sort((a, b) => {
+    if (a.displayOrder !== b.displayOrder) {
+      return a.displayOrder - b.displayOrder;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
+}
+
+export async function getActivePsychomotorFields(schoolId: number) {
+  const fields = await getPsychomotorFields(schoolId);
+
+  return fields.filter((field) => field.isActive);
+}
+
+export async function getPsychomotorField(schoolId: number, fieldId: number) {
+  const field = await db.orm.public.PsychomotorField.where((field) =>
+    field.id.eq(fieldId),
+  ).first();
+
+  if (!field || field.schoolId !== schoolId) {
+    return null;
+  }
+
+  return field;
+}
+
+export async function createPsychomotorField(
+  schoolId: number,
+  input: PsychomotorFieldInput,
+) {
+  const existingFields = await getPsychomotorFields(schoolId);
+
+  const duplicate = existingFields.some(
+    (field) =>
+      field.name.trim().toLowerCase() === input.name.trim().toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error("A psychomotor field with this name already exists.");
+  }
+
+  return db.orm.public.PsychomotorField.create({
+    schoolId,
+    name: input.name.trim(),
+    description: input.description?.trim() || null,
+    displayOrder: input.displayOrder,
+    isActive: input.isActive ?? true,
+  });
+}
+
+export async function updatePsychomotorField(
+  schoolId: number,
+  fieldId: number,
+  input: PsychomotorFieldInput,
+) {
+  const field = await getPsychomotorField(schoolId, fieldId);
+
+  if (!field) {
+    throw new Error("Psychomotor field not found.");
+  }
+
+  const existingFields = await getPsychomotorFields(schoolId);
+
+  const duplicate = existingFields.some(
+    (item) =>
+      item.id !== fieldId &&
+      item.name.trim().toLowerCase() === input.name.trim().toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error("A psychomotor field with this name already exists.");
+  }
+
+  return db.orm.public.PsychomotorField.where((item) =>
+    item.id.eq(fieldId),
+  ).update({
+    name: input.name.trim(),
+    description: input.description?.trim() || null,
+    displayOrder: input.displayOrder,
+    isActive: input.isActive ?? true,
+  });
+}
+
+export async function deletePsychomotorField(
+  schoolId: number,
+  fieldId: number,
+) {
+  const field = await getPsychomotorField(schoolId, fieldId);
+
+  if (!field) {
+    throw new Error("Psychomotor field not found.");
+  }
+
+  const ratings = await db.orm.public.StudentPsychomotorRating.where((rating) =>
+    rating.fieldId.eq(fieldId),
+  ).all();
+
+  const schoolRatings = ratings.filter(
+    (rating) => rating.schoolId === schoolId,
+  );
+
+  if (schoolRatings.length > 0) {
+    throw new Error(
+      "This psychomotor field has student ratings and cannot be deleted. Deactivate it instead.",
+    );
+  }
+
+  return db.orm.public.PsychomotorField.where((item) =>
+    item.id.eq(fieldId),
+  ).delete();
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * Rating Options
+ * ---------------------------------------------------------------------------
+ */
+
+export async function getPsychomotorRatingOptions(schoolId: number) {
+  const options = await db.orm.public.PsychomotorRatingOption.where((option) =>
+    option.schoolId.eq(schoolId),
+  ).all();
+
+  return options.sort((a, b) => {
+    if (a.displayOrder !== b.displayOrder) {
+      return a.displayOrder - b.displayOrder;
+    }
+
+    return a.value.localeCompare(b.value);
+  });
+}
+
+export async function getActivePsychomotorRatingOptions(schoolId: number) {
+  const options = await getPsychomotorRatingOptions(schoolId);
+
+  return options.filter((option) => option.isActive);
+}
+
+export async function getPsychomotorRatingOption(
+  schoolId: number,
+  ratingId: number,
+) {
+  const option = await db.orm.public.PsychomotorRatingOption.where((rating) =>
+    rating.id.eq(ratingId),
+  ).first();
+
+  if (!option || option.schoolId !== schoolId) {
+    return null;
+  }
+
+  return option;
+}
+
+export async function createPsychomotorRatingOption(
+  schoolId: number,
+  input: PsychomotorRatingOptionInput,
+) {
+  const options = await getPsychomotorRatingOptions(schoolId);
+
+  const duplicate = options.some(
+    (option) =>
+      option.value.trim().toLowerCase() === input.value.trim().toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error("A rating option with this value already exists.");
+  }
+
+  return db.orm.public.PsychomotorRatingOption.create({
+    schoolId,
+    label: input.label.trim(),
+    value: input.value.trim(),
+    displayOrder: input.displayOrder,
+    isActive: input.isActive ?? true,
+  });
+}
+
+export async function updatePsychomotorRatingOption(
+  schoolId: number,
+  ratingId: number,
+  input: PsychomotorRatingOptionInput,
+) {
+  const option = await getPsychomotorRatingOption(schoolId, ratingId);
+
+  if (!option) {
+    throw new Error("Psychomotor rating option not found.");
+  }
+
+  const options = await getPsychomotorRatingOptions(schoolId);
+
+  const duplicate = options.some(
+    (item) =>
+      item.id !== ratingId &&
+      item.value.trim().toLowerCase() === input.value.trim().toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error("A rating option with this value already exists.");
+  }
+
+  return db.orm.public.PsychomotorRatingOption.where((item) =>
+    item.id.eq(ratingId),
+  ).update({
+    label: input.label.trim(),
+    value: input.value.trim(),
+    displayOrder: input.displayOrder,
+    isActive: input.isActive ?? true,
+  });
+}
+
+export async function deletePsychomotorRatingOption(
+  schoolId: number,
+  ratingId: number,
+) {
+  const option = await getPsychomotorRatingOption(schoolId, ratingId);
+
+  if (!option) {
+    throw new Error("Psychomotor rating option not found.");
+  }
+
+  const ratings = await db.orm.public.StudentPsychomotorRating.where((rating) =>
+    rating.ratingId.eq(ratingId),
+  ).all();
+
+  const schoolRatings = ratings.filter(
+    (rating) => rating.schoolId === schoolId,
+  );
+
+  if (schoolRatings.length > 0) {
+    throw new Error(
+      "This rating option has been used by students and cannot be deleted. Deactivate it instead.",
+    );
+  }
+
+  return db.orm.public.PsychomotorRatingOption.where((item) =>
+    item.id.eq(ratingId),
+  ).delete();
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * Student Ratings
+ * ---------------------------------------------------------------------------
+ */
+
+export async function getStudentPsychomotorRatings(
+  schoolId: number,
+  studentId: number,
+  termId: number,
+) {
+  const ratings = await db.orm.public.StudentPsychomotorRating.where((rating) =>
+    rating.studentId.eq(studentId),
+  ).all();
+
+  return ratings.filter(
+    (rating) => rating.schoolId === schoolId && rating.termId === termId,
+  );
+}
+
+export async function getStudentPsychomotorRating(
+  schoolId: number,
+  studentId: number,
+  termId: number,
+  fieldId: number,
+) {
+  const ratings = await getStudentPsychomotorRatings(
+    schoolId,
+    studentId,
+    termId,
+  );
+
+  return ratings.find((rating) => rating.fieldId === fieldId) ?? null;
+}
+
+export async function saveStudentPsychomotorRating(
+  schoolId: number,
+  input: StudentPsychomotorRatingInput,
+) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(input.studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  const field = await getPsychomotorField(schoolId, input.fieldId);
+
+  if (!field) {
+    throw new Error("Psychomotor field not found.");
+  }
+
+  const ratingOption = await getPsychomotorRatingOption(
+    schoolId,
+    input.ratingId,
+  );
+
+  if (!ratingOption) {
+    throw new Error("Psychomotor rating option not found.");
+  }
+
+  const existingRatings = await getStudentPsychomotorRatings(
+    schoolId,
+    input.studentId,
+    input.termId,
+  );
+
+  const existing = existingRatings.find(
+    (rating) => rating.fieldId === input.fieldId,
+  );
+
+  if (existing) {
+    return db.orm.public.StudentPsychomotorRating.where((rating) =>
+      rating.id.eq(existing.id),
+    ).update({
+      ratingId: input.ratingId,
+      comment: input.comment?.trim() || null,
+    });
+  }
+
+  return db.orm.public.StudentPsychomotorRating.create({
+    schoolId,
+    studentId: input.studentId,
+    termId: input.termId,
+    fieldId: input.fieldId,
+    ratingId: input.ratingId,
+    comment: input.comment?.trim() || null,
+  });
+}
+
+export async function deleteStudentPsychomotorRating(
+  schoolId: number,
+  ratingId: number,
+) {
+  const rating = await db.orm.public.StudentPsychomotorRating.where((item) =>
+    item.id.eq(ratingId),
+  ).first();
+
+  if (!rating || rating.schoolId !== schoolId) {
+    throw new Error("Student psychomotor rating not found.");
+  }
+
+  return db.orm.public.StudentPsychomotorRating.where((item) =>
+    item.id.eq(ratingId),
+  ).delete();
+}
+
+============================================================
+FILE: .\src\lib\utils\file-upload.ts
+============================================================
+import { mkdir, unlink, writeFile } from "fs/promises";
+import path from "path";
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
+const ALLOWED_IMAGE_TYPES = new Map<string, string>([
+  ["image/jpeg", "jpg"],
+  ["image/png", "png"],
+  ["image/webp", "webp"],
+]);
+
+export async function saveStudentPhoto(
+  file: File,
+  schoolId: number,
+  studentId: number,
+) {
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Please select a passport photograph.");
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("Passport photograph must not exceed 2 MB.");
+  }
+
+  const extension = ALLOWED_IMAGE_TYPES.get(file.type);
+
+  if (!extension) {
+    throw new Error(
+      "Invalid passport photograph. Please upload JPG, PNG, or WEBP.",
+    );
+  }
+
+  const uploadDirectory = path.join(
+    process.cwd(),
+    "public",
+    "uploads",
+    "students",
+    String(schoolId),
+  );
+
+  await mkdir(uploadDirectory, { recursive: true });
+
+  const fileName = `${studentId}-${Date.now()}.${extension}`;
+
+  const filePath = path.join(uploadDirectory, fileName);
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  await writeFile(filePath, buffer);
+
+  return `/uploads/students/${schoolId}/${fileName}`;
+}
+
+export async function deleteUploadedFile(
+  fileUrl?: string | null,
+  schoolId?: number,
+) {
+  if (!fileUrl || !schoolId) {
+    return;
+  }
+
+  const uploadRoot = path.resolve(
+    process.cwd(),
+    "public",
+    "uploads",
+    "students",
+    String(schoolId),
+  );
+
+  const normalizedUrl = fileUrl.replace(/^\/+/, "");
+
+  const expectedPrefix = `uploads/students/${schoolId}/`;
+
+  if (!normalizedUrl.startsWith(expectedPrefix)) {
+    console.warn("Skipped deletion of unsafe student photo path:", fileUrl);
+    return;
+  }
+
+  const fileName = path.basename(normalizedUrl);
+
+  if (!fileName || fileName === "." || fileName === "..") {
+    console.warn("Skipped deletion of invalid student photo path:", fileUrl);
+    return;
+  }
+
+  const filePath = path.resolve(uploadRoot, fileName);
+
+  const relativePath = path.relative(uploadRoot, filePath);
+
+  if (
+    relativePath.startsWith("..") ||
+    path.isAbsolute(relativePath) ||
+    relativePath !== fileName
+  ) {
+    console.warn("Skipped deletion of unsafe student photo path:", fileUrl);
+    return;
+  }
+
+  try {
+    await unlink(filePath);
+  } catch (error) {
+    const err = error as NodeJS.ErrnoException;
+
+    if (err.code !== "ENOENT") {
+      console.warn("Could not delete student photo:", {
+        fileUrl,
+        error: err.message,
+      });
+    }
+  }
+}
+
+============================================================
+FILE: .\src\app\school\settings\page.tsx
+============================================================
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import Link from "next/link";
+
+import { requireRole } from "@/lib/auth/authorization";
+import { updateSchool } from "@/lib/services/school.service";
+import { db } from "@/prisma/db";
+import SchoolBrandingForm from "@/app/school/settings/components/school-branding-form";
+
+const updateSchoolSchema = z.object({
+  name: z.string().trim().min(2).max(150),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  address: z.string().trim().max(250).optional().or(z.literal("")),
+  city: z.string().trim().max(100).optional().or(z.literal("")),
+  state: z.string().trim().max(100).optional().or(z.literal("")),
+  country: z.string().trim().min(2).max(100),
+
+  logoUrl: z.string().trim().url().optional().or(z.literal("")),
+  faviconUrl: z.string().trim().url().optional().or(z.literal("")),
+  motto: z.string().trim().max(200).optional().or(z.literal("")),
+
+  primaryColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  secondaryColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  accentColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Enter a valid hex color.")
+    .optional()
+    .or(z.literal("")),
+
+  website: z.string().trim().url().optional().or(z.literal("")),
+  principalName: z.string().trim().max(150).optional().or(z.literal("")),
+  principalTitle: z.string().trim().max(100).optional().or(z.literal("")),
+  stampUrl: z.string().trim().url().optional().or(z.literal("")),
+});
+
+export default async function SchoolSettingsPage() {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    throw new Error("School context is required.");
+  }
+
+  const school = await db.orm.public.School.where((school) =>
+    school.id.eq(schoolId),
+  ).first();
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  async function updateSchoolAction(formData: FormData) {
+    "use server";
+
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      throw new Error("School context is required.");
+    }
+
+    const result = updateSchoolSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+      city: formData.get("city"),
+      state: formData.get("state"),
+      country: formData.get("country"),
+
+      logoUrl: formData.get("logoUrl"),
+      faviconUrl: formData.get("faviconUrl"),
+      motto: formData.get("motto"),
+      primaryColor: formData.get("primaryColor"),
+      secondaryColor: formData.get("secondaryColor"),
+      accentColor: formData.get("accentColor"),
+      website: formData.get("website"),
+      principalName: formData.get("principalName"),
+      principalTitle: formData.get("principalTitle"),
+      stampUrl: formData.get("stampUrl"),
+    });
+
+    if (!result.success) {
+      throw new Error(
+        result.error.issues[0]?.message || "Invalid school information.",
+      );
+    }
+
+    await updateSchool(schoolId, result.data);
+
+    redirect("/school/settings");
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-5xl space-y-6 px-2 sm:px-4">
+      {/* Page heading */}
+      <div>
+        <p className="text-sm font-semibold text-blue-600">
+          School Administration
+        </p>
+
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          School Settings
+        </h1>
+
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Grading Scale
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-600">
+                Configure the grades, score ranges, and remarks used when
+                calculating student results.
+              </p>
+            </div>
+
+            <Link
+              href="/school/settings/grading"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Manage Grading Scale
+            </Link>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Psychomotor & Behaviour
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-600">
+                Configure the behaviour and psychomotor fields and rating
+                options used on student report cards.
+              </p>
+            </div>
+
+            <Link
+              href="/school/settings/psychomotor"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Manage Psychomotor
+            </Link>
+          </div>
+        </div>
+
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Manage your school's basic information and contact details.
+        </p>
+      </div>
+
+      {/* School information */}
+      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-6 py-5 sm:px-8">
+          <h2 className="font-semibold text-slate-900">School Information</h2>
+
+          <p className="mt-1 text-sm text-slate-600">
+            Update the information displayed throughout the school portal.
+          </p>
+        </div>
+
+        <form action={updateSchoolAction} className="p-6 sm:p-8">
+          <div className="space-y-8">
+            {/* Basic information */}
+            <section>
+              <div className="mb-5">
+                <h3 className="text-base font-semibold text-slate-900">
+                  Basic Information
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-600">
+                  Your school's name and primary contact information.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
+                  >
+                    School Name <span className="text-red-500">*</span>
+                  </label>
+
+                  <input
+                    id="name"
+                    name="name"
+                    defaultValue={school.name}
+                    required
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                      Email
+                    </label>
+
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      defaultValue={school.email ?? ""}
+                      placeholder="school@example.com"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="phone"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                      Phone
+                    </label>
+
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      defaultValue={school.phone ?? ""}
+                      placeholder="08012345678"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Address */}
+            <section className="border-t border-slate-200 pt-8">
+              <div className="mb-5">
+                <h3 className="text-base font-semibold text-slate-900">
+                  School Address
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-600">
+                  Enter the school's physical location.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="address"
+                    className="mb-2 block text-sm font-semibold text-slate-700"
+                  >
+                    Address
+                  </label>
+
+                  <textarea
+                    id="address"
+                    name="address"
+                    defaultValue={school.address ?? ""}
+                    rows={4}
+                    placeholder="School's physical address"
+                    className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-3">
+                  <div>
+                    <label
+                      htmlFor="city"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                      City
+                    </label>
+
+                    <input
+                      id="city"
+                      name="city"
+                      defaultValue={school.city ?? ""}
+                      placeholder="e.g. Lagos"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="state"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                      State
+                    </label>
+
+                    <input
+                      id="state"
+                      name="state"
+                      defaultValue={school.state ?? ""}
+                      placeholder="e.g. Lagos"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="country"
+                      className="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                      Country <span className="text-red-500">*</span>
+                    </label>
+
+                    <input
+                      id="country"
+                      name="country"
+                      defaultValue={school.country}
+                      required
+                      placeholder="e.g. Nigeria"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+          <SchoolBrandingForm
+            motto={school.motto ?? ""}
+            logoUrl={school.logoUrl ?? ""}
+            faviconUrl={school.faviconUrl ?? ""}
+            primaryColor={school.primaryColor ?? ""}
+            secondaryColor={school.secondaryColor ?? ""}
+            accentColor={school.accentColor ?? ""}
+            website={school.website ?? ""}
+            principalName={school.principalName ?? ""}
+            principalTitle={school.principalTitle ?? ""}
+            stampUrl={school.stampUrl ?? ""}
+          />
+
+          {/* Actions */}
+          <div className="mt-8 flex justify-end border-t border-slate-200 pt-6">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}
+
+============================================================
+FILE: .\src\app\school\results\report-card\page.tsx
+============================================================
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { db } from "@/prisma/db";
+import { requireRole } from "@/lib/auth/authorization";
+import { getStudentReportCardData } from "@/lib/services/report-card.service";
+import PrintButton from "./print-button";
+
+type SearchParams = {
+  sessionId?: string;
+  termId?: string;
+  classId?: string;
+  studentId?: string;
+};
+
+type ReportCardPageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function ReportCardPage({
+  searchParams,
+}: ReportCardPageProps) {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    redirect("/school/results");
+  }
+
+  const params = await searchParams;
+
+  const [sessions, classes] = await Promise.all([
+    db.orm.public.AcademicSession.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all(),
+
+    db.orm.public.SchoolClass.where((item) => item.schoolId.eq(schoolId)).all(),
+  ]);
+
+  const sortedSessions = [...sessions].sort((a, b) =>
+    b.startDate.toString().localeCompare(a.startDate.toString()),
+  );
+
+  const selectedSessionId = Number(params.sessionId) || sortedSessions[0]?.id;
+
+  const terms = selectedSessionId
+    ? await db.orm.public.Term.where((item) =>
+        item.sessionId.eq(selectedSessionId),
+      ).all()
+    : [];
+
+  const selectedTermId = Number(params.termId) || terms[0]?.id;
+
+  const sortedClasses = [...classes].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  const selectedClassId = Number(params.classId) || sortedClasses[0]?.id;
+
+  const students = selectedClassId
+    ? await db.orm.public.Student.where((item) =>
+        item.schoolId.eq(schoolId),
+      ).all()
+    : [];
+
+  const classStudents = students
+    .filter((student) => student.classId === selectedClassId)
+    .sort((a, b) => a.lastName.localeCompare(b.lastName));
+
+  const selectedStudentId = Number(params.studentId) || classStudents[0]?.id;
+
+  const selectedStudent = classStudents.find(
+    (student) => student.id === selectedStudentId,
+  );
+
+  let reportCardData = null;
+
+  if (selectedStudent && selectedTermId && selectedClassId) {
+    try {
+      reportCardData = await getStudentReportCardData(
+        schoolId,
+        selectedStudent.id,
+        selectedClassId,
+        selectedTermId,
+        "TERMINAL",
+      );
+    } catch {
+      reportCardData = null;
+    }
+  }
+
+  /*
+   * Load the school's active grading scale so the report card displays
+   * the actual configured grading key rather than hard-coded values.
+   */
+  const gradeScales = await db.orm.public.GradeScale.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  const activeGradeScales = [...gradeScales]
+    .filter((scale) => scale.isActive)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  const school = reportCardData?.school;
+  const student = reportCardData?.student;
+  const academic = reportCardData?.academic;
+
+  const classSize = classStudents.length;
+
+  const primaryColor = school?.primaryColor || "#1e3a8a";
+
+  const secondaryColor = school?.secondaryColor || "#334155";
+
+  const accentColor = school?.accentColor || primaryColor;
+
+  const academicSubjects = academic?.subjects ?? [];
+
+  /*
+   * Keep the report table dynamic based on the configured report
+   * components. The current school configuration contains CA and EXAM.
+   */
+  const reportComponents = academicSubjects[0]?.components ?? [];
+
+  const caComponent = reportComponents.find(
+    (component) =>
+      component.componentName.toLowerCase().includes("continuous") ||
+      component.componentName.toLowerCase() === "ca" ||
+      component.componentName.toLowerCase().includes("ca"),
+  );
+
+  const examComponent = reportComponents.find(
+    (component) =>
+      component.componentName.toLowerCase().includes("exam") ||
+      component.componentName.toLowerCase().includes("examination"),
+  );
+
+  const otherComponents = reportComponents.filter(
+    (component) =>
+      component.componentId !== caComponent?.componentId &&
+      component.componentId !== examComponent?.componentId,
+  );
+
+  const selectedTerm = terms.find((term) => term.id === selectedTermId);
+
+  const selectedClass = sortedClasses.find(
+    (schoolClass) => schoolClass.id === selectedClassId,
+  );
+
+  return (
+    <>
+      <style>{`
+        @page {
+          size: A4 portrait;
+          margin: 10mm;
+        }
+
+        @media print {
+          html,
+          body {
+            background: #ffffff !important;
+          }
+
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .print-hidden {
+            display: none !important;
+          }
+
+          .report-page-wrapper {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .report-sheet {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+
+          .report-section {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+
+          table {
+            break-inside: auto;
+            page-break-inside: auto;
+          }
+
+          tr {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+
+          .signature-section {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+        }
+
+        @media screen {
+          .report-page-wrapper {
+            background: #f1f5f9;
+            padding: 2rem;
+          }
+
+          .report-sheet {
+            max-width: 794px;
+            margin: 0 auto;
+          }
+        }
+      `}</style>
+
+      <div className="report-page-wrapper min-h-screen">
+        {/* ================================
+            SCREEN-ONLY CONTROLS
+        ================================= */}
+        <div className="print-hidden mx-auto mb-6 max-w-5xl">
+          <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-blue-600">
+                Academic Management
+              </p>
+
+              <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+                Terminal Report Card
+              </h1>
+
+              <p className="mt-1 text-sm text-slate-600">
+                Select a student and print or save the report as PDF.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/school/results"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Back to Results
+              </Link>
+
+              <Link
+                href="/school/results/report-card/comments"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Report Comments
+              </Link>
+
+              {reportCardData && (
+                <div
+                  style={{
+                    backgroundColor: primaryColor,
+                  }}
+                  className="inline-flex overflow-hidden rounded-lg"
+                >
+                  <PrintButton />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Student selector */}
+          <form
+            method="GET"
+            className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="sessionId"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Academic Session
+                </label>
+
+                <select
+                  id="sessionId"
+                  name="sessionId"
+                  defaultValue={selectedSessionId ?? ""}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {sortedSessions.map((academicSession) => (
+                    <option key={academicSession.id} value={academicSession.id}>
+                      {academicSession.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="termId"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Term
+                </label>
+
+                <select
+                  id="termId"
+                  name="termId"
+                  defaultValue={selectedTermId ?? ""}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {terms.map((term) => (
+                    <option key={term.id} value={term.id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="classId"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Class
+                </label>
+
+                <select
+                  id="classId"
+                  name="classId"
+                  defaultValue={selectedClassId ?? ""}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {sortedClasses.map((schoolClass) => (
+                    <option key={schoolClass.id} value={schoolClass.id}>
+                      {schoolClass.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="studentId"
+                  className="text-sm font-medium text-slate-700"
+                >
+                  Student
+                </label>
+
+                <select
+                  key={`student-selector-${selectedStudentId}`}
+                  id="studentId"
+                  name="studentId"
+                  defaultValue={selectedStudentId ?? ""}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {classStudents.map((classStudent) => (
+                    <option key={classStudent.id} value={classStudent.id}>
+                      {classStudent.firstName} {classStudent.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="submit"
+                className="rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Load Report Card
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* ================================
+            REPORT SHEET
+        ================================= */}
+        {selectedStudent &&
+        selectedTermId &&
+        selectedClassId &&
+        reportCardData &&
+        school &&
+        student &&
+        academic ? (
+          <main
+            className="report-sheet overflow-hidden border border-slate-300 bg-white text-slate-900 shadow-xl"
+            style={{
+              borderTopWidth: "6px",
+              borderTopColor: primaryColor,
+            }}
+          >
+            {/* ================================
+                SCHOOL HEADER
+            ================================= */}
+            <section
+              className="report-section border-b-2 px-7 py-6"
+              style={{
+                borderBottomColor: primaryColor,
+              }}
+            >
+              <div className="grid grid-cols-[90px_1fr_90px] items-center gap-4">
+                {/* School Logo */}
+                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1">
+                  {school.logoUrl ? (
+                    <img
+                      src={school.logoUrl}
+                      alt={`${school.name} logo`}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <div
+                      className="flex h-full w-full items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{
+                        backgroundColor: primaryColor,
+                      }}
+                    >
+                      LOGO
+                    </div>
+                  )}
+                </div>
+
+                {/* School Identity */}
+                <div className="text-center">
+                  <p
+                    className="text-xs font-bold uppercase tracking-[0.2em]"
+                    style={{ color: secondaryColor }}
+                  >
+                    Official School Report
+                  </p>
+
+                  <h1
+                    className="mt-1 text-2xl font-black uppercase tracking-tight sm:text-3xl"
+                    style={{ color: primaryColor }}
+                  >
+                    {school.name}
+                  </h1>
+
+                  {school.motto && (
+                    <p className="mt-1 text-sm font-semibold italic text-slate-600">
+                      "{school.motto}"
+                    </p>
+                  )}
+
+                  <div className="mt-2 space-y-0.5 text-xs text-slate-600">
+                    {school.address && <p>{school.address}</p>}
+
+                    {(school.city || school.state || school.country) && (
+                      <p>
+                        {[school.city, school.state, school.country]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </p>
+                    )}
+
+                    {school.phone && (
+                      <p>
+                        Tel: <span className="font-medium">{school.phone}</span>
+                      </p>
+                    )}
+
+                    {school.website && <p>{school.website}</p>}
+                  </div>
+                </div>
+
+                {/* Student Passport */}
+                <div className="flex justify-end">
+                  <div className="h-24 w-20 overflow-hidden border-2 border-slate-400 bg-slate-100">
+                    {student.photoUrl ? (
+                      <img
+                        src={student.photoUrl}
+                        alt={`${student.firstName} ${student.lastName}`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center px-2 text-center text-[10px] font-medium text-slate-500">
+                        PASSPORT
+                        <br />
+                        PHOTO
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="mx-auto mt-5 w-fit border-y-2 px-8 py-2 text-center"
+                style={{
+                  borderColor: primaryColor,
+                }}
+              >
+                <h2
+                  className="text-lg font-black uppercase tracking-[0.12em]"
+                  style={{ color: primaryColor }}
+                >
+                  Terminal Report Sheet
+                </h2>
+
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  Academic Performance Report
+                </p>
+              </div>
+            </section>
+
+            {/* ================================
+                STUDENT INFORMATION
+            ================================= */}
+            <section className="report-section px-7 py-5">
+              <div className="grid grid-cols-2 border border-slate-300 text-sm sm:grid-cols-3 lg:grid-cols-6">
+                <div className="border-b border-r border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Student Name
+                  </p>
+                  <p className="mt-1 font-bold">
+                    {student.firstName}{" "}
+                    {student.middleName ? `${student.middleName} ` : ""}
+                    {student.lastName}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Admission No.
+                  </p>
+                  <p className="mt-1 font-bold">{student.admissionNumber}</p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Class
+                  </p>
+                  <p className="mt-1 font-bold">{selectedClass?.name ?? "—"}</p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Session
+                  </p>
+                  <p className="mt-1 font-bold">
+                    {reportCardData.academicSession?.name ?? selectedSessionId}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Term
+                  </p>
+                  <p className="mt-1 font-bold">
+                    {reportCardData.term?.name ?? selectedTerm?.name ?? "—"}
+                  </p>
+                </div>
+
+                <div className="border-b border-slate-300 p-3">
+                  <p className="text-[10px] font-bold uppercase text-slate-500">
+                    Gender
+                  </p>
+                  <p className="mt-1 font-bold">{student.gender}</p>
+                </div>
+              </div>
+            </section>
+
+            {/* ================================
+                ACADEMIC PERFORMANCE
+            ================================= */}
+            <section className="report-section px-7">
+              <div className="mb-3 flex items-center justify-between">
+                <h3
+                  className="text-sm font-black uppercase tracking-wide"
+                  style={{ color: primaryColor }}
+                >
+                  Academic Performance
+                </h3>
+
+                <span className="text-[10px] font-semibold uppercase text-slate-500">
+                  Terminal Assessment
+                </span>
+              </div>
+
+              <div className="overflow-hidden border border-slate-400">
+                <table className="w-full border-collapse text-[11px]">
+                  <thead>
+                    <tr
+                      className="text-white"
+                      style={{
+                        backgroundColor: primaryColor,
+                      }}
+                    >
+                      <th className="border border-slate-400 px-2 py-2 text-left">
+                        Subject
+                      </th>
+
+                      <th className="w-16 border border-slate-400 px-2 py-2 text-center">
+                        CA
+                      </th>
+
+                      <th className="w-20 border border-slate-400 px-2 py-2 text-center">
+                        Examination
+                      </th>
+
+                      {otherComponents.map((component) => (
+                        <th
+                          key={component.componentId}
+                          className="border border-slate-400 px-2 py-2 text-center"
+                        >
+                          {component.componentName}
+                        </th>
+                      ))}
+
+                      <th className="w-16 border border-slate-400 px-2 py-2 text-center">
+                        Total
+                      </th>
+
+                      <th className="w-14 border border-slate-400 px-2 py-2 text-center">
+                        Grade
+                      </th>
+
+                      <th className="border border-slate-400 px-2 py-2 text-left">
+                        Remark
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {academicSubjects.map((subject) => {
+                      const caScore = caComponent
+                        ? subject.components.find(
+                            (component) =>
+                              component.componentId === caComponent.componentId,
+                          )
+                        : undefined;
+
+                      const examScore = examComponent
+                        ? subject.components.find(
+                            (component) =>
+                              component.componentId ===
+                              examComponent.componentId,
+                          )
+                        : undefined;
+
+                      return (
+                        <tr
+                          key={subject.subjectId}
+                          className="break-inside-avoid"
+                        >
+                          <td className="border border-slate-300 px-2 py-2 font-semibold">
+                            {subject.subjectName}
+                          </td>
+
+                          <td className="border border-slate-300 px-2 py-2 text-center">
+                            {caScore
+                              ? `${caScore.score}/${caScore.maxScore}`
+                              : "—"}
+                          </td>
+
+                          <td className="border border-slate-300 px-2 py-2 text-center">
+                            {examScore
+                              ? `${examScore.score}/${examScore.maxScore}`
+                              : "—"}
+                          </td>
+
+                          {otherComponents.map((component) => {
+                            const score = subject.components.find(
+                              (item) =>
+                                item.componentId === component.componentId,
+                            );
+
+                            return (
+                              <td
+                                key={component.componentId}
+                                className="border border-slate-300 px-2 py-2 text-center"
+                              >
+                                {score
+                                  ? `${score.score}/${score.maxScore}`
+                                  : "—"}
+                              </td>
+                            );
+                          })}
+
+                          <td className="border border-slate-300 px-2 py-2 text-center font-bold">
+                            {subject.totalScore}
+                          </td>
+
+                          <td
+                            className="border border-slate-300 px-2 py-2 text-center font-black"
+                            style={{ color: primaryColor }}
+                          >
+                            {subject.grade}
+                          </td>
+
+                          <td className="border border-slate-300 px-2 py-2">
+                            {subject.remark || "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* ================================
+                PERFORMANCE SUMMARY
+            ================================= */}
+            <section className="report-section px-7 pt-5">
+              <h3
+                className="mb-3 text-sm font-black uppercase tracking-wide"
+                style={{ color: primaryColor }}
+              >
+                Performance Summary
+              </h3>
+
+              <div className="grid grid-cols-2 border border-slate-300 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="border-b border-r border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    Total Score
+                  </p>
+                  <p className="mt-1 text-lg font-black">
+                    {academic.totalScore}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    Average
+                  </p>
+                  <p className="mt-1 text-lg font-black">
+                    {academic.averageScore.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    Grade
+                  </p>
+                  <p
+                    className="mt-1 text-lg font-black"
+                    style={{ color: primaryColor }}
+                  >
+                    {academic.grade ?? "—"}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    Position
+                  </p>
+                  <p className="mt-1 text-lg font-black">
+                    {academic.position ?? "—"}
+                  </p>
+                </div>
+
+                <div className="border-b border-r border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    Class Average
+                  </p>
+                  <p className="mt-1 text-lg font-black">
+                    {academic.classAverage?.toFixed(2) ?? "—"}
+                  </p>
+                </div>
+
+                <div className="border-b border-slate-300 p-3 text-center">
+                  <p className="text-[9px] font-bold uppercase text-slate-500">
+                    No. in Class
+                  </p>
+                  <p className="mt-1 text-lg font-black">{classSize}</p>
+                </div>
+              </div>
+            </section>
+
+            {/* ================================
+                PSYCHOMOTOR / BEHAVIOURAL
+            ================================= */}
+            <section className="report-section px-7 pt-5">
+              <h3
+                className="mb-3 text-sm font-black uppercase tracking-wide"
+                style={{ color: primaryColor }}
+              >
+                Psychomotor / Behavioural Assessment
+              </h3>
+
+              <div className="overflow-hidden border border-slate-400">
+                <table className="w-full border-collapse text-[10px]">
+                  <thead>
+                    <tr
+                      className="text-white"
+                      style={{
+                        backgroundColor: secondaryColor,
+                      }}
+                    >
+                      <th className="border border-slate-400 px-2 py-2 text-left">
+                        Behaviour / Skill
+                      </th>
+
+                      <th className="w-28 border border-slate-400 px-2 py-2 text-center">
+                        Rating
+                      </th>
+
+                      <th className="border border-slate-400 px-2 py-2 text-left">
+                        Comment
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {reportCardData.psychomotor.length > 0 ? (
+                      reportCardData.psychomotor.map((item) => (
+                        <tr key={item.fieldId} className="break-inside-avoid">
+                          <td className="border border-slate-300 px-2 py-2 font-semibold">
+                            {item.fieldName}
+                          </td>
+
+                          <td className="border border-slate-300 px-2 py-2 text-center font-semibold">
+                            {item.ratingLabel
+                              ? `${item.ratingLabel}${
+                                  item.ratingValue
+                                    ? ` (${item.ratingValue})`
+                                    : ""
+                                }`
+                              : "Not rated"}
+                          </td>
+
+                          <td className="border border-slate-300 px-2 py-2">
+                            {item.comment || "—"}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="border border-slate-300 px-3 py-3 text-center text-slate-500"
+                        >
+                          No psychomotor assessment recorded.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* ================================
+                COMMENTS
+            ================================= */}
+            <section className="report-section px-7 pt-5">
+              <h3
+                className="mb-3 text-sm font-black uppercase tracking-wide"
+                style={{ color: primaryColor }}
+              >
+                Teachers' Comments
+              </h3>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="min-h-[105px] border border-slate-300 p-4">
+                  <p
+                    className="mb-2 text-[10px] font-black uppercase"
+                    style={{ color: primaryColor }}
+                  >
+                    Class Teacher's Comment
+                  </p>
+
+                  <p className="text-xs leading-5 text-slate-700">
+                    {reportCardData.comments.teacherComment ||
+                      "No teacher comment has been entered."}
+                  </p>
+                </div>
+
+                <div className="min-h-[105px] border border-slate-300 p-4">
+                  <p
+                    className="mb-2 text-[10px] font-black uppercase"
+                    style={{ color: primaryColor }}
+                  >
+                    Principal / Head Teacher's Comment
+                  </p>
+
+                  <p className="text-xs leading-5 text-slate-700">
+                    {reportCardData.comments.principalComment ||
+                      "No principal comment has been entered."}
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* ================================
+                RATING KEYS
+            ================================= */}
+            <section className="report-section px-7 pt-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Academic grading key */}
+                <div className="border border-slate-300 p-4">
+                  <h3
+                    className="mb-3 text-[10px] font-black uppercase"
+                    style={{ color: primaryColor }}
+                  >
+                    Academic Grading Scale
+                  </h3>
+
+                  <div className="overflow-hidden border border-slate-300">
+                    <table className="w-full border-collapse text-[9px]">
+                      <thead>
+                        <tr className="bg-slate-100">
+                          <th className="border border-slate-300 px-2 py-1.5 text-left">
+                            Grade
+                          </th>
+                          <th className="border border-slate-300 px-2 py-1.5 text-center">
+                            Score
+                          </th>
+                          <th className="border border-slate-300 px-2 py-1.5 text-left">
+                            Remark
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {activeGradeScales.length > 0 ? (
+                          activeGradeScales.map((scale) => (
+                            <tr key={scale.id}>
+                              <td className="border border-slate-300 px-2 py-1.5 font-bold">
+                                {scale.code}
+                              </td>
+
+                              <td className="border border-slate-300 px-2 py-1.5 text-center">
+                                {scale.minScore}–{scale.maxScore}
+                              </td>
+
+                              <td className="border border-slate-300 px-2 py-1.5">
+                                {scale.remark || "—"}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              colSpan={3}
+                              className="border border-slate-300 px-2 py-2 text-center text-slate-500"
+                            >
+                              Grading scale not configured.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Psychomotor rating key */}
+                <div className="border border-slate-300 p-4">
+                  <h3
+                    className="mb-3 text-[10px] font-black uppercase"
+                    style={{ color: primaryColor }}
+                  >
+                    Psychomotor Rating Scale
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-2 text-[9px]">
+                    {[
+                      ["5", "Excellent"],
+                      ["4", "Very Good"],
+                      ["3", "Good"],
+                      ["2", "Fair"],
+                      ["1", "Needs Improvement"],
+                    ].map(([value, label]) => (
+                      <div
+                        key={value}
+                        className="flex items-center gap-2 border border-slate-200 px-2 py-2"
+                      >
+                        <span className="font-black">{value}</span>
+                        <span>{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ================================
+                APPROVAL / SIGNATURES
+            ================================= */}
+            <section className="signature-section px-7 pb-7 pt-6">
+              <div className="border-t-2 pt-5">
+                <div className="grid gap-8 sm:grid-cols-3">
+                  {/* Class Teacher */}
+                  <div className="text-center">
+                    <div className="h-12 border-b border-slate-500" />
+
+                    <p className="mt-2 text-[10px] font-bold uppercase">
+                      Class Teacher
+                    </p>
+
+                    <p className="mt-1 text-[9px] text-slate-500">
+                      Signature / Date
+                    </p>
+                  </div>
+
+                  {/* Principal */}
+                  <div className="text-center">
+                    <div className="relative h-12 border-b border-slate-500">
+                      {school.stampUrl && (
+                        <img
+                          src={school.stampUrl}
+                          alt="Official school stamp"
+                          className="absolute bottom-0 left-1/2 h-16 w-16 -translate-x-1/2 object-contain opacity-80"
+                        />
+                      )}
+                    </div>
+
+                    <p className="mt-2 text-[10px] font-bold uppercase">
+                      {school.principalTitle || "Principal / Head Teacher"}
+                    </p>
+
+                    {school.principalName && (
+                      <p className="mt-1 text-[9px] font-medium">
+                        {school.principalName}
+                      </p>
+                    )}
+
+                    <p className="mt-1 text-[9px] text-slate-500">
+                      Signature / Date
+                    </p>
+                  </div>
+
+                  {/* Official Stamp */}
+                  <div className="text-center">
+                    <div className="flex h-12 items-center justify-center border-b border-slate-500">
+                      {!school.stampUrl && (
+                        <span className="text-[9px] uppercase text-slate-400">
+                          Official School Stamp
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="mt-2 text-[10px] font-bold uppercase">
+                      School Stamp
+                    </p>
+
+                    <p className="mt-1 text-[9px] text-slate-500">
+                      Official Approval
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ================================
+                FOOTER
+            ================================= */}
+            <footer
+              className="px-7 py-3 text-center text-[9px] text-white"
+              style={{
+                backgroundColor: primaryColor,
+              }}
+            >
+              <p className="font-semibold uppercase tracking-wider">
+                {school.name}
+              </p>
+
+              <p className="mt-0.5 opacity-90">
+                Terminal Report Sheet ·{" "}
+                {reportCardData.academicSession?.name ?? "Academic Session"} ·{" "}
+                {reportCardData.term?.name ?? "Term"}
+              </p>
+            </footer>
+          </main>
+        ) : (
+          <div className="print-hidden mx-auto max-w-5xl rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
+            <p className="font-semibold text-slate-800">
+              Report card data is not available yet.
+            </p>
+
+            <p className="mt-2 text-sm text-slate-500">
+              Make sure all required academic results have been calculated for
+              this student and term.
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}

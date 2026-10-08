@@ -4,6 +4,12 @@ import Link from "next/link";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { updateSchool } from "@/lib/services/school.service";
+import {
+  savePrincipalSignature,
+  saveSchoolFavicon,
+  saveSchoolLogo,
+  saveSchoolStamp,
+} from "@/lib/utils/file-upload";
 import { db } from "@/prisma/db";
 import SchoolBrandingForm from "@/app/school/settings/components/school-branding-form";
 
@@ -16,8 +22,7 @@ const updateSchoolSchema = z.object({
   state: z.string().trim().max(100).optional().or(z.literal("")),
   country: z.string().trim().min(2).max(100),
 
-  logoUrl: z.string().trim().url().optional().or(z.literal("")),
-  faviconUrl: z.string().trim().url().optional().or(z.literal("")),
+
   motto: z.string().trim().max(200).optional().or(z.literal("")),
 
   primaryColor: z
@@ -44,7 +49,7 @@ const updateSchoolSchema = z.object({
   website: z.string().trim().url().optional().or(z.literal("")),
   principalName: z.string().trim().max(150).optional().or(z.literal("")),
   principalTitle: z.string().trim().max(100).optional().or(z.literal("")),
-  stampUrl: z.string().trim().url().optional().or(z.literal("")),
+  
 });
 
 export default async function SchoolSettingsPage() {
@@ -84,8 +89,7 @@ export default async function SchoolSettingsPage() {
       state: formData.get("state"),
       country: formData.get("country"),
 
-      logoUrl: formData.get("logoUrl"),
-      faviconUrl: formData.get("faviconUrl"),
+      
       motto: formData.get("motto"),
       primaryColor: formData.get("primaryColor"),
       secondaryColor: formData.get("secondaryColor"),
@@ -93,7 +97,7 @@ export default async function SchoolSettingsPage() {
       website: formData.get("website"),
       principalName: formData.get("principalName"),
       principalTitle: formData.get("principalTitle"),
-      stampUrl: formData.get("stampUrl"),
+      
     });
 
     if (!result.success) {
@@ -102,7 +106,39 @@ export default async function SchoolSettingsPage() {
       );
     }
 
-    await updateSchool(schoolId, result.data);
+    const logo = formData.get("logo");
+    const favicon = formData.get("favicon");
+    const signature = formData.get("principalSignature");
+    const stamp = formData.get("stamp");
+
+    let logoUrl: string | undefined;
+    let faviconUrl: string | undefined;
+    let principalSignatureUrl: string | undefined;
+    let stampUrl: string | undefined;
+
+    if (logo instanceof File && logo.size > 0) {
+      logoUrl = await saveSchoolLogo(logo, schoolId);
+    }
+
+    if (favicon instanceof File && favicon.size > 0) {
+      faviconUrl = await saveSchoolFavicon(favicon, schoolId);
+    }
+
+    if (signature instanceof File && signature.size > 0) {
+      principalSignatureUrl = await savePrincipalSignature(signature, schoolId);
+    }
+
+    if (stamp instanceof File && stamp.size > 0) {
+      stampUrl = await saveSchoolStamp(stamp, schoolId);
+    }
+
+    await updateSchool(schoolId, {
+      ...result.data,
+      ...(logoUrl ? { logoUrl } : {}),
+      ...(faviconUrl ? { faviconUrl } : {}),
+      ...(principalSignatureUrl ? { principalSignatureUrl } : {}),
+      ...(stampUrl ? { stampUrl } : {}),
+    });
 
     redirect("/school/settings");
   }
@@ -177,8 +213,11 @@ export default async function SchoolSettingsPage() {
             Update the information displayed throughout the school portal.
           </p>
         </div>
-
-        <form action={updateSchoolAction} className="p-6 sm:p-8">
+        <form
+          action={updateSchoolAction}
+          encType="multipart/form-data"
+          className="p-6 sm:p-8"
+        >
           <div className="space-y-8">
             {/* Basic information */}
             <section>
@@ -347,6 +386,7 @@ export default async function SchoolSettingsPage() {
             website={school.website ?? ""}
             principalName={school.principalName ?? ""}
             principalTitle={school.principalTitle ?? ""}
+            principalSignatureUrl={school.principalSignatureUrl ?? ""}
             stampUrl={school.stampUrl ?? ""}
           />
 

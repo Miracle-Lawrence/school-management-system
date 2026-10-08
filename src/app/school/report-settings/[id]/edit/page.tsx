@@ -64,7 +64,7 @@ export default async function EditReportConfigurationPage({
         </h1>
 
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Update the name or activation status of this report configuration.
+          Configure the information that should appear on this report.
         </p>
       </div>
 
@@ -124,6 +124,115 @@ export default async function EditReportConfigurationPage({
               <span className="mt-1 block text-sm leading-5 text-slate-500">
                 Enable this configuration for use in your school's result
                 management process.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div className="space-y-4 rounded-lg border border-slate-200 p-4">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">
+              Report Card Display
+            </h2>
+
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Choose which approval and report information should appear on
+              generated report cards.
+            </p>
+          </div>
+
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              name="showClassPosition"
+              defaultChecked={configuration.showClassPosition}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span>
+              <span className="block text-sm font-medium text-slate-900">
+                Show Class Position
+              </span>
+
+              <span className="mt-1 block text-sm leading-5 text-slate-500">
+                Display the student's position in the class summary.
+              </span>
+            </span>
+          </label>
+
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              name="showClassTeacherName"
+              defaultChecked={configuration.showClassTeacherName}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span>
+              <span className="block text-sm font-medium text-slate-900">
+                Show Class Teacher Name
+              </span>
+
+              <span className="mt-1 block text-sm leading-5 text-slate-500">
+                Display the assigned class teacher's name in the signature
+                section.
+              </span>
+            </span>
+          </label>
+
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              name="showPrincipalSignature"
+              defaultChecked={configuration.showPrincipalSignature}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span>
+              <span className="block text-sm font-medium text-slate-900">
+                Show Principal Signature
+              </span>
+
+              <span className="mt-1 block text-sm leading-5 text-slate-500">
+                Include the principal's signature area on the report card.
+              </span>
+            </span>
+          </label>
+
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              name="showSchoolStamp"
+              defaultChecked={configuration.showSchoolStamp}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span>
+              <span className="block text-sm font-medium text-slate-900">
+                Show School Stamp
+              </span>
+
+              <span className="mt-1 block text-sm leading-5 text-slate-500">
+                Include the official school stamp in the signature section.
+              </span>
+            </span>
+          </label>
+
+          <label className="flex cursor-pointer items-start gap-3">
+            <input
+              type="checkbox"
+              name="showAttendance"
+              defaultChecked={configuration.showAttendance}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            />
+
+            <span>
+              <span className="block text-sm font-medium text-slate-900">
+                Show Attendance
+              </span>
+
+              <span className="mt-1 block text-sm leading-5 text-slate-500">
+                Display the student's attendance summary for the selected term.
               </span>
             </span>
           </label>

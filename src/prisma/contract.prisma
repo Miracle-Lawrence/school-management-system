@@ -85,7 +85,9 @@ model School {
   website                  String?
   principalName            String?
   principalTitle           String?
+  principalSignatureUrl    String?
   stampUrl                 String?
+  
   reportConfigurations     ReportConfiguration[]
   teacherAssignments       TeacherAssignment[]
   attendanceRecords        Attendance[]
@@ -112,6 +114,11 @@ model ReportConfiguration {
 
   name       String
   isActive   Boolean                    @default(true)
+  showClassPosition       Boolean                    @default(true)
+  showClassTeacherName    Boolean                    @default(true)
+  showPrincipalSignature  Boolean                    @default(true)
+  showSchoolStamp         Boolean                    @default(true)
+  showAttendance          Boolean                    @default(false)
 
   components ReportComponent[]
 
@@ -435,19 +442,20 @@ model Student {
 }
 
 model Teacher {
-  id          Int                        @id @default(autoincrement())
-  school      School                     @relation(fields:[schoolId], references:[id])
-  schoolId    Int
-  user        User?                      @relation(fields:[userId], references:[id])
-  userId      Int?                       @unique
-  employeeId  String
-  firstName   String
-  lastName    String
-  phone       String?
-  email       String?
-  assignments TeacherAssignment[]
-  createdAt   TimestamptzString          @default(now())
-  updatedAt   temporal.updatedAtString()
+  id              Int                       @id @default(autoincrement())
+  school          School                    @relation(fields:[schoolId], references:[id])
+  schoolId        Int
+  user            User?                     @relation(fields:[userId], references:[id])
+  userId          Int?                      @unique
+  employeeId      String
+  firstName       String
+  lastName        String
+  phone           String?
+  email           String?
+  assignments     TeacherAssignment[]
+  classTeacherOf  SchoolClass[]             @relation("ClassTeacher")
+  createdAt       TimestamptzString         @default(now())
+  updatedAt       temporal.updatedAtString()
 
   @@unique([schoolId, employeeId])
   @@index([schoolId])
@@ -494,11 +502,14 @@ model SchoolClass {
   assessments        Assessment[]
   subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
+  classTeacher       Teacher? @relation("ClassTeacher", fields:[classTeacherId], references:[id])
+  classTeacherId     Int?
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId])
+  @@index([classTeacherId])
 }
 
 model Subject {

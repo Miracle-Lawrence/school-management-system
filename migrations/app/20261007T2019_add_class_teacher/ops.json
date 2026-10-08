@@ -1,0 +1,125 @@
+[
+  {
+    "id": "column.public.SchoolClass.classTeacherId",
+    "label": "Add column \"classTeacherId\" to \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "classTeacherId",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"classTeacherId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SchoolClass",
+          "classTeacherId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"classTeacherId\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolClass\" ADD COLUMN \"classTeacherId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"classTeacherId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SchoolClass",
+          "classTeacherId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolClass.SchoolClass_classTeacherId_idx_a6853519",
+    "label": "Create index \"SchoolClass_classTeacherId_idx_a6853519\" on \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolClass_classTeacherId_idx_a6853519",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolClass_classTeacherId_idx_a6853519\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolClass_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolClass_classTeacherId_idx_a6853519\"",
+        "sql": "CREATE INDEX \"SchoolClass_classTeacherId_idx_a6853519\" ON \"public\".\"SchoolClass\" (\"classTeacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolClass_classTeacherId_idx_a6853519\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolClass_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolClass.SchoolClass_classTeacherId_fkey",
+    "label": "Add foreign key \"SchoolClass_classTeacherId_fkey\" on \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolClass_classTeacherId_fkey",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolClass_classTeacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolClass_classTeacherId_fkey",
+          "public",
+          "\"public\".\"SchoolClass\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolClass_classTeacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolClass\"\nADD CONSTRAINT \"SchoolClass_classTeacherId_fkey\"\nFOREIGN KEY (\"classTeacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolClass_classTeacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolClass_classTeacherId_fkey",
+          "public",
+          "\"public\".\"SchoolClass\""
+        ]
+      }
+    ]
+  }
+]

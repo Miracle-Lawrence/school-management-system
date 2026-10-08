@@ -12,6 +12,7 @@ type SchoolBrandingFormProps = {
   website: string;
   principalName: string;
   principalTitle: string;
+  principalSignatureUrl: string;
   stampUrl: string;
 };
 
@@ -28,9 +29,14 @@ export default function SchoolBrandingForm({
   accentColor,
   website,
   principalName,
-  principalTitle,
+    principalTitle,
+    principalSignatureUrl,
   stampUrl,
 }: SchoolBrandingFormProps) {
+
+    const [signaturePreview, setSignaturePreview] = useState(
+      principalSignatureUrl,
+    );
   const [primary, setPrimary] = useState(primaryColor || DEFAULT_PRIMARY);
   const [secondary, setSecondary] = useState(
     secondaryColor || DEFAULT_SECONDARY,
@@ -82,20 +88,25 @@ export default function SchoolBrandingForm({
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label
-                  htmlFor="logoUrl"
+                  htmlFor="logo"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                  School Logo URL
+                  School Logo
                 </label>
 
                 <input
-                  id="logoUrl"
-                  name="logoUrl"
-                  type="url"
-                  defaultValue={logoUrl}
-                  placeholder="https://example.com/logo.png"
-                  onChange={(event) => setLogoPreview(event.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  id="logo"
+                  name="logo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+
+                    if (!file) return;
+
+                    setLogoPreview(URL.createObjectURL(file));
+                  }}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-700"
                 />
 
                 {logoPreview && (
@@ -104,47 +115,51 @@ export default function SchoolBrandingForm({
                       src={logoPreview}
                       alt="School logo preview"
                       className="max-h-full max-w-full object-contain"
-                      onError={() => setLogoPreview("")}
                     />
                   </div>
                 )}
 
                 <p className="mt-2 text-xs text-slate-500">
-                  A transparent PNG or SVG works best for school documents.
+                  Upload your school logo. JPG, PNG, or WEBP, maximum 2 MB.
                 </p>
               </div>
 
               <div>
                 <label
-                  htmlFor="faviconUrl"
+                  htmlFor="favicon"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
-                  Favicon URL
+                  School Favicon
                 </label>
 
                 <input
-                  id="faviconUrl"
-                  name="faviconUrl"
-                  type="url"
-                  defaultValue={faviconUrl}
-                  placeholder="https://example.com/favicon.png"
-                  onChange={(event) => setFaviconPreview(event.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  id="favicon"
+                  name="favicon"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+
+                    if (!file) return;
+
+                    setFaviconPreview(URL.createObjectURL(file));
+                  }}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-700"
                 />
 
                 {faviconPreview && (
                   <div className="mt-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-2">
                     <img
                       src={faviconPreview}
-                      alt="Favicon preview"
+                      alt="School favicon preview"
                       className="max-h-full max-w-full object-contain"
-                      onError={() => setFaviconPreview("")}
                     />
                   </div>
                 )}
 
                 <p className="mt-2 text-xs text-slate-500">
-                  Used for the browser tab and school portal branding.
+                  Upload an image for the browser tab and school portal. JPG,
+                  PNG, or WEBP.
                 </p>
               </div>
             </div>
@@ -229,6 +244,39 @@ export default function SchoolBrandingForm({
 
               <div>
                 <label
+                  htmlFor="principalSignature"
+                  className="mb-2 block text-sm font-semibold text-slate-700"
+                >
+                  Principal Signature
+                </label>
+
+                <input
+                  id="principalSignature"
+                  name="principalSignature"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-700"
+                />
+
+                {signaturePreview && (
+                  <div className="mt-3 flex h-20 w-40 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-2">
+                    <img
+                      src={signaturePreview}
+                      alt="Principal signature preview"
+                      className="max-h-full max-w-full object-contain"
+                      onError={() => setSignaturePreview("")}
+                    />
+                  </div>
+                )}
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Upload a clear signature image. JPG, PNG, or WEBP, maximum 2
+                  MB.
+                </p>
+              </div>
+
+              <div>
+                <label
                   htmlFor="principalTitle"
                   className="mb-2 block text-sm font-semibold text-slate-700"
                 >
@@ -255,20 +303,25 @@ export default function SchoolBrandingForm({
 
           <div>
             <label
-              htmlFor="stampUrl"
+              htmlFor="stamp"
               className="mb-2 block text-sm font-semibold text-slate-700"
             >
-              Stamp / Seal URL
+              Stamp / Seal
             </label>
 
             <input
-              id="stampUrl"
-              name="stampUrl"
-              type="url"
-              defaultValue={stampUrl}
-              placeholder="https://example.com/school-stamp.png"
-              onChange={(event) => setStampPreview(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              id="stamp"
+              name="stamp"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+
+                if (!file) return;
+
+                setStampPreview(URL.createObjectURL(file));
+              }}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-700"
             />
 
             {stampPreview && (
@@ -277,10 +330,14 @@ export default function SchoolBrandingForm({
                   src={stampPreview}
                   alt="School stamp preview"
                   className="max-h-full max-w-full object-contain"
-                  onError={() => setStampPreview("")}
                 />
               </div>
             )}
+
+            <p className="mt-2 text-xs text-slate-500">
+              Upload your official school stamp or seal. JPG, PNG, or WEBP,
+              maximum 2 MB.
+            </p>
           </div>
         </div>
       </div>

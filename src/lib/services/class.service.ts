@@ -70,3 +70,33 @@ export async function updateClass(
     description: data.description || null,
   });
 }
+
+export async function setClassTeacher(
+  schoolId: number,
+  classId: number,
+  teacherId: number | null,
+) {
+  const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.id.eq(classId),
+  ).first();
+
+  if (!schoolClass || schoolClass.schoolId !== schoolId) {
+    throw new Error("Class not found.");
+  }
+
+  if (teacherId !== null) {
+    const teacher = await db.orm.public.Teacher.where((teacher) =>
+      teacher.id.eq(teacherId),
+    ).first();
+
+    if (!teacher || teacher.schoolId !== schoolId) {
+      throw new Error("Invalid teacher.");
+    }
+  }
+
+  return db.orm.public.SchoolClass.where((schoolClass) =>
+    schoolClass.id.eq(classId),
+  ).update({
+    classTeacherId: teacherId,
+  });
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.ReportConfiguration.showClassPosition",
+    "label": "Add column \"showClassPosition\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showClassPosition",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showClassPosition\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassPosition"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showClassPosition\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showClassPosition\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showClassPosition\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassPosition"
+        ]
+      }
+    ]
+  }
+]

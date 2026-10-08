@@ -310,7 +310,35 @@ export async function getStudentReportCardData(
 
   /*
    * ---------------------------------------------------------
-   * 15. Get teacher and principal comments
+   * 15. Get attendance data
+   * ---------------------------------------------------------
+   */
+
+  const allAttendanceRecords = await db.orm.public.Attendance.where((item) =>
+    item.studentId.eq(studentId),
+  ).all();
+
+  const attendanceRecords = allAttendanceRecords.filter(
+    (record) =>
+      record.schoolId === schoolId &&
+      record.classId === classId &&
+      record.termId === termId,
+  );
+
+  const attendance = {
+    total: attendanceRecords.length,
+    present: attendanceRecords.filter((record) => record.status === "PRESENT")
+      .length,
+    absent: attendanceRecords.filter((record) => record.status === "ABSENT")
+      .length,
+    late: attendanceRecords.filter((record) => record.status === "LATE").length,
+    excused: attendanceRecords.filter((record) => record.status === "EXCUSED")
+      .length,
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * 16. Get teacher and principal comments
    * ---------------------------------------------------------
    */
 
@@ -323,7 +351,7 @@ export async function getStudentReportCardData(
 
   /*
    * ---------------------------------------------------------
-   * 16. Return complete report-card data
+   * 17. Return complete report-card data
    * ---------------------------------------------------------
    */
 
@@ -338,6 +366,11 @@ export async function getStudentReportCardData(
       id: reportConfiguration.id,
       name: reportConfiguration.name,
       reportType: reportConfiguration.reportType,
+      showClassPosition: reportConfiguration.showClassPosition,
+      showClassTeacherName: reportConfiguration.showClassTeacherName,
+      showPrincipalSignature: reportConfiguration.showPrincipalSignature,
+      showSchoolStamp: reportConfiguration.showSchoolStamp,
+      showAttendance: reportConfiguration.showAttendance,
     },
 
     academic: {
@@ -352,6 +385,8 @@ export async function getStudentReportCardData(
     },
 
     psychomotor,
+
+    attendance,
 
     comments: {
       teacherComment: reportComment?.teacherComment ?? null,

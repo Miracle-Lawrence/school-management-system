@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c2ea0b70ca5d5ecf0e3945618680e99782e1a70cac3ac82687b8019af99e563e'>;
+  StorageHashBase<'e4e7af962c6c36b5abed9ec218d2f3652eb58568c54182e5fa0ca8c23334a027'>;
 export type ExecutionHash =
   ExecutionHashBase<'0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039'>;
 export type ProfileHash =
@@ -398,11 +398,7 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['output'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['output'];
-      readonly showClassTeacherName: CodecTypes['pg/bool@1']['output'];
-      readonly showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
-      readonly showSchoolStamp: CodecTypes['pg/bool@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly ResultComponentScore: {
@@ -429,7 +425,6 @@ export type FieldOutputTypes = {
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly primaryColor: CodecTypes['pg/text@1']['output'] | null;
       readonly principalName: CodecTypes['pg/text@1']['output'] | null;
-      readonly principalSignatureUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly principalTitle: CodecTypes['pg/text@1']['output'] | null;
       readonly secondaryColor: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'];
@@ -721,11 +716,7 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['input'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['input'];
-      readonly showClassTeacherName: CodecTypes['pg/bool@1']['input'];
-      readonly showPrincipalSignature: CodecTypes['pg/bool@1']['input'];
-      readonly showSchoolStamp: CodecTypes['pg/bool@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ResultComponentScore: {
@@ -752,7 +743,6 @@ export type FieldInputTypes = {
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly primaryColor: CodecTypes['pg/text@1']['input'] | null;
       readonly principalName: CodecTypes['pg/text@1']['input'] | null;
-      readonly principalSignatureUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly principalTitle: CodecTypes['pg/text@1']['input'] | null;
       readonly secondaryColor: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'];
@@ -1044,11 +1034,7 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['output'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['output'];
-      readonly showClassTeacherName: CodecTypes['pg/bool@1']['output'];
-      readonly showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
-      readonly showSchoolStamp: CodecTypes['pg/bool@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly ResultComponentScore: {
@@ -1075,7 +1061,6 @@ export type StorageColumnTypes = {
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly primaryColor: CodecTypes['pg/text@1']['output'] | null;
       readonly principalName: CodecTypes['pg/text@1']['output'] | null;
-      readonly principalSignatureUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly principalTitle: CodecTypes['pg/text@1']['output'] | null;
       readonly secondaryColor: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'];
@@ -1367,11 +1352,7 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['input'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['input'];
-      readonly showClassTeacherName: CodecTypes['pg/bool@1']['input'];
-      readonly showPrincipalSignature: CodecTypes['pg/bool@1']['input'];
-      readonly showSchoolStamp: CodecTypes['pg/bool@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ResultComponentScore: {
@@ -1398,7 +1379,6 @@ export type StorageColumnInputTypes = {
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly primaryColor: CodecTypes['pg/text@1']['input'] | null;
       readonly principalName: CodecTypes['pg/text@1']['input'] | null;
-      readonly principalSignatureUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly principalTitle: CodecTypes['pg/text@1']['input'] | null;
       readonly secondaryColor: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'];
@@ -1740,11 +1720,7 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'];
     reportType: 'MID_TERM' | 'TERMINAL';
     schoolId: CodecTypes['pg/int4@1']['output'];
-    showAttendance: CodecTypes['pg/bool@1']['output'];
     showClassPosition: CodecTypes['pg/bool@1']['output'];
-    showClassTeacherName: CodecTypes['pg/bool@1']['output'];
-    showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
-    showSchoolStamp: CodecTypes['pg/bool@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     components: public_ReportComponent[];
     school: public_School;
@@ -1777,7 +1753,6 @@ export namespace Models {
     phone: CodecTypes['pg/text@1']['output'] | null;
     primaryColor: CodecTypes['pg/text@1']['output'] | null;
     principalName: CodecTypes['pg/text@1']['output'] | null;
-    principalSignatureUrl: CodecTypes['pg/text@1']['output'] | null;
     principalTitle: CodecTypes['pg/text@1']['output'] | null;
     secondaryColor: CodecTypes['pg/text@1']['output'] | null;
     slug: CodecTypes['pg/text@1']['output'];
@@ -3465,43 +3440,7 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                 };
-                readonly showAttendance: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
-                };
                 readonly showClassPosition: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly showClassTeacherName: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly showPrincipalSignature: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly showSchoolStamp: {
                   readonly nativeType: 'bool';
                   readonly codecId: 'pg/bool@1';
                   readonly nullable: false;
@@ -3704,11 +3643,6 @@ type ContractBase = Omit<
                   readonly nullable: true;
                 };
                 readonly principalName: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly principalSignatureUrl: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
@@ -6347,23 +6281,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly showAttendance: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly showClassPosition: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly showClassTeacherName: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly showPrincipalSignature: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly showSchoolStamp: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
@@ -6410,11 +6328,7 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly reportType: { readonly column: 'reportType' };
                 readonly schoolId: { readonly column: 'schoolId' };
-                readonly showAttendance: { readonly column: 'showAttendance' };
                 readonly showClassPosition: { readonly column: 'showClassPosition' };
-                readonly showClassTeacherName: { readonly column: 'showClassTeacherName' };
-                readonly showPrincipalSignature: { readonly column: 'showPrincipalSignature' };
-                readonly showSchoolStamp: { readonly column: 'showSchoolStamp' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -6554,10 +6468,6 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly principalName: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly principalSignatureUrl: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -6823,7 +6733,6 @@ type ContractBase = Omit<
                 readonly phone: { readonly column: 'phone' };
                 readonly primaryColor: { readonly column: 'primaryColor' };
                 readonly principalName: { readonly column: 'principalName' };
-                readonly principalSignatureUrl: { readonly column: 'principalSignatureUrl' };
                 readonly principalTitle: { readonly column: 'principalTitle' };
                 readonly secondaryColor: { readonly column: 'secondaryColor' };
                 readonly slug: { readonly column: 'slug' };

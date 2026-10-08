@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'c2ea0b70ca5d5ecf0e3945618680e99782e1a70cac3ac82687b8019af99e563e'>;
+  StorageHashBase<'db4412bc00a844e4bc53c5264f32699a09a852af3dafabb1b05570c848c3bce4'>;
 export type ExecutionHash =
   ExecutionHashBase<'0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039'>;
 export type ProfileHash =
@@ -398,7 +398,6 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['output'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['output'];
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['output'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
@@ -721,7 +720,6 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['input'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['input'];
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['input'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['input'];
@@ -1044,7 +1042,6 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['output'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['output'];
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['output'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
@@ -1367,7 +1364,6 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly reportType: 'MID_TERM' | 'TERMINAL';
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
-      readonly showAttendance: CodecTypes['pg/bool@1']['input'];
       readonly showClassPosition: CodecTypes['pg/bool@1']['input'];
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['input'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['input'];
@@ -1740,7 +1736,6 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'];
     reportType: 'MID_TERM' | 'TERMINAL';
     schoolId: CodecTypes['pg/int4@1']['output'];
-    showAttendance: CodecTypes['pg/bool@1']['output'];
     showClassPosition: CodecTypes['pg/bool@1']['output'];
     showClassTeacherName: CodecTypes['pg/bool@1']['output'];
     showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
@@ -3464,15 +3459,6 @@ type ContractBase = Omit<
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
-                };
-                readonly showAttendance: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-                  };
                 };
                 readonly showClassPosition: {
                   readonly nativeType: 'bool';
@@ -6347,10 +6333,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly showAttendance: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly showClassPosition: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
@@ -6410,7 +6392,6 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly reportType: { readonly column: 'reportType' };
                 readonly schoolId: { readonly column: 'schoolId' };
-                readonly showAttendance: { readonly column: 'showAttendance' };
                 readonly showClassPosition: { readonly column: 'showClassPosition' };
                 readonly showClassTeacherName: { readonly column: 'showClassTeacherName' };
                 readonly showPrincipalSignature: { readonly column: 'showPrincipalSignature' };

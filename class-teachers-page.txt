@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
-import { setClassTeacher } from "@/lib/services/class.service";
 import { db } from "@/prisma/db";
 
 type ClassTeachersPageProps = {
@@ -49,31 +48,6 @@ export default async function ClassTeachersPage({
     subject.schoolId.eq(schoolId),
   ).all();
 
-  async function setClassTeacherAction(formData: FormData) {
-    "use server";
-
-    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
-    const schoolId = session.user.schoolId;
-
-    if (!schoolId) {
-      throw new Error("School context is required.");
-    }
-
-    const teacherValue = formData.get("teacherId");
-
-    const teacherId =
-      typeof teacherValue === "string" && teacherValue !== ""
-        ? Number(teacherValue)
-        : null;
-
-    if (teacherId !== null && !Number.isInteger(teacherId)) {
-      throw new Error("Invalid teacher.");
-    }
-
-    await setClassTeacher(schoolId, classId, teacherId);
-  }
-
   const assignmentDetails = assignments.map((assignment) => {
     const teacher = teachers.find(
       (teacher) => teacher.id === assignment.teacherId,
@@ -89,12 +63,6 @@ export default async function ClassTeachersPage({
       subject,
     };
   });
-
-  const sortedTeachers = [...teachers].sort((a, b) =>
-    `${a.firstName} ${a.lastName}`.localeCompare(
-      `${b.firstName} ${b.lastName}`,
-    ),
-  );
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6 px-2 sm:px-4">
@@ -130,53 +98,6 @@ export default async function ClassTeachersPage({
           </Link>
         </div>
       </div>
-
-      {/* Class Teacher */}
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-6 py-5 sm:px-8">
-          <h2 className="font-semibold text-slate-900">Class Teacher</h2>
-
-          <p className="mt-1 text-sm text-slate-600">
-            Assign the teacher responsible for this class.
-          </p>
-        </div>
-
-        <div className="px-6 py-6 sm:px-8">
-          <form action={setClassTeacherAction} className="space-y-4">
-            <div>
-              <label
-                htmlFor="teacherId"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Select Class Teacher
-              </label>
-
-              <select
-                id="teacherId"
-                name="teacherId"
-                defaultValue={schoolClass.classTeacherId?.toString() ?? ""}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              >
-                <option value="">No class teacher</option>
-
-                {sortedTeachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.firstName} {teacher.lastName}
-                    {teacher.employeeId ? ` — ${teacher.employeeId}` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              Save Class Teacher
-            </button>
-          </form>
-        </div>
-      </section>
 
       {/* Summary */}
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">

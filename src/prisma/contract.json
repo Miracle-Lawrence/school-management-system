@@ -2250,6 +2250,41 @@
                   "kind": "scalar"
                 }
               },
+              "showAttendance": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showClassPosition": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showClassTeacherName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showPrincipalSignature": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "showSchoolStamp": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -2310,6 +2345,21 @@
                 },
                 "schoolId": {
                   "column": "schoolId"
+                },
+                "showAttendance": {
+                  "column": "showAttendance"
+                },
+                "showClassPosition": {
+                  "column": "showClassPosition"
+                },
+                "showClassTeacherName": {
+                  "column": "showClassTeacherName"
+                },
+                "showPrincipalSignature": {
+                  "column": "showPrincipalSignature"
+                },
+                "showSchoolStamp": {
+                  "column": "showSchoolStamp"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -2527,6 +2577,13 @@
                 }
               },
               "principalName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "principalSignatureUrl": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -2927,6 +2984,9 @@
                 "principalName": {
                   "column": "principalName"
                 },
+                "principalSignatureUrl": {
+                  "column": "principalSignatureUrl"
+                },
                 "principalTitle": {
                   "column": "principalTitle"
                 },
@@ -2958,6 +3018,13 @@
           },
           "SchoolClass": {
             "fields": {
+              "classTeacherId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -3054,6 +3121,22 @@
                   "namespace": "public"
                 }
               },
+              "classTeacher": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "classTeacherId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Teacher",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -3133,6 +3216,9 @@
             },
             "storage": {
               "fields": {
+                "classTeacherId": {
+                  "column": "classTeacherId"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -4371,6 +4457,21 @@
                 },
                 "to": {
                   "model": "TeacherAssignment",
+                  "namespace": "public"
+                }
+              },
+              "classTeacherOf": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "classTeacherId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolClass",
                   "namespace": "public"
                 }
               },
@@ -6815,6 +6916,51 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "showAttendance": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showClassPosition": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showClassTeacherName": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showPrincipalSignature": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "showSchoolStamp": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
@@ -7066,6 +7212,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "principalSignatureUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "principalTitle": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -7134,6 +7285,11 @@
             },
             "SchoolClass": {
               "columns": {
+                "classTeacherId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -7194,9 +7350,33 @@
                     "namespaceId": "public",
                     "tableName": "School"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "classTeacherId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolClass"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Teacher"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "classTeacherId"
+                  ],
+                  "name": "SchoolClass_classTeacherId_idx_a6853519",
+                  "prefix": "SchoolClass_classTeacherId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "schoolId"
@@ -8722,7 +8902,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7eb5bc1b9a30ab60200f30afb3eabfbc0116825d7576d559c36510708fa07f9c"
+    "storageHash": "c2ea0b70ca5d5ecf0e3945618680e99782e1a70cac3ac82687b8019af99e563e"
   },
   "execution": {
     "executionHash": "0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039",

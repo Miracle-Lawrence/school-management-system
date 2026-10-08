@@ -1,0 +1,170 @@
+[
+  {
+    "id": "column.public.ReportConfiguration.showClassTeacherName",
+    "label": "Add column \"showClassTeacherName\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showClassTeacherName",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showClassTeacherName\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassTeacherName"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showClassTeacherName\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showClassTeacherName\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showClassTeacherName\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassTeacherName"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showPrincipalSignature",
+    "label": "Add column \"showPrincipalSignature\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showPrincipalSignature",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showPrincipalSignature\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showPrincipalSignature"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showPrincipalSignature\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showPrincipalSignature\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showPrincipalSignature\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showPrincipalSignature"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showSchoolStamp",
+    "label": "Add column \"showSchoolStamp\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showSchoolStamp",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showSchoolStamp\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showSchoolStamp"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showSchoolStamp\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showSchoolStamp\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showSchoolStamp\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showSchoolStamp"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.School.principalSignatureUrl",
+    "label": "Add column \"principalSignatureUrl\" to \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "principalSignatureUrl",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"principalSignatureUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "principalSignatureUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"principalSignatureUrl\"",
+        "sql": "ALTER TABLE \"public\".\"School\" ADD COLUMN \"principalSignatureUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"principalSignatureUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "principalSignatureUrl"
+        ]
+      }
+    ]
+  }
+]
