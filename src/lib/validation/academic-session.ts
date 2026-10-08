@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createAcademicSessionSchema = z
+export const academicSessionSchema = z
   .object({
     name: z
       .string()
@@ -17,6 +17,4 @@ export const createAcademicSessionSchema = z
     path: ["endDate"],
   });
 
-export type CreateAcademicSessionInput = z.infer<
-  typeof createAcademicSessionSchema
->;
+export type AcademicSessionInput = z.infer<typeof academicSessionSchema>;
