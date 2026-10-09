@@ -133,6 +133,46 @@ export async function updateStudent(
   });
 }
 
+export async function deactivateStudent(schoolId: number, studentId: number) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  if (!student.isActive) {
+    throw new Error("Student is already inactive.");
+  }
+
+  return db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).update({
+    isActive: false,
+  });
+}
+
+export async function reactivateStudent(schoolId: number, studentId: number) {
+  const student = await db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).first();
+
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Student not found.");
+  }
+
+  if (student.isActive) {
+    throw new Error("Student is already active.");
+  }
+
+  return db.orm.public.Student.where((student) =>
+    student.id.eq(studentId),
+  ).update({
+    isActive: true,
+  });
+}
+
 export async function updateStudentPhoto(
   schoolId: number,
   studentId: number,

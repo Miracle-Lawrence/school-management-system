@@ -405,6 +405,12 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     throw new Error("Invalid student.");
   }
 
+  if (!student.isActive) {
+    throw new Error(
+      "Assessment scores cannot be recorded for an inactive student.",
+    );
+  }
+
   if (student.classId !== assessment.classId) {
     throw new Error("Student is not assigned to this class.");
   }

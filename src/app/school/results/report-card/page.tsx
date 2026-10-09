@@ -64,8 +64,27 @@ export default async function ReportCardPage({
       ).all()
     : [];
 
+  const historicalTermResults =
+    selectedClassId && selectedTermId
+      ? await db.orm.public.StudentTermResult.where((item) =>
+          item.studentId.gt(0),
+        ).all()
+      : [];
+
+  const historicalStudentIds = new Set(
+    historicalTermResults
+      .filter(
+        (result) =>
+          result.schoolId === schoolId &&
+          result.classId === selectedClassId &&
+          result.termId === selectedTermId &&
+          result.reportType === "TERMINAL",
+      )
+      .map((result) => result.studentId),
+  );
+
   const classStudents = students
-    .filter((student) => student.classId === selectedClassId)
+    .filter((student) => historicalStudentIds.has(student.id))
     .sort((a, b) => a.lastName.localeCompare(b.lastName));
 
   const selectedStudentId = Number(params.studentId) || classStudents[0]?.id;
@@ -106,7 +125,7 @@ export default async function ReportCardPage({
   const student = reportCardData?.student;
   const academic = reportCardData?.academic;
 
-  const classSize = classStudents.length;
+ const classSize = academic?.classSize ?? classStudents.length;
 
   const primaryColor = school?.primaryColor || "#1e3a8a";
 
@@ -131,12 +150,9 @@ export default async function ReportCardPage({
 
   const selectedClass = sortedClasses.find(
     (schoolClass) => schoolClass.id === selectedClassId,
-    );
-    const classTeacher = selectedClass?.classTeacherId
-      ? await db.orm.public.Teacher.where((teacher) =>
-          teacher.id.eq(selectedClass.classTeacherId!),
-        ).first()
-      : null;
+  );
+
+  const classTeacher = reportCardData?.classTeacher ?? null;
 
   return (
     <>

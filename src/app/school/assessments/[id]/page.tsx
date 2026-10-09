@@ -53,7 +53,9 @@ export default async function AssessmentDetailsPage({
     db.orm.public.Student.where((item) => item.classId.eq(assessment.classId))
       .all()
       .then((classStudents) =>
-        classStudents.filter((student) => student.schoolId === schoolId),
+        classStudents.filter(
+          (student) => student.schoolId === schoolId && student.isActive,
+        ),
       ),
 
     getAssessmentScores(schoolId, assessmentId),

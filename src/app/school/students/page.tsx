@@ -2,19 +2,49 @@ import Link from "next/link";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import StudentFilters from "./student-filters";
 
-export default async function StudentsPage() {
+type StudentsPageProps = {
+  searchParams: Promise<{
+    status?: string;
+    classId?: string;
+  }>;
+};
+
+export default async function StudentsPage({
+  searchParams,
+}: StudentsPageProps) {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
   const schoolId = session.user.schoolId;
+  const filters = await searchParams;
+
+  const statusFilter =
+    filters.status === "inactive" || filters.status === "all"
+      ? filters.status
+      : "active";
+
+  const selectedClassId = filters.classId ? Number(filters.classId) : null;
 
   if (!schoolId) {
     throw new Error("School context is required.");
   }
 
-  const students = await db.orm.public.Student.where((student) =>
-    student.schoolId.eq(schoolId),
-  ).all();
+ const students = await db.orm.public.Student.where((student) =>
+   student.schoolId.eq(schoolId),
+ ).all();
+
+ const filteredStudents = students.filter((student) => {
+   const matchesStatus =
+     statusFilter === "all" ||
+     (statusFilter === "active" && student.isActive) ||
+     (statusFilter === "inactive" && !student.isActive);
+
+   const matchesClass =
+     selectedClassId === null || student.classId === selectedClassId;
+
+   return matchesStatus && matchesClass;
+ });
 
   const classes = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.schoolId.eq(schoolId),
@@ -41,27 +71,42 @@ export default async function StudentsPage() {
             Manage student records, classes, and attendance.
           </p>
         </div>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/school/students/promote"
+            className="inline-flex w-fit items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Bulk Promotion
+          </Link>
 
-        <Link
-          href="/school/students/new"
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-        >
-          + Add Student
-        </Link>
+          <Link
+            href="/school/students/new"
+            className="inline-flex w-fit items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+          >
+            + Add Student
+          </Link>
+        </div>
       </div>
+
+      <StudentFilters
+        classes={classes.map((schoolClass) => ({
+          id: schoolClass.id,
+          name: schoolClass.name,
+        }))}
+      />
 
       {/* Student count */}
       <div className="rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
         <p className="text-sm text-slate-600">Total students</p>
 
         <p className="mt-1 text-2xl font-bold text-slate-900">
-          {students.length}
+          {filteredStudents.length}
         </p>
       </div>
 
       {/* Students table */}
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {students.length === 0 ? (
+        {filteredStudents.length === 0 ? (
           <div className="px-6 py-12 text-center sm:px-8">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
               <span className="text-xl font-bold">S</span>
@@ -115,7 +160,7 @@ export default async function StudentsPage() {
               </thead>
 
               <tbody className="divide-y divide-slate-100">
-                {students.map((student) => (
+                {filteredStudents.map((student) => (
                   <tr key={student.id} className="transition hover:bg-slate-50">
                     <td className="px-6 py-4 font-medium text-slate-700">
                       {student.admissionNumber}

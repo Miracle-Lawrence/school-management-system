@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireRole } from "@/lib/auth/authorization";
 import { updateTeacher } from "@/lib/services/teacher.service";
 import { db } from "@/prisma/db";
+import TeacherEditForm from "../teacher-edit-form";
 
 type TeacherDetailsPageProps = {
   params: Promise<{
@@ -71,36 +72,69 @@ export default async function TeacherDetailsPage({
     subjects.map((subject) => [subject.id, subject.name]),
   );
 
-  async function updateTeacherAction(formData: FormData) {
+  type TeacherEditFormState = {
+    error: string | null;
+  };
+
+  async function updateTeacherAction(
+    _previousState: TeacherEditFormState,
+    formData: FormData,
+  ): Promise<TeacherEditFormState> {
     "use server";
 
-    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+    try {
+      const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
-    const schoolId = session.user.schoolId;
+      const schoolId = session.user.schoolId;
 
-    if (!schoolId) {
-      throw new Error("School context is required.");
+      if (!schoolId) {
+        return {
+          error: "School context is required.",
+        };
+      }
+
+      const result = updateTeacherSchema.safeParse({
+        employeeId: formData.get("employeeId"),
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+      });
+
+      if (!result.success) {
+        return {
+          error:
+            result.error.issues[0]?.message ?? "Invalid teacher information.",
+        };
+      }
+
+      try {
+        await updateTeacher(schoolId, teacherId, result.data);
+      } catch (error) {
+        if (error instanceof Error) {
+          return {
+            error: error.message,
+          };
+        }
+
+        return {
+          error: "Unable to update the teacher.",
+        };
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          error: error.message,
+        };
+      }
+
+      return {
+        error: "Something went wrong. Please try again.",
+      };
     }
-
-    const result = updateTeacherSchema.safeParse({
-      employeeId: formData.get("employeeId"),
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-    });
-
-    if (!result.success) {
-      throw new Error(
-        result.error.issues[0]?.message || "Invalid teacher information.",
-      );
-    }
-
-    await updateTeacher(schoolId, teacherId, result.data);
 
     redirect(`/school/teachers/${teacherId}`);
   }
-
   const fullName = `${teacher.firstName} ${teacher.lastName}`;
 
   return (
@@ -258,107 +292,14 @@ export default async function TeacherDetailsPage({
         <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 transition hover:bg-slate-50 sm:px-8">
           Edit Teacher Information
         </summary>
-
-        <form
+        <TeacherEditForm
           action={updateTeacherAction}
-          className="space-y-6 border-t border-slate-200 p-6 sm:p-8"
-        >
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor="employeeId"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Employee ID <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                id="employeeId"
-                name="employeeId"
-                defaultValue={teacher.employeeId}
-                required
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="firstName"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                First Name <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                id="firstName"
-                name="firstName"
-                defaultValue={teacher.firstName}
-                required
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="lastName"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Last Name <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                id="lastName"
-                name="lastName"
-                defaultValue={teacher.lastName}
-                required
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Email
-              </label>
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                defaultValue={teacher.email ?? ""}
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="phone"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                Phone
-              </label>
-
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                defaultValue={teacher.phone ?? ""}
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end border-t border-slate-200 pt-6">
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
+          employeeId={teacher.employeeId}
+          firstName={teacher.firstName}
+          lastName={teacher.lastName}
+          email={teacher.email ?? ""}
+          phone={teacher.phone ?? ""}
+        />
       </details>
     </div>
   );

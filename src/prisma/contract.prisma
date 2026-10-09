@@ -301,7 +301,7 @@ model SubjectResult {
   createdAt       TimestamptzString          @default(now())
   updatedAt       temporal.updatedAtString()
 
-  @@unique([studentId, subjectId, termId, reportType])
+  @@unique([studentId, classId, subjectId, termId, reportType])
   @@index([schoolId])
   @@index([studentId])
   @@index([classId])
@@ -340,6 +340,8 @@ model StudentTermResult {
 
   class        SchoolClass                @relation(fields:[classId], references:[id])
   classId      Int
+  classTeacher   Teacher? @relation("StudentTermResultClassTeacher", fields:[classTeacherId], references:[id])
+  classTeacherId Int?
 
   term         Term                       @relation(fields:[termId], references:[id])
   termId       Int
@@ -355,7 +357,7 @@ model StudentTermResult {
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
 
-  @@unique([studentId, termId, reportType])
+  @@unique([studentId, classId, termId, reportType])
   @@index([schoolId])
   @@index([studentId])
   @@index([classId])
@@ -413,6 +415,7 @@ model Student {
   id                 Int                        @id @default(autoincrement())
   school             School                     @relation(fields:[schoolId], references:[id])
   schoolId           Int
+  isActive           Boolean                    @default(true)
   user               User?                      @relation(fields:[userId], references:[id])
   userId             Int?                       @unique
   admissionNumber    String
@@ -453,6 +456,7 @@ model Teacher {
   phone           String?
   email           String?
   assignments     TeacherAssignment[]
+  historicalClassTeacherResults StudentTermResult[] @relation("StudentTermResultClassTeacher")
   classTeacherOf  SchoolClass[]             @relation("ClassTeacher")
   createdAt       TimestamptzString         @default(now())
   updatedAt       temporal.updatedAtString()

@@ -592,6 +592,7 @@ export async function calculateAndSaveSubjectResult(
    subjectResults.find(
      (result) =>
        result.subjectId === input.subjectId &&
+       result.classId === input.classId &&
        result.termId === input.termId &&
        result.reportType === input.reportType,
    ) ?? null;
@@ -742,11 +743,13 @@ export async function calculateAndSaveStudentTermResult(
     studentId: number;
   },
 ) {
-  await validateClass(input.schoolId, input.classId);
+  const schoolClass = await validateClass(input.schoolId, input.classId);
 
   await validateStudent(input.schoolId, input.studentId, input.classId);
 
   await getSchoolTerm(input.schoolId, input.termId);
+
+  const classTeacherId = schoolClass.classTeacherId ?? null;
 
   const allStudentSubjectResults = await db.orm.public.SubjectResult.where(
     (result) => result.studentId.eq(input.studentId),
@@ -803,12 +806,13 @@ export async function calculateAndSaveStudentTermResult(
     (result) => result.studentId.eq(input.studentId),
   ).all();
 
-  let studentTermResult =
-    allStudentTermResults.find(
-      (result) =>
-        result.termId === input.termId &&
-        result.reportType === input.reportType,
-    ) ?? null;
+ let studentTermResult =
+   allStudentTermResults.find(
+     (result) =>
+       result.classId === input.classId &&
+       result.termId === input.termId &&
+       result.reportType === input.reportType,
+   ) ?? null;
 
   if (studentTermResult) {
     studentTermResult = await db.orm.public.StudentTermResult.where((result) =>
@@ -816,6 +820,7 @@ export async function calculateAndSaveStudentTermResult(
     ).update({
       schoolId: input.schoolId,
       classId: input.classId,
+      classTeacherId,
       totalScore,
       averageScore,
       grade: gradeResult.grade,
@@ -829,6 +834,7 @@ export async function calculateAndSaveStudentTermResult(
     schoolId: input.schoolId,
     studentId: input.studentId,
     classId: input.classId,
+    classTeacherId,
     termId: input.termId,
     reportType: input.reportType,
     totalScore,

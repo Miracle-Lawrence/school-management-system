@@ -22,7 +22,8 @@ export default async function NewReportConfigurationPage() {
         </p>
       </div>
 
-      <div className="max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mx-auto w-full max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        {" "}
         <form action={createReportConfigurationAction} className="space-y-6">
           <div>
             <label

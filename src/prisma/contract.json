@@ -3316,6 +3316,13 @@
                   "kind": "scalar"
                 }
               },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "lastName": {
                 "nullable": false,
                 "type": {
@@ -3550,6 +3557,9 @@
                 "id": {
                   "column": "id"
                 },
+                "isActive": {
+                  "column": "isActive"
+                },
                 "lastName": {
                   "column": "lastName"
                 },
@@ -3774,6 +3784,13 @@
                   "kind": "scalar"
                 }
               },
+              "classTeacherId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -3875,6 +3892,22 @@
                   "namespace": "public"
                 }
               },
+              "classTeacher": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "classTeacherId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Teacher",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -3931,6 +3964,9 @@
                 },
                 "classId": {
                   "column": "classId"
+                },
+                "classTeacherId": {
+                  "column": "classTeacherId"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -4472,6 +4508,21 @@
                 },
                 "to": {
                   "model": "SchoolClass",
+                  "namespace": "public"
+                }
+              },
+              "historicalClassTeacherResults": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "classTeacherId"
+                  ]
+                },
+                "to": {
+                  "model": "StudentTermResult",
                   "namespace": "public"
                 }
               },
@@ -7468,6 +7519,15 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "lastName": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -7805,6 +7865,11 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "classTeacherId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -7927,6 +7992,22 @@
                 {
                   "source": {
                     "columns": [
+                      "classTeacherId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "StudentTermResult"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Teacher"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
                       "termId"
                     ],
                     "namespaceId": "public",
@@ -7948,6 +8029,14 @@
                   ],
                   "name": "StudentTermResult_classId_idx_0089e5e7",
                   "prefix": "StudentTermResult_classId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "classTeacherId"
+                  ],
+                  "name": "StudentTermResult_classTeacherId_idx_a6853519",
+                  "prefix": "StudentTermResult_classTeacherId_idx",
                   "unique": false
                 },
                 {
@@ -7984,6 +8073,7 @@
                 {
                   "columns": [
                     "studentId",
+                    "classId",
                     "termId",
                     "reportType"
                   ]
@@ -8300,6 +8390,7 @@
                 {
                   "columns": [
                     "studentId",
+                    "classId",
                     "subjectId",
                     "termId",
                     "reportType"
@@ -8902,7 +8993,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c2ea0b70ca5d5ecf0e3945618680e99782e1a70cac3ac82687b8019af99e563e"
+    "storageHash": "e8efc318395b2cfd350d73b717c33fe9e663056776056e01445930ee0652c6dd"
   },
   "execution": {
     "executionHash": "0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039",

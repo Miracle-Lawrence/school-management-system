@@ -1,0 +1,866 @@
+[
+  {
+    "id": "table.ReportComment",
+    "label": "Create table \"ReportComment\"",
+    "summary": "Creates table \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ReportComment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ReportComment\"",
+        "sql": "CREATE TABLE \"public\".\"ReportComment\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"principalComment\" text,\n  \"reportType\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"teacherComment\" text,\n  \"termId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"ReportComment_reportType_check_6c6f706e\" CHECK (\"reportType\" IN ('MID_TERM', 'TERMINAL'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ReportComment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showAttendance",
+    "label": "Add column \"showAttendance\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showAttendance",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showAttendance\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showAttendance"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showAttendance\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showAttendance\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showAttendance\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showAttendance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showClassPosition",
+    "label": "Add column \"showClassPosition\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showClassPosition",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showClassPosition\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassPosition"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showClassPosition\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showClassPosition\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showClassPosition\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassPosition"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showClassTeacherName",
+    "label": "Add column \"showClassTeacherName\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showClassTeacherName",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showClassTeacherName\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassTeacherName"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showClassTeacherName\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showClassTeacherName\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showClassTeacherName\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showClassTeacherName"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showPrincipalSignature",
+    "label": "Add column \"showPrincipalSignature\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showPrincipalSignature",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showPrincipalSignature\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showPrincipalSignature"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showPrincipalSignature\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showPrincipalSignature\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showPrincipalSignature\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showPrincipalSignature"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.showSchoolStamp",
+    "label": "Add column \"showSchoolStamp\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "showSchoolStamp",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"showSchoolStamp\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showSchoolStamp"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"showSchoolStamp\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"showSchoolStamp\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"showSchoolStamp\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "showSchoolStamp"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.School.principalSignatureUrl",
+    "label": "Add column \"principalSignatureUrl\" to \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "principalSignatureUrl",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"principalSignatureUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "principalSignatureUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"principalSignatureUrl\"",
+        "sql": "ALTER TABLE \"public\".\"School\" ADD COLUMN \"principalSignatureUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"principalSignatureUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "principalSignatureUrl"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.SchoolClass.classTeacherId",
+    "label": "Add column \"classTeacherId\" to \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "classTeacherId",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"classTeacherId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SchoolClass",
+          "classTeacherId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"classTeacherId\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolClass\" ADD COLUMN \"classTeacherId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"classTeacherId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SchoolClass",
+          "classTeacherId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Student.isActive",
+    "label": "Add column \"isActive\" to \"Student\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "isActive",
+        "table": "Student"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isActive\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Student",
+          "isActive"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"isActive\"",
+        "sql": "ALTER TABLE \"public\".\"Student\" ADD COLUMN \"isActive\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isActive\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Student",
+          "isActive"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.StudentTermResult.classTeacherId",
+    "label": "Add column \"classTeacherId\" to \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "classTeacherId",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"classTeacherId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "StudentTermResult",
+          "classTeacherId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"classTeacherId\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\" ADD COLUMN \"classTeacherId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"classTeacherId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "StudentTermResult",
+          "classTeacherId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.ReportComment.ReportComment_studentId_termId_reportType_key",
+    "label": "Add unique constraint on \"ReportComment\" (studentId, termId, reportType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "ReportComment_studentId_termId_reportType_key",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ReportComment_studentId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"ReportComment_studentId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\" ADD CONSTRAINT \"ReportComment_studentId_termId_reportType_key\" UNIQUE (\"studentId\", \"termId\", \"reportType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ReportComment_studentId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_schoolId_idx_82b454d7",
+    "label": "Create index \"ReportComment_schoolId_idx_82b454d7\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_schoolId_idx_82b454d7",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"ReportComment_schoolId_idx_82b454d7\" ON \"public\".\"ReportComment\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_studentId_idx_bf255322",
+    "label": "Create index \"ReportComment_studentId_idx_bf255322\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_studentId_idx_bf255322",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"ReportComment_studentId_idx_bf255322\" ON \"public\".\"ReportComment\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportComment.ReportComment_termId_idx_1b74c9af",
+    "label": "Create index \"ReportComment_termId_idx_1b74c9af\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportComment_termId_idx_1b74c9af",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportComment_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportComment_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"ReportComment_termId_idx_1b74c9af\" ON \"public\".\"ReportComment\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportComment_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportComment_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolClass.SchoolClass_classTeacherId_idx_a6853519",
+    "label": "Create index \"SchoolClass_classTeacherId_idx_a6853519\" on \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolClass_classTeacherId_idx_a6853519",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolClass_classTeacherId_idx_a6853519\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolClass_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolClass_classTeacherId_idx_a6853519\"",
+        "sql": "CREATE INDEX \"SchoolClass_classTeacherId_idx_a6853519\" ON \"public\".\"SchoolClass\" (\"classTeacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolClass_classTeacherId_idx_a6853519\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolClass_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentTermResult.StudentTermResult_classTeacherId_idx_a6853519",
+    "label": "Create index \"StudentTermResult_classTeacherId_idx_a6853519\" on \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentTermResult_classTeacherId_idx_a6853519",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentTermResult_classTeacherId_idx_a6853519\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentTermResult_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentTermResult_classTeacherId_idx_a6853519\"",
+        "sql": "CREATE INDEX \"StudentTermResult_classTeacherId_idx_a6853519\" ON \"public\".\"StudentTermResult\" (\"classTeacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentTermResult_classTeacherId_idx_a6853519\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentTermResult_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_schoolId_fkey",
+    "label": "Add foreign key \"ReportComment_schoolId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_schoolId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_studentId_fkey",
+    "label": "Add foreign key \"ReportComment_studentId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_studentId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_studentId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportComment.ReportComment_termId_fkey",
+    "label": "Add foreign key \"ReportComment_termId_fkey\" on \"ReportComment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportComment_termId_fkey",
+        "table": "ReportComment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportComment_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_termId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportComment_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportComment\"\nADD CONSTRAINT \"ReportComment_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportComment_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportComment_termId_fkey",
+          "public",
+          "\"public\".\"ReportComment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolClass.SchoolClass_classTeacherId_fkey",
+    "label": "Add foreign key \"SchoolClass_classTeacherId_fkey\" on \"SchoolClass\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolClass_classTeacherId_fkey",
+        "table": "SchoolClass"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolClass_classTeacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolClass_classTeacherId_fkey",
+          "public",
+          "\"public\".\"SchoolClass\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolClass_classTeacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolClass\"\nADD CONSTRAINT \"SchoolClass_classTeacherId_fkey\"\nFOREIGN KEY (\"classTeacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolClass_classTeacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolClass_classTeacherId_fkey",
+          "public",
+          "\"public\".\"SchoolClass\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentTermResult.StudentTermResult_classTeacherId_fkey",
+    "label": "Add foreign key \"StudentTermResult_classTeacherId_fkey\" on \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentTermResult_classTeacherId_fkey",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentTermResult_classTeacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_classTeacherId_fkey",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentTermResult_classTeacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\"\nADD CONSTRAINT \"StudentTermResult_classTeacherId_fkey\"\nFOREIGN KEY (\"classTeacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentTermResult_classTeacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_classTeacherId_fkey",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ]
+  }
+]

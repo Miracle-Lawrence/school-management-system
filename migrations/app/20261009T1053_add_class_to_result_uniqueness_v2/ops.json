@@ -1,0 +1,170 @@
+[
+  {
+    "id": "dropConstraint.StudentTermResult.StudentTermResult_studentId_termId_reportType_key",
+    "label": "Drop constraint \"StudentTermResult_studentId_termId_reportType_key\" on \"StudentTermResult\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentTermResult_studentId_termId_reportType_key",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentTermResult_studentId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"StudentTermResult_studentId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\" DROP CONSTRAINT \"StudentTermResult_studentId_termId_reportType_key\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentTermResult_studentId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_studentId_termId_reportType_key",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.SubjectResult.SubjectResult_studentId_subjectId_termId_reportType_key",
+    "label": "Drop constraint \"SubjectResult_studentId_subjectId_termId_reportType_key\" on \"SubjectResult\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "SubjectResult_studentId_subjectId_termId_reportType_key",
+        "table": "SubjectResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"SubjectResult_studentId_subjectId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubjectResult_studentId_subjectId_termId_reportType_key",
+          "public",
+          "\"public\".\"SubjectResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"SubjectResult_studentId_subjectId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"SubjectResult\" DROP CONSTRAINT \"SubjectResult_studentId_subjectId_termId_reportType_key\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"SubjectResult_studentId_subjectId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubjectResult_studentId_subjectId_termId_reportType_key",
+          "public",
+          "\"public\".\"SubjectResult\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentTermResult.StudentTermResult_studentId_classId_termId_reportType_key",
+    "label": "Add unique constraint on \"StudentTermResult\" (studentId, classId, termId, reportType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentTermResult_studentId_classId_termId_reportType_key",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentTermResult_studentId_classId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_studentId_classId_termId_reportType_key",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentTermResult_studentId_classId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\" ADD CONSTRAINT \"StudentTermResult_studentId_classId_termId_reportType_key\" UNIQUE (\"studentId\", \"classId\", \"termId\", \"reportType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentTermResult_studentId_classId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_studentId_classId_termId_reportType_key",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.SubjectResult.SubjectResult_studentId_classId_subjectId_termId_reportType_key",
+    "label": "Add unique constraint on \"SubjectResult\" (studentId, classId, subjectId, termId, reportType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "SubjectResult_studentId_classId_subjectId_termId_reportType_key",
+        "table": "SubjectResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"SubjectResult_studentId_classId_subjectId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubjectResult_studentId_classId_subjectId_termId_reportType_key",
+          "public",
+          "\"public\".\"SubjectResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"SubjectResult_studentId_classId_subjectId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"SubjectResult\" ADD CONSTRAINT \"SubjectResult_studentId_classId_subjectId_termId_reportType_key\" UNIQUE (\"studentId\", \"classId\", \"subjectId\", \"termId\", \"reportType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"SubjectResult_studentId_classId_subjectId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SubjectResult_studentId_classId_subjectId_termId_reportType_key",
+          "public",
+          "\"public\".\"SubjectResult\""
+        ]
+      }
+    ]
+  }
+]

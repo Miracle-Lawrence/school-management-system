@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'e8efc318395b2cfd350d73b717c33fe9e663056776056e01445930ee0652c6dd'>;
+  StorageHashBase<'1aea19b47f62b4a186c066b824d232f05facbf603dc01413f377475710194c55'>;
 export type ExecutionHash =
   ExecutionHashBase<'0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039'>;
 export type ProfileHash =
@@ -459,7 +459,6 @@ export type FieldOutputTypes = {
       readonly firstName: CodecTypes['pg/text@1']['output'];
       readonly gender: 'MALE' | 'FEMALE';
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
       readonly lastName: CodecTypes['pg/text@1']['output'];
       readonly middleName: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -784,7 +783,6 @@ export type FieldInputTypes = {
       readonly firstName: CodecTypes['pg/text@1']['input'];
       readonly gender: 'MALE' | 'FEMALE';
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
       readonly lastName: CodecTypes['pg/text@1']['input'];
       readonly middleName: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -1109,7 +1107,6 @@ export type StorageColumnTypes = {
       readonly firstName: CodecTypes['pg/text@1']['output'];
       readonly gender: 'MALE' | 'FEMALE';
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly isActive: CodecTypes['pg/bool@1']['output'];
       readonly lastName: CodecTypes['pg/text@1']['output'];
       readonly middleName: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -1434,7 +1431,6 @@ export type StorageColumnInputTypes = {
       readonly firstName: CodecTypes['pg/text@1']['input'];
       readonly gender: 'MALE' | 'FEMALE';
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly isActive: CodecTypes['pg/bool@1']['input'];
       readonly lastName: CodecTypes['pg/text@1']['input'];
       readonly middleName: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -1873,7 +1869,6 @@ export namespace Models {
     firstName: CodecTypes['pg/text@1']['output'];
     gender: 'MALE' | 'FEMALE';
     id: CodecTypes['pg/int4@1']['output'];
-    isActive: CodecTypes['pg/bool@1']['output'];
     lastName: CodecTypes['pg/text@1']['output'];
     middleName: CodecTypes['pg/text@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
@@ -3919,15 +3914,6 @@ type ContractBase = Omit<
                     readonly expression: 'autoincrement()';
                   };
                 };
-                readonly isActive: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
                 readonly lastName: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -4252,7 +4238,7 @@ type ContractBase = Omit<
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [
-                { readonly columns: readonly ['studentId', 'classId', 'termId', 'reportType'] },
+                { readonly columns: readonly ['studentId', 'termId', 'reportType'] },
               ];
               indexes: readonly [
                 {
@@ -4492,15 +4478,7 @@ type ContractBase = Omit<
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [
-                {
-                  readonly columns: readonly [
-                    'studentId',
-                    'classId',
-                    'subjectId',
-                    'termId',
-                    'reportType',
-                  ];
-                },
+                { readonly columns: readonly ['studentId', 'subjectId', 'termId', 'reportType'] },
               ];
               indexes: readonly [
                 {
@@ -7091,10 +7069,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly isActive: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
               readonly lastName: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -7252,7 +7226,6 @@ type ContractBase = Omit<
                 readonly firstName: { readonly column: 'firstName' };
                 readonly gender: { readonly column: 'gender' };
                 readonly id: { readonly column: 'id' };
-                readonly isActive: { readonly column: 'isActive' };
                 readonly lastName: { readonly column: 'lastName' };
                 readonly middleName: { readonly column: 'middleName' };
                 readonly phone: { readonly column: 'phone' };

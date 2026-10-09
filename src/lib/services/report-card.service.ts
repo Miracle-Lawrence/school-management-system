@@ -40,11 +40,7 @@ export async function getStudentReportCardData(
     item.id.eq(studentId),
   ).first();
 
-  if (
-    !student ||
-    student.schoolId !== schoolId ||
-    student.classId !== classId
-  ) {
+  if (!student || student.schoolId !== schoolId) {
     throw new Error("Invalid student.");
   }
 
@@ -106,7 +102,12 @@ export async function getStudentReportCardData(
   if (!studentTermResult) {
     throw new Error("No completed term result exists for this student.");
   }
-
+  
+  const classTeacher = studentTermResult.classTeacherId
+    ? await db.orm.public.Teacher.where((teacher) =>
+        teacher.id.eq(studentTermResult.classTeacherId!),
+      ).first()
+    : null;
   /*
    * ---------------------------------------------------------
    * 6. Get class subjects
@@ -361,6 +362,7 @@ export async function getStudentReportCardData(
     term,
     schoolClass,
     student,
+    classTeacher,
 
     reportConfiguration: {
       id: reportConfiguration.id,

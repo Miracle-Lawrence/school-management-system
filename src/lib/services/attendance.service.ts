@@ -27,13 +27,17 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     student.id.eq(studentId),
   ).first();
 
-  if (!student || student.schoolId !== schoolId) {
-    throw new Error("Invalid student.");
-  }
+ if (!student || student.schoolId !== schoolId) {
+   throw new Error("Invalid student.");
+ }
 
-  if (student.classId !== classId) {
-    throw new Error("Student is not assigned to this class.");
-  }
+ if (!student.isActive) {
+   throw new Error("Attendance cannot be recorded for an inactive student.");
+ }
+
+ if (student.classId !== classId) {
+   throw new Error("Student is not assigned to this class.");
+ }
 
   const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.id.eq(classId),

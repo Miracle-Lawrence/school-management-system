@@ -1,0 +1,125 @@
+[
+  {
+    "id": "column.public.StudentTermResult.classTeacherId",
+    "label": "Add column \"classTeacherId\" to \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "classTeacherId",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"classTeacherId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "StudentTermResult",
+          "classTeacherId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"classTeacherId\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\" ADD COLUMN \"classTeacherId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"classTeacherId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "StudentTermResult",
+          "classTeacherId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentTermResult.StudentTermResult_classTeacherId_idx_a6853519",
+    "label": "Create index \"StudentTermResult_classTeacherId_idx_a6853519\" on \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentTermResult_classTeacherId_idx_a6853519",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentTermResult_classTeacherId_idx_a6853519\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentTermResult_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentTermResult_classTeacherId_idx_a6853519\"",
+        "sql": "CREATE INDEX \"StudentTermResult_classTeacherId_idx_a6853519\" ON \"public\".\"StudentTermResult\" (\"classTeacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentTermResult_classTeacherId_idx_a6853519\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentTermResult_classTeacherId_idx_a6853519\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentTermResult.StudentTermResult_classTeacherId_fkey",
+    "label": "Add foreign key \"StudentTermResult_classTeacherId_fkey\" on \"StudentTermResult\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentTermResult_classTeacherId_fkey",
+        "table": "StudentTermResult"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentTermResult_classTeacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_classTeacherId_fkey",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentTermResult_classTeacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentTermResult\"\nADD CONSTRAINT \"StudentTermResult_classTeacherId_fkey\"\nFOREIGN KEY (\"classTeacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentTermResult_classTeacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentTermResult_classTeacherId_fkey",
+          "public",
+          "\"public\".\"StudentTermResult\""
+        ]
+      }
+    ]
+  }
+]
