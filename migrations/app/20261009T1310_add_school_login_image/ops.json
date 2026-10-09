@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.School.loginImageUrl",
+    "label": "Add column \"loginImageUrl\" to \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "loginImageUrl",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"loginImageUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "loginImageUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"loginImageUrl\"",
+        "sql": "ALTER TABLE \"public\".\"School\" ADD COLUMN \"loginImageUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"loginImageUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "loginImageUrl"
+        ]
+      }
+    ]
+  }
+]

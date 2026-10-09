@@ -82,6 +82,7 @@ model School {
   primaryColor             String?
   secondaryColor           String?
   accentColor              String?
+  loginImageUrl            String?
   website                  String?
   principalName            String?
   principalTitle           String?

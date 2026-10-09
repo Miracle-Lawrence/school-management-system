@@ -59,6 +59,10 @@ export async function saveSchoolLogo(file: File, schoolId: number) {
   return saveSchoolBrandingImage(file, schoolId, "logo");
 }
 
+export async function saveSchoolLoginImage(file: File, schoolId: number) {
+  return saveSchoolBrandingImage(file, schoolId, "login-image");
+}
+
 export async function saveSchoolFavicon(file: File, schoolId: number) {
   return saveSchoolBrandingImage(file, schoolId, "favicon");
 }

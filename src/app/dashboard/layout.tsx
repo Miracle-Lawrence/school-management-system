@@ -1,17 +1,13 @@
 import Link from "next/link";
-import { auth, signOut } from "@/auth";
-import { redirect } from "next/navigation";
+import { signOut } from "@/auth";
+import { requireRole } from "@/lib/auth/authorization";
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await requireRole(["PLATFORM_OWNER", "PLATFORM_ADMIN"]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

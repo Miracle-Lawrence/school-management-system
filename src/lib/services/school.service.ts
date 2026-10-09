@@ -11,6 +11,7 @@ type UpdateSchoolData = {
 
   // School branding
   logoUrl?: string;
+  loginImageUrl?: string;
   faviconUrl?: string;
   motto?: string;
   primaryColor?: string;
@@ -43,6 +44,10 @@ export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
 
     // School branding
     logoUrl: data.logoUrl !== undefined ? data.logoUrl : school.logoUrl,
+    loginImageUrl:
+      data.loginImageUrl !== undefined
+        ? data.loginImageUrl
+        : school.loginImageUrl,
     faviconUrl:
       data.faviconUrl !== undefined ? data.faviconUrl : school.faviconUrl,
     motto: data.motto !== undefined ? data.motto || null : school.motto,
@@ -72,5 +77,53 @@ export async function updateSchool(schoolId: number, data: UpdateSchoolData) {
         ? data.principalSignatureUrl
         : school.principalSignatureUrl,
     stampUrl: data.stampUrl !== undefined ? data.stampUrl : school.stampUrl,
+  });
+}
+
+type UpdateSchoolLoginBrandingData = {
+  motto?: string;
+  logoUrl?: string;
+  loginImageUrl?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+};
+
+export async function updateSchoolLoginBranding(
+  schoolId: number,
+  data: UpdateSchoolLoginBrandingData,
+) {
+  const school = await db.orm.public.School.where((school) =>
+    school.id.eq(schoolId),
+  ).first();
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  return db.orm.public.School.where((school) => school.id.eq(schoolId)).update({
+    motto: data.motto !== undefined ? data.motto || null : school.motto,
+
+    logoUrl: data.logoUrl !== undefined ? data.logoUrl : school.logoUrl,
+
+    loginImageUrl:
+      data.loginImageUrl !== undefined
+        ? data.loginImageUrl
+        : school.loginImageUrl,
+
+    primaryColor:
+      data.primaryColor !== undefined
+        ? data.primaryColor || null
+        : school.primaryColor,
+
+    secondaryColor:
+      data.secondaryColor !== undefined
+        ? data.secondaryColor || null
+        : school.secondaryColor,
+
+    accentColor:
+      data.accentColor !== undefined
+        ? data.accentColor || null
+        : school.accentColor,
   });
 }

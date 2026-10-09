@@ -40,6 +40,7 @@ export default async function SchoolsPage() {
                   <th className="px-6 py-4 font-semibold">Slug</th>
                   <th className="px-6 py-4 font-semibold">Status</th>
                   <th className="px-6 py-4 font-semibold">Country</th>
+                  <th className="px-6 py-4 font-semibold">Actions</th>
                 </tr>
               </thead>
 
@@ -53,6 +54,14 @@ export default async function SchoolsPage() {
                     <td className="px-6 py-4">{school.status}</td>
 
                     <td className="px-6 py-4">{school.country}</td>
+                    <td className="px-6 py-4">
+                      <Link
+                        href={`/dashboard/schools/${school.id}`}
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>

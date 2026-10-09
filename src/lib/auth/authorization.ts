@@ -1,24 +1,61 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { db } from "@/prisma/db";
 
 export async function requireAuth() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
-  return session;
+  const user = await db.orm.public.User.where((user) =>
+    user.id.eq(Number(session.user.id)),
+  ).first();
+
+  if (!user || !user.isActive) {
+    redirect("/login");
+  }
+
+  return {
+    ...session,
+    user: {
+      ...session.user,
+      id: String(user.id),
+      role: user.role,
+      schoolId: user.schoolId,
+    },
+  };
 }
 
 export async function requireRole(allowedRoles: string[]) {
   const session = await requireAuth();
 
-  if (!allowedRoles.includes(session.user.role)) {
-    throw new Error("Forbidden.");
+  if (allowedRoles.includes(session.user.role)) {
+    return session;
   }
 
-  return session;
+  switch (session.user.role) {
+    case "PLATFORM_OWNER":
+    case "PLATFORM_ADMIN":
+      redirect("/dashboard");
+
+    case "SCHOOL_OWNER":
+    case "SCHOOL_ADMIN":
+      redirect("/school/dashboard");
+
+    case "TEACHER":
+      redirect("/teacher/dashboard");
+
+    case "PARENT":
+      redirect("/parent/dashboard");
+
+    case "STUDENT":
+      redirect("/student/dashboard");
+
+    default:
+      redirect("/login");
+  }
 }
 
 export async function requireSchoolUser() {
