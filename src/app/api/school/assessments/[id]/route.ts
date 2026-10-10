@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { requireRole } from "@/lib/auth/authorization";
 import {
   deleteAssessment,
   updateAssessment,
@@ -13,7 +13,7 @@ type RouteContext = {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
-    const session = await auth();
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
@@ -96,7 +96,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
 export async function DELETE(request: Request, { params }: RouteContext) {
   try {
-    const session = await auth();
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });

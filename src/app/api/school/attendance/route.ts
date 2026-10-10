@@ -1,49 +1,78 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { recordAttendance } from "@/lib/services/attendance.service";
 
+const VALID_STATUSES = ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const;
+
+type AttendanceStatus = (typeof VALID_STATUSES)[number];
+
+type AttendanceInput = {
+  studentId: number;
+  status: AttendanceStatus;
+};
+
+function isValidDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+
+  return (
+    !Number.isNaN(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === value
+  );
+}
+
+function isValidId(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+}
+
 export async function GET(request: Request) {
+  // Keep authorization outside the database-operation try/catch.
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    return NextResponse.json(
+      { error: "School context is required." },
+      { status: 403 },
+    );
+  }
+
   try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (
-      session.user.role !== "SCHOOL_OWNER" &&
-      session.user.role !== "SCHOOL_ADMIN"
-    ) {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
-
-    if (!session.user.schoolId) {
-      return NextResponse.json(
-        { error: "School context is required." },
-        { status: 400 },
-      );
-    }
-
     const { searchParams } = new URL(request.url);
-
-    const classId = Number(searchParams.get("classId"));
-
-    const termId = Number(searchParams.get("termId"));
-
+    const classIdValue = searchParams.get("classId");
+    const termIdValue = searchParams.get("termId");
     const date = searchParams.get("date");
 
-    if (!Number.isInteger(classId) || !Number.isInteger(termId)) {
+    if (
+      !classIdValue ||
+      !termIdValue ||
+      !/^\d+$/.test(classIdValue) ||
+      !/^\d+$/.test(termIdValue)
+    ) {
       return NextResponse.json(
         { error: "Invalid class or term." },
         { status: 400 },
       );
     }
 
-    if (!date) {
+    const classId = Number(classIdValue);
+    const termId = Number(termIdValue);
+
+    if (!isValidId(classId) || !isValidId(termId)) {
       return NextResponse.json(
-        { error: "Attendance date is required." },
+        { error: "Invalid class or term." },
+        { status: 400 },
+      );
+    }
+
+    if (!isValidDate(date)) {
+      return NextResponse.json(
+        { error: "A valid attendance date is required (YYYY-MM-DD)." },
         { status: 400 },
       );
     }
@@ -52,8 +81,8 @@ export async function GET(request: Request) {
       schoolClass.id.eq(classId),
     ).first();
 
-    if (!schoolClass || schoolClass.schoolId !== session.user.schoolId) {
-      return NextResponse.json({ error: "Invalid class." }, { status: 400 });
+    if (!schoolClass || schoolClass.schoolId !== schoolId) {
+      return NextResponse.json({ error: "Class not found." }, { status: 404 });
     }
 
     const term = await db.orm.public.Term.where((term) =>
@@ -61,90 +90,115 @@ export async function GET(request: Request) {
     ).first();
 
     if (!term) {
-      return NextResponse.json({ error: "Invalid term." }, { status: 400 });
+      return NextResponse.json({ error: "Term not found." }, { status: 404 });
     }
 
     const academicSession = await db.orm.public.AcademicSession.where(
       (academicSession) => academicSession.id.eq(term.sessionId),
     ).first();
 
-    if (
-      !academicSession ||
-      academicSession.schoolId !== session.user.schoolId
-    ) {
+    if (!academicSession || academicSession.schoolId !== schoolId) {
       return NextResponse.json(
-        { error: "Invalid academic session." },
-        { status: 400 },
+        { error: "Term does not belong to this school." },
+        { status: 404 },
       );
     }
 
-    const allRecords = await db.orm.public.Attendance.where((attendance) =>
-      attendance.classId.eq(classId),
-    ).all();
+    const [attendanceRecords, schoolStudents] = await Promise.all([
+      db.orm.public.Attendance.where((attendance) =>
+        attendance.classId.eq(classId),
+      ).all(),
+      db.orm.public.Student.where((student) =>
+        student.schoolId.eq(schoolId),
+      ).all(),
+    ]);
 
-    const records = allRecords
+    const validStudents = new Map(
+      schoolStudents
+        .filter((student) => student.classId === classId)
+        .map((student) => [student.id, student]),
+    );
+
+    const records = attendanceRecords
       .filter(
         (record) =>
           record.termId === termId &&
-          record.date.toString().slice(0, 10) === date,
+          record.date.toString().slice(0, 10) === date &&
+          validStudents.has(record.studentId),
       )
       .map((record) => ({
         studentId: record.studentId,
         status: record.status,
       }));
 
-    return NextResponse.json({
-      records,
-    });
+    return NextResponse.json(
+      { records },
+      {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   } catch (error) {
     console.error("Attendance lookup error:", error);
 
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to load attendance.",
-      },
-      { status: 400 },
+      { error: "Failed to load attendance." },
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: Request) {
+  // Keep authorization outside the database-operation try/catch.
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    return NextResponse.json(
+      { error: "School context is required." },
+      { status: 403 },
+    );
+  }
+
   try {
-    const session = await auth();
+    let body: unknown;
 
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (
-      session.user.role !== "SCHOOL_OWNER" &&
-      session.user.role !== "SCHOOL_ADMIN"
-    ) {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
-
-    if (!session.user.schoolId) {
+    try {
+      body = await request.json();
+    } catch {
       return NextResponse.json(
-        { error: "School context is required." },
+        { error: "Invalid JSON request body." },
         { status: 400 },
       );
     }
 
-    const body = await request.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: "Invalid attendance request." },
+        { status: 400 },
+      );
+    }
 
-    const { classId, termId, date, records } = body;
+    const payload = body as {
+      classId?: unknown;
+      termId?: unknown;
+      date?: unknown;
+      records?: unknown;
+    };
 
-    if (!Number.isInteger(classId) || !Number.isInteger(termId)) {
+    const { classId, termId, date, records } = payload;
+
+    if (!isValidId(classId) || !isValidId(termId)) {
       return NextResponse.json(
         { error: "Invalid class or term." },
         { status: 400 },
       );
     }
 
-    if (typeof date !== "string" || !date) {
+    if (!isValidDate(date)) {
       return NextResponse.json(
-        { error: "Attendance date is required." },
+        { error: "A valid attendance date is required (YYYY-MM-DD)." },
         { status: 400 },
       );
     }
@@ -156,25 +210,112 @@ export async function POST(request: Request) {
       );
     }
 
-    const validStatuses = ["PRESENT", "ABSENT", "LATE", "EXCUSED"];
+    const validatedRecords: AttendanceInput[] = [];
 
-    for (const record of records) {
+    for (const item of records) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        return NextResponse.json(
+          { error: "Invalid attendance record." },
+          { status: 400 },
+        );
+      }
+
+      const record = item as {
+        studentId?: unknown;
+        status?: unknown;
+      };
+
       if (
-        !Number.isInteger(record.studentId) ||
-        !validStatuses.includes(record.status)
+        !isValidId(record.studentId) ||
+        typeof record.status !== "string" ||
+        !VALID_STATUSES.includes(record.status as AttendanceStatus)
       ) {
         return NextResponse.json(
           { error: "Invalid attendance record." },
           { status: 400 },
         );
       }
+
+      validatedRecords.push({
+        studentId: record.studentId,
+        status: record.status as AttendanceStatus,
+      });
+    }
+
+    // Reject duplicate student IDs to avoid recording the same student twice.
+    const studentIds = validatedRecords.map((record) => record.studentId);
+
+    if (new Set(studentIds).size !== studentIds.length) {
+      return NextResponse.json(
+        { error: "Duplicate students were submitted." },
+        { status: 400 },
+      );
+    }
+
+    // Confirm the class belongs to the authenticated school.
+    const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
+      schoolClass.id.eq(classId),
+    ).first();
+
+    if (!schoolClass || schoolClass.schoolId !== schoolId) {
+      return NextResponse.json({ error: "Class not found." }, { status: 404 });
+    }
+
+    // Confirm the term's academic session belongs to this school.
+    const term = await db.orm.public.Term.where((term) =>
+      term.id.eq(termId),
+    ).first();
+
+    if (!term) {
+      return NextResponse.json({ error: "Term not found." }, { status: 404 });
+    }
+
+    const academicSession = await db.orm.public.AcademicSession.where(
+      (academicSession) => academicSession.id.eq(term.sessionId),
+    ).first();
+
+    if (!academicSession || academicSession.schoolId !== schoolId) {
+      return NextResponse.json(
+        { error: "Term does not belong to this school." },
+        { status: 404 },
+      );
+    }
+
+    // Every submitted student must belong to this school and this class.
+    const schoolStudents = await db.orm.public.Student.where((student) =>
+      student.schoolId.eq(schoolId),
+    ).all();
+
+    const validStudentIds = new Set(
+      schoolStudents
+        .filter((student) => student.classId === classId)
+        .map((student) => student.id),
+    );
+
+    const invalidStudent = validatedRecords.some(
+      (record) => !validStudentIds.has(record.studentId),
+    );
+
+    if (invalidStudent) {
+      return NextResponse.json(
+        { error: "One or more students do not belong to this class." },
+        { status: 400 },
+      );
     }
 
     const recordedById = Number(session.user.id);
 
-    for (const record of records) {
+    if (!isValidId(recordedById)) {
+      return NextResponse.json(
+        { error: "Invalid authenticated user." },
+        { status: 403 },
+      );
+    }
+
+    // Preserve the existing service responsible for recording attendance.
+    for (const record of validatedRecords) {
       await recordAttendance({
-        schoolId: session.user.schoolId,
+        schoolId,
         studentId: record.studentId,
         classId,
         termId,
@@ -191,13 +332,8 @@ export async function POST(request: Request) {
     console.error("Attendance recording error:", error);
 
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to record attendance.",
-      },
-      { status: 400 },
+      { error: "Failed to record attendance." },
+      { status: 500 },
     );
   }
 }

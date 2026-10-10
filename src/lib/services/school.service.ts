@@ -127,3 +127,24 @@ export async function updateSchoolLoginBranding(
         : school.accentColor,
   });
 }
+
+
+type SchoolStatus = "ACTIVE" | "SUSPENDED" | "INACTIVE";
+
+export async function updateSchoolStatus(
+  schoolId: number,
+  status: SchoolStatus,
+) {
+  const school = await db.orm.public.School.where((school) =>
+    school.id.eq(schoolId),
+  ).first();
+
+  if (!school) {
+    throw new Error("School not found.");
+  }
+
+  return db.orm.public.School.where((school) => school.id.eq(schoolId)).update({
+    status,
+  });
+}
+

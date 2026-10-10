@@ -35,13 +35,17 @@ export async function createAssessment(input: CreateAssessmentInput) {
     throw new Error("Assessment title is required.");
   }
 
-  if (maxScore <= 0) {
-    throw new Error("Maximum score must be greater than zero.");
-  }
+  
+if (!Number.isFinite(maxScore) || maxScore <= 0) {
+  throw new Error("Maximum score must be a finite number greater than zero.");
+}
 
-  if (weight <= 0) {
-    throw new Error("Assessment weight must be greater than zero.");
-  }
+if (!Number.isFinite(weight) || weight <= 0) {
+  throw new Error(
+    "Assessment weight must be a finite number greater than zero.",
+  );
+}
+
 
   const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.id.eq(classId),
@@ -231,12 +235,14 @@ export async function updateAssessment(input: UpdateAssessmentInput) {
     throw new Error("Assessment title is required.");
   }
 
-  if (maxScore !== undefined && maxScore <= 0) {
-    throw new Error("Maximum score must be greater than zero.");
+  if (maxScore !== undefined && (!Number.isFinite(maxScore) || maxScore <= 0)) {
+    throw new Error("Maximum score must be a finite number greater than zero.");
   }
 
-  if (weight !== undefined && weight <= 0) {
-    throw new Error("Assessment weight must be greater than zero.");
+  if (weight !== undefined && (!Number.isFinite(weight) || weight <= 0)) {
+    throw new Error(
+      "Assessment weight must be a finite number greater than zero.",
+    );
   }
 
   const newClassId = classId ?? assessment.classId;
@@ -415,15 +421,25 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     throw new Error("Student is not assigned to this class.");
   }
 
-  if (score < 0) {
-    throw new Error("Score cannot be negative.");
-  }
+ 
+if (!Number.isFinite(score)) {
+  throw new Error("Score must be a valid finite number.");
+}
 
-  if (score > assessment.maxScore) {
-    throw new Error(
-      `Score cannot be greater than the maximum score of ${assessment.maxScore}.`,
-    );
-  }
+if (score < 0) {
+  throw new Error("Score cannot be negative.");
+}
+
+if (score > assessment.maxScore) {
+  throw new Error(
+    `Score cannot be greater than the maximum score of ${assessment.maxScore}.`,
+  );
+}
+
+if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
+  throw new Error("The assessment maximum score is invalid.");
+}
+
 
   /*
    * Save or update the assessment score first.

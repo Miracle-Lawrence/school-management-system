@@ -11,6 +11,21 @@ type RecordAttendanceInput = {
   notes?: string;
 };
 
+const VALID_STATUSES = ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const;
+
+function isValidDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  try {
+    const parsed = globalThis.Temporal.PlainDate.from(value);
+    return parsed.toString() === value;
+  } catch {
+    return false;
+  }
+}
+
 export async function recordAttendance(input: RecordAttendanceInput) {
   const {
     schoolId,
@@ -23,22 +38,58 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     notes,
   } = input;
 
+  // Validate identifiers and input before accessing the database.
+  for (const [name, value] of Object.entries({
+    schoolId,
+    studentId,
+    classId,
+    termId,
+    recordedById,
+  })) {
+    if (!Number.isSafeInteger(value) || value <= 0) {
+      throw new Error(`Invalid ${name}.`);
+    }
+  }
+
+  if (!isValidDate(date)) {
+    throw new Error("Invalid attendance date. Use YYYY-MM-DD.");
+  }
+
+  if (!VALID_STATUSES.includes(status as (typeof VALID_STATUSES)[number])) {
+    throw new Error("Invalid attendance status.");
+  }
+
+  if (notes !== undefined && typeof notes !== "string") {
+    throw new Error("Invalid attendance notes.");
+  }
+
+  // Verify the school exists and is active.
+  const school = await db.orm.public.School.where((school) =>
+    school.id.eq(schoolId),
+  ).first();
+
+  if (!school || school.status !== "ACTIVE") {
+    throw new Error("School is not active.");
+  }
+
+  // Verify the student belongs to this school and class.
   const student = await db.orm.public.Student.where((student) =>
     student.id.eq(studentId),
   ).first();
 
- if (!student || student.schoolId !== schoolId) {
-   throw new Error("Invalid student.");
- }
+  if (!student || student.schoolId !== schoolId) {
+    throw new Error("Invalid student.");
+  }
 
- if (!student.isActive) {
-   throw new Error("Attendance cannot be recorded for an inactive student.");
- }
+  if (!student.isActive) {
+    throw new Error("Attendance cannot be recorded for an inactive student.");
+  }
 
- if (student.classId !== classId) {
-   throw new Error("Student is not assigned to this class.");
- }
+  if (student.classId !== classId) {
+    throw new Error("Student is not assigned to this class.");
+  }
 
+  // Verify the class belongs to this school.
   const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.id.eq(classId),
   ).first();
@@ -47,6 +98,7 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("Invalid class.");
   }
 
+  // Verify the term and its academic session belong to this school.
   const term = await db.orm.public.Term.where((term) =>
     term.id.eq(termId),
   ).first();
@@ -71,10 +123,6 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("The term is not active.");
   }
 
-  /*
-   * Make sure the attendance date falls
-   * inside the active academic session.
-   */
   const attendanceDate = globalThis.Temporal.PlainDate.from(date);
 
   const sessionStart = globalThis.Temporal.PlainDate.from(
@@ -92,10 +140,6 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("Attendance date must be within the academic session.");
   }
 
-  /*
-   * Make sure the attendance date falls
-   * inside the active term.
-   */
   const termStart = globalThis.Temporal.PlainDate.from(
     term.startDate.toString().slice(0, 10),
   );
@@ -111,6 +155,7 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("Attendance date must be within the active term.");
   }
 
+  // Verify the recording user belongs to this school and is active.
   const recorder = await db.orm.public.User.where((user) =>
     user.id.eq(recordedById),
   ).first();
@@ -119,6 +164,7 @@ export async function recordAttendance(input: RecordAttendanceInput) {
     throw new Error("Invalid attendance recorder.");
   }
 
+  // Find an existing record for this student and attendance date.
   const existingRecords = await db.orm.public.Attendance.where((attendance) =>
     attendance.studentId.eq(studentId),
   ).all();
@@ -130,6 +176,15 @@ export async function recordAttendance(input: RecordAttendanceInput) {
   );
 
   if (existingRecord) {
+    // Never update an existing record belonging to another school.
+    if (
+      existingRecord.schoolId !== schoolId ||
+      existingRecord.studentId !== studentId ||
+      existingRecord.classId !== classId
+    ) {
+      throw new Error("Existing attendance record failed ownership checks.");
+    }
+
     return db.orm.public.Attendance.where((attendance) =>
       attendance.id.eq(existingRecord.id),
     ).update({

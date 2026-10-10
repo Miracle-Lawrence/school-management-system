@@ -4,24 +4,30 @@ import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 
 export async function GET(request: Request) {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    return NextResponse.json(
+      { error: "School context is required." },
+      { status: 403 },
+    );
+  }
+
   try {
-    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+    const { searchParams } = new URL(request.url);
+    const classIdValue = searchParams.get("classId");
 
-    const schoolId = session.user.schoolId;
-
-    if (!schoolId) {
+    if (!classIdValue || classIdValue.trim() === "") {
       return NextResponse.json(
-        { error: "School context is required." },
+        { error: "A valid class ID is required." },
         { status: 400 },
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const classIdValue = searchParams.get("classId");
-
     const classId = Number(classIdValue);
 
-    if (!classIdValue || !Number.isInteger(classId)) {
+    if (!Number.isSafeInteger(classId) || classId <= 0) {
       return NextResponse.json({ error: "Invalid class." }, { status: 400 });
     }
 
@@ -30,7 +36,7 @@ export async function GET(request: Request) {
     ).first();
 
     if (!schoolClass || schoolClass.schoolId !== schoolId) {
-      return NextResponse.json({ error: "Invalid class." }, { status: 404 });
+      return NextResponse.json({ error: "Class not found." }, { status: 404 });
     }
 
     const students = await db.orm.public.Student.where((student) =>
@@ -48,13 +54,16 @@ export async function GET(request: Request) {
         gender: student.gender,
       }));
 
-    return NextResponse.json({
-      students: classStudents,
-    });
+    return NextResponse.json(
+      { students: classStudents },
+      {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   } catch (error) {
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    console.error("Unable to load students:", error);
 
     return NextResponse.json(
       { error: "Unable to load students." },

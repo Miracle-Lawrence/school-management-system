@@ -194,6 +194,7 @@ async function getGradeForScore(schoolId: number, score: number) {
 }
 
 async function getStudentAssessmentScores(
+  schoolId: number,
   studentId: number,
   classId: number,
   subjectId: number,
@@ -204,12 +205,13 @@ async function getStudentAssessmentScores(
     assessment.termId.eq(termId),
   ).all();
 
-  const matchingAssessments = assessments.filter(
-    (assessment) =>
-      assessment.classId === classId &&
-      assessment.subjectId === subjectId &&
-      assessment.type === assessmentType,
-  );
+ const matchingAssessments = assessments.filter(
+   (assessment) =>
+     assessment.schoolId === schoolId &&
+     assessment.classId === classId &&
+     assessment.subjectId === subjectId &&
+     assessment.type === assessmentType,
+ );
 
   if (matchingAssessments.length === 0) {
     return [];
@@ -248,6 +250,7 @@ async function getStudentAssessmentScores(
 }
 
 async function calculateAssessmentComponent(
+  schoolId: number,
   studentId: number,
   classId: number,
   subjectId: number,
@@ -272,6 +275,7 @@ async function calculateAssessmentComponent(
   }
 
   const scores = await getStudentAssessmentScores(
+    schoolId,
     studentId,
     classId,
     subjectId,
@@ -434,11 +438,10 @@ async function calculateCalculatedComponent(
   };
 }
 
-async function calculateSubject(input: CalculateSubjectResultInput): Promise<
-  SubjectCalculation & {
-    components: ComponentCalculation[];
-  }
-> {
+
+async function calculateSubject(
+  input: CalculateSubjectResultInput,
+): Promise<SubjectCalculation> {
   await validateClass(input.schoolId, input.classId);
 
   await validateSubject(input.schoolId, input.subjectId);
@@ -458,88 +461,90 @@ async function calculateSubject(input: CalculateSubjectResultInput): Promise<
 
   if (components.length === 0) {
     throw new Error("The report configuration has no components.");
+  }
+
+  await validateComponentDependencies(components);
+
+  const calculatedComponents = new Map<number, ComponentCalculation>();
+
+  const componentResults: ComponentCalculation[] = [];
+
+  const componentsById = new Map(
+    components.map((component) => [component.id, component]),
+  );
+
+  const calculating = new Set<number>();
+
+  async function calculateComponent(
+    componentId: number,
+  ): Promise<ComponentCalculation> {
+    const existing = calculatedComponents.get(componentId);
+
+    if (existing) {
+      return existing;
     }
-    
-    await validateComponentDependencies(components);
 
-const calculatedComponents = new Map<number, ComponentCalculation>();
-
-const componentResults: ComponentCalculation[] = [];
-const componentsById = new Map(
-  components.map((component) => [component.id, component]),
-);
-
-const calculating = new Set<number>();
-
-async function calculateComponent(
-  componentId: number,
-): Promise<ComponentCalculation> {
-  const existing = calculatedComponents.get(componentId);
-
-  if (existing) {
-    return existing;
-  }
-
-  if (calculating.has(componentId)) {
-    throw new Error(
-      "Circular dependency detected in report component configuration.",
-    );
-  }
-
-  const component = componentsById.get(componentId);
-
-  if (!component) {
-    throw new Error(`Report component ${componentId} was not found.`);
-  }
-
-  calculating.add(componentId);
-
-  if (component.type === "CALCULATED") {
-    const rules = await getComponentRules(component.id);
-
-    for (const rule of rules) {
-      await calculateComponent(rule.sourceComponentId);
+    if (calculating.has(componentId)) {
+      throw new Error(
+        "Circular dependency detected in report component configuration.",
+      );
     }
+
+    const component = componentsById.get(componentId);
+
+    if (!component) {
+      throw new Error(`Report component ${componentId} was not found.`);
+    }
+
+    calculating.add(componentId);
+
+    if (component.type === "CALCULATED") {
+      const rules = await getComponentRules(component.id);
+
+      for (const rule of rules) {
+        await calculateComponent(rule.sourceComponentId);
+      }
+    }
+
+    let result: {
+      score: number;
+      maxScore: number | null;
+    };
+
+    if (component.type === "ASSESSMENT") {
+      result = await calculateAssessmentComponent(
+        input.schoolId,
+        input.studentId,
+        input.classId,
+        input.subjectId,
+        input.termId,
+        component,
+      );
+    } else {
+      result = await calculateCalculatedComponent(
+        component,
+        calculatedComponents,
+      );
+    }
+
+    const calculation: ComponentCalculation = {
+      componentId: component.id,
+      score: result.score,
+      maxScore: result.maxScore,
+    };
+
+    calculatedComponents.set(component.id, calculation);
+
+    calculating.delete(componentId);
+
+    componentResults.push(calculation);
+
+    return calculation;
   }
 
-  let result: {
-    score: number;
-    maxScore: number | null;
-  };
-
-  if (component.type === "ASSESSMENT") {
-    result = await calculateAssessmentComponent(
-      input.studentId,
-      input.classId,
-      input.subjectId,
-      input.termId,
-      component,
-    );
-  } else {
-    result = await calculateCalculatedComponent(
-      component,
-      calculatedComponents,
-    );
+  for (const component of components) {
+    await calculateComponent(component.id);
   }
-
-  const calculation: ComponentCalculation = {
-    componentId: component.id,
-    score: result.score,
-    maxScore: result.maxScore,
-  };
-
-  calculatedComponents.set(component.id, calculation);
-
-  calculating.delete(componentId);
-
-  componentResults.push(calculation);
-
-  return calculation;
-}
-
-for (const component of components) {
-  await calculateComponent(component.id);
-}
 
   const totalComponents = components.filter(
     (component) => component.countsTowardTotal,
@@ -567,13 +572,13 @@ for (const component of components) {
 
   const gradeResult = await getGradeForScore(input.schoolId, normalizedScore);
 
- return {
-   totalScore,
-   percentageScore: normalizedScore,
-   components: componentResults,
-   grade: gradeResult.grade,
-   remark: gradeResult.remark,
- };
+  return {
+    totalScore,
+    percentageScore: normalizedScore,
+    components: componentResults,
+    grade: gradeResult.grade,
+    remark: gradeResult.remark,
+  };
 }
 
 /**
@@ -591,6 +596,7 @@ export async function calculateAndSaveSubjectResult(
  let subjectResult =
    subjectResults.find(
      (result) =>
+       result.schoolId === input.schoolId &&
        result.subjectId === input.subjectId &&
        result.classId === input.classId &&
        result.termId === input.termId &&
@@ -809,6 +815,7 @@ export async function calculateAndSaveStudentTermResult(
  let studentTermResult =
    allStudentTermResults.find(
      (result) =>
+       result.schoolId === input.schoolId &&
        result.classId === input.classId &&
        result.termId === input.termId &&
        result.reportType === input.reportType,
@@ -910,6 +917,7 @@ export async function calculateClassTermResults(
       const subjectHasAllRequiredScores = await Promise.all(
         assessmentComponents.map(async (component) => {
           const scores = await getStudentAssessmentScores(
+            input.schoolId,
             student.id,
             input.classId,
             classSubject.subjectId,

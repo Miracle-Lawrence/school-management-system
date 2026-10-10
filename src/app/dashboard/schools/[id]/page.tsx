@@ -4,7 +4,10 @@ import { z } from "zod";
 
 import { db } from "@/prisma/db";
 import { requireRole } from "@/lib/auth/authorization";
-import { updateSchoolLoginBranding } from "@/lib/services/school.service";
+import {
+  updateSchoolLoginBranding,
+  updateSchoolStatus,
+} from "@/lib/services/school.service";
 import { saveSchoolLogo, saveSchoolLoginImage } from "@/lib/utils/file-upload";
 
 import SchoolLoginBrandingForm from "./components/school-login-branding-form";
@@ -69,6 +72,39 @@ async function updateSchoolLoginBrandingAction(formData: FormData) {
 
   redirect(`/dashboard/schools/${schoolId}`);
 }
+
+
+async function updateSchoolStatusAction(formData: FormData) {
+  "use server";
+
+  await requireRole(["PLATFORM_OWNER", "PLATFORM_ADMIN"]);
+
+  const schoolIdValue = formData.get("schoolId");
+  const statusValue = formData.get("status");
+
+  if (typeof schoolIdValue !== "string" || !/^\d+$/.test(schoolIdValue)) {
+    throw new Error("Invalid school ID.");
+  }
+
+  const schoolId = Number(schoolIdValue);
+
+  if (!Number.isSafeInteger(schoolId) || schoolId <= 0) {
+    throw new Error("Invalid school ID.");
+  }
+
+  if (
+    statusValue !== "ACTIVE" &&
+    statusValue !== "SUSPENDED" &&
+    statusValue !== "INACTIVE"
+  ) {
+    throw new Error("Invalid school status.");
+  }
+
+  await updateSchoolStatus(schoolId, statusValue);
+
+  redirect(`/dashboard/schools/${schoolId}`);
+}
+
 
 export default async function SchoolDetailsPage({
   params,
@@ -166,6 +202,65 @@ export default async function SchoolDetailsPage({
           <p className="text-xs font-medium uppercase text-gray-500">Address</p>
           <p className="mt-1">{school.address ?? "—"}</p>
         </div>
+      </div>
+
+      <div className="mt-6 rounded-lg border bg-white p-6">
+        <h2 className="text-lg font-semibold">School Status Management</h2>
+
+        <p className="mt-1 text-sm text-gray-500">
+          Control whether this school can access the platform.
+        </p>
+
+        <div className="mt-4">
+          <span className="text-sm text-gray-500">Current status: </span>
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+              school.status === "ACTIVE"
+                ? "bg-emerald-100 text-emerald-700"
+                : school.status === "SUSPENDED"
+                  ? "bg-amber-100 text-amber-700"
+                  : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            {school.status}
+          </span>
+        </div>
+
+        <form action={updateSchoolStatusAction} className="mt-5">
+          <input type="hidden" name="schoolId" value={school.id} />
+
+          <label
+            htmlFor="school-status"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Change status
+          </label>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <select
+              id="school-status"
+              name="status"
+              defaultValue={school.status}
+              className="w-full rounded-md border border-gray-300 px-3 py-2.5 text-sm sm:max-w-xs"
+            >
+              <option value="ACTIVE">Active</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="INACTIVE">Inactive</option>
+            </select>
+
+            <button
+              type="submit"
+              className="rounded-md bg-[#0F172A] px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+            >
+              Update Status
+            </button>
+          </div>
+
+          <p className="mt-3 text-xs text-gray-500">
+            Suspended or inactive schools should not be able to log in. Verify
+            that your authentication checks enforce this restriction.
+          </p>
+        </form>
       </div>
 
       <form action={updateSchoolLoginBrandingAction}>

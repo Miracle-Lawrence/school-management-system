@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { requireRole } from "@/lib/auth/authorization";
 import {
   getAssessmentScores,
   recordAssessmentScore,
@@ -10,34 +10,40 @@ type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
+function parsePositiveId(value: unknown): number | null {
+  if (typeof value !== "number" && typeof value !== "string") {
+    return null;
+  }
+
+  if (typeof value === "string" && !/^\d+$/.test(value)) {
+    return null;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export async function GET(_request: Request, { params }: RouteContext) {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    return NextResponse.json(
+      { error: "School context is required." },
+      { status: 403 },
+    );
+  }
+
   try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (
-      session.user.role !== "SCHOOL_OWNER" &&
-      session.user.role !== "SCHOOL_ADMIN"
-    ) {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
-
-    const schoolId = session.user.schoolId;
-
-    if (!schoolId) {
-      return NextResponse.json(
-        { error: "School context is required." },
-        { status: 400 },
-      );
-    }
-
     const { id } = await params;
-    const assessmentId = Number(id);
+    const assessmentId = parsePositiveId(id);
 
-    if (!Number.isInteger(assessmentId) || assessmentId <= 0) {
+    if (assessmentId === null) {
       return NextResponse.json(
         { error: "Invalid assessment ID." },
         { status: 400 },
@@ -46,68 +52,84 @@ export async function GET(_request: Request, { params }: RouteContext) {
 
     const scores = await getAssessmentScores(schoolId, assessmentId);
 
-    return NextResponse.json({ scores });
+    return NextResponse.json(
+      { scores },
+      {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   } catch (error) {
     console.error("Assessment scores lookup error:", error);
 
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to load assessment scores.",
-      },
-      { status: 400 },
+      { error: "Failed to load assessment scores." },
+      { status: 500 },
     );
   }
 }
 
 export async function POST(request: Request, { params }: RouteContext) {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    return NextResponse.json(
+      { error: "School context is required." },
+      { status: 403 },
+    );
+  }
+
   try {
-    const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (
-      session.user.role !== "SCHOOL_OWNER" &&
-      session.user.role !== "SCHOOL_ADMIN"
-    ) {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
-
-    const schoolId = session.user.schoolId;
-
-    if (!schoolId) {
-      return NextResponse.json(
-        { error: "School context is required." },
-        { status: 400 },
-      );
-    }
-
     const { id } = await params;
-    const assessmentId = Number(id);
+    const assessmentId = parsePositiveId(id);
 
-    if (!Number.isInteger(assessmentId) || assessmentId <= 0) {
+    if (assessmentId === null) {
       return NextResponse.json(
         { error: "Invalid assessment ID." },
         { status: 400 },
       );
     }
 
-    const body = await request.json();
+    let body: unknown;
 
-    const studentId = Number(body.studentId);
-    const score = Number(body.score);
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON request body." },
+        { status: 400 },
+      );
+    }
+
+    if (!isRecord(body)) {
+      return NextResponse.json(
+        { error: "Invalid score request." },
+        { status: 400 },
+      );
+    }
+
+    const studentId = parsePositiveId(body.studentId);
 
     if (
-      !Number.isInteger(studentId) ||
-      studentId <= 0 ||
-      !Number.isFinite(score)
+      studentId === null ||
+      typeof body.score !== "number" ||
+      !Number.isFinite(body.score)
     ) {
       return NextResponse.json(
-        { error: "A valid student and score are required." },
+        { error: "A valid student ID and numeric score are required." },
+        { status: 400 },
+      );
+    }
+
+    if (
+      body.remarks !== undefined &&
+      body.remarks !== null &&
+      typeof body.remarks !== "string"
+    ) {
+      return NextResponse.json(
+        { error: "Remarks must be text." },
         { status: 400 },
       );
     }
@@ -121,7 +143,7 @@ export async function POST(request: Request, { params }: RouteContext) {
       schoolId,
       assessmentId,
       studentId,
-      score,
+      score: body.score,
       remarks,
     });
 
@@ -130,19 +152,19 @@ export async function POST(request: Request, { params }: RouteContext) {
         message: "Student score saved successfully.",
         score: savedScore,
       },
-      { status: 200 },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
     );
   } catch (error) {
     console.error("Assessment score recording error:", error);
 
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to save student score.",
-      },
-      { status: 400 },
+      { error: "Failed to save student score." },
+      { status: 500 },
     );
   }
 }

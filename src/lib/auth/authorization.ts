@@ -17,6 +17,28 @@ export async function requireAuth() {
     redirect("/login");
   }
 
+  const schoolScopedRoles = [
+    "SCHOOL_OWNER",
+    "SCHOOL_ADMIN",
+    "TEACHER",
+    "PARENT",
+    "STUDENT",
+  ];
+
+  if (schoolScopedRoles.includes(user.role)) {
+    if (!user.schoolId) {
+      redirect("/login");
+    }
+
+    const school = await db.orm.public.School.where((school) =>
+      school.id.eq(user.schoolId!),
+    ).first();
+
+    if (!school || school.status !== "ACTIVE") {
+      redirect("/login");
+    }
+  }
+
   return {
     ...session,
     user: {
