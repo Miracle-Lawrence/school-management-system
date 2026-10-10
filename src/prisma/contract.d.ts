@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab'>;
+  StorageHashBase<'ed0565f3c0f51631a9a4f98adadc9fb7d39185ef2e54df1cb8dcd8ab10209c7e'>;
 export type ExecutionHash =
-  ExecutionHashBase<'d2689beaf8b5c36ff0e3d18680b34016762303458513d76d0943159236ebf99d'>;
+  ExecutionHashBase<'d7b6f419ef5913c17f5345c3c8b78d04193172654b5cbc46beda58f2f232ea07'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -334,6 +334,18 @@ export type FieldOutputTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['output'];
       readonly studentId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly PlatformSetting: {
+      readonly defaultCurrency: CodecTypes['pg/text@1']['output'];
+      readonly defaultTimezone: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly maintenanceMessage: CodecTypes['pg/text@1']['output'] | null;
+      readonly maintenanceMode: CodecTypes['pg/bool@1']['output'];
+      readonly platformName: CodecTypes['pg/text@1']['output'];
+      readonly registrationEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly supportEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly supportPhone: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly PsychomotorField: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -704,6 +716,18 @@ export type FieldInputTypes = {
       readonly parentId: CodecTypes['pg/int4@1']['input'];
       readonly studentId: CodecTypes['pg/int4@1']['input'];
     };
+    readonly PlatformSetting: {
+      readonly defaultCurrency: CodecTypes['pg/text@1']['input'];
+      readonly defaultTimezone: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly maintenanceMessage: CodecTypes['pg/text@1']['input'] | null;
+      readonly maintenanceMode: CodecTypes['pg/bool@1']['input'];
+      readonly platformName: CodecTypes['pg/text@1']['input'];
+      readonly registrationEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly supportEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly supportPhone: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly PsychomotorField: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -1073,6 +1097,18 @@ export type StorageColumnTypes = {
       readonly parentId: CodecTypes['pg/int4@1']['output'];
       readonly studentId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly PlatformSetting: {
+      readonly defaultCurrency: CodecTypes['pg/text@1']['output'];
+      readonly defaultTimezone: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly maintenanceMessage: CodecTypes['pg/text@1']['output'] | null;
+      readonly maintenanceMode: CodecTypes['pg/bool@1']['output'];
+      readonly platformName: CodecTypes['pg/text@1']['output'];
+      readonly registrationEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly supportEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly supportPhone: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly PsychomotorField: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -1441,6 +1477,18 @@ export type StorageColumnInputTypes = {
     readonly ParentStudent: {
       readonly parentId: CodecTypes['pg/int4@1']['input'];
       readonly studentId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly PlatformSetting: {
+      readonly defaultCurrency: CodecTypes['pg/text@1']['input'];
+      readonly defaultTimezone: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly maintenanceMessage: CodecTypes['pg/text@1']['input'] | null;
+      readonly maintenanceMode: CodecTypes['pg/bool@1']['input'];
+      readonly platformName: CodecTypes['pg/text@1']['input'];
+      readonly registrationEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly supportEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly supportPhone: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly PsychomotorField: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1842,6 +1890,19 @@ export namespace Models {
     parent: public_Parent;
     student: public_Student;
     readonly [RelationKeys]?: 'parent' | 'student';
+  };
+  export type public_PlatformSetting = {
+    defaultCurrency: CodecTypes['pg/text@1']['output'];
+    defaultTimezone: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    maintenanceMessage: CodecTypes['pg/text@1']['output'] | null;
+    maintenanceMode: CodecTypes['pg/bool@1']['output'];
+    platformName: CodecTypes['pg/text@1']['output'];
+    registrationEnabled: CodecTypes['pg/bool@1']['output'];
+    supportEmail: CodecTypes['pg/text@1']['output'] | null;
+    supportPhone: CodecTypes['pg/text@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly [RelationKeys]?: never;
   };
   export type public_PsychomotorField = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2310,6 +2371,7 @@ export declare const models: {
     GradeScale: Models.public_GradeScale;
     Parent: Models.public_Parent;
     ParentStudent: Models.public_ParentStudent;
+    PlatformSetting: Models.public_PlatformSetting;
     PsychomotorField: Models.public_PsychomotorField;
     PsychomotorRatingOption: Models.public_PsychomotorRatingOption;
     ReportComment: Models.public_ReportComment;
@@ -3197,6 +3259,88 @@ type ContractBase = Omit<
                   };
                 },
               ];
+            };
+            readonly PlatformSetting: {
+              columns: {
+                readonly defaultCurrency: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'NGN'>;
+                  };
+                };
+                readonly defaultTimezone: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'Africa/Lagos'>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly maintenanceMessage: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly maintenanceMode: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly platformName: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'SchoolMS'>;
+                  };
+                };
+                readonly registrationEnabled: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly supportEmail: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly supportPhone: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
             };
             readonly PsychomotorField: {
               columns: {
@@ -5685,6 +5829,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ParentStudent';
     };
+    readonly PlatformSetting: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PlatformSetting';
+    };
     readonly PsychomotorField: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'PsychomotorField';
@@ -6515,6 +6663,70 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly parentId: { readonly column: 'parentId' };
                 readonly studentId: { readonly column: 'studentId' };
+              };
+            };
+          };
+          readonly PlatformSetting: {
+            readonly fields: {
+              readonly defaultCurrency: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly defaultTimezone: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly maintenanceMessage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly maintenanceMode: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly platformName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly registrationEnabled: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly supportEmail: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly supportPhone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'PlatformSetting';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly defaultCurrency: { readonly column: 'defaultCurrency' };
+                readonly defaultTimezone: { readonly column: 'defaultTimezone' };
+                readonly id: { readonly column: 'id' };
+                readonly maintenanceMessage: { readonly column: 'maintenanceMessage' };
+                readonly maintenanceMode: { readonly column: 'maintenanceMode' };
+                readonly platformName: { readonly column: 'platformName' };
+                readonly registrationEnabled: { readonly column: 'registrationEnabled' };
+                readonly supportEmail: { readonly column: 'supportEmail' };
+                readonly supportPhone: { readonly column: 'supportPhone' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -9445,6 +9657,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Parent';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'PlatformSetting';
           };
         },
         {

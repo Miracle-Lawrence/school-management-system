@@ -779,3 +779,16 @@ model Attendance {
   @@index([date])
   @@index([recordedById])
 }
+
+model PlatformSetting {
+  id                    Int      @id @default(autoincrement())
+  platformName          String   @default("SchoolMS")
+  supportEmail          String?
+  supportPhone          String?
+  defaultCurrency       String   @default("NGN")
+  defaultTimezone       String   @default("Africa/Lagos")
+  registrationEnabled   Boolean  @default(true)
+  maintenanceMode       Boolean  @default(false)
+  maintenanceMessage    String?
+  updatedAt             temporal.updatedAtString()
+}

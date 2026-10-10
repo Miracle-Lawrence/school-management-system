@@ -36,6 +36,10 @@
       "model": "ParentStudent",
       "namespace": "public"
     },
+    "PlatformSetting": {
+      "model": "PlatformSetting",
+      "namespace": "public"
+    },
     "PsychomotorField": {
       "model": "PsychomotorField",
       "namespace": "public"
@@ -1540,6 +1544,117 @@
               },
               "namespaceId": "public",
               "table": "ParentStudent"
+            }
+          },
+          "PlatformSetting": {
+            "fields": {
+              "defaultCurrency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "defaultTimezone": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "maintenanceMessage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "maintenanceMode": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "platformName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "registrationEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "supportEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "supportPhone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "defaultCurrency": {
+                  "column": "defaultCurrency"
+                },
+                "defaultTimezone": {
+                  "column": "defaultTimezone"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "maintenanceMessage": {
+                  "column": "maintenanceMessage"
+                },
+                "maintenanceMode": {
+                  "column": "maintenanceMode"
+                },
+                "platformName": {
+                  "column": "platformName"
+                },
+                "registrationEnabled": {
+                  "column": "registrationEnabled"
+                },
+                "supportEmail": {
+                  "column": "supportEmail"
+                },
+                "supportPhone": {
+                  "column": "supportPhone"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PlatformSetting"
             }
           },
           "PsychomotorField": {
@@ -6882,6 +6997,92 @@
               },
               "uniques": []
             },
+            "PlatformSetting": {
+              "columns": {
+                "defaultCurrency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NGN"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "defaultTimezone": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Africa/Lagos"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "maintenanceMessage": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "maintenanceMode": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "platformName": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "SchoolMS"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "registrationEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "supportEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "supportPhone": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "PsychomotorField": {
               "columns": {
                 "createdAt": {
@@ -10076,10 +10277,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab"
+    "storageHash": "ed0565f3c0f51631a9a4f98adadc9fb7d39185ef2e54df1cb8dcd8ab10209c7e"
   },
   "execution": {
-    "executionHash": "d2689beaf8b5c36ff0e3d18680b34016762303458513d76d0943159236ebf99d",
+    "executionHash": "d7b6f419ef5913c17f5345c3c8b78d04193172654b5cbc46beda58f2f232ea07",
     "mutations": {
       "defaults": [
         {
@@ -10185,6 +10386,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "Parent"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "PlatformSetting"
           }
         },
         {
