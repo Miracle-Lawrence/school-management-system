@@ -15,7 +15,7 @@ const loginSchema = z.object({
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60,
+    maxAge: 15 * 60,
   },
 
   providers: [
@@ -67,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           role: user.role,
           schoolId: user.schoolId,
+          sessionVersion: user.sessionVersion,
         };
       },
     }),
@@ -78,6 +79,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.schoolId = user.schoolId;
+        token.sessionVersion = user.sessionVersion;
+      }
+
+      if (!token.id || typeof token.sessionVersion !== "number") {
+        return null;
+      }
+
+      const currentUser = await db.orm.public.User.where((u) =>
+        u.id.eq(Number(token.id)),
+      ).first();
+
+      if (
+        !currentUser ||
+        !currentUser.isActive ||
+        currentUser.sessionVersion !== token.sessionVersion
+      ) {
+        return null;
       }
 
       return token;

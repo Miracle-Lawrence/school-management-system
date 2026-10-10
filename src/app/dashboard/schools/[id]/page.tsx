@@ -205,6 +205,26 @@ export default async function SchoolDetailsPage({
       </div>
 
       <div className="mt-6 rounded-lg border bg-white p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">School User Management</h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              View and manage School Owner and School Admin accounts associated
+              with this school.
+            </p>
+          </div>
+
+          <Link
+            href={`/dashboard/schools/${school.id}/users`}
+            className="inline-flex items-center justify-center rounded-md bg-[#0F172A] px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+          >
+            Manage Users →
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-lg border bg-white p-6">
         <h2 className="text-lg font-semibold">School Status Management</h2>
 
         <p className="mt-1 text-sm text-gray-500">

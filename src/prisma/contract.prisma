@@ -401,6 +401,7 @@ model User {
   phone              String?
   role               UserRole
   isActive           Boolean                    @default(true)
+  sessionVersion      Int                       @default(0)
   emailVerifiedAt    DateTime?
   lastLoginAt        DateTime?
   student            Student?

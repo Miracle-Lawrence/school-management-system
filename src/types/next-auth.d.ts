@@ -5,6 +5,7 @@ declare module "next-auth" {
     id: string;
     role: UserRole;
     schoolId: number | null;
+    sessionVersion: number;
   }
 
   interface Session {
@@ -21,5 +22,6 @@ declare module "next-auth/jwt" {
     id: string;
     role: UserRole;
     schoolId: number | null;
+    sessionVersion: number;
   }
 }
