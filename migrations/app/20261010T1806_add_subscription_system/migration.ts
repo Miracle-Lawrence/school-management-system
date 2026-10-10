@@ -1,0 +1,450 @@
+#!/usr/bin/env -S node
+import type { Contract as End } from '../../snapshots/9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab/contract';
+import endContract from '../../snapshots/9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab/contract.json' with { type: 'json' };
+import type { Contract as Start } from '../../snapshots/b0ae16366ddd635b037e77594ad3e443ba456292ea11300858d6f08e8a7f0d28/contract';
+import startContract from '../../snapshots/b0ae16366ddd635b037e77594ad3e443ba456292ea11300858d6f08e8a7f0d28/contract.json' with { type: 'json' };
+import {
+  Migration,
+  MigrationCLI,
+  checkExpression,
+  col,
+  fn,
+  lit,
+  primaryKey,
+} from '@prisma/orm-postgres/migration';
+
+export default class M extends Migration<Start, End> {
+  override readonly startContractJson = startContract;
+  override readonly endContractJson = endContract;
+
+  override get operations() {
+    return [
+      this.dropConstraint({
+        schema: 'public',
+        table: 'StudentTermResult',
+        constraint: 'StudentTermResult_studentId_termId_reportType_key',
+      }),
+      this.dropConstraint({
+        schema: 'public',
+        table: 'SubjectResult',
+        constraint: 'SubjectResult_studentId_subjectId_termId_reportType_key',
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'ReportComment',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('principalComment', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('reportType', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('schoolId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('studentId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('teacherComment', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('termId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'ReportComment_reportType_check_6c6f706e',
+            "\"reportType\" IN ('MID_TERM', 'TERMINAL')",
+          ),
+        ],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        columns: [
+          col('cancelledAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('currentPeriodEnd', 'timestamptz', {
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('currentPeriodStart', 'timestamptz', {
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('notes', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('planId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('schoolId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('startsAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('TRIALING'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('trialEndsAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'SchoolSubscription_status_check_674e81b6',
+            "\"status\" IN ('TRIALING', 'ACTIVE', 'PAST_DUE', 'SUSPENDED', 'CANCELLED', 'EXPIRED')",
+          ),
+        ],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        columns: [
+          col('amount', 'numeric', { notNull: true, codecRef: { codecId: 'pg/numeric@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('currency', 'text', {
+            notNull: true,
+            default: lit('NGN'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('notes', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('paidAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('provider', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('reference', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('PENDING'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('subscriptionId', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'SubscriptionPayment_status_check_d65fcf38',
+            "\"status\" IN ('PENDING', 'SUCCESSFUL', 'FAILED', 'REFUNDED')",
+          ),
+        ],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'SubscriptionPlan',
+        columns: [
+          col('billingInterval', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('currency', 'text', {
+            notNull: true,
+            default: lit('NGN'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('description', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('features', 'text[]', {
+            notNull: true,
+            default: lit([]),
+            codecRef: { codecId: 'pg/text@1', many: true },
+          }),
+          col('id', 'SERIAL', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('isActive', 'bool', {
+            notNull: true,
+            default: lit(true),
+            codecRef: { codecId: 'pg/bool@1' },
+          }),
+          col('maxStorageMb', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+          col('maxStudents', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+          col('maxTeachers', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+          col('name', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('price', 'numeric', { notNull: true, codecRef: { codecId: 'pg/numeric@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'SubscriptionPlan_billingInterval_check_0bedc4d3',
+            "\"billingInterval\" IN ('MONTHLY', 'QUARTERLY', 'YEARLY')",
+          ),
+          checkExpression(
+            'SubscriptionPlan_features_elem_not_null_1a661718',
+            'array_position("features", NULL) IS NULL',
+          ),
+        ],
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'ReportConfiguration',
+        column: col('showAttendance', 'bool', {
+          notNull: true,
+          default: lit(false),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'ReportConfiguration',
+        column: col('showClassPosition', 'bool', {
+          notNull: true,
+          default: lit(true),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'ReportConfiguration',
+        column: col('showClassTeacherName', 'bool', {
+          notNull: true,
+          default: lit(true),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'ReportConfiguration',
+        column: col('showPrincipalSignature', 'bool', {
+          notNull: true,
+          default: lit(true),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'ReportConfiguration',
+        column: col('showSchoolStamp', 'bool', {
+          notNull: true,
+          default: lit(true),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'School',
+        column: col('loginImageUrl', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'School',
+        column: col('principalSignatureUrl', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'SchoolClass',
+        column: col('classTeacherId', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'Student',
+        column: col('isActive', 'bool', {
+          notNull: true,
+          default: lit(true),
+          codecRef: { codecId: 'pg/bool@1' },
+        }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'StudentTermResult',
+        column: col('classTeacherId', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'User',
+        column: col('sessionVersion', 'int4', {
+          notNull: true,
+          default: lit(0),
+          codecRef: { codecId: 'pg/int4@1' },
+        }),
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'ReportComment',
+        constraint: 'ReportComment_studentId_termId_reportType_key',
+        columns: ['studentId', 'termId', 'reportType'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'StudentTermResult',
+        constraint: 'StudentTermResult_studentId_classId_termId_reportType_key',
+        columns: ['studentId', 'classId', 'termId', 'reportType'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'SubjectResult',
+        constraint: 'SubjectResult_studentId_classId_subjectId_termId_reportType_key',
+        columns: ['studentId', 'classId', 'subjectId', 'termId', 'reportType'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        constraint: 'SubscriptionPayment_reference_key',
+        columns: ['reference'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'ReportComment',
+        index: 'ReportComment_schoolId_idx_82b454d7',
+        columns: ['schoolId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'ReportComment',
+        index: 'ReportComment_studentId_idx_bf255322',
+        columns: ['studentId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'ReportComment',
+        index: 'ReportComment_termId_idx_1b74c9af',
+        columns: ['termId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SchoolClass',
+        index: 'SchoolClass_classTeacherId_idx_a6853519',
+        columns: ['classTeacherId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        index: 'SchoolSubscription_currentPeriodEnd_idx_810e4bc6',
+        columns: ['currentPeriodEnd'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        index: 'SchoolSubscription_planId_idx_5b32079a',
+        columns: ['planId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        index: 'SchoolSubscription_schoolId_idx_82b454d7',
+        columns: ['schoolId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        index: 'SchoolSubscription_schoolId_status_idx_7110c695',
+        columns: ['schoolId', 'status'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'StudentTermResult',
+        index: 'StudentTermResult_classTeacherId_idx_a6853519',
+        columns: ['classTeacherId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        index: 'SubscriptionPayment_createdAt_idx_9575dbd7',
+        columns: ['createdAt'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        index: 'SubscriptionPayment_subscriptionId_idx_edbe96bf',
+        columns: ['subscriptionId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        index: 'SubscriptionPayment_subscriptionId_status_idx_cf4c0158',
+        columns: ['subscriptionId', 'status'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'SubscriptionPlan',
+        index: 'SubscriptionPlan_isActive_idx_77fe3ba1',
+        columns: ['isActive'],
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'ReportComment',
+        foreignKey: {
+          name: 'ReportComment_schoolId_fkey',
+          columns: ['schoolId'],
+          references: { schema: 'public', table: 'School', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'ReportComment',
+        foreignKey: {
+          name: 'ReportComment_studentId_fkey',
+          columns: ['studentId'],
+          references: { schema: 'public', table: 'Student', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'ReportComment',
+        foreignKey: {
+          name: 'ReportComment_termId_fkey',
+          columns: ['termId'],
+          references: { schema: 'public', table: 'Term', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'SchoolClass',
+        foreignKey: {
+          name: 'SchoolClass_classTeacherId_fkey',
+          columns: ['classTeacherId'],
+          references: { schema: 'public', table: 'Teacher', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        foreignKey: {
+          name: 'SchoolSubscription_schoolId_fkey',
+          columns: ['schoolId'],
+          references: { schema: 'public', table: 'School', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'SchoolSubscription',
+        foreignKey: {
+          name: 'SchoolSubscription_planId_fkey',
+          columns: ['planId'],
+          references: { schema: 'public', table: 'SubscriptionPlan', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'StudentTermResult',
+        foreignKey: {
+          name: 'StudentTermResult_classTeacherId_fkey',
+          columns: ['classTeacherId'],
+          references: { schema: 'public', table: 'Teacher', columns: ['id'] },
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'SubscriptionPayment',
+        foreignKey: {
+          name: 'SubscriptionPayment_subscriptionId_fkey',
+          columns: ['subscriptionId'],
+          references: { schema: 'public', table: 'SchoolSubscription', columns: ['id'] },
+        },
+      }),
+    ];
+  }
+}
+
+MigrationCLI.run(import.meta.url, M);

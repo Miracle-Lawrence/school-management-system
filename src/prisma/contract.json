@@ -72,6 +72,10 @@
       "model": "SchoolClass",
       "namespace": "public"
     },
+    "SchoolSubscription": {
+      "model": "SchoolSubscription",
+      "namespace": "public"
+    },
     "Student": {
       "model": "Student",
       "namespace": "public"
@@ -90,6 +94,14 @@
     },
     "SubjectResult": {
       "model": "SubjectResult",
+      "namespace": "public"
+    },
+    "SubscriptionPayment": {
+      "model": "SubscriptionPayment",
+      "namespace": "public"
+    },
+    "SubscriptionPlan": {
+      "model": "SubscriptionPlan",
       "namespace": "public"
     },
     "Teacher": {
@@ -180,6 +192,23 @@
               }
             ]
           },
+          "BillingInterval": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "MONTHLY",
+                "value": "MONTHLY"
+              },
+              {
+                "name": "QUARTERLY",
+                "value": "QUARTERLY"
+              },
+              {
+                "name": "YEARLY",
+                "value": "YEARLY"
+              }
+            ]
+          },
           "Gender": {
             "codecId": "pg/text@1",
             "members": [
@@ -203,6 +232,27 @@
               {
                 "name": "RAW_SCORE",
                 "value": "RAW_SCORE"
+              }
+            ]
+          },
+          "PaymentStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "SUCCESSFUL",
+                "value": "SUCCESSFUL"
+              },
+              {
+                "name": "FAILED",
+                "value": "FAILED"
+              },
+              {
+                "name": "REFUNDED",
+                "value": "REFUNDED"
               }
             ]
           },
@@ -246,6 +296,35 @@
               {
                 "name": "INACTIVE",
                 "value": "INACTIVE"
+              }
+            ]
+          },
+          "SubscriptionStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TRIALING",
+                "value": "TRIALING"
+              },
+              {
+                "name": "ACTIVE",
+                "value": "ACTIVE"
+              },
+              {
+                "name": "PAST_DUE",
+                "value": "PAST_DUE"
+              },
+              {
+                "name": "SUSPENDED",
+                "value": "SUSPENDED"
+              },
+              {
+                "name": "CANCELLED",
+                "value": "CANCELLED"
+              },
+              {
+                "name": "EXPIRED",
+                "value": "EXPIRED"
               }
             ]
           },
@@ -2661,6 +2740,21 @@
               }
             },
             "relations": {
+              "SubscriptionStatus": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolSubscription",
+                  "namespace": "public"
+                }
+              },
               "assessments": {
                 "cardinality": "1:N",
                 "on": {
@@ -3253,6 +3347,191 @@
               },
               "namespaceId": "public",
               "table": "SchoolClass"
+            }
+          },
+          "SchoolSubscription": {
+            "fields": {
+              "cancelledAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "currentPeriodEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "currentPeriodStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "planId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "startsAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "SubscriptionStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "trialEndsAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "payments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "subscriptionId"
+                  ]
+                },
+                "to": {
+                  "model": "SubscriptionPayment",
+                  "namespace": "public"
+                }
+              },
+              "plan": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "planId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SubscriptionPlan",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "cancelledAt": {
+                  "column": "cancelledAt"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "currentPeriodEnd": {
+                  "column": "currentPeriodEnd"
+                },
+                "currentPeriodStart": {
+                  "column": "currentPeriodStart"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "planId": {
+                  "column": "planId"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "startsAt": {
+                  "column": "startsAt"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "trialEndsAt": {
+                  "column": "trialEndsAt"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SchoolSubscription"
             }
           },
           "Student": {
@@ -4415,6 +4694,314 @@
               },
               "namespaceId": "public",
               "table": "SubjectResult"
+            }
+          },
+          "SubscriptionPayment": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "currency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "paidAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "provider": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reference": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PaymentStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "subscriptionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "subscription": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "subscriptionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolSubscription",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "currency": {
+                  "column": "currency"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "paidAt": {
+                  "column": "paidAt"
+                },
+                "provider": {
+                  "column": "provider"
+                },
+                "reference": {
+                  "column": "reference"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "subscriptionId": {
+                  "column": "subscriptionId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SubscriptionPayment"
+            }
+          },
+          "SubscriptionPlan": {
+            "fields": {
+              "billingInterval": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BillingInterval",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "currency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "features": {
+                "many": true,
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "maxStorageMb": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "maxStudents": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "maxTeachers": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "price": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "subscriptions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "planId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolSubscription",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "billingInterval": {
+                  "column": "billingInterval"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "currency": {
+                  "column": "currency"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "features": {
+                  "column": "features"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "maxStorageMb": {
+                  "column": "maxStorageMb"
+                },
+                "maxStudents": {
+                  "column": "maxStudents"
+                },
+                "maxTeachers": {
+                  "column": "maxTeachers"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "price": {
+                  "column": "price"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SubscriptionPlan"
             }
           },
           "Teacher": {
@@ -7476,6 +8063,170 @@
                 }
               ]
             },
+            "SchoolSubscription": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('TRIALING', 'ACTIVE', 'PAST_DUE', 'SUSPENDED', 'CANCELLED', 'EXPIRED')",
+                  "name": "SchoolSubscription_status_check_674e81b6",
+                  "prefix": "SchoolSubscription_status_check"
+                }
+              ],
+              "columns": {
+                "cancelledAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "currentPeriodEnd": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "currentPeriodStart": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "planId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "startsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "TRIALING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "SubscriptionStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "trialEndsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolSubscription"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "planId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolSubscription"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SubscriptionPlan"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "currentPeriodEnd"
+                  ],
+                  "name": "SchoolSubscription_currentPeriodEnd_idx_810e4bc6",
+                  "prefix": "SchoolSubscription_currentPeriodEnd_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "planId"
+                  ],
+                  "name": "SchoolSubscription_planId_idx_5b32079a",
+                  "prefix": "SchoolSubscription_planId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "SchoolSubscription_schoolId_idx_82b454d7",
+                  "prefix": "SchoolSubscription_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "status"
+                  ],
+                  "name": "SchoolSubscription_schoolId_status_idx_7110c695",
+                  "prefix": "SchoolSubscription_schoolId_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Student": {
               "checks": [
                 {
@@ -8423,6 +9174,276 @@
                 }
               ]
             },
+            "SubscriptionPayment": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'SUCCESSFUL', 'FAILED', 'REFUNDED')",
+                  "name": "SubscriptionPayment_status_check_d65fcf38",
+                  "prefix": "SubscriptionPayment_status_check"
+                }
+              ],
+              "columns": {
+                "amount": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "currency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NGN"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "paidAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "provider": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "reference": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PaymentStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "subscriptionId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "subscriptionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SubscriptionPayment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolSubscription"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdAt"
+                  ],
+                  "name": "SubscriptionPayment_createdAt_idx_9575dbd7",
+                  "prefix": "SubscriptionPayment_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "subscriptionId"
+                  ],
+                  "name": "SubscriptionPayment_subscriptionId_idx_edbe96bf",
+                  "prefix": "SubscriptionPayment_subscriptionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "subscriptionId",
+                    "status"
+                  ],
+                  "name": "SubscriptionPayment_subscriptionId_status_idx_cf4c0158",
+                  "prefix": "SubscriptionPayment_subscriptionId_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "reference"
+                  ]
+                }
+              ]
+            },
+            "SubscriptionPlan": {
+              "checks": [
+                {
+                  "expression": "\"billingInterval\" IN ('MONTHLY', 'QUARTERLY', 'YEARLY')",
+                  "name": "SubscriptionPlan_billingInterval_check_0bedc4d3",
+                  "prefix": "SubscriptionPlan_billingInterval_check"
+                },
+                {
+                  "expression": "array_position(\"features\", NULL) IS NULL",
+                  "name": "SubscriptionPlan_features_elem_not_null_1a661718",
+                  "prefix": "SubscriptionPlan_features_elem_not_null"
+                }
+              ],
+              "columns": {
+                "billingInterval": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BillingInterval",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "currency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NGN"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "features": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "maxStorageMb": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "maxStudents": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "maxTeachers": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "price": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "isActive"
+                  ],
+                  "name": "SubscriptionPlan_isActive_idx_77fe3ba1",
+                  "prefix": "SubscriptionPlan_isActive_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Teacher": {
               "columns": {
                 "createdAt": {
@@ -8973,6 +9994,14 @@
                 "EXCUSED"
               ]
             },
+            "BillingInterval": {
+              "kind": "valueSet",
+              "values": [
+                "MONTHLY",
+                "QUARTERLY",
+                "YEARLY"
+              ]
+            },
             "Gender": {
               "kind": "valueSet",
               "values": [
@@ -8985,6 +10014,15 @@
               "values": [
                 "PERCENTAGE",
                 "RAW_SCORE"
+              ]
+            },
+            "PaymentStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "SUCCESSFUL",
+                "FAILED",
+                "REFUNDED"
               ]
             },
             "ReportComponentType": {
@@ -9009,6 +10047,17 @@
                 "INACTIVE"
               ]
             },
+            "SubscriptionStatus": {
+              "kind": "valueSet",
+              "values": [
+                "TRIALING",
+                "ACTIVE",
+                "PAST_DUE",
+                "SUSPENDED",
+                "CANCELLED",
+                "EXPIRED"
+              ]
+            },
             "UserRole": {
               "kind": "valueSet",
               "values": [
@@ -9027,10 +10076,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f410efa5f383d2f016680e60a03f68f441c632714d850626a6b8802002486455"
+    "storageHash": "9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab"
   },
   "execution": {
-    "executionHash": "0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039",
+    "executionHash": "d2689beaf8b5c36ff0e3d18680b34016762303458513d76d0943159236ebf99d",
     "mutations": {
       "defaults": [
         {
@@ -9285,6 +10334,21 @@
           "ref": {
             "column": "updatedAt",
             "namespace": "public",
+            "table": "SchoolSubscription"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
             "table": "Student"
           }
         },
@@ -9346,6 +10410,36 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "SubjectResult"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "SubscriptionPayment"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "SubscriptionPlan"
           }
         },
         {

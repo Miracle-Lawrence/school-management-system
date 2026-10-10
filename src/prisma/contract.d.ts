@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f410efa5f383d2f016680e60a03f68f441c632714d850626a6b8802002486455'>;
+  StorageHashBase<'9287ea9c50865035a373c4354c0c3fc6d8ff559b518474a3843c5d57fb50d4ab'>;
 export type ExecutionHash =
-  ExecutionHashBase<'0f4f14e87c65aff1d0c7a0313a074d8d833125f2c76f24f365aa9b2562aca039'>;
+  ExecutionHashBase<'d2689beaf8b5c36ff0e3d18680b34016762303458513d76d0943159236ebf99d'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -450,6 +450,20 @@ export type FieldOutputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SchoolSubscription: {
+      readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currentPeriodEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly currentPeriodStart: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly planId: CodecTypes['pg/int4@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly startsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Student: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly admissionNumber: CodecTypes['pg/text@1']['output'];
@@ -518,6 +532,34 @@ export type FieldOutputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
       readonly totalScore: CodecTypes['pg/float8@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SubscriptionPayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currency: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly provider: CodecTypes['pg/text@1']['output'] | null;
+      readonly reference: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'REFUNDED';
+      readonly subscriptionId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SubscriptionPlan: {
+      readonly billingInterval: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currency: CodecTypes['pg/text@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly features: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly maxStorageMb: CodecTypes['pg/int4@1']['output'] | null;
+      readonly maxStudents: CodecTypes['pg/int4@1']['output'] | null;
+      readonly maxTeachers: CodecTypes['pg/int4@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly price: CodecTypes['pg/numeric@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Teacher: {
@@ -777,6 +819,20 @@ export type FieldInputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly SchoolSubscription: {
+      readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currentPeriodEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly currentPeriodStart: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly planId: CodecTypes['pg/int4@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly startsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly Student: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly admissionNumber: CodecTypes['pg/text@1']['input'];
@@ -845,6 +901,34 @@ export type FieldInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly termId: CodecTypes['pg/int4@1']['input'];
       readonly totalScore: CodecTypes['pg/float8@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SubscriptionPayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currency: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly provider: CodecTypes['pg/text@1']['input'] | null;
+      readonly reference: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'REFUNDED';
+      readonly subscriptionId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SubscriptionPlan: {
+      readonly billingInterval: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currency: CodecTypes['pg/text@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly features: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly maxStorageMb: CodecTypes['pg/int4@1']['input'] | null;
+      readonly maxStudents: CodecTypes['pg/int4@1']['input'] | null;
+      readonly maxTeachers: CodecTypes['pg/int4@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly price: CodecTypes['pg/numeric@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Teacher: {
@@ -1104,6 +1188,20 @@ export type StorageColumnTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SchoolSubscription: {
+      readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currentPeriodEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly currentPeriodStart: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly planId: CodecTypes['pg/int4@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly startsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Student: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly admissionNumber: CodecTypes['pg/text@1']['output'];
@@ -1172,6 +1270,34 @@ export type StorageColumnTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
       readonly totalScore: CodecTypes['pg/float8@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SubscriptionPayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currency: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly provider: CodecTypes['pg/text@1']['output'] | null;
+      readonly reference: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'REFUNDED';
+      readonly subscriptionId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SubscriptionPlan: {
+      readonly billingInterval: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly currency: CodecTypes['pg/text@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly features: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly maxStorageMb: CodecTypes['pg/int4@1']['output'] | null;
+      readonly maxStudents: CodecTypes['pg/int4@1']['output'] | null;
+      readonly maxTeachers: CodecTypes['pg/int4@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly price: CodecTypes['pg/numeric@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Teacher: {
@@ -1431,6 +1557,20 @@ export type StorageColumnInputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly SchoolSubscription: {
+      readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currentPeriodEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly currentPeriodStart: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly planId: CodecTypes['pg/int4@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly startsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly Student: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly admissionNumber: CodecTypes['pg/text@1']['input'];
@@ -1499,6 +1639,34 @@ export type StorageColumnInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly termId: CodecTypes['pg/int4@1']['input'];
       readonly totalScore: CodecTypes['pg/float8@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SubscriptionPayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currency: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly provider: CodecTypes['pg/text@1']['input'] | null;
+      readonly reference: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'REFUNDED';
+      readonly subscriptionId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SubscriptionPlan: {
+      readonly billingInterval: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly currency: CodecTypes['pg/text@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly features: ReadonlyArray<CodecTypes['pg/text@1']['input']>;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly maxStorageMb: CodecTypes['pg/int4@1']['input'] | null;
+      readonly maxStudents: CodecTypes['pg/int4@1']['input'] | null;
+      readonly maxTeachers: CodecTypes['pg/int4@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly price: CodecTypes['pg/numeric@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Teacher: {
@@ -1803,6 +1971,7 @@ export namespace Models {
     status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     website: CodecTypes['pg/text@1']['output'] | null;
+    SubscriptionStatus: public_SchoolSubscription[];
     assessments: public_Assessment[];
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
@@ -1823,6 +1992,7 @@ export namespace Models {
     teachers: public_Teacher[];
     users: public_User[];
     readonly [RelationKeys]?:
+      | 'SubscriptionStatus'
       | 'assessments'
       | 'attendanceRecords'
       | 'classSubjects'
@@ -1871,6 +2041,24 @@ export namespace Models {
       | 'students'
       | 'subjectResults'
       | 'teacherAssignments';
+  };
+  export type public_SchoolSubscription = {
+    cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    currentPeriodEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    currentPeriodStart: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    planId: CodecTypes['pg/int4@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    startsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    status: 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'SUSPENDED' | 'CANCELLED' | 'EXPIRED';
+    trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    payments: public_SubscriptionPayment[];
+    plan: public_SubscriptionPlan;
+    school: public_School;
+    readonly [RelationKeys]?: 'payments' | 'plan' | 'school';
   };
   export type public_Student = {
     address: CodecTypes['pg/text@1']['output'] | null;
@@ -1990,6 +2178,38 @@ export namespace Models {
     readonly [RelationKeys]?:
       'class' | 'componentScores' | 'school' | 'student' | 'subject' | 'term';
   };
+  export type public_SubscriptionPayment = {
+    amount: CodecTypes['pg/numeric@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    currency: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    provider: CodecTypes['pg/text@1']['output'] | null;
+    reference: CodecTypes['pg/text@1']['output'];
+    status: 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'REFUNDED';
+    subscriptionId: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    subscription: public_SchoolSubscription;
+    readonly [RelationKeys]?: 'subscription';
+  };
+  export type public_SubscriptionPlan = {
+    billingInterval: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    currency: CodecTypes['pg/text@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    features: ReadonlyArray<CodecTypes['pg/text@1']['output']>;
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    maxStorageMb: CodecTypes['pg/int4@1']['output'] | null;
+    maxStudents: CodecTypes['pg/int4@1']['output'] | null;
+    maxTeachers: CodecTypes['pg/int4@1']['output'] | null;
+    name: CodecTypes['pg/text@1']['output'];
+    price: CodecTypes['pg/numeric@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    subscriptions: public_SchoolSubscription[];
+    readonly [RelationKeys]?: 'subscriptions';
+  };
   export type public_Teacher = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'] | null;
@@ -2099,11 +2319,14 @@ export declare const models: {
     ResultComponentScore: Models.public_ResultComponentScore;
     School: Models.public_School;
     SchoolClass: Models.public_SchoolClass;
+    SchoolSubscription: Models.public_SchoolSubscription;
     Student: Models.public_Student;
     StudentPsychomotorRating: Models.public_StudentPsychomotorRating;
     StudentTermResult: Models.public_StudentTermResult;
     Subject: Models.public_Subject;
     SubjectResult: Models.public_SubjectResult;
+    SubscriptionPayment: Models.public_SubscriptionPayment;
+    SubscriptionPlan: Models.public_SubscriptionPlan;
     Teacher: Models.public_Teacher;
     TeacherAssignment: Models.public_TeacherAssignment;
     Term: Models.public_Term;
@@ -3882,6 +4105,133 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly SchoolSubscription: {
+              columns: {
+                readonly cancelledAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly currentPeriodEnd: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly currentPeriodStart: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly notes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly planId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly startsAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'TRIALING'>;
+                  };
+                };
+                readonly trialEndsAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'SchoolSubscription_currentPeriodEnd_idx_810e4bc6';
+                  readonly prefix: 'SchoolSubscription_currentPeriodEnd_idx';
+                  readonly columns: readonly ['currentPeriodEnd'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SchoolSubscription_planId_idx_5b32079a';
+                  readonly prefix: 'SchoolSubscription_planId_idx';
+                  readonly columns: readonly ['planId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SchoolSubscription_schoolId_idx_82b454d7';
+                  readonly prefix: 'SchoolSubscription_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SchoolSubscription_schoolId_status_idx_7110c695';
+                  readonly prefix: 'SchoolSubscription_schoolId_status_idx';
+                  readonly columns: readonly ['schoolId', 'status'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolSubscription';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolSubscription';
+                    readonly columns: readonly ['planId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SubscriptionPlan';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Student: {
               columns: {
                 readonly address: {
@@ -4612,6 +4962,211 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly SubscriptionPayment: {
+              columns: {
+                readonly amount: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly currency: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'NGN'>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly notes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly paidAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly provider: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly reference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly subscriptionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['reference'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'SubscriptionPayment_createdAt_idx_9575dbd7';
+                  readonly prefix: 'SubscriptionPayment_createdAt_idx';
+                  readonly columns: readonly ['createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SubscriptionPayment_subscriptionId_idx_edbe96bf';
+                  readonly prefix: 'SubscriptionPayment_subscriptionId_idx';
+                  readonly columns: readonly ['subscriptionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SubscriptionPayment_subscriptionId_status_idx_cf4c0158';
+                  readonly prefix: 'SubscriptionPayment_subscriptionId_status_idx';
+                  readonly columns: readonly ['subscriptionId', 'status'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SubscriptionPayment';
+                    readonly columns: readonly ['subscriptionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolSubscription';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly SubscriptionPlan: {
+              columns: {
+                readonly billingInterval: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly currency: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'NGN'>;
+                  };
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly features: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', readonly []>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly maxStorageMb: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly maxStudents: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly maxTeachers: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly price: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'SubscriptionPlan_isActive_idx_77fe3ba1';
+                  readonly prefix: 'SubscriptionPlan_isActive_idx';
+                  readonly columns: readonly ['isActive'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
+            };
             readonly Teacher: {
               columns: {
                 readonly createdAt: {
@@ -5039,6 +5594,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['PRESENT', 'ABSENT', 'LATE', 'EXCUSED'];
             };
+            readonly BillingInterval: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['MONTHLY', 'QUARTERLY', 'YEARLY'];
+            };
             readonly Gender: {
               readonly kind: 'valueSet';
               readonly values: readonly ['MALE', 'FEMALE'];
@@ -5046,6 +5605,10 @@ type ContractBase = Omit<
             readonly GradeCalculationType: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PERCENTAGE', 'RAW_SCORE'];
+            };
+            readonly PaymentStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'SUCCESSFUL', 'FAILED', 'REFUNDED'];
             };
             readonly ReportComponentType: {
               readonly kind: 'valueSet';
@@ -5058,6 +5621,17 @@ type ContractBase = Omit<
             readonly SchoolStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['ACTIVE', 'SUSPENDED', 'INACTIVE'];
+            };
+            readonly SubscriptionStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'TRIALING',
+                'ACTIVE',
+                'PAST_DUE',
+                'SUSPENDED',
+                'CANCELLED',
+                'EXPIRED',
+              ];
             };
             readonly UserRole: {
               readonly kind: 'valueSet';
@@ -5144,6 +5718,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'SchoolClass';
     };
+    readonly SchoolSubscription: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SchoolSubscription';
+    };
     readonly Student: { readonly namespace: 'public' & NamespaceId; readonly model: 'Student' };
     readonly StudentPsychomotorRating: {
       readonly namespace: 'public' & NamespaceId;
@@ -5157,6 +5735,14 @@ type ContractBase = Omit<
     readonly SubjectResult: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'SubjectResult';
+    };
+    readonly SubscriptionPayment: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SubscriptionPayment';
+    };
+    readonly SubscriptionPlan: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SubscriptionPlan';
     };
     readonly Teacher: { readonly namespace: 'public' & NamespaceId; readonly model: 'Teacher' };
     readonly TeacherAssignment: {
@@ -6679,6 +7265,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly SubscriptionStatus: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolSubscription';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly assessments: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -7072,6 +7669,134 @@ type ContractBase = Omit<
                 readonly level: { readonly column: 'level' };
                 readonly name: { readonly column: 'name' };
                 readonly schoolId: { readonly column: 'schoolId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly SchoolSubscription: {
+            readonly fields: {
+              readonly cancelledAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly currentPeriodEnd: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly currentPeriodStart: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly planId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly startsAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly trialEndsAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly payments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SubscriptionPayment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['subscriptionId'];
+                };
+              };
+              readonly plan: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SubscriptionPlan';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['planId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'SchoolSubscription';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly cancelledAt: { readonly column: 'cancelledAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly currentPeriodEnd: { readonly column: 'currentPeriodEnd' };
+                readonly currentPeriodStart: { readonly column: 'currentPeriodStart' };
+                readonly id: { readonly column: 'id' };
+                readonly notes: { readonly column: 'notes' };
+                readonly planId: { readonly column: 'planId' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly startsAt: { readonly column: 'startsAt' };
+                readonly status: { readonly column: 'status' };
+                readonly trialEndsAt: { readonly column: 'trialEndsAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -7817,6 +8542,189 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly SubscriptionPayment: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly currency: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly paidAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly provider: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly reference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly subscriptionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly subscription: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolSubscription';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['subscriptionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'SubscriptionPayment';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly amount: { readonly column: 'amount' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly currency: { readonly column: 'currency' };
+                readonly id: { readonly column: 'id' };
+                readonly notes: { readonly column: 'notes' };
+                readonly paidAt: { readonly column: 'paidAt' };
+                readonly provider: { readonly column: 'provider' };
+                readonly reference: { readonly column: 'reference' };
+                readonly status: { readonly column: 'status' };
+                readonly subscriptionId: { readonly column: 'subscriptionId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly SubscriptionPlan: {
+            readonly fields: {
+              readonly billingInterval: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly currency: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly features: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly many: true;
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly maxStorageMb: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly maxStudents: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly maxTeachers: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly price: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly subscriptions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolSubscription';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['planId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'SubscriptionPlan';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly billingInterval: { readonly column: 'billingInterval' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly currency: { readonly column: 'currency' };
+                readonly description: { readonly column: 'description' };
+                readonly features: { readonly column: 'features' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly maxStorageMb: { readonly column: 'maxStorageMb' };
+                readonly maxStudents: { readonly column: 'maxStudents' };
+                readonly maxTeachers: { readonly column: 'maxTeachers' };
+                readonly name: { readonly column: 'name' };
+                readonly price: { readonly column: 'price' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Teacher: {
             readonly fields: {
               readonly createdAt: {
@@ -8371,6 +9279,14 @@ type ContractBase = Omit<
               { readonly name: 'EXCUSED'; readonly value: 'EXCUSED' },
             ];
           };
+          readonly BillingInterval: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'MONTHLY'; readonly value: 'MONTHLY' },
+              { readonly name: 'QUARTERLY'; readonly value: 'QUARTERLY' },
+              { readonly name: 'YEARLY'; readonly value: 'YEARLY' },
+            ];
+          };
           readonly Gender: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -8383,6 +9299,15 @@ type ContractBase = Omit<
             readonly members: readonly [
               { readonly name: 'PERCENTAGE'; readonly value: 'PERCENTAGE' },
               { readonly name: 'RAW_SCORE'; readonly value: 'RAW_SCORE' },
+            ];
+          };
+          readonly PaymentStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'SUCCESSFUL'; readonly value: 'SUCCESSFUL' },
+              { readonly name: 'FAILED'; readonly value: 'FAILED' },
+              { readonly name: 'REFUNDED'; readonly value: 'REFUNDED' },
             ];
           };
           readonly ReportComponentType: {
@@ -8405,6 +9330,17 @@ type ContractBase = Omit<
               { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
               { readonly name: 'SUSPENDED'; readonly value: 'SUSPENDED' },
               { readonly name: 'INACTIVE'; readonly value: 'INACTIVE' },
+            ];
+          };
+          readonly SubscriptionStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'TRIALING'; readonly value: 'TRIALING' },
+              { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
+              { readonly name: 'PAST_DUE'; readonly value: 'PAST_DUE' },
+              { readonly name: 'SUSPENDED'; readonly value: 'SUSPENDED' },
+              { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+              { readonly name: 'EXPIRED'; readonly value: 'EXPIRED' },
             ];
           };
           readonly UserRole: {
@@ -8598,6 +9534,15 @@ type ContractBase = Omit<
           readonly ref: {
             readonly column: 'updatedAt';
             readonly namespace: 'public';
+            readonly table: 'SchoolSubscription';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
             readonly table: 'Student';
           };
         },
@@ -8635,6 +9580,24 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'SubjectResult';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'SubscriptionPayment';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'SubscriptionPlan';
           };
         },
         {

@@ -15,6 +15,30 @@ enum SchoolStatus {
   INACTIVE
 }
 
+
+enum BillingInterval {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  SUSPENDED
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+
 enum Gender {
   MALE
   FEMALE
@@ -68,6 +92,7 @@ model School {
   state                    String?
   country                  String                     @default("Nigeria")
   status                   SchoolStatus               @default(ACTIVE)
+  SubscriptionStatus       SchoolSubscription[]
   users                    User[]
   students                 Student[]
   teachers                 Teacher[]
@@ -104,6 +129,67 @@ model School {
   createdAt                TimestamptzString          @default(now())
   updatedAt                temporal.updatedAtString()
 }
+
+
+model SubscriptionPlan {
+  id                 Int               @id @default(autoincrement())
+  name               String
+  description        String?
+  price              Decimal
+  currency           String            @default("NGN")
+  billingInterval    BillingInterval
+  maxStudents        Int?
+  maxTeachers        Int?
+  maxStorageMb       Int?
+  features           String[]          @default([])
+  isActive           Boolean           @default(true)
+  subscriptions      SchoolSubscription[]
+  createdAt          TimestamptzString @default(now())
+  updatedAt          temporal.updatedAtString()
+
+  @@index([isActive])
+}
+
+model SchoolSubscription {
+  id                 Int                @id @default(autoincrement())
+  school             School             @relation(fields: [schoolId], references: [id])
+  schoolId           Int
+  plan               SubscriptionPlan   @relation(fields: [planId], references: [id])
+  planId             Int
+  status             SubscriptionStatus  @default(TRIALING)
+  startsAt           TimestamptzString?
+  trialEndsAt        TimestamptzString?
+  currentPeriodStart TimestamptzString?
+  currentPeriodEnd   TimestamptzString?
+  cancelledAt        TimestamptzString?
+  notes              String?
+  payments           SubscriptionPayment[]
+  createdAt          TimestamptzString  @default(now())
+  updatedAt          temporal.updatedAtString()
+
+  @@index([schoolId, status])
+  @@index([planId])
+  @@index([currentPeriodEnd])
+}
+
+model SubscriptionPayment {
+  id             Int                 @id @default(autoincrement())
+  subscription   SchoolSubscription  @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int
+  amount         Decimal
+  currency       String              @default("NGN")
+  status         PaymentStatus       @default(PENDING)
+  reference      String              @unique
+  provider       String?
+  paidAt         TimestamptzString?
+  notes          String?
+  createdAt      TimestamptzString   @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  @@index([subscriptionId, status])
+  @@index([createdAt])
+}
+
 
 model ReportConfiguration {
   id         Int                        @id @default(autoincrement())
