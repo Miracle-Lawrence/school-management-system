@@ -1,0 +1,41 @@
+[
+  {
+    "id": "table.PlatformSetting",
+    "label": "Create table \"PlatformSetting\"",
+    "summary": "Creates table \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"PlatformSetting\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSetting\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"PlatformSetting\"",
+        "sql": "CREATE TABLE \"public\".\"PlatformSetting\" (\n  \"defaultCurrency\" text DEFAULT 'NGN' NOT NULL,\n  \"defaultTimezone\" text DEFAULT 'Africa/Lagos' NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"maintenanceMessage\" text,\n  \"maintenanceMode\" bool DEFAULT false NOT NULL,\n  \"platformName\" text DEFAULT 'SchoolMS' NOT NULL,\n  \"registrationEnabled\" bool DEFAULT true NOT NULL,\n  \"supportEmail\" text,\n  \"supportPhone\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"PlatformSetting\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSetting\""
+        ]
+      }
+    ]
+  }
+]

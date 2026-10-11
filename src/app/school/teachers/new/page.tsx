@@ -34,6 +34,7 @@ export default function NewTeacherPage() {
         lastName: formData.get("lastName"),
         phone: formData.get("phone"),
         email: formData.get("email"),
+        password: formData.get("password"),
       });
 
       if (!result.success) {

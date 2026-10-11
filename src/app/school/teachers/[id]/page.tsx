@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
-
+import { hashPassword } from "@/lib/auth/password";
 import { requireRole } from "@/lib/auth/authorization";
 import { updateTeacher } from "@/lib/services/teacher.service";
 import { db } from "@/prisma/db";
 import TeacherEditForm from "../teacher-edit-form";
+import TeacherPasswordResetForm from "../teacher-password-reset-form";
+import type { TeacherPasswordResetState } from "../teacher-password-reset-form";
 
 type TeacherDetailsPageProps = {
   params: Promise<{
@@ -22,15 +24,17 @@ const updateTeacherSchema = z.object({
     .string()
     .trim()
     .email("Enter a valid email address.")
-    .optional()
-    .or(z.literal("")),
+    .transform((email) => email.toLowerCase()),
 });
+
+type TeacherEditFormState = {
+  error: string | null;
+};
 
 export default async function TeacherDetailsPage({
   params,
 }: TeacherDetailsPageProps) {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -40,41 +44,47 @@ export default async function TeacherDetailsPage({
   const { id } = await params;
   const teacherId = Number(id);
 
-  if (!Number.isInteger(teacherId)) {
+  if (!Number.isInteger(teacherId) || teacherId <= 0) {
     notFound();
   }
 
-  const teacher = await db.orm.public.Teacher.where((teacher) =>
-    teacher.id.eq(teacherId),
+  const teacher = await db.orm.public.Teacher.where((item) =>
+    item.id.eq(teacherId),
   ).first();
 
   if (!teacher || teacher.schoolId !== schoolId) {
     notFound();
   }
 
-  const assignments = await db.orm.public.TeacherAssignment.where(
-    (assignment) => assignment.teacherId.eq(teacherId),
+  const linkedUser = teacher.userId
+    ? await db.orm.public.User.where((item) =>
+        item.id.eq(teacher.userId!),
+      ).first()
+    : null;
+
+  const accountStatus =
+    linkedUser &&
+    linkedUser.schoolId === schoolId &&
+    linkedUser.role === "TEACHER"
+      ? linkedUser.isActive
+        ? "Active"
+        : "Inactive"
+      : "Not linked";
+
+  const assignments = await db.orm.public.TeacherAssignment.where((item) =>
+    item.teacherId.eq(teacherId),
   ).all();
 
-  const classes = await db.orm.public.SchoolClass.where((schoolClass) =>
-    schoolClass.schoolId.eq(schoolId),
+  const classes = await db.orm.public.SchoolClass.where((item) =>
+    item.schoolId.eq(schoolId),
   ).all();
 
-  const subjects = await db.orm.public.Subject.where((subject) =>
-    subject.schoolId.eq(schoolId),
+  const subjects = await db.orm.public.Subject.where((item) =>
+    item.schoolId.eq(schoolId),
   ).all();
 
-  const classMap = new Map(
-    classes.map((schoolClass) => [schoolClass.id, schoolClass.name]),
-  );
-
-  const subjectMap = new Map(
-    subjects.map((subject) => [subject.id, subject.name]),
-  );
-
-  type TeacherEditFormState = {
-    error: string | null;
-  };
+  const classMap = new Map(classes.map((item) => [item.id, item.name]));
+  const subjectMap = new Map(subjects.map((item) => [item.id, item.name]));
 
   async function updateTeacherAction(
     _previousState: TeacherEditFormState,
@@ -84,13 +94,10 @@ export default async function TeacherDetailsPage({
 
     try {
       const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
       const schoolId = session.user.schoolId;
 
       if (!schoolId) {
-        return {
-          error: "School context is required.",
-        };
+        return { error: "School context is required." };
       }
 
       const result = updateTeacherSchema.safeParse({
@@ -108,33 +115,174 @@ export default async function TeacherDetailsPage({
         };
       }
 
-      try {
-        await updateTeacher(schoolId, teacherId, result.data);
-      } catch (error) {
-        if (error instanceof Error) {
-          return {
-            error: error.message,
-          };
-        }
-
-        return {
-          error: "Unable to update the teacher.",
-        };
-      }
+      await updateTeacher(schoolId, teacherId, result.data);
     } catch (error) {
       if (error instanceof Error) {
-        return {
-          error: error.message,
-        };
+        return { error: error.message };
       }
 
       return {
-        error: "Something went wrong. Please try again.",
+        error: "Unable to update the teacher. Please try again.",
       };
     }
 
     redirect(`/school/teachers/${teacherId}`);
   }
+
+  async function resetTeacherPasswordAction(
+    _previousState: TeacherPasswordResetState,
+    formData: FormData,
+  ): Promise<TeacherPasswordResetState> {
+    "use server";
+
+    // Keep authorization outside the ordinary error-handling block.
+    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      return {
+        error: "School context is required.",
+        success: null,
+      };
+    }
+
+    const passwordSchema = z
+      .string()
+      .min(4, "Password must be at least 4 characters.")
+      .max(128, "Password is too long.");
+
+    const passwordResult = passwordSchema.safeParse(formData.get("password"));
+
+    if (!passwordResult.success) {
+      return {
+        error: passwordResult.error.issues[0]?.message ?? "Invalid password.",
+        success: null,
+      };
+    }
+
+    try {
+      const teacher = await db.orm.public.Teacher.where((item) =>
+        item.id.eq(teacherId),
+      ).first();
+
+      if (!teacher || teacher.schoolId !== schoolId) {
+        return {
+          error: "Teacher not found in your school.",
+          success: null,
+        };
+      }
+
+      if (!teacher.email?.trim()) {
+        return {
+          error:
+            "This teacher has no email address. Edit the teacher profile and add an email before resetting the password.",
+          success: null,
+        };
+      }
+
+      const email = teacher.email.trim().toLowerCase();
+      const passwordHash = await hashPassword(passwordResult.data);
+
+      // Case 1: The teacher already has a linked login account.
+      if (teacher.userId) {
+        const user = await db.orm.public.User.where((item) =>
+          item.id.eq(teacher.userId!),
+        ).first();
+
+        if (!user || user.schoolId !== schoolId || user.role !== "TEACHER") {
+          return {
+            error:
+              "The linked teacher login account could not be verified. Please contact support.",
+            success: null,
+          };
+        }
+
+        await db.orm.public.User.where((item) => item.id.eq(user.id)).update({
+          passwordHash,
+          sessionVersion: user.sessionVersion + 1,
+        });
+      } else {
+        // Case 2: Legacy teacher without a linked login account.
+        const existingUser = await db.orm.public.User.where((item) =>
+          item.email.eq(email),
+        ).first();
+
+        let userId: number;
+
+        if (existingUser) {
+          // Never attach an account belonging to another school or role.
+          if (
+            existingUser.schoolId !== schoolId ||
+            existingUser.role !== "TEACHER"
+          ) {
+            return {
+              error:
+                "This email is already associated with another account. Update the teacher's email before continuing.",
+              success: null,
+            };
+          }
+
+          // Ensure the login account is not linked to another teacher.
+          const linkedTeacher = await db.orm.public.Teacher.where((item) =>
+            item.userId.eq(existingUser.id),
+          ).first();
+
+          if (linkedTeacher) {
+            return {
+              error: "This login account is already linked to another teacher.",
+              success: null,
+            };
+          }
+
+          await db.orm.public.User.where((item) =>
+            item.id.eq(existingUser.id),
+          ).update({
+            passwordHash,
+            name: `${teacher.firstName} ${teacher.lastName}`,
+            phone: teacher.phone ?? null,
+            isActive: true,
+            sessionVersion: existingUser.sessionVersion + 1,
+          });
+
+          userId = existingUser.id;
+        } else {
+          // Create a login account for the legacy teacher.
+          const newUser = await db.orm.public.User.create({
+            schoolId,
+            email,
+            passwordHash,
+            name: `${teacher.firstName} ${teacher.lastName}`,
+            phone: teacher.phone ?? null,
+            role: "TEACHER",
+            isActive: true,
+          });
+
+          userId = newUser.id;
+        }
+
+        // Link the existing teacher profile to the login account.
+        await db.orm.public.Teacher.where((item) =>
+          item.id.eq(teacherId),
+        ).update({
+          userId,
+          email,
+        });
+      }
+
+      return {
+        error: null,
+        success: "Teacher password reset successfully.",
+      };
+    } catch (error) {
+      console.error("Teacher password reset failed:", error);
+
+      return {
+        error: "Unable to reset the teacher password. Please try again.",
+        success: null,
+      };
+    }
+  }
+
   const fullName = `${teacher.firstName} ${teacher.lastName}`;
 
   return (
@@ -145,7 +293,7 @@ export default async function TeacherDetailsPage({
           href="/school/teachers"
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          ← Back to Teachers
+          &larr; Back to Teachers
         </Link>
 
         <div className="mt-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
@@ -195,7 +343,6 @@ export default async function TeacherDetailsPage({
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Employee ID
               </dt>
-
               <dd className="mt-1 font-medium text-slate-900">
                 {teacher.employeeId}
               </dd>
@@ -205,7 +352,6 @@ export default async function TeacherDetailsPage({
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 First Name
               </dt>
-
               <dd className="mt-1 font-medium text-slate-900">
                 {teacher.firstName}
               </dd>
@@ -215,7 +361,6 @@ export default async function TeacherDetailsPage({
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Last Name
               </dt>
-
               <dd className="mt-1 font-medium text-slate-900">
                 {teacher.lastName}
               </dd>
@@ -225,16 +370,42 @@ export default async function TeacherDetailsPage({
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Email
               </dt>
-
-              <dd className="mt-1 text-slate-700">{teacher.email ?? "—"}</dd>
+              <dd className="mt-1 break-words text-slate-700">
+                {teacher.email ?? "—"}
+              </dd>
             </div>
 
             <div>
               <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Phone
               </dt>
-
               <dd className="mt-1 text-slate-700">{teacher.phone ?? "—"}</dd>
+            </div>
+
+            <div>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Login Account
+              </dt>
+
+              <dd className="mt-2">
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                    accountStatus === "Active"
+                      ? "bg-green-100 text-green-700"
+                      : accountStatus === "Inactive"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {accountStatus}
+                </span>
+              </dd>
+
+              {linkedUser && accountStatus !== "Not linked" && (
+                <p className="mt-2 break-words text-sm text-slate-500">
+                  Login email: {linkedUser.email}
+                </p>
+              )}
             </div>
           </dl>
         </section>
@@ -287,11 +458,12 @@ export default async function TeacherDetailsPage({
         </section>
       </div>
 
-      {/* Edit section */}
+      {/* Edit teacher information */}
       <details className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 transition hover:bg-slate-50 sm:px-8">
           Edit Teacher Information
         </summary>
+
         <TeacherEditForm
           action={updateTeacherAction}
           employeeId={teacher.employeeId}
@@ -300,6 +472,15 @@ export default async function TeacherDetailsPage({
           email={teacher.email ?? ""}
           phone={teacher.phone ?? ""}
         />
+      </details>
+
+      {/* Password management */}
+      <details className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 transition hover:bg-slate-50 sm:px-8">
+          Reset Teacher Password
+        </summary>
+
+        <TeacherPasswordResetForm action={resetTeacherPasswordAction} />
       </details>
     </div>
   );

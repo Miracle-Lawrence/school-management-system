@@ -12,6 +12,10 @@
       "model": "Assessment",
       "namespace": "public"
     },
+    "AssessmentCategory": {
+      "model": "AssessmentCategory",
+      "namespace": "public"
+    },
     "AssessmentScore": {
       "model": "AssessmentScore",
       "namespace": "public"
@@ -492,6 +496,13 @@
           },
           "Assessment": {
             "fields": {
+              "assessmentCategoryId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "classId": {
                 "nullable": false,
                 "type": {
@@ -598,6 +609,22 @@
               }
             },
             "relations": {
+              "category": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "assessmentCategoryId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "AssessmentCategory",
+                  "namespace": "public"
+                }
+              },
               "class": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -696,6 +723,9 @@
             },
             "storage": {
               "fields": {
+                "assessmentCategoryId": {
+                  "column": "assessmentCategoryId"
+                },
                 "classId": {
                   "column": "classId"
                 },
@@ -741,6 +771,150 @@
               },
               "namespaceId": "public",
               "table": "Assessment"
+            }
+          },
+          "AssessmentCategory": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "displayOrder": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AssessmentType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "assessments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "assessmentCategoryId"
+                  ]
+                },
+                "to": {
+                  "model": "Assessment",
+                  "namespace": "public"
+                }
+              },
+              "reportComponents": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "assessmentCategoryId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportComponent",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "displayOrder": {
+                  "column": "displayOrder"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "AssessmentCategory"
             }
           },
           "AssessmentScore": {
@@ -2074,6 +2248,13 @@
                   "plane": "domain"
                 }
               },
+              "assessmentCategoryId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "assessmentType": {
                 "nullable": true,
                 "type": {
@@ -2179,6 +2360,22 @@
               }
             },
             "relations": {
+              "assessmentCategory": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "assessmentCategoryId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "AssessmentCategory",
+                  "namespace": "public"
+                }
+              },
               "configuration": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -2245,6 +2442,9 @@
               "fields": {
                 "aggregationType": {
                   "column": "aggregationType"
+                },
+                "assessmentCategoryId": {
+                  "column": "assessmentCategoryId"
                 },
                 "assessmentType": {
                   "column": "assessmentType"
@@ -2867,6 +3067,21 @@
                 },
                 "to": {
                   "model": "SchoolSubscription",
+                  "namespace": "public"
+                }
+              },
+              "assessmentCategories": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "AssessmentCategory",
                   "namespace": "public"
                 }
               },
@@ -6009,6 +6224,11 @@
                 }
               ],
               "columns": {
+                "assessmentCategoryId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "classId": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -6174,9 +6394,33 @@
                     "namespaceId": "public",
                     "tableName": "User"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "assessmentCategoryId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Assessment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "AssessmentCategory"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "assessmentCategoryId"
+                  ],
+                  "name": "Assessment_assessmentCategoryId_idx_24e62543",
+                  "prefix": "Assessment_assessmentCategoryId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "classId"
@@ -6224,6 +6468,129 @@
                 ]
               },
               "uniques": []
+            },
+            "AssessmentCategory": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('ASSIGNMENT', 'TEST', 'CA', 'EXAM', 'PROJECT', 'PRACTICAL', 'OTHER')",
+                  "name": "AssessmentCategory_type_check_5f5595b1",
+                  "prefix": "AssessmentCategory_type_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "displayOrder": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AssessmentType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "AssessmentCategory"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "AssessmentCategory_schoolId_idx_82b454d7",
+                  "prefix": "AssessmentCategory_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "type"
+                  ],
+                  "name": "AssessmentCategory_schoolId_type_idx_a08c0ed3",
+                  "prefix": "AssessmentCategory_schoolId_type_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "schoolId",
+                    "name"
+                  ]
+                }
+              ]
             },
             "AssessmentScore": {
               "columns": {
@@ -7471,6 +7838,11 @@
                     "plane": "storage"
                   }
                 },
+                "assessmentCategoryId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "assessmentType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -7585,9 +7957,33 @@
                     "namespaceId": "public",
                     "tableName": "ReportConfiguration"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "assessmentCategoryId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportComponent"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "AssessmentCategory"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "assessmentCategoryId"
+                  ],
+                  "name": "ReportComponent_assessmentCategoryId_idx_24e62543",
+                  "prefix": "ReportComponent_assessmentCategoryId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "configurationId"
@@ -10277,10 +10673,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ed0565f3c0f51631a9a4f98adadc9fb7d39185ef2e54df1cb8dcd8ab10209c7e"
+    "storageHash": "a50238f2dbc03699315447d078b5454f87807742920b5ece3bb88e919b938502"
   },
   "execution": {
-    "executionHash": "d7b6f419ef5913c17f5345c3c8b78d04193172654b5cbc46beda58f2f232ea07",
+    "executionHash": "b4f4f5b0035a457f896990a606c7f95345b36e9f1d850593b6e0a360733167c3",
     "mutations": {
       "defaults": [
         {
@@ -10311,6 +10707,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "Assessment"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "AssessmentCategory"
           }
         },
         {

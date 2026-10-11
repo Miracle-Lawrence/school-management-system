@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth/authorization";
+import { db } from "@/prisma/db";
 import {
+  getAssessmentById,
   getAssessmentScores,
   recordAssessmentScore,
 } from "@/lib/services/assessment.service";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
+};
+
+type AuthorizedAssessmentContext = {
+  schoolId: number;
+  assessmentId: number;
 };
 
 function parsePositiveId(value: unknown): number | null {
@@ -28,8 +35,56 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+async function authorizeAssessmentAccess(
+  schoolId: number,
+  userId: number,
+  role: string,
+  assessmentId: number,
+): Promise<AuthorizedAssessmentContext | null> {
+  const assessment = await getAssessmentById(schoolId, assessmentId);
+
+  // School owners and administrators can access assessments within their school.
+  if (role === "SCHOOL_OWNER" || role === "SCHOOL_ADMIN") {
+    return { schoolId, assessmentId };
+  }
+
+  if (role !== "TEACHER") {
+    return null;
+  }
+
+  const teacher = await db.orm.public.Teacher.where((item) =>
+    item.userId.eq(userId),
+  ).first();
+
+  if (!teacher || teacher.schoolId !== schoolId) {
+    return null;
+  }
+
+  const assignments = await db.orm.public.TeacherAssignment.where((item) =>
+    item.teacherId.eq(teacher.id),
+  ).all();
+
+  const isAssigned = assignments.some(
+    (assignment) =>
+      assignment.schoolId === schoolId &&
+      assignment.classId === assessment.classId &&
+      assignment.subjectId === assessment.subjectId,
+  );
+
+  if (!isAssigned) {
+    return null;
+  }
+
+  return { schoolId, assessmentId };
+}
+
 export async function GET(_request: Request, { params }: RouteContext) {
-  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const session = await requireRole([
+    "SCHOOL_OWNER",
+    "SCHOOL_ADMIN",
+    "TEACHER",
+  ]);
+
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -47,6 +102,20 @@ export async function GET(_request: Request, { params }: RouteContext) {
       return NextResponse.json(
         { error: "Invalid assessment ID." },
         { status: 400 },
+      );
+    }
+
+    const access = await authorizeAssessmentAccess(
+      schoolId,
+      Number(session.user.id),
+      session.user.role,
+      assessmentId,
+    );
+
+    if (!access) {
+      return NextResponse.json(
+        { error: "You are not authorized to access this assessment." },
+        { status: 403 },
       );
     }
 
@@ -71,7 +140,12 @@ export async function GET(_request: Request, { params }: RouteContext) {
 }
 
 export async function POST(request: Request, { params }: RouteContext) {
-  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const session = await requireRole([
+    "SCHOOL_OWNER",
+    "SCHOOL_ADMIN",
+    "TEACHER",
+  ]);
+
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -89,6 +163,22 @@ export async function POST(request: Request, { params }: RouteContext) {
       return NextResponse.json(
         { error: "Invalid assessment ID." },
         { status: 400 },
+      );
+    }
+
+    const access = await authorizeAssessmentAccess(
+      schoolId,
+      Number(session.user.id),
+      session.user.role,
+      assessmentId,
+    );
+
+    if (!access) {
+      return NextResponse.json(
+        {
+          error: "You are not authorized to record scores for this assessment.",
+        },
+        { status: 403 },
       );
     }
 

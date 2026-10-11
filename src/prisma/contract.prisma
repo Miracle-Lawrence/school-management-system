@@ -115,6 +115,7 @@ model School {
   stampUrl                 String?
   
   reportConfigurations     ReportConfiguration[]
+  assessmentCategories     AssessmentCategory[]
   teacherAssignments       TeacherAssignment[]
   attendanceRecords        Attendance[]
   sessions                 AcademicSession[]
@@ -225,7 +226,9 @@ model ReportComponent {
   name              String
   type              ReportComponentType
 
-  assessmentType    AssessmentType?
+  assessmentType       AssessmentType?
+  assessmentCategory   AssessmentCategory? @relation(fields: [assessmentCategoryId], references: [id])
+  assessmentCategoryId Int?
 
   rules             ReportComponentRule[]      @relation("ComponentRules")
   usedInRules       ReportComponentRule[]      @relation("RuleSourceComponent")
@@ -245,6 +248,7 @@ model ReportComponent {
 
   @@unique([configurationId, name])
   @@index([configurationId])
+  @@index([assessmentCategoryId])
 }
 
 model ReportComponentRule {
@@ -714,9 +718,11 @@ model Assessment {
   createdBy   User                       @relation("AssessmentCreatedBy", fields:[createdById], references:[id])
   createdById Int
 
-  title       String
-  type        AssessmentType
-  maxScore    Float
+  title               String
+  type                AssessmentType
+  category            AssessmentCategory? @relation(fields: [assessmentCategoryId], references: [id])
+  assessmentCategoryId Int?
+  maxScore            Float
   weight      Float
   date        DateTime?
   description String?
@@ -731,6 +737,29 @@ model Assessment {
   @@index([subjectId])
   @@index([termId])
   @@index([createdById])
+  @@index([assessmentCategoryId])
+}
+
+model AssessmentCategory {
+  id Int @id @default(autoincrement())
+
+  school School @relation(fields: [schoolId], references: [id])
+  schoolId Int
+
+  name String
+  type AssessmentType
+  displayOrder Int @default(1)
+  isActive Boolean @default(true)
+
+  assessments Assessment[]
+  reportComponents ReportComponent[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+  @@index([schoolId, type])
 }
 
 model AssessmentScore {

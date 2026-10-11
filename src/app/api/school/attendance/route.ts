@@ -30,9 +30,34 @@ function isValidId(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
 
+
+async function canTeacherAccessClass(
+  userId: number,
+  schoolId: number,
+  classId: number,
+): Promise<boolean> {
+  const teacher = await db.orm.public.Teacher.where((teacher) =>
+    teacher.userId.eq(userId),
+  ).first();
+
+  if (!teacher || teacher.schoolId !== schoolId) {
+    return false;
+  }
+
+  const assignments = await db.orm.public.TeacherAssignment.where(
+    (assignment) => assignment.teacherId.eq(teacher.id),
+  ).all();
+
+  return assignments.some(
+    (assignment) =>
+      assignment.schoolId === schoolId && assignment.classId === classId,
+  );
+}
+
+
 export async function GET(request: Request) {
   // Keep authorization outside the database-operation try/catch.
-  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN", "TEACHER"]);
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -83,6 +108,20 @@ export async function GET(request: Request) {
 
     if (!schoolClass || schoolClass.schoolId !== schoolId) {
       return NextResponse.json({ error: "Class not found." }, { status: 404 });
+    }
+
+    if (session.user.role === "TEACHER") {
+      const userId = Number(session.user.id);
+
+      if (
+        !isValidId(userId) ||
+        !(await canTeacherAccessClass(userId, schoolId, classId))
+      ) {
+        return NextResponse.json(
+          { error: "You are not assigned to this class." },
+          { status: 403 },
+        );
+      }
     }
 
     const term = await db.orm.public.Term.where((term) =>
@@ -151,7 +190,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   // Keep authorization outside the database-operation try/catch.
-  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN", "TEACHER"]);
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {

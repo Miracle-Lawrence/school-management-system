@@ -213,11 +213,7 @@ export default async function SchoolSettingsPage() {
             Update the information displayed throughout the school portal.
           </p>
         </div>
-        <form
-          action={updateSchoolAction}
-          encType="multipart/form-data"
-          className="p-6 sm:p-8"
-        >
+        <form action={updateSchoolAction} className="p-6 sm:p-8">
           <div className="space-y-8">
             {/* Basic information */}
             <section>

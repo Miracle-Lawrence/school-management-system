@@ -30,8 +30,12 @@ export const createTeacherSchema = z.object({
     .string()
     .trim()
     .email("Enter a valid email address.")
-    .optional()
-    .or(z.literal("")),
+    .transform((email) => email.toLowerCase()),
+
+  password: z
+    .string()
+    .min(4, "Initial password must be at least 4 characters.")
+    .max(128, "Initial password is too long."),
 });
 
 export type CreateTeacherInput = z.infer<typeof createTeacherSchema>;

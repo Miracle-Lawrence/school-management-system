@@ -66,6 +66,32 @@ export default function TeacherForm({ action }: TeacherFormProps) {
             />
           </div>
 
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
+              Initial Login Password <span className="text-red-500">*</span>
+            </label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minLength={4}
+              maxLength={128}
+              autoComplete="new-password"
+              placeholder="At least 4 characters"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Give the teacher this initial password securely. The system stores
+              a hashed version, not the plain-text password.
+            </p>
+          </div>
+
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <label
@@ -129,6 +155,8 @@ export default function TeacherForm({ action }: TeacherFormProps) {
               id="email"
               name="email"
               type="email"
+              required
+              autoComplete="email"
               placeholder="teacher@example.com"
               className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />

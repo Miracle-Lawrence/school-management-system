@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ed0565f3c0f51631a9a4f98adadc9fb7d39185ef2e54df1cb8dcd8ab10209c7e'>;
+  StorageHashBase<'a50238f2dbc03699315447d078b5454f87807742920b5ece3bb88e919b938502'>;
 export type ExecutionHash =
-  ExecutionHashBase<'d7b6f419ef5913c17f5345c3c8b78d04193172654b5cbc46beda58f2f232ea07'>;
+  ExecutionHashBase<'b4f4f5b0035a457f896990a606c7f95345b36e9f1d850593b6e0a360733167c3'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -261,6 +261,7 @@ export type FieldOutputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Assessment: {
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
       readonly classId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdById: CodecTypes['pg/int4@1']['output'];
@@ -275,6 +276,16 @@ export type FieldOutputTypes = {
       readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly weight: CodecTypes['pg/float8@1']['output'];
+    };
+    readonly AssessmentCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly AssessmentScore: {
       readonly assessmentId: CodecTypes['pg/int4@1']['output'];
@@ -380,6 +391,7 @@ export type FieldOutputTypes = {
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
       readonly assessmentType:
         'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
       readonly configurationId: CodecTypes['pg/int4@1']['output'];
@@ -642,6 +654,7 @@ export type FieldInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Assessment: {
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['input'] | null;
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdById: CodecTypes['pg/int4@1']['input'];
@@ -656,6 +669,16 @@ export type FieldInputTypes = {
       readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly weight: CodecTypes['pg/float8@1']['input'];
+    };
+    readonly AssessmentCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly AssessmentScore: {
       readonly assessmentId: CodecTypes['pg/int4@1']['input'];
@@ -761,6 +784,7 @@ export type FieldInputTypes = {
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['input'] | null;
       readonly assessmentType:
         'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
       readonly configurationId: CodecTypes['pg/int4@1']['input'];
@@ -1023,6 +1047,7 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Assessment: {
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
       readonly classId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdById: CodecTypes['pg/int4@1']['output'];
@@ -1037,6 +1062,16 @@ export type StorageColumnTypes = {
       readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly weight: CodecTypes['pg/float8@1']['output'];
+    };
+    readonly AssessmentCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly AssessmentScore: {
       readonly assessmentId: CodecTypes['pg/int4@1']['output'];
@@ -1142,6 +1177,7 @@ export type StorageColumnTypes = {
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
       readonly assessmentType:
         'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
       readonly configurationId: CodecTypes['pg/int4@1']['output'];
@@ -1404,6 +1440,7 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Assessment: {
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['input'] | null;
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdById: CodecTypes['pg/int4@1']['input'];
@@ -1418,6 +1455,16 @@ export type StorageColumnInputTypes = {
       readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly weight: CodecTypes['pg/float8@1']['input'];
+    };
+    readonly AssessmentCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly AssessmentScore: {
       readonly assessmentId: CodecTypes['pg/int4@1']['input'];
@@ -1523,6 +1570,7 @@ export type StorageColumnInputTypes = {
     };
     readonly ReportComponent: {
       readonly aggregationType: 'SUM' | 'AVERAGE';
+      readonly assessmentCategoryId: CodecTypes['pg/int4@1']['input'] | null;
       readonly assessmentType:
         'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
       readonly configurationId: CodecTypes['pg/int4@1']['input'];
@@ -1788,6 +1836,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'school' | 'terms';
   };
   export type public_Assessment = {
+    assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
     classId: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdById: CodecTypes['pg/int4@1']['output'];
@@ -1802,13 +1851,29 @@ export namespace Models {
     type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     weight: CodecTypes['pg/float8@1']['output'];
+    category: public_AssessmentCategory | null;
     class: public_SchoolClass;
     createdBy: public_User;
     school: public_School;
     scores: public_AssessmentScore[];
     subject: public_Subject;
     term: public_Term;
-    readonly [RelationKeys]?: 'class' | 'createdBy' | 'school' | 'scores' | 'subject' | 'term';
+    readonly [RelationKeys]?:
+      'category' | 'class' | 'createdBy' | 'school' | 'scores' | 'subject' | 'term';
+  };
+  export type public_AssessmentCategory = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    type: 'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    assessments: public_Assessment[];
+    reportComponents: public_ReportComponent[];
+    school: public_School;
+    readonly [RelationKeys]?: 'assessments' | 'reportComponents' | 'school';
   };
   export type public_AssessmentScore = {
     assessmentId: CodecTypes['pg/int4@1']['output'];
@@ -1947,6 +2012,7 @@ export namespace Models {
   };
   export type public_ReportComponent = {
     aggregationType: 'SUM' | 'AVERAGE';
+    assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
     assessmentType:
       'ASSIGNMENT' | 'TEST' | 'CA' | 'EXAM' | 'PROJECT' | 'PRACTICAL' | 'OTHER' | null;
     configurationId: CodecTypes['pg/int4@1']['output'];
@@ -1961,11 +2027,13 @@ export namespace Models {
     type: 'ASSESSMENT' | 'CALCULATED';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     weight: CodecTypes['pg/float8@1']['output'] | null;
+    assessmentCategory: public_AssessmentCategory | null;
     configuration: public_ReportConfiguration;
     resultScores: public_ResultComponentScore[];
     rules: public_ReportComponentRule[];
     usedInRules: public_ReportComponentRule[];
-    readonly [RelationKeys]?: 'configuration' | 'resultScores' | 'rules' | 'usedInRules';
+    readonly [RelationKeys]?:
+      'assessmentCategory' | 'configuration' | 'resultScores' | 'rules' | 'usedInRules';
   };
   export type public_ReportComponentRule = {
     componentId: CodecTypes['pg/int4@1']['output'];
@@ -2033,6 +2101,7 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     website: CodecTypes['pg/text@1']['output'] | null;
     SubscriptionStatus: public_SchoolSubscription[];
+    assessmentCategories: public_AssessmentCategory[];
     assessments: public_Assessment[];
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
@@ -2054,6 +2123,7 @@ export namespace Models {
     users: public_User[];
     readonly [RelationKeys]?:
       | 'SubscriptionStatus'
+      | 'assessmentCategories'
       | 'assessments'
       | 'attendanceRecords'
       | 'classSubjects'
@@ -2365,6 +2435,7 @@ export declare const models: {
   public: {
     AcademicSession: Models.public_AcademicSession;
     Assessment: Models.public_Assessment;
+    AssessmentCategory: Models.public_AssessmentCategory;
     AssessmentScore: Models.public_AssessmentScore;
     Attendance: Models.public_Attendance;
     ClassSubject: Models.public_ClassSubject;
@@ -2493,6 +2564,11 @@ type ContractBase = Omit<
             };
             readonly Assessment: {
               columns: {
+                readonly assessmentCategoryId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
                 readonly classId: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -2572,6 +2648,12 @@ type ContractBase = Omit<
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
               indexes: readonly [
+                {
+                  readonly name: 'Assessment_assessmentCategoryId_idx_24e62543';
+                  readonly prefix: 'Assessment_assessmentCategoryId_idx';
+                  readonly columns: readonly ['assessmentCategoryId'];
+                  readonly unique: false;
+                },
                 {
                   readonly name: 'Assessment_classId_idx_0089e5e7';
                   readonly prefix: 'Assessment_classId_idx';
@@ -2661,6 +2743,105 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assessment';
+                    readonly columns: readonly ['assessmentCategoryId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssessmentCategory';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly AssessmentCategory: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['schoolId', 'name'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'AssessmentCategory_schoolId_idx_82b454d7';
+                  readonly prefix: 'AssessmentCategory_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'AssessmentCategory_schoolId_type_idx_a08c0ed3';
+                  readonly prefix: 'AssessmentCategory_schoolId_type_idx';
+                  readonly columns: readonly ['schoolId', 'type'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssessmentCategory';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -3623,6 +3804,11 @@ type ContractBase = Omit<
                     readonly value: DefaultLiteralValue<'pg/text@1', 'SUM'>;
                   };
                 };
+                readonly assessmentCategoryId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
                 readonly assessmentType: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -3710,6 +3896,12 @@ type ContractBase = Omit<
               uniques: readonly [{ readonly columns: readonly ['configurationId', 'name'] }];
               indexes: readonly [
                 {
+                  readonly name: 'ReportComponent_assessmentCategoryId_idx_24e62543';
+                  readonly prefix: 'ReportComponent_assessmentCategoryId_idx';
+                  readonly columns: readonly ['assessmentCategoryId'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'ReportComponent_configurationId_idx_9f879af3';
                   readonly prefix: 'ReportComponent_configurationId_idx';
                   readonly columns: readonly ['configurationId'];
@@ -3726,6 +3918,18 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'ReportConfiguration';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportComponent';
+                    readonly columns: readonly ['assessmentCategoryId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssessmentCategory';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -5808,6 +6012,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Assessment';
     };
+    readonly AssessmentCategory: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'AssessmentCategory';
+    };
     readonly AssessmentScore: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'AssessmentScore';
@@ -5990,6 +6198,10 @@ type ContractBase = Omit<
           };
           readonly Assessment: {
             readonly fields: {
+              readonly assessmentCategoryId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly classId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -6057,6 +6269,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly category: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssessmentCategory';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['assessmentCategoryId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly class: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -6127,6 +6351,7 @@ type ContractBase = Omit<
               readonly table: 'Assessment';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly assessmentCategoryId: { readonly column: 'assessmentCategoryId' };
                 readonly classId: { readonly column: 'classId' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly createdById: { readonly column: 'createdById' };
@@ -6141,6 +6366,98 @@ type ContractBase = Omit<
                 readonly type: { readonly column: 'type' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly weight: { readonly column: 'weight' };
+              };
+            };
+          };
+          readonly AssessmentCategory: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly assessments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assessment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assessmentCategoryId'];
+                };
+              };
+              readonly reportComponents: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportComponent';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assessmentCategoryId'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'AssessmentCategory';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly name: { readonly column: 'name' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly type: { readonly column: 'type' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -6994,6 +7311,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly assessmentCategoryId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly assessmentType: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -7054,6 +7375,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly assessmentCategory: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssessmentCategory';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['assessmentCategoryId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly configuration: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -7105,6 +7438,7 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly aggregationType: { readonly column: 'aggregationType' };
+                readonly assessmentCategoryId: { readonly column: 'assessmentCategoryId' };
                 readonly assessmentType: { readonly column: 'assessmentType' };
                 readonly configurationId: { readonly column: 'configurationId' };
                 readonly countsTowardTotal: { readonly column: 'countsTowardTotal' };
@@ -7481,6 +7815,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'SchoolSubscription';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
+              readonly assessmentCategories: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssessmentCategory';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -9612,6 +9957,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Assessment';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'AssessmentCategory';
           };
         },
         {
