@@ -1,0 +1,494 @@
+[
+  {
+    "id": "dropConstraint.GradeScale.GradeScale_schoolId_code_key",
+    "label": "Drop constraint \"GradeScale_schoolId_code_key\" on \"GradeScale\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "GradeScale_schoolId_code_key",
+        "table": "GradeScale"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"GradeScale_schoolId_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_schoolId_code_key",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"GradeScale_schoolId_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScale\" DROP CONSTRAINT \"GradeScale_schoolId_code_key\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"GradeScale_schoolId_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_schoolId_code_key",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.GradeScaleSet",
+    "label": "Create table \"GradeScaleSet\"",
+    "summary": "Creates table \"GradeScaleSet\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "GradeScaleSet"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"GradeScaleSet\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"GradeScaleSet\"",
+        "sql": "CREATE TABLE \"public\".\"GradeScaleSet\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"GradeScaleSet\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.GradeScale.gradeScaleSetId",
+    "label": "Add column \"gradeScaleSetId\" to \"GradeScale\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "gradeScaleSetId",
+        "table": "GradeScale"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"gradeScaleSetId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "GradeScale",
+          "gradeScaleSetId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"gradeScaleSetId\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScale\" ADD COLUMN \"gradeScaleSetId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"gradeScaleSetId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "GradeScale",
+          "gradeScaleSetId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.ReportConfiguration.gradeScaleSetId",
+    "label": "Add column \"gradeScaleSetId\" to \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "gradeScaleSetId",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"gradeScaleSetId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "gradeScaleSetId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"gradeScaleSetId\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\" ADD COLUMN \"gradeScaleSetId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"gradeScaleSetId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ReportConfiguration",
+          "gradeScaleSetId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.GradeScale.GradeScale_gradeScaleSetId_code_key",
+    "label": "Add unique constraint on \"GradeScale\" (gradeScaleSetId, code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "GradeScale_gradeScaleSetId_code_key",
+        "table": "GradeScale"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"GradeScale_gradeScaleSetId_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_gradeScaleSetId_code_key",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"GradeScale_gradeScaleSetId_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScale\" ADD CONSTRAINT \"GradeScale_gradeScaleSetId_code_key\" UNIQUE (\"gradeScaleSetId\", \"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"GradeScale_gradeScaleSetId_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_gradeScaleSetId_code_key",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.GradeScaleSet.GradeScaleSet_schoolId_name_key",
+    "label": "Add unique constraint on \"GradeScaleSet\" (schoolId, name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "GradeScaleSet_schoolId_name_key",
+        "table": "GradeScaleSet"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"GradeScaleSet_schoolId_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScaleSet_schoolId_name_key",
+          "public",
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"GradeScaleSet_schoolId_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScaleSet\" ADD CONSTRAINT \"GradeScaleSet_schoolId_name_key\" UNIQUE (\"schoolId\", \"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"GradeScaleSet_schoolId_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScaleSet_schoolId_name_key",
+          "public",
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.GradeScale.GradeScale_gradeScaleSetId_idx_40aa63f0",
+    "label": "Create index \"GradeScale_gradeScaleSetId_idx_40aa63f0\" on \"GradeScale\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "GradeScale_gradeScaleSetId_idx_40aa63f0",
+        "table": "GradeScale"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"GradeScale_gradeScaleSetId_idx_40aa63f0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScale_gradeScaleSetId_idx_40aa63f0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"GradeScale_gradeScaleSetId_idx_40aa63f0\"",
+        "sql": "CREATE INDEX \"GradeScale_gradeScaleSetId_idx_40aa63f0\" ON \"public\".\"GradeScale\" (\"gradeScaleSetId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"GradeScale_gradeScaleSetId_idx_40aa63f0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScale_gradeScaleSetId_idx_40aa63f0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.GradeScaleSet.GradeScaleSet_schoolId_idx_82b454d7",
+    "label": "Create index \"GradeScaleSet_schoolId_idx_82b454d7\" on \"GradeScaleSet\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "GradeScaleSet_schoolId_idx_82b454d7",
+        "table": "GradeScaleSet"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"GradeScaleSet_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScaleSet_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"GradeScaleSet_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"GradeScaleSet_schoolId_idx_82b454d7\" ON \"public\".\"GradeScaleSet\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"GradeScaleSet_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"GradeScaleSet_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportConfiguration.ReportConfiguration_gradeScaleSetId_idx_40aa63f0",
+    "label": "Create index \"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\" on \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportConfiguration_gradeScaleSetId_idx_40aa63f0",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\"",
+        "sql": "CREATE INDEX \"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\" ON \"public\".\"ReportConfiguration\" (\"gradeScaleSetId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportConfiguration_gradeScaleSetId_idx_40aa63f0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.GradeScaleSet.GradeScaleSet_schoolId_fkey",
+    "label": "Add foreign key \"GradeScaleSet_schoolId_fkey\" on \"GradeScaleSet\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "GradeScaleSet_schoolId_fkey",
+        "table": "GradeScaleSet"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"GradeScaleSet_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScaleSet_schoolId_fkey",
+          "public",
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"GradeScaleSet_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScaleSet\"\nADD CONSTRAINT \"GradeScaleSet_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"GradeScaleSet_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScaleSet_schoolId_fkey",
+          "public",
+          "\"public\".\"GradeScaleSet\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.GradeScale.GradeScale_gradeScaleSetId_fkey",
+    "label": "Add foreign key \"GradeScale_gradeScaleSetId_fkey\" on \"GradeScale\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "GradeScale_gradeScaleSetId_fkey",
+        "table": "GradeScale"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"GradeScale_gradeScaleSetId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_gradeScaleSetId_fkey",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"GradeScale_gradeScaleSetId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScale\"\nADD CONSTRAINT \"GradeScale_gradeScaleSetId_fkey\"\nFOREIGN KEY (\"gradeScaleSetId\")\nREFERENCES \"public\".\"GradeScaleSet\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"GradeScale_gradeScaleSetId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "GradeScale_gradeScaleSetId_fkey",
+          "public",
+          "\"public\".\"GradeScale\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportConfiguration.ReportConfiguration_gradeScaleSetId_fkey",
+    "label": "Add foreign key \"ReportConfiguration_gradeScaleSetId_fkey\" on \"ReportConfiguration\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportConfiguration_gradeScaleSetId_fkey",
+        "table": "ReportConfiguration"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportConfiguration_gradeScaleSetId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportConfiguration_gradeScaleSetId_fkey",
+          "public",
+          "\"public\".\"ReportConfiguration\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportConfiguration_gradeScaleSetId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportConfiguration\"\nADD CONSTRAINT \"ReportConfiguration_gradeScaleSetId_fkey\"\nFOREIGN KEY (\"gradeScaleSetId\")\nREFERENCES \"public\".\"GradeScaleSet\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportConfiguration_gradeScaleSetId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportConfiguration_gradeScaleSetId_fkey",
+          "public",
+          "\"public\".\"ReportConfiguration\""
+        ]
+      }
+    ]
+  }
+]

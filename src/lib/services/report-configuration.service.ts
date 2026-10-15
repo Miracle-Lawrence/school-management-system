@@ -11,6 +11,7 @@ interface CreateReportConfigurationInput {
   schoolId: number;
   reportType: ReportType;
   name: string;
+  gradeScaleSetId?: number | null;
 }
 
 interface CreateReportComponentInput {
@@ -18,6 +19,7 @@ interface CreateReportComponentInput {
   name: string;
   type: ReportComponentType;
   assessmentType?: AssessmentType;
+  assessmentCategoryId?: number | null;
   aggregationType?: AssessmentAggregationType;
   maxScore?: number;
   weight?: number;
@@ -34,12 +36,14 @@ interface UpdateReportConfigurationInput {
   showPrincipalSignature?: boolean;
   showSchoolStamp?: boolean;
   showAttendance?: boolean;
+  gradeScaleSetId?: number | null;
 }
 
 interface UpdateReportComponentInput {
   name?: string;
   assessmentType?: AssessmentType | null;
   aggregationType?: AssessmentAggregationType;
+  assessmentCategoryId?: number | null;
   maxScore?: number | null;
   weight?: number | null;
   displayOrder?: number;
@@ -78,6 +82,29 @@ async function validateConfigurationOwnership(
   return configuration;
 }
 
+async function validateGradeScaleSetOwnership(
+  schoolId: number,
+  gradeScaleSetId: number | null | undefined,
+) {
+  if (gradeScaleSetId == null) {
+    return null;
+  }
+
+  const gradeScaleSet = await db.orm.public.GradeScaleSet.where((item) =>
+    item.id.eq(gradeScaleSetId),
+  ).first();
+
+  if (!gradeScaleSet || gradeScaleSet.schoolId !== schoolId) {
+    throw new Error("Invalid grading set for this school.");
+  }
+
+  if (!gradeScaleSet.isActive) {
+    throw new Error("The selected grading set is inactive.");
+  }
+
+  return gradeScaleSet.id;
+}
+
 async function validateComponentOwnership(
   componentId: number,
   schoolId: number,
@@ -99,6 +126,256 @@ async function validateComponentOwnership(
     configuration,
   };
 }
+
+
+async function validateAssessmentCategory(
+  schoolId: number,
+  assessmentCategoryId: number | null | undefined,
+  assessmentType: AssessmentType,
+) {
+  if (assessmentCategoryId == null) {
+    return null;
+  }
+
+  const category = await db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(assessmentCategoryId),
+  ).first();
+
+  if (!category || category.schoolId !== schoolId || !category.isActive) {
+    throw new Error("Invalid or inactive assessment category for this school.");
+  }
+
+  if (category.type !== assessmentType) {
+    throw new Error(
+      "Assessment category type must match the report component assessment type.",
+    );
+  }
+
+  return category.id;
+}
+
+
+export async function getActiveAssessmentCategories(schoolId: number) {
+  const categories = await db.orm.public.AssessmentCategory.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  return categories
+    .filter((category) => category.isActive)
+    .sort(
+      (a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name),
+    )
+    .map((category) => ({
+      id: category.id,
+      name: category.name,
+      type: category.type,
+      displayOrder: category.displayOrder,
+    }));
+}
+
+
+
+
+type AssessmentCategoryType =
+  "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+
+interface CreateAssessmentCategoryInput {
+  name: string;
+  type: AssessmentCategoryType;
+  displayOrder: number;
+}
+
+interface UpdateAssessmentCategoryInput {
+  name: string;
+  type: AssessmentCategoryType;
+  displayOrder: number;
+}
+
+const allowedCategoryTypes: AssessmentCategoryType[] = [
+  "ASSIGNMENT",
+  "TEST",
+  "CA",
+  "EXAM",
+  "PROJECT",
+  "PRACTICAL",
+  "OTHER",
+];
+
+
+export async function getAssessmentCategories(schoolId: number) {
+  const categories = await db.orm.public.AssessmentCategory.where((category) =>
+    category.schoolId.eq(schoolId),
+  ).all();
+
+  return categories
+    .sort(
+      (a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name),
+    )
+    .map((category) => ({
+      id: category.id,
+      name: category.name,
+      type: category.type,
+      displayOrder: category.displayOrder,
+      isActive: category.isActive,
+    }));
+}
+
+
+function validateAssessmentCategoryInput(
+  data: CreateAssessmentCategoryInput | UpdateAssessmentCategoryInput,
+) {
+  const name = data.name.trim();
+
+  if (!name || name.length > 100) {
+    throw new Error(
+      "Category name is required and cannot exceed 100 characters.",
+    );
+  }
+
+  if (!allowedCategoryTypes.includes(data.type)) {
+    throw new Error("Select a valid assessment type.");
+  }
+
+  if (!Number.isInteger(data.displayOrder) || data.displayOrder < 1) {
+    throw new Error("Display order must be a positive whole number.");
+  }
+
+  return { ...data, name };
+}
+
+export async function createAssessmentCategory(
+  schoolId: number,
+  input: CreateAssessmentCategoryInput,
+) {
+  const data = validateAssessmentCategoryInput(input);
+
+  const existingCategories = await db.orm.public.AssessmentCategory.where(
+    (category) => category.schoolId.eq(schoolId),
+  ).all();
+
+  const duplicate = existingCategories.some(
+    (category) => category.name.toLowerCase() === data.name.toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error(
+      "An assessment category with this name already exists in this school.",
+    );
+  }
+
+  return db.orm.public.AssessmentCategory.create({
+    schoolId,
+    name: data.name,
+    type: data.type,
+    displayOrder: data.displayOrder,
+    isActive: true,
+  });
+}
+
+export async function updateAssessmentCategory(
+  schoolId: number,
+  categoryId: number,
+  input: UpdateAssessmentCategoryInput,
+) {
+  const data = validateAssessmentCategoryInput(input);
+
+  const category = await db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(categoryId),
+  ).first();
+
+  if (!category || category.schoolId !== schoolId) {
+    throw new Error("Assessment category not found.");
+  }
+
+  const existingCategories = await db.orm.public.AssessmentCategory.where(
+    (item) => item.schoolId.eq(schoolId),
+  ).all();
+
+  const duplicate = existingCategories.some(
+    (item) =>
+      item.id !== categoryId &&
+      item.name.toLowerCase() === data.name.toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error(
+      "An assessment category with this name already exists in this school.",
+    );
+  }
+
+  // Do not change a category's type when existing records depend on it.
+  if (data.type !== category.type) {
+    const assessments = await db.orm.public.Assessment.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all();
+
+    const hasAssessments = assessments.some(
+      (item) => item.assessmentCategoryId === categoryId,
+    );
+
+    const components = await db.orm.public.ReportComponent.where((item) =>
+      item.assessmentCategoryId.eq(categoryId),
+    ).all();
+
+    if (hasAssessments || components.length > 0) {
+      throw new Error(
+        "The category type cannot be changed because assessments or report components already use this category.",
+      );
+    }
+  }
+
+  return db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(categoryId),
+  ).update({
+    name: data.name,
+    type: data.type,
+    displayOrder: data.displayOrder,
+  });
+}
+
+export async function deactivateAssessmentCategory(
+  schoolId: number,
+  categoryId: number,
+) {
+  const category = await db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(categoryId),
+  ).first();
+
+  if (!category || category.schoolId !== schoolId) {
+    throw new Error("Assessment category not found.");
+  }
+
+  if (!category.isActive) {
+    return category;
+  }
+
+  const assessments = await db.orm.public.Assessment.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  const hasAssessments = assessments.some(
+    (item) => item.assessmentCategoryId === categoryId,
+  );
+
+  const components = await db.orm.public.ReportComponent.where((item) =>
+    item.assessmentCategoryId.eq(categoryId),
+  ).all();
+
+  if (hasAssessments || components.length > 0) {
+    throw new Error(
+      "This category is in use. It cannot be deactivated until its existing assessment and report-component references have been resolved.",
+    );
+  }
+
+  return db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(categoryId),
+  ).update({
+    isActive: false,
+  });
+}
+
+
+
 
 function validatePositiveNumber(
   value: number | undefined | null,
@@ -145,10 +422,16 @@ export async function createReportConfiguration(
     );
   }
 
+  const gradeScaleSetId = await validateGradeScaleSetOwnership(
+    input.schoolId,
+    input.gradeScaleSetId,
+  );
+
   return db.orm.public.ReportConfiguration.create({
     schoolId: input.schoolId,
     reportType: input.reportType,
     name,
+    gradeScaleSetId,
   });
 }
 
@@ -179,6 +462,14 @@ export async function getReportConfigurations(schoolId: number) {
   ).all();
 }
 
+export async function getGradeScaleSets(schoolId: number) {
+  const gradeScaleSets = await db.orm.public.GradeScaleSet.where((item) =>
+    item.schoolId.eq(schoolId),
+  ).all();
+
+  return gradeScaleSets.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /**
  * Update a report configuration.
  */
@@ -199,6 +490,11 @@ export async function updateReportConfiguration(
     throw new Error("Report configuration name is required.");
   }
 
+  const gradeScaleSetId =
+    input.gradeScaleSetId !== undefined
+      ? await validateGradeScaleSetOwnership(schoolId, input.gradeScaleSetId)
+      : configuration.gradeScaleSetId;
+
   return db.orm.public.ReportConfiguration.where((item) =>
     item.id.eq(configurationId),
   ).update({
@@ -212,6 +508,7 @@ export async function updateReportConfiguration(
       input.showPrincipalSignature ?? configuration.showPrincipalSignature,
     showSchoolStamp: input.showSchoolStamp ?? configuration.showSchoolStamp,
     showAttendance: input.showAttendance ?? configuration.showAttendance,
+    gradeScaleSetId,
   });
 }
 
@@ -240,25 +537,53 @@ export async function createReportComponent(
   validatePositiveNumber(input.maxScore, "Maximum score");
   validatePositiveNumber(input.weight, "Weight");
 
-  if (input.type === "ASSESSMENT") {
-    if (!input.assessmentType) {
-      throw new Error(
-        "Assessment type is required for an assessment component.",
-      );
-    }
+  
+let validatedCategoryId: number | null = null;
+
+if (input.type === "ASSESSMENT") {
+  if (!input.assessmentType) {
+    throw new Error("Assessment type is required for an assessment component.");
   }
 
-  if (input.type === "CALCULATED") {
-    if (input.assessmentType) {
-      throw new Error(
-        "Assessment type cannot be set on a calculated component.",
-      );
-    }
+  validatedCategoryId = await validateAssessmentCategory(
+    configuration.schoolId,
+    input.assessmentCategoryId,
+    input.assessmentType,
+  );
+}
+
+if (input.type === "CALCULATED") {
+  if (input.assessmentType) {
+    throw new Error("Assessment type cannot be set on a calculated component.");
   }
+
+  if (input.assessmentCategoryId != null) {
+    throw new Error(
+      "Assessment category cannot be set on a calculated component.",
+    );
+  }
+}
+
 
   const existingComponents = await db.orm.public.ReportComponent.where(
     (component) => component.configurationId.eq(configuration.id),
   ).all();
+
+  if (input.type === "ASSESSMENT") {
+    const duplicateMapping = existingComponents.some(
+      (component) =>
+        component.type === "ASSESSMENT" &&
+        component.assessmentType === input.assessmentType &&
+        (component.assessmentCategoryId ?? null) ===
+          (validatedCategoryId ?? null),
+    );
+
+    if (duplicateMapping) {
+      throw new Error(
+        "An assessment component with this assessment type and category already exists in this configuration.",
+      );
+    }
+  }
 
   const duplicateName = existingComponents.some(
     (component) => component.name.toLowerCase() === name.toLowerCase(),
@@ -275,6 +600,7 @@ export async function createReportComponent(
     name,
     type: input.type,
     assessmentType: input.assessmentType ?? null,
+    assessmentCategoryId: validatedCategoryId,
     aggregationType: input.aggregationType ?? "SUM",
     maxScore: input.maxScore ?? null,
     weight: input.weight ?? null,
@@ -345,26 +671,43 @@ export async function updateReportComponent(
   validatePositiveNumber(nextMaxScore, "Maximum score");
   validatePositiveNumber(nextWeight, "Weight");
 
-  if (component.type === "ASSESSMENT") {
-    const nextAssessmentType =
-      input.assessmentType !== undefined
-        ? input.assessmentType
-        : component.assessmentType;
+  
+const nextAssessmentType =
+  input.assessmentType !== undefined
+    ? input.assessmentType
+    : component.assessmentType;
 
-    if (!nextAssessmentType) {
-      throw new Error(
-        "Assessment type is required for an assessment component.",
-      );
-    }
+const nextCategoryId =
+  input.assessmentCategoryId !== undefined
+    ? input.assessmentCategoryId
+    : component.assessmentCategoryId;
+
+let validatedCategoryId: number | null = null;
+
+if (component.type === "ASSESSMENT") {
+  if (!nextAssessmentType) {
+    throw new Error("Assessment type is required for an assessment component.");
   }
 
-  if (component.type === "CALCULATED") {
-    if (input.assessmentType !== undefined && input.assessmentType !== null) {
-      throw new Error(
-        "Assessment type cannot be set on a calculated component.",
-      );
-    }
+  validatedCategoryId = await validateAssessmentCategory(
+    configuration.schoolId,
+    nextCategoryId,
+    nextAssessmentType,
+  );
+}
+
+if (component.type === "CALCULATED") {
+  if (input.assessmentType !== undefined && input.assessmentType !== null) {
+    throw new Error("Assessment type cannot be set on a calculated component.");
   }
+
+  if (nextCategoryId != null) {
+    throw new Error(
+      "Assessment category cannot be set on a calculated component.",
+    );
+  }
+}
+
 
   const existingComponents = await db.orm.public.ReportComponent.where(
     (existingComponent) =>
@@ -377,6 +720,23 @@ export async function updateReportComponent(
       existingComponent.name.toLowerCase() === nextName.toLowerCase(),
   );
 
+  if (component.type === "ASSESSMENT") {
+    const duplicateMapping = existingComponents.some(
+      (existingComponent) =>
+        existingComponent.id !== componentId &&
+        existingComponent.type === "ASSESSMENT" &&
+        existingComponent.assessmentType === nextAssessmentType &&
+        (existingComponent.assessmentCategoryId ?? null) ===
+          (validatedCategoryId ?? null),
+    );
+
+    if (duplicateMapping) {
+      throw new Error(
+        "An assessment component with this assessment type and category already exists in this configuration.",
+      );
+    }
+  }
+
   if (duplicateName) {
     throw new Error(
       "A report component with this name already exists in this configuration.",
@@ -387,10 +747,8 @@ export async function updateReportComponent(
     reportComponent.id.eq(componentId),
   ).update({
     name: nextName,
-    assessmentType:
-      input.assessmentType !== undefined
-        ? input.assessmentType
-        : component.assessmentType,
+    assessmentType: component.type === "ASSESSMENT" ? nextAssessmentType : null,
+    assessmentCategoryId: validatedCategoryId,
     aggregationType: input.aggregationType ?? component.aggregationType,
     maxScore: nextMaxScore,
     weight: nextWeight,

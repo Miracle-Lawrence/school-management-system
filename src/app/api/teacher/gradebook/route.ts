@@ -14,6 +14,7 @@ type GradebookRequestBody = {
   classId: number;
   subjectId: number;
   termId: number;
+  configurationId: number;
   scores: GradebookScoreInput[];
 };
 
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
       !isPositiveInteger(data.classId) ||
       !isPositiveInteger(data.subjectId) ||
       !isPositiveInteger(data.termId) ||
+      !isPositiveInteger(data.configurationId) ||
       !Array.isArray(data.scores) ||
       data.scores.length === 0 ||
       data.scores.length > 5000
@@ -97,22 +99,31 @@ export async function POST(request: Request) {
       );
     }
 
-    const [schoolClass, subject, allTerms, sessions, allAssessments] =
-      await Promise.all([
-        db.orm.public.SchoolClass.where((item) =>
-          item.id.eq(data.classId!),
-        ).first(),
-        db.orm.public.Subject.where((item) =>
-          item.id.eq(data.subjectId!),
-        ).first(),
-        db.orm.public.Term.all(),
-        db.orm.public.AcademicSession.where((item) =>
-          item.schoolId.eq(schoolId),
-        ).all(),
-        db.orm.public.Assessment.where((item) =>
-          item.schoolId.eq(schoolId),
-        ).all(),
-      ]);
+    const [
+      schoolClass,
+      subject,
+      allTerms,
+      sessions,
+      allAssessments,
+      configurations,
+    ] = await Promise.all([
+      db.orm.public.SchoolClass.where((item) =>
+        item.id.eq(data.classId!),
+      ).first(),
+      db.orm.public.Subject.where((item) =>
+        item.id.eq(data.subjectId!),
+      ).first(),
+      db.orm.public.Term.all(),
+      db.orm.public.AcademicSession.where((item) =>
+        item.schoolId.eq(schoolId),
+      ).all(),
+      db.orm.public.Assessment.where((item) =>
+        item.schoolId.eq(schoolId),
+      ).all(),
+      db.orm.public.ReportConfiguration.where((item) =>
+        item.schoolId.eq(schoolId),
+      ).all(),
+    ]);
 
     const term = allTerms.find((item) => item.id === data.termId);
 
@@ -141,10 +152,42 @@ export async function POST(request: Request) {
       )
     ) {
       return NextResponse.json(
-        { message: "This subject is not assigned to the selected class." },
+        {
+          message: "This subject is not assigned to the selected class.",
+        },
         { status: 400 },
       );
     }
+
+    // Verify the exact report configuration selected in the gradebook.
+    const configuration = configurations.find(
+      (item) =>
+        item.id === data.configurationId &&
+        item.schoolId === schoolId &&
+        item.isActive,
+    );
+
+    if (!configuration) {
+      return NextResponse.json(
+        {
+          message:
+            "The selected report configuration is unavailable or inactive. Refresh the gradebook and try again.",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Only visible assessment components authorize score entry.
+    const components = await db.orm.public.ReportComponent.where((item) =>
+      item.configurationId.eq(configuration.id),
+    ).all();
+
+    const assessmentComponents = components.filter(
+      (component) =>
+        component.type === "ASSESSMENT" &&
+        component.isVisible &&
+        component.assessmentType !== null,
+    );
 
     const validAssessments = allAssessments.filter(
       (assessment) =>
@@ -172,6 +215,7 @@ export async function POST(request: Request) {
 
     const seenKeys = new Set<string>();
 
+    // Validate every entry before starting the transaction.
     for (const item of data.scores) {
       if (
         !item ||
@@ -191,7 +235,9 @@ export async function POST(request: Request) {
 
       if (seenKeys.has(key)) {
         return NextResponse.json(
-          { message: "Duplicate student-assessment entries were submitted." },
+          {
+            message: "Duplicate student-assessment entries were submitted.",
+          },
           { status: 400 },
         );
       }
@@ -210,6 +256,24 @@ export async function POST(request: Request) {
         );
       }
 
+      // Match the assessment to a visible component using its type
+      // and category in the selected configuration.
+      const belongsToConfiguration = assessmentComponents.some(
+        (component) =>
+          component.assessmentType === assessment.type &&
+          (component.assessmentCategoryId ?? null) ===
+            (assessment.assessmentCategoryId ?? null),
+      );
+
+      if (!belongsToConfiguration) {
+        return NextResponse.json(
+          {
+            message: `The assessment "${assessment.title}" is not part of the selected report configuration.`,
+          },
+          { status: 400 },
+        );
+      }
+
       if (
         item.score !== null &&
         (item.score < 0 || item.score > assessment.maxScore)
@@ -223,23 +287,32 @@ export async function POST(request: Request) {
       }
     }
 
-    // Pre-validation completes before any writes. Blank values are skipped.
-    let savedCount = 0;
+    // Save the batch atomically. If any score write or recalculation
+    // throws, the transaction must roll back the complete batch.
+    const savedCount = await db.transaction(async (tx) => {
+      let count = 0;
 
-    for (const item of data.scores) {
-      if (item.score === null) {
-        continue;
+      for (const item of data.scores!) {
+        // Blank scores must not overwrite existing scores.
+        if (item.score === null) {
+          continue;
+        }
+
+        await recordAssessmentScore(
+          {
+            schoolId,
+            assessmentId: item.assessmentId,
+            studentId: item.studentId,
+            score: item.score,
+          },
+          tx,
+        );
+
+        count += 1;
       }
 
-      await recordAssessmentScore({
-        schoolId,
-        assessmentId: item.assessmentId,
-        studentId: item.studentId,
-        score: item.score,
-      });
-
-      savedCount += 1;
-    }
+      return count;
+    });
 
     return NextResponse.json({
       message: "Gradebook scores saved successfully.",
@@ -249,7 +322,9 @@ export async function POST(request: Request) {
     console.error("Teacher gradebook save error:", error);
 
     return NextResponse.json(
-      { message: "Unable to save gradebook scores. Please try again." },
+      {
+        message: "Unable to save gradebook scores. Please try again.",
+      },
       { status: 500 },
     );
   }

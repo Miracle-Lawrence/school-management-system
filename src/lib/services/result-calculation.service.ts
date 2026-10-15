@@ -1,4 +1,6 @@
-import { db } from "@/prisma/db";
+﻿import { db } from "@/prisma/db";
+
+type DatabaseClient = Pick<typeof db, "orm">;
 
 type ReportType = "MID_TERM" | "TERMINAL";
 type AssessmentType =
@@ -54,8 +56,12 @@ function validateFiniteNumber(value: number, fieldName: string) {
   }
 }
 
-async function getSchoolTerm(schoolId: number, termId: number) {
-  const term = await db.orm.public.Term.where((item) =>
+async function getSchoolTerm(
+  schoolId: number,
+  termId: number,
+  client: DatabaseClient = db,
+) {
+  const term = await client.orm.public.Term.where((item) =>
     item.id.eq(termId),
   ).first();
 
@@ -63,7 +69,7 @@ async function getSchoolTerm(schoolId: number, termId: number) {
     throw new Error("Term not found.");
   }
 
-  const session = await db.orm.public.AcademicSession.where((item) =>
+  const session = await client.orm.public.AcademicSession.where((item) =>
     item.id.eq(term.sessionId),
   ).first();
 
@@ -71,18 +77,16 @@ async function getSchoolTerm(schoolId: number, termId: number) {
     throw new Error("Invalid term.");
   }
 
-  return {
-    term,
-    session,
-  };
+  return { term, session };
 }
 
 async function validateStudent(
   schoolId: number,
   studentId: number,
   classId: number,
+  client: DatabaseClient = db,
 ) {
-  const student = await db.orm.public.Student.where((item) =>
+  const student = await client.orm.public.Student.where((item) =>
     item.id.eq(studentId),
   ).first();
 
@@ -97,8 +101,12 @@ async function validateStudent(
   return student;
 }
 
-async function validateClass(schoolId: number, classId: number) {
-  const schoolClass = await db.orm.public.SchoolClass.where((item) =>
+async function validateClass(
+  schoolId: number,
+  classId: number,
+  client: DatabaseClient = db,
+) {
+  const schoolClass = await client.orm.public.SchoolClass.where((item) =>
     item.id.eq(classId),
   ).first();
 
@@ -109,8 +117,12 @@ async function validateClass(schoolId: number, classId: number) {
   return schoolClass;
 }
 
-async function validateSubject(schoolId: number, subjectId: number) {
-  const subject = await db.orm.public.Subject.where((item) =>
+async function validateSubject(
+  schoolId: number,
+  subjectId: number,
+  client: DatabaseClient = db,
+) {
+  const subject = await client.orm.public.Subject.where((item) =>
     item.id.eq(subjectId),
   ).first();
 
@@ -124,8 +136,9 @@ async function validateSubject(schoolId: number, subjectId: number) {
 async function validateSubjectAssignedToClass(
   classId: number,
   subjectId: number,
+  client: DatabaseClient = db,
 ) {
-  const assignments = await db.orm.public.ClassSubject.where((item) =>
+  const assignments = await client.orm.public.ClassSubject.where((item) =>
     item.classId.eq(classId),
   ).all();
 
@@ -141,9 +154,10 @@ async function validateSubjectAssignedToClass(
 async function getReportConfiguration(
   schoolId: number,
   reportType: ReportType,
+  client: DatabaseClient = db,
 ) {
-  const configurations = await db.orm.public.ReportConfiguration.where((item) =>
-    item.schoolId.eq(schoolId),
+  const configurations = await client.orm.public.ReportConfiguration.where(
+    (item) => item.schoolId.eq(schoolId),
   ).all();
 
   const configuration = configurations.find(
@@ -152,24 +166,39 @@ async function getReportConfiguration(
 
   if (!configuration) {
     throw new Error(
-      `No active ${reportType === "MID_TERM" ? "mid-term" : "terminal"} report configuration exists.`,
+      `No active ${
+        reportType === "MID_TERM" ? "mid-term" : "terminal"
+      } report configuration exists.`,
     );
   }
 
   return configuration;
 }
 
-async function getReportComponents(configurationId: number) {
-  const components = await db.orm.public.ReportComponent.where((item) =>
+async function getReportComponents(
+  configurationId: number,
+  client: DatabaseClient = db,
+) {
+  const components = await client.orm.public.ReportComponent.where((item) =>
     item.configurationId.eq(configurationId),
   ).all();
 
   return components.sort((a, b) => a.displayOrder - b.displayOrder);
 }
 
-async function getGradeForScore(schoolId: number, score: number) {
-  const gradeScales = await db.orm.public.GradeScale.where((item) =>
-    item.schoolId.eq(schoolId),
+async function getGradeForScore(
+  gradeScaleSetId: number | null,
+  score: number,
+  client: DatabaseClient = db,
+) {
+  if (gradeScaleSetId === null) {
+    throw new Error(
+      "No grading set is selected for this report configuration.",
+    );
+  }
+
+  const gradeScales = await client.orm.public.GradeScale.where((item) =>
+    item.gradeScaleSetId.eq(gradeScaleSetId),
   ).all();
 
   const activeScales = gradeScales
@@ -192,7 +221,6 @@ async function getGradeForScore(schoolId: number, score: number) {
     remark: matchingScale.remark,
   };
 }
-
 async function getStudentAssessmentScores(
   schoolId: number,
   studentId: number,
@@ -200,32 +228,50 @@ async function getStudentAssessmentScores(
   subjectId: number,
   termId: number,
   assessmentType: AssessmentType,
+  assessmentCategoryId: number | null = null,
+  client: DatabaseClient = db,
 ) {
-  const assessments = await db.orm.public.Assessment.where((assessment) =>
+  const assessments = await client.orm.public.Assessment.where((assessment) =>
     assessment.termId.eq(termId),
   ).all();
 
- const matchingAssessments = assessments.filter(
-   (assessment) =>
-     assessment.schoolId === schoolId &&
-     assessment.classId === classId &&
-     assessment.subjectId === subjectId &&
-     assessment.type === assessmentType,
- );
+  const matchingAssessments = assessments.filter((assessment) => {
+    const matchesScope =
+      assessment.schoolId === schoolId &&
+      assessment.classId === classId &&
+      assessment.subjectId === subjectId &&
+      assessment.type === assessmentType;
+
+    if (!matchesScope) {
+      return false;
+    }
+
+    // When a category is configured, match that exact category.
+    // Otherwise, preserve legacy behavior for existing components.
+    if (assessmentCategoryId !== null) {
+      return assessment.assessmentCategoryId === assessmentCategoryId;
+    }
+
+    return assessment.assessmentCategoryId === null;
+  });
 
   if (matchingAssessments.length === 0) {
     return [];
   }
 
-  const assessmentIds = matchingAssessments.map((assessment) => assessment.id);
+  const assessmentIds = new Set(
+    matchingAssessments.map((assessment) => assessment.id),
+  );
 
-  const allScores = await db.orm.public.AssessmentScore.all();
+  const allScores = await client.orm.public.AssessmentScore.all();
 
   return matchingAssessments
     .map((assessment) => {
       const score = allScores.find(
         (item) =>
-          item.assessmentId === assessment.id && item.studentId === studentId,
+          assessmentIds.has(item.assessmentId) &&
+          item.assessmentId === assessment.id &&
+          item.studentId === studentId,
       );
 
       if (!score) {
@@ -258,9 +304,11 @@ async function calculateAssessmentComponent(
   component: {
     id: number;
     assessmentType: AssessmentType | null;
+    assessmentCategoryId: number | null;
     aggregationType: AssessmentAggregationType;
     maxScore: number | null;
   },
+  client: DatabaseClient = db,
 ) {
   if (!component.assessmentType) {
     throw new Error(
@@ -281,6 +329,8 @@ async function calculateAssessmentComponent(
     subjectId,
     termId,
     component.assessmentType,
+    component.assessmentCategoryId,
+    client,
   );
 
   if (scores.length === 0) {
@@ -325,8 +375,11 @@ async function calculateAssessmentComponent(
   };
 }
 
-async function getComponentRules(componentId: number) {
-  return db.orm.public.ReportComponentRule.where((rule) =>
+async function getComponentRules(
+  componentId: number,
+  client: DatabaseClient = db,
+) {
+  return client.orm.public.ReportComponentRule.where((rule) =>
     rule.componentId.eq(componentId),
   ).all();
 }
@@ -337,6 +390,7 @@ async function validateComponentDependencies(
     name: string;
     type: ReportComponentType;
   }>,
+  client: DatabaseClient = db,
 ) {
   const componentIds = new Set(components.map((component) => component.id));
 
@@ -356,7 +410,7 @@ async function validateComponentDependencies(
 
     visiting.add(componentId);
 
-    const rules = await getComponentRules(componentId);
+    const rules = await getComponentRules(componentId, client);
 
     for (const rule of rules) {
       if (!componentIds.has(rule.sourceComponentId)) {
@@ -384,6 +438,7 @@ async function calculateCalculatedComponent(
     maxScore: number | null;
   },
   calculatedComponents: Map<number, ComponentCalculation>,
+  client: DatabaseClient = db,
 ) {
   if (component.maxScore === null || component.maxScore <= 0) {
     throw new Error(
@@ -391,7 +446,7 @@ async function calculateCalculatedComponent(
     );
   }
 
-  const rules = await getComponentRules(component.id);
+  const rules = await getComponentRules(component.id, client);
 
   if (rules.length === 0) {
     throw new Error(
@@ -438,35 +493,35 @@ async function calculateCalculatedComponent(
   };
 }
 
-
 async function calculateSubject(
   input: CalculateSubjectResultInput,
+  client: DatabaseClient = db,
 ): Promise<SubjectCalculation> {
-  await validateClass(input.schoolId, input.classId);
+  await validateClass(input.schoolId, input.classId, client);
 
-  await validateSubject(input.schoolId, input.subjectId);
+  await validateSubject(input.schoolId, input.subjectId, client);
 
-  await validateStudent(input.schoolId, input.studentId, input.classId);
+  await validateStudent(input.schoolId, input.studentId, input.classId, client);
 
-  await validateSubjectAssignedToClass(input.classId, input.subjectId);
+  await validateSubjectAssignedToClass(input.classId, input.subjectId, client);
 
-  await getSchoolTerm(input.schoolId, input.termId);
+  await getSchoolTerm(input.schoolId, input.termId, client);
 
   const configuration = await getReportConfiguration(
     input.schoolId,
     input.reportType,
+    client,
   );
 
-  const components = await getReportComponents(configuration.id);
+  const components = await getReportComponents(configuration.id, client);
 
   if (components.length === 0) {
     throw new Error("The report configuration has no components.");
   }
 
-  await validateComponentDependencies(components);
+  await validateComponentDependencies(components, client);
 
   const calculatedComponents = new Map<number, ComponentCalculation>();
-
   const componentResults: ComponentCalculation[] = [];
 
   const componentsById = new Map(
@@ -499,7 +554,7 @@ async function calculateSubject(
     calculating.add(componentId);
 
     if (component.type === "CALCULATED") {
-      const rules = await getComponentRules(component.id);
+      const rules = await getComponentRules(component.id, client);
 
       for (const rule of rules) {
         await calculateComponent(rule.sourceComponentId);
@@ -519,11 +574,13 @@ async function calculateSubject(
         input.subjectId,
         input.termId,
         component,
+        client,
       );
     } else {
       result = await calculateCalculatedComponent(
         component,
         calculatedComponents,
+        client,
       );
     }
 
@@ -534,9 +591,7 @@ async function calculateSubject(
     };
 
     calculatedComponents.set(component.id, calculation);
-
     calculating.delete(componentId);
-
     componentResults.push(calculation);
 
     return calculation;
@@ -570,7 +625,11 @@ async function calculateSubject(
 
   const normalizedScore = roundScore((totalScore / totalMaxScore) * 100);
 
-  const gradeResult = await getGradeForScore(input.schoolId, normalizedScore);
+  const gradeResult = await getGradeForScore(
+    configuration.gradeScaleSetId,
+    normalizedScore,
+    client,
+  );
 
   return {
     totalScore,
@@ -583,28 +642,33 @@ async function calculateSubject(
 
 /**
  * Calculate and save one student's result for one subject.
+ *
+ * Pass a transaction client when this function is called from a
+ * transactional operation. All reads and writes in this calculation
+ * will then use that client.
  */
 export async function calculateAndSaveSubjectResult(
   input: CalculateSubjectResultInput,
+  client: DatabaseClient = db,
 ) {
-  const calculation = await calculateSubject(input);
+  const calculation = await calculateSubject(input, client);
 
- const subjectResults = await db.orm.public.SubjectResult.where((result) =>
-   result.studentId.eq(input.studentId),
- ).all();
+  const subjectResults = await client.orm.public.SubjectResult.where((result) =>
+    result.studentId.eq(input.studentId),
+  ).all();
 
- let subjectResult =
-   subjectResults.find(
-     (result) =>
-       result.schoolId === input.schoolId &&
-       result.subjectId === input.subjectId &&
-       result.classId === input.classId &&
-       result.termId === input.termId &&
-       result.reportType === input.reportType,
-   ) ?? null;
+  let subjectResult =
+    subjectResults.find(
+      (result) =>
+        result.schoolId === input.schoolId &&
+        result.subjectId === input.subjectId &&
+        result.classId === input.classId &&
+        result.termId === input.termId &&
+        result.reportType === input.reportType,
+    ) ?? null;
 
   if (subjectResult) {
-    subjectResult = await db.orm.public.SubjectResult.where((result) =>
+    subjectResult = await client.orm.public.SubjectResult.where((result) =>
       result.id.eq(subjectResult!.id),
     ).update({
       schoolId: input.schoolId,
@@ -616,7 +680,7 @@ export async function calculateAndSaveSubjectResult(
     });
 
     const existingComponentScores =
-      await db.orm.public.ResultComponentScore.where((score) =>
+      await client.orm.public.ResultComponentScore.where((score) =>
         score.subjectResultId.eq(subjectResult!.id),
       ).all();
 
@@ -626,14 +690,14 @@ export async function calculateAndSaveSubjectResult(
       );
 
       if (existing) {
-        await db.orm.public.ResultComponentScore.where((score) =>
+        await client.orm.public.ResultComponentScore.where((score) =>
           score.id.eq(existing.id),
         ).update({
           score: component.score,
           maxScore: component.maxScore,
         });
       } else {
-        await db.orm.public.ResultComponentScore.create({
+        await client.orm.public.ResultComponentScore.create({
           subjectResultId: subjectResult!.id,
           componentId: component.componentId,
           score: component.score,
@@ -645,7 +709,7 @@ export async function calculateAndSaveSubjectResult(
     return subjectResult;
   }
 
-  subjectResult = await db.orm.public.SubjectResult.create({
+  subjectResult = await client.orm.public.SubjectResult.create({
     schoolId: input.schoolId,
     studentId: input.studentId,
     classId: input.classId,
@@ -659,7 +723,7 @@ export async function calculateAndSaveSubjectResult(
   });
 
   for (const component of calculation.components) {
-    await db.orm.public.ResultComponentScore.create({
+    await client.orm.public.ResultComponentScore.create({
       subjectResultId: subjectResult.id,
       componentId: component.componentId,
       score: component.score,
@@ -693,8 +757,6 @@ export async function getStudentSubjectResult(
         result.reportType === reportType,
     ) ?? null
   );
-
-  return results[0] ?? null;
 }
 
 /**
@@ -806,20 +868,28 @@ export async function calculateAndSaveStudentTermResult(
     ) / subjectResults.length,
   );
 
-  const gradeResult = await getGradeForScore(input.schoolId, averageScore);
+  const configuration = await getReportConfiguration(
+    input.schoolId,
+    input.reportType,
+  );
+
+  const gradeResult = await getGradeForScore(
+    configuration.gradeScaleSetId,
+    averageScore,
+  );
 
   const allStudentTermResults = await db.orm.public.StudentTermResult.where(
     (result) => result.studentId.eq(input.studentId),
   ).all();
 
- let studentTermResult =
-   allStudentTermResults.find(
-     (result) =>
-       result.schoolId === input.schoolId &&
-       result.classId === input.classId &&
-       result.termId === input.termId &&
-       result.reportType === input.reportType,
-   ) ?? null;
+  let studentTermResult =
+    allStudentTermResults.find(
+      (result) =>
+        result.schoolId === input.schoolId &&
+        result.classId === input.classId &&
+        result.termId === input.termId &&
+        result.reportType === input.reportType,
+    ) ?? null;
 
   if (studentTermResult) {
     studentTermResult = await db.orm.public.StudentTermResult.where((result) =>
@@ -853,23 +923,12 @@ export async function calculateAndSaveStudentTermResult(
 }
 
 /**
- * Calculate overall term results for every student
- * in a class.
+ * Calculate overall term results for every student in a class.
  *
- * Position is calculated after all student results exist.
- */
-/**
- * Calculate overall term results for every student
- * in a class.
- *
- * Students are checked for complete assessment scores
- * BEFORE subject results are generated.
- *
- * Students with missing required assessments remain pending
- * and do not receive zero SubjectResult records.
- *
- * Position is calculated after all completed student
- * term results exist.
+ * Students are checked for complete assessment scores before
+ * subject results are generated. Students with missing required
+ * assessments remain pending and do not receive zero SubjectResult
+ * records. Position is calculated after completed results exist.
  */
 export async function calculateClassTermResults(
   input: CalculateClassResultsInput,
@@ -897,8 +956,7 @@ export async function calculateClassTermResults(
   const components = await getReportComponents(configuration.id);
 
   const assessmentComponents = components.filter(
-    (component) =>
-      component.type === "ASSESSMENT" && component.assessmentType,
+    (component) => component.type === "ASSESSMENT" && component.assessmentType,
   );
 
   const generatedResults = [];
@@ -906,13 +964,8 @@ export async function calculateClassTermResults(
 
   for (const student of classStudents) {
     let missingSubjectCount = 0;
+    let completedSubjectCount = 0;
 
-    /**
-     * First check whether the student has every required
-     * assessment score for every subject.
-     *
-     * We do this BEFORE generating SubjectResult records.
-     */
     for (const classSubject of classSubjects) {
       const subjectHasAllRequiredScores = await Promise.all(
         assessmentComponents.map(async (component) => {
@@ -923,6 +976,7 @@ export async function calculateClassTermResults(
             classSubject.subjectId,
             input.termId,
             component.assessmentType!,
+            component.assessmentCategoryId,
           );
 
           return scores.length > 0;
@@ -931,31 +985,9 @@ export async function calculateClassTermResults(
 
       if (!subjectHasAllRequiredScores.every(Boolean)) {
         missingSubjectCount += 1;
+        continue;
       }
-    }
 
-    /**
-     * If any subject is incomplete, leave the student pending.
-     *
-     * IMPORTANT:
-     * We do NOT call calculateAndSaveSubjectResult()
-     * for this student.
-     */
-    if (missingSubjectCount > 0) {
-      pendingStudents.push({
-        studentId: student.id,
-        missingSubjectCount,
-      });
-
-      continue;
-    }
-
-    /**
-     * The student has all required assessment scores.
-     *
-     * Now generate/save the SubjectResult for every subject.
-     */
-    for (const classSubject of classSubjects) {
       await calculateAndSaveSubjectResult({
         schoolId: input.schoolId,
         studentId: student.id,
@@ -964,26 +996,31 @@ export async function calculateClassTermResults(
         termId: input.termId,
         reportType: input.reportType,
       });
+
+      completedSubjectCount += 1;
     }
 
-    /**
-     * Now that all SubjectResults exist, calculate
-     * the student's overall term result.
-     */
-    const result = await calculateAndSaveStudentTermResult({
-      schoolId: input.schoolId,
-      studentId: student.id,
-      classId: input.classId,
-      termId: input.termId,
-      reportType: input.reportType,
-    });
+    if (
+      missingSubjectCount === 0 &&
+      completedSubjectCount === classSubjects.length
+    ) {
+      const result = await calculateAndSaveStudentTermResult({
+        schoolId: input.schoolId,
+        studentId: student.id,
+        classId: input.classId,
+        termId: input.termId,
+        reportType: input.reportType,
+      });
 
-    generatedResults.push(result);
+      generatedResults.push(result);
+    } else {
+      pendingStudents.push({
+        studentId: student.id,
+        missingSubjectCount,
+      });
+    }
   }
 
-  /**
-   * Only completed students receive positions.
-   */
   if (generatedResults.length > 0) {
     await assignClassPositions(
       input.schoolId,
@@ -1001,15 +1038,8 @@ export async function calculateClassTermResults(
 
 /**
  * Assign positions to students based on average score.
- *
  * Students with the same average receive the same position.
  * The next position skips accordingly.
- *
- * Example:
- * 1st
- * 2nd
- * 2nd
- * 4th
  */
 export async function assignClassPositions(
   schoolId: number,
@@ -1060,15 +1090,13 @@ export async function getStudentTermResult(
   termId: number,
   reportType: ReportType,
 ) {
-  const result = await db.orm.public.StudentTermResult.where(
+  return db.orm.public.StudentTermResult.where(
     (item) =>
       item.schoolId.eq(schoolId) &&
       item.studentId.eq(studentId) &&
       item.termId.eq(termId) &&
       item.reportType.eq(reportType),
   ).first();
-
-  return result;
 }
 
 /**
@@ -1104,3 +1132,5 @@ export async function getClassTermResults(
     return a.position - b.position;
   });
 }
+
+

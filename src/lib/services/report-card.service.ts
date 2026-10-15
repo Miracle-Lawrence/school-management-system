@@ -15,6 +15,7 @@ export async function getStudentReportCardData(
   classId: number,
   termId: number,
   reportType: ReportType = "TERMINAL",
+  configurationId?: number,
 ) {
   /*
    * ---------------------------------------------------------
@@ -99,15 +100,14 @@ export async function getStudentReportCardData(
         result.reportType === reportType,
     ) ?? null;
 
-  if (!studentTermResult) {
-    throw new Error("No completed term result exists for this student.");
-  }
-  
-  const classTeacher = studentTermResult.classTeacherId
+  const hasCompletedTermResult = studentTermResult !== null;
+
+  const classTeacher = studentTermResult?.classTeacherId
     ? await db.orm.public.Teacher.where((teacher) =>
-        teacher.id.eq(studentTermResult.classTeacherId!),
+        teacher.id.eq(studentTermResult!.classTeacherId!),
       ).first()
     : null;
+
   /*
    * ---------------------------------------------------------
    * 6. Get class subjects
@@ -134,21 +134,30 @@ export async function getStudentReportCardData(
    * ---------------------------------------------------------
    */
 
-  const configurations = await db.orm.public.ReportConfiguration.where((item) =>
-    item.schoolId.eq(schoolId),
-  ).all();
+const configurations = await db.orm.public.ReportConfiguration.where((item) =>
+  item.schoolId.eq(schoolId),
+).all();
 
-  const reportConfiguration =
-    configurations.find(
+const reportConfiguration = configurationId
+  ? (configurations.find(
+      (configuration) =>
+        configuration.id === configurationId &&
+        configuration.schoolId === schoolId &&
+        configuration.isActive &&
+        configuration.reportType === reportType,
+    ) ?? null)
+  : (configurations.find(
       (configuration) =>
         configuration.reportType === reportType && configuration.isActive,
-    ) ?? null;
+    ) ?? null);
 
-  if (!reportConfiguration) {
-    throw new Error(
-      "No active report configuration exists for this report type.",
-    );
-  }
+if (!reportConfiguration) {
+  throw new Error(
+    "The selected report configuration does not exist, is inactive, or does not match the report type.",
+  );
+}
+
+  
 
   /*
    * ---------------------------------------------------------
@@ -377,13 +386,15 @@ export async function getStudentReportCardData(
 
     academic: {
       subjects: academicResults,
-      totalScore: studentTermResult.totalScore,
-      averageScore: studentTermResult.averageScore,
-      grade: studentTermResult.grade,
-      remark: studentTermResult.remark,
-      position: studentTermResult.position,
+      totalScore: studentTermResult?.totalScore ?? null,
+      averageScore: studentTermResult?.averageScore ?? null,
+      grade: studentTermResult?.grade ?? null,
+      remark: studentTermResult?.remark ?? null,
+      position: studentTermResult?.position ?? null,
       classSize: classTermResults.length,
       classAverage,
+      isComplete: hasCompletedTermResult,
+      status: hasCompletedTermResult ? "COMPLETE" : "IN_PROGRESS",
     },
 
     psychomotor,

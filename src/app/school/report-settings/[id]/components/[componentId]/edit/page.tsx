@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth/authorization";
-import { getReportComponent } from "@/lib/services/report-configuration.service";
+import {
+  getActiveAssessmentCategories,
+  getReportComponent,
+} from "@/lib/services/report-configuration.service";
 import EditReportComponentForm from "./edit-form";
 import CalculatedEditForm from "./calculated-edit-form";
 
@@ -27,7 +30,6 @@ export default async function EditReportComponentPage({ params }: PageProps) {
   }
 
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -59,6 +61,8 @@ export default async function EditReportComponentPage({ params }: PageProps) {
     notFound();
   }
 
+  const categories = await getActiveAssessmentCategories(schoolId);
+
   return (
     <main className="mx-auto max-w-2xl space-y-6 p-6">
       <div>
@@ -73,10 +77,12 @@ export default async function EditReportComponentPage({ params }: PageProps) {
 
       <EditReportComponentForm
         configurationId={configurationId}
+        categories={categories}
         component={{
           id: component.id,
           name: component.name,
           assessmentType: component.assessmentType,
+          assessmentCategoryId: component.assessmentCategoryId ?? null,
           maxScore: component.maxScore,
           displayOrder: component.displayOrder,
           isRequired: component.isRequired,

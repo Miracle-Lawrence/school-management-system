@@ -74,6 +74,21 @@ export async function createReportComponentAction(
         "OTHER",
       ] as const;
 
+      const assessmentCategoryIdRaw = String(
+        formData.get("assessmentCategoryId") ?? "",
+      ).trim();
+
+      const assessmentCategoryId = assessmentCategoryIdRaw
+        ? Number(assessmentCategoryIdRaw)
+        : null;
+
+      if (
+        assessmentCategoryId !== null &&
+        (!Number.isInteger(assessmentCategoryId) || assessmentCategoryId < 1)
+      ) {
+        return { error: "Select a valid assessment category." };
+      }
+
       if (
         !allowedAssessmentTypes.includes(
           assessmentType as (typeof allowedAssessmentTypes)[number],
@@ -94,6 +109,7 @@ export async function createReportComponentAction(
         type: "ASSESSMENT",
         assessmentType:
           assessmentType as (typeof allowedAssessmentTypes)[number],
+        assessmentCategoryId,
         aggregationType:
           aggregationType as (typeof allowedAggregationTypes)[number],
         maxScore,

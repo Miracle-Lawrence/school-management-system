@@ -133,6 +133,7 @@ export async function POST(request: Request) {
      createdById,
      title: data.title,
      type: data.type,
+     assessmentCategoryId: data.assessmentCategoryId,
      maxScore: data.maxScore,
      weight: data.weight,
      date: data.date || undefined,

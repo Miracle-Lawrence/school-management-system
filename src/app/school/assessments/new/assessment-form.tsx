@@ -24,25 +24,6 @@ type TermOption = {
   sessionName: string;
 };
 
-type AssessmentFormProps = {
-  classes: ClassOption[];
-  subjects: SubjectOption[];
-  assignments: AssignmentOption[];
-  terms: TermOption[];
-  assessment?: {
-    id: number;
-    classId: number;
-    subjectId: number;
-    termId: number;
-    title: string;
-    type: (typeof assessmentTypes)[number];
-    maxScore: number;
-    weight: number;
-    date: string | null;
-    description: string | null;
-  };
-};
-
 const assessmentTypes = [
   "ASSIGNMENT",
   "TEST",
@@ -53,38 +34,84 @@ const assessmentTypes = [
   "OTHER",
 ] as const;
 
+type AssessmentType = (typeof assessmentTypes)[number];
+
+type AssessmentCategoryOption = {
+  id: number;
+  name: string;
+  type: AssessmentType;
+  displayOrder: number;
+};
+
+type AssessmentFormProps = {
+  classes: ClassOption[];
+  subjects: SubjectOption[];
+  assignments: AssignmentOption[];
+  terms: TermOption[];
+  categories: AssessmentCategoryOption[];
+  assessment?: {
+    id: number;
+    classId: number;
+    subjectId: number;
+    termId: number;
+    title: string;
+    type: AssessmentType;
+    assessmentCategoryId: number | null;
+    maxScore: number;
+    weight: number;
+    date: string | null;
+    description: string | null;
+  };
+};
+
 export default function AssessmentForm({
   classes,
   subjects,
   assignments,
   terms,
+  categories,
   assessment,
 }: AssessmentFormProps) {
   const router = useRouter();
 
-const [classId, setClassId] = useState(
-  assessment ? String(assessment.classId) : "",
-);
-const [subjectId, setSubjectId] = useState(
-  assessment ? String(assessment.subjectId) : "",
-);
-const [termId, setTermId] = useState(
-  assessment ? String(assessment.termId) : "",
-);
-const [title, setTitle] = useState(assessment?.title ?? "");
-const [type, setType] = useState<(typeof assessmentTypes)[number]>(
-  assessment?.type ?? "CA",
-);
-const [maxScore, setMaxScore] = useState(
-  assessment ? String(assessment.maxScore) : "20",
-);
-const [weight, setWeight] = useState(
-  assessment ? String(assessment.weight) : "1",
-);
-const [date, setDate] = useState(
-  assessment?.date ? new Date(assessment.date).toISOString().slice(0, 10) : "",
-);
-const [description, setDescription] = useState(assessment?.description ?? "");
+  const [classId, setClassId] = useState(
+    assessment ? String(assessment.classId) : "",
+  );
+
+  const [subjectId, setSubjectId] = useState(
+    assessment ? String(assessment.subjectId) : "",
+  );
+
+  const [termId, setTermId] = useState(
+    assessment ? String(assessment.termId) : "",
+  );
+
+  const [title, setTitle] = useState(assessment?.title ?? "");
+
+  const [type, setType] = useState<AssessmentType>(assessment?.type ?? "CA");
+
+  const [assessmentCategoryId, setAssessmentCategoryId] = useState(
+    assessment?.assessmentCategoryId != null
+      ? String(assessment.assessmentCategoryId)
+      : "",
+  );
+
+  const [maxScore, setMaxScore] = useState(
+    assessment ? String(assessment.maxScore) : "20",
+  );
+
+  const [weight, setWeight] = useState(
+    assessment ? String(assessment.weight) : "1",
+  );
+
+  const [date, setDate] = useState(
+    assessment?.date
+      ? new Date(assessment.date).toISOString().slice(0, 10)
+      : "",
+  );
+
+  const [description, setDescription] = useState(assessment?.description ?? "");
+
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -96,14 +123,38 @@ const [description, setDescription] = useState(assessment?.description ?? "");
     return subjects.filter((subject) => assignedIds.includes(subject.id));
   }, [assignments, classId, subjects]);
 
+  const availableCategories = useMemo(
+    () =>
+      categories
+        .filter((category) => category.type === type)
+        .sort(
+          (a, b) =>
+            a.displayOrder - b.displayOrder || a.name.localeCompare(b.name),
+        ),
+    [categories, type],
+  );
+
   function handleClassChange(value: string) {
     setClassId(value);
     setSubjectId("");
   }
 
+  function handleTypeChange(value: string) {
+    const nextType = value as AssessmentType;
+
+    setType(nextType);
+
+    const selectedCategory = categories.find(
+      (category) => String(category.id) === assessmentCategoryId,
+    );
+
+    if (selectedCategory?.type !== nextType) {
+      setAssessmentCategoryId("");
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setError("");
 
     if (!classId || !subjectId || !termId || !title.trim()) {
@@ -121,6 +172,16 @@ const [description, setDescription] = useState(assessment?.description ?? "");
       parsedWeight <= 0
     ) {
       setError("Maximum score and weight must be greater than zero.");
+      return;
+    }
+
+    if (
+      assessmentCategoryId &&
+      !availableCategories.some(
+        (category) => String(category.id) === assessmentCategoryId,
+      )
+    ) {
+      setError("Please select a valid category for this assessment type.");
       return;
     }
 
@@ -142,6 +203,9 @@ const [description, setDescription] = useState(assessment?.description ?? "");
             termId: Number(termId),
             title: title.trim(),
             type,
+            assessmentCategoryId: assessmentCategoryId
+              ? Number(assessmentCategoryId)
+              : null,
             maxScore: parsedMaxScore,
             weight: parsedWeight,
             date: date || "",
@@ -277,9 +341,8 @@ const [description, setDescription] = useState(assessment?.description ?? "");
           <select
             id="type"
             value={type}
-            onChange={(event) =>
-              setType(event.target.value as (typeof assessmentTypes)[number])
-            }
+            onChange={(event) => handleTypeChange(event.target.value)}
+            required
             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           >
             {assessmentTypes.map((assessmentType) => (
@@ -288,6 +351,35 @@ const [description, setDescription] = useState(assessment?.description ?? "");
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="assessmentCategoryId"
+            className="text-sm font-medium text-gray-700"
+          >
+            Assessment Category
+          </label>
+
+          <select
+            id="assessmentCategoryId"
+            value={assessmentCategoryId}
+            onChange={(event) => setAssessmentCategoryId(event.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          >
+            <option value="">No category</option>
+            {availableCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          {availableCategories.length === 0 && (
+            <p className="text-xs text-gray-500">
+              No active categories are configured for this assessment type.
+            </p>
+          )}
         </div>
 
         <div className="space-y-2 sm:col-span-2">

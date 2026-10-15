@@ -2,6 +2,7 @@ import { db } from "@/prisma/db";
 
 interface CreateGradeScaleInput {
   schoolId: number;
+  gradeScaleSetId: number;
   name: string;
   code: string;
   minScore: number;
@@ -19,6 +20,21 @@ interface UpdateGradeScaleInput {
   remark?: string | null;
   displayOrder?: number;
   isActive?: boolean;
+}
+
+async function validateGradeScaleSetOwnership(
+  schoolId: number,
+  gradeScaleSetId: number,
+) {
+  const gradeScaleSet = await db.orm.public.GradeScaleSet.where((item) =>
+    item.id.eq(gradeScaleSetId),
+  ).first();
+
+  if (!gradeScaleSet || gradeScaleSet.schoolId !== schoolId) {
+    throw new Error("Invalid grading set for this school.");
+  }
+
+  return gradeScaleSet;
 }
 
 function validateScoreRange(minScore: number, maxScore: number) {
@@ -53,21 +69,23 @@ async function validateGradeScaleOwnership(
 ) {
   const gradeScale = await getGradeScaleById(gradeScaleId);
 
-  if (!gradeScale || gradeScale.schoolId !== schoolId) {
-    throw new Error("Invalid grade scale.");
+  if (!gradeScale || gradeScale.gradeScaleSetId === null) {
+    throw new Error("Invalid grade scale or unassigned grading set.");
   }
+
+  await validateGradeScaleSetOwnership(schoolId, gradeScale.gradeScaleSetId);
 
   return gradeScale;
 }
 
 async function validateNoOverlap(
-  schoolId: number,
+  gradeScaleSetId: number,
   minScore: number,
   maxScore: number,
   excludeGradeScaleId?: number,
 ) {
   const gradeScales = await db.orm.public.GradeScale.where((gradeScale) =>
-    gradeScale.schoolId.eq(schoolId),
+    gradeScale.gradeScaleSetId.eq(gradeScaleSetId),
   ).all();
 
   const overlaps = gradeScales.some((gradeScale) => {
@@ -82,12 +100,14 @@ async function validateNoOverlap(
   });
 
   if (overlaps) {
-    throw new Error("This grade range overlaps with an existing grade scale.");
+    throw new Error(
+      "This grade range overlaps with an existing grade in this grading set.",
+    );
   }
 }
 
 /**
- * Create a grade scale for a school.
+ * Create a grade within a school's grading set.
  *
  * Example:
  * A = 70 - 100
@@ -100,18 +120,20 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
   const remark = input.remark?.trim() || null;
 
   if (!name) {
-    throw new Error("Grade scale name is required.");
+    throw new Error("Grade name is required.");
   }
 
   if (!code) {
-    throw new Error("Grade scale code is required.");
+    throw new Error("Grade code is required.");
   }
+
+  await validateGradeScaleSetOwnership(input.schoolId, input.gradeScaleSetId);
 
   validateScoreRange(input.minScore, input.maxScore);
   validateDisplayOrder(input.displayOrder);
 
   const existingGradeScales = await db.orm.public.GradeScale.where(
-    (gradeScale) => gradeScale.schoolId.eq(input.schoolId),
+    (gradeScale) => gradeScale.gradeScaleSetId.eq(input.gradeScaleSetId),
   ).all();
 
   const duplicateCode = existingGradeScales.some(
@@ -119,13 +141,19 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
   );
 
   if (duplicateCode) {
-    throw new Error(`A grade scale with code "${code}" already exists.`);
+    throw new Error(
+      `A grade with code "${code}" already exists in this grading set.`,
+    );
   }
 
-  await validateNoOverlap(input.schoolId, input.minScore, input.maxScore);
+  await validateNoOverlap(
+    input.gradeScaleSetId,
+    input.minScore,
+    input.maxScore,
+  );
 
   return db.orm.public.GradeScale.create({
-    schoolId: input.schoolId,
+    gradeScaleSetId: input.gradeScaleSetId,
     name,
     code,
     minScore: input.minScore,
@@ -137,23 +165,29 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
 }
 
 /**
- * Get all grade scales belonging to a school.
+ * Get all grades in a grading set owned by the specified school.
  */
-export async function getGradeScales(schoolId: number) {
+export async function getGradeScales(
+  schoolId: number,
+  gradeScaleSetId: number,
+) {
+  await validateGradeScaleSetOwnership(schoolId, gradeScaleSetId);
+
   const gradeScales = await db.orm.public.GradeScale.where((gradeScale) =>
-    gradeScale.schoolId.eq(schoolId),
+    gradeScale.gradeScaleSetId.eq(gradeScaleSetId),
   ).all();
 
   return gradeScales.sort((a, b) => a.displayOrder - b.displayOrder);
 }
 
 /**
- * Get only active grade scales belonging to a school.
+ * Get active grades in a grading set owned by the specified school.
  */
-export async function getActiveGradeScales(schoolId: number) {
-  const gradeScales = await db.orm.public.GradeScale.where((gradeScale) =>
-    gradeScale.schoolId.eq(schoolId),
-  ).all();
+export async function getActiveGradeScales(
+  schoolId: number,
+  gradeScaleSetId: number,
+) {
+  const gradeScales = await getGradeScales(schoolId, gradeScaleSetId);
 
   return gradeScales
     .filter((gradeScale) => gradeScale.isActive)
@@ -161,14 +195,14 @@ export async function getActiveGradeScales(schoolId: number) {
 }
 
 /**
- * Get a single grade scale.
+ * Get one grade, ensuring it belongs to the specified school.
  */
 export async function getGradeScale(schoolId: number, gradeScaleId: number) {
   return validateGradeScaleOwnership(gradeScaleId, schoolId);
 }
 
 /**
- * Update a grade scale.
+ * Update a grade, ensuring it belongs to the specified school.
  */
 export async function updateGradeScale(
   schoolId: number,
@@ -204,31 +238,40 @@ export async function updateGradeScale(
     input.isActive !== undefined ? input.isActive : gradeScale.isActive;
 
   if (!name) {
-    throw new Error("Grade scale name is required.");
+    throw new Error("Grade name is required.");
   }
 
   if (!code) {
-    throw new Error("Grade scale code is required.");
+    throw new Error("Grade code is required.");
   }
 
   validateScoreRange(minScore, maxScore);
   validateDisplayOrder(displayOrder);
 
-  const existingGradeScales = await db.orm.public.GradeScale.where(
-    (existingGradeScale) => existingGradeScale.schoolId.eq(schoolId),
+  const existingGradeScales = await db.orm.public.GradeScale.where((item) =>
+    item.gradeScaleSetId.eq(gradeScale.gradeScaleSetId),
   ).all();
 
   const duplicateCode = existingGradeScales.some(
-    (existingGradeScale) =>
-      existingGradeScale.id !== gradeScaleId &&
-      existingGradeScale.code.toUpperCase() === code,
+    (item) => item.id !== gradeScaleId && item.code.toUpperCase() === code,
   );
 
   if (duplicateCode) {
-    throw new Error(`A grade scale with code "${code}" already exists.`);
+    throw new Error(
+      `A grade with code "${code}" already exists in this grading set.`,
+    );
   }
 
-  await validateNoOverlap(schoolId, minScore, maxScore, gradeScaleId);
+  if (gradeScale.gradeScaleSetId === null) {
+    throw new Error("This grade has not been assigned to a grading set.");
+  }
+
+  await validateNoOverlap(
+    gradeScale.gradeScaleSetId,
+    minScore,
+    maxScore,
+    gradeScaleId,
+  );
 
   return db.orm.public.GradeScale.where((item) =>
     item.id.eq(gradeScaleId),
@@ -244,7 +287,7 @@ export async function updateGradeScale(
 }
 
 /**
- * Delete a grade scale.
+ * Delete a grade, ensuring it belongs to the specified school.
  */
 export async function deleteGradeScale(schoolId: number, gradeScaleId: number) {
   const gradeScale = await validateGradeScaleOwnership(gradeScaleId, schoolId);
@@ -255,14 +298,13 @@ export async function deleteGradeScale(schoolId: number, gradeScaleId: number) {
 }
 
 /**
- * Find the grade scale that applies to a score.
- *
- * Example:
- * 75 => A
- * 65 => B
- * 55 => C
+ * Find the active grade that applies to a score in a grading set.
  */
-export async function getGradeForScore(schoolId: number, score: number) {
+export async function getGradeForScore(
+  schoolId: number,
+  gradeScaleSetId: number,
+  score: number,
+) {
   if (!Number.isFinite(score)) {
     throw new Error("Score must be a valid number.");
   }
@@ -271,7 +313,7 @@ export async function getGradeForScore(schoolId: number, score: number) {
     throw new Error("Score must be between 0 and 100.");
   }
 
-  const gradeScales = await getActiveGradeScales(schoolId);
+  const gradeScales = await getActiveGradeScales(schoolId, gradeScaleSetId);
 
   const matchingGrade = gradeScales.find(
     (gradeScale) =>
@@ -279,21 +321,25 @@ export async function getGradeForScore(schoolId: number, score: number) {
   );
 
   if (!matchingGrade) {
-    throw new Error(`No active grade scale covers the score ${score}.`);
+    throw new Error(
+      `No active grade in this grading set covers the score ${score}.`,
+    );
   }
 
   return matchingGrade;
 }
 
 /**
- * Check whether the school's active grade scales
- * provide complete coverage from 0 to 100.
+ * Check that a grading set's active grades cover scores from 0 to 100.
  */
-export async function validateGradeScaleCoverage(schoolId: number) {
-  const gradeScales = await getActiveGradeScales(schoolId);
+export async function validateGradeScaleCoverage(
+  schoolId: number,
+  gradeScaleSetId: number,
+) {
+  const gradeScales = await getActiveGradeScales(schoolId, gradeScaleSetId);
 
   if (gradeScales.length === 0) {
-    throw new Error("The school does not have any active grade scales.");
+    throw new Error("This grading set does not have any active grades.");
   }
 
   const sortedScales = [...gradeScales].sort((a, b) => a.minScore - b.minScore);

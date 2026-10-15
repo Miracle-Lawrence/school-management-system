@@ -11,6 +11,18 @@ export interface UpdateComponentFormState {
   error: string | null;
 }
 
+const allowedAssessmentTypes = [
+  "ASSIGNMENT",
+  "TEST",
+  "CA",
+  "EXAM",
+  "PROJECT",
+  "PRACTICAL",
+  "OTHER",
+] as const;
+
+type AssessmentType = (typeof allowedAssessmentTypes)[number];
+
 export async function updateReportComponentAction(
   configurationId: number,
   componentId: number,
@@ -18,7 +30,6 @@ export async function updateReportComponentAction(
   formData: FormData,
 ): Promise<UpdateComponentFormState> {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -27,12 +38,17 @@ export async function updateReportComponentAction(
 
   const name = String(formData.get("name") ?? "").trim();
   const displayOrder = Number(formData.get("displayOrder"));
-
   const isRequired = formData.get("isRequired") === "on";
   const isVisible = formData.get("isVisible") === "on";
 
   if (!name) {
     return { error: "Component name is required." };
+  }
+
+  if (name.length > 100) {
+    return {
+      error: "Component name cannot exceed 100 characters.",
+    };
   }
 
   if (!Number.isInteger(displayOrder) || displayOrder < 1) {
@@ -55,8 +71,16 @@ export async function updateReportComponentAction(
         isRequired,
         isVisible,
       });
-    } else {
-      const assessmentType = String(formData.get("assessmentType") ?? "");
+    } else if (component.type === "ASSESSMENT") {
+      const assessmentTypeRaw = String(formData.get("assessmentType") ?? "");
+
+      if (
+        !allowedAssessmentTypes.includes(assessmentTypeRaw as AssessmentType)
+      ) {
+        return { error: "Select a valid assessment type." };
+      }
+
+      const assessmentType = assessmentTypeRaw as AssessmentType;
 
       const maxScore = Number(formData.get("maxScore"));
 
@@ -66,33 +90,44 @@ export async function updateReportComponentAction(
         };
       }
 
-      const allowedAssessmentTypes = [
-        "ASSIGNMENT",
-        "TEST",
-        "CA",
-        "EXAM",
-        "PROJECT",
-        "PRACTICAL",
-        "OTHER",
-      ] as const;
+      const hasCategoryField = formData.has("assessmentCategoryId");
 
-      if (
-        !allowedAssessmentTypes.includes(
-          assessmentType as (typeof allowedAssessmentTypes)[number],
-        )
-      ) {
-        return { error: "Select a valid assessment type." };
+      const categoryRaw = String(
+        formData.get("assessmentCategoryId") ?? "",
+      ).trim();
+
+      // Missing field: preserve the existing category.
+      // Blank field: explicitly remove the category.
+      // Numeric value: assign the selected category.
+      let assessmentCategoryId: number | null | undefined;
+
+      if (!hasCategoryField) {
+        assessmentCategoryId = undefined;
+      } else if (!categoryRaw) {
+        assessmentCategoryId = null;
+      } else {
+        const parsedCategoryId = Number(categoryRaw);
+
+        if (!Number.isInteger(parsedCategoryId) || parsedCategoryId < 1) {
+          return {
+            error: "Select a valid assessment category.",
+          };
+        }
+
+        assessmentCategoryId = parsedCategoryId;
       }
 
       await updateReportComponent(schoolId, componentId, {
         name,
-        assessmentType:
-          assessmentType as (typeof allowedAssessmentTypes)[number],
+        assessmentType,
+        assessmentCategoryId,
         maxScore,
         displayOrder,
         isRequired,
         isVisible,
       });
+    } else {
+      return { error: "Unsupported report component type." };
     }
   } catch (error) {
     if (

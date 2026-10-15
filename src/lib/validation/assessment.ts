@@ -2,7 +2,9 @@ import { z } from "zod";
 
 export const createAssessmentSchema = z.object({
   classId: z.coerce.number().int().positive("Please select a valid class."),
+
   subjectId: z.coerce.number().int().positive("Please select a valid subject."),
+
   termId: z.coerce
     .number()
     .int()
@@ -23,6 +25,10 @@ export const createAssessmentSchema = z.object({
     "PRACTICAL",
     "OTHER",
   ]),
+
+  assessmentCategoryId: z
+    .union([z.coerce.number().int().positive(), z.null()])
+    .optional(),
 
   maxScore: z.coerce
     .number()

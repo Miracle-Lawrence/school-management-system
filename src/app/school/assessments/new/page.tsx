@@ -5,6 +5,9 @@ import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import AssessmentForm from "./assessment-form";
 
+import { getActiveAssessmentCategories } from "@/lib/services/report-configuration.service";
+
+
 export default async function NewAssessmentPage() {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
@@ -13,6 +16,10 @@ export default async function NewAssessmentPage() {
   if (!schoolId) {
     throw new Error("School context is required.");
   }
+
+  
+const categories = await getActiveAssessmentCategories(schoolId);
+
 
   const classes = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.schoolId.eq(schoolId),
@@ -97,6 +104,7 @@ export default async function NewAssessmentPage() {
         subjects={subjectOptions}
         assignments={assignmentOptions}
         terms={availableTerms}
+        categories={categories}
       />
     </div>
   );

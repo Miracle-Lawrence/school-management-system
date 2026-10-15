@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth/authorization";
+import { getReportConfigurations } from "@/lib/services/report-configuration.service";
 import { db } from "@/prisma/db";
 import GradebookSelector from "./gradebook-selector";
 
@@ -37,12 +38,10 @@ export default async function TeacherGradebookPage() {
       db.orm.public.AcademicSession.where((item) =>
         item.schoolId.eq(schoolId),
       ).all(),
-      db.orm.public.ReportConfiguration.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
+      getReportConfigurations(schoolId),
     ]);
 
-  // Only retain assignments belonging to this teacher's school.
+  // Retain only assignments belonging to this teacher's school.
   const assignments = allAssignments.filter(
     (item) => item.schoolId === schoolId,
   );
@@ -79,7 +78,7 @@ export default async function TeacherGradebookPage() {
       );
     });
 
-  // Only show terms belonging to this school's academic sessions.
+  // Only show terms linked to this school's academic sessions.
   const validTerms = terms
     .filter((term) => sessionById.has(term.sessionId))
     .sort((a, b) => {
@@ -93,15 +92,14 @@ export default async function TeacherGradebookPage() {
     (configuration) => configuration.isActive,
   );
 
-  // Each report type should appear only once in the selector.
-  const reportTypes = [
-    ...new Set(
-      activeConfigurations.map((configuration) => configuration.reportType),
-    ),
-  ].map((reportType) => ({
-    value: reportType,
-    label: reportType === "MID_TERM" ? "Mid-term" : "Terminal",
-  }));
+  // Pass each exact configuration to the selector.
+  const availableConfigurations = activeConfigurations
+    .map((configuration) => ({
+      id: configuration.id,
+      reportType: configuration.reportType,
+      name: configuration.name,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <main className="space-y-6">
@@ -115,8 +113,8 @@ export default async function TeacherGradebookPage() {
         </h1>
 
         <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-          Select an assigned class, subject, term, and report type to enter
-          student assessment scores from one table.
+          Select an assigned class, subject, academic term, and report
+          configuration to enter student assessment scores from one table.
         </p>
       </section>
 
@@ -137,7 +135,7 @@ export default async function TeacherGradebookPage() {
       <section>
         {assignedPairs.length === 0 ||
         validTerms.length === 0 ||
-        reportTypes.length === 0 ? (
+        availableConfigurations.length === 0 ? (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-800">
             {assignedPairs.length === 0
               ? "You do not have any valid class-subject assignments yet. Please contact your school administrator."
@@ -158,22 +156,21 @@ export default async function TeacherGradebookPage() {
               name: term.name,
               sessionName: sessionById.get(term.sessionId)!.name,
             }))}
-            reportTypes={reportTypes}
+            configurations={availableConfigurations}
           />
         )}
       </section>
 
       <section className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-        <h2 className="font-semibold text-blue-950">
-          How score entry will work
-        </h2>
+        <h2 className="font-semibold text-blue-950">How score entry works</h2>
 
         <ul className="mt-3 space-y-2 text-sm leading-6 text-blue-900">
           <li>
-            • One row per student, with columns for the configured assessments.
+            • One row per student, with columns for the configured assessment
+            fields.
           </li>
           <li>• Existing scores will be displayed for editing.</li>
-          <li>• Blank scores will remain unrecorded.</li>
+          <li>• Blank scores will remain unchanged.</li>
           <li>• Scores will be validated against each assessment's maximum.</li>
           <li>
             • Your school's configured result-calculation rules will remain in

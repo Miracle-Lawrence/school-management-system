@@ -2,9 +2,17 @@ import Link from "next/link";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { createReportConfigurationAction } from "./actions";
+import { getGradeScaleSets } from "@/lib/services/report-configuration.service";
 
 export default async function NewReportConfigurationPage() {
-  await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+
+  if (!schoolId) {
+    throw new Error("School context is required.");
+  }
+
+  const gradeScaleSets = await getGradeScaleSets(schoolId);
 
   return (
     <div className="space-y-6">
@@ -69,6 +77,33 @@ export default async function NewReportConfigurationPage() {
               <option value="MID_TERM">Mid-Term</option>
               <option value="TERMINAL">Terminal</option>
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="gradeScaleSetId">Grading Set</label>
+            <select
+              id="gradeScaleSetId"
+              name="gradeScaleSetId"
+              required
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select a grading set
+              </option>
+
+              {gradeScaleSets
+                .filter((set) => set.isActive)
+                .map((set) => (
+                  <option key={set.id} value={set.id}>
+                    {set.name}
+                  </option>
+                ))}
+            </select>
+            <p>
+              Reports using the same grading set share its grading bands.
+              Changes to that set affect every report configuration that uses
+              it.
+            </p>
           </div>
 
           <div>

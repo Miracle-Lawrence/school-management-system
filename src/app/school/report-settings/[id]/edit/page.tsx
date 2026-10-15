@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
-import { getReportConfigurations } from "@/lib/services/report-configuration.service";
+import {
+  getReportConfigurations,
+  getGradeScaleSets,
+} from "@/lib/services/report-configuration.service";
 
 import { updateReportConfigurationAction } from "./actions";
 
@@ -30,7 +33,10 @@ export default async function EditReportConfigurationPage({
     notFound();
   }
 
-  const configurations = await getReportConfigurations(schoolId);
+  const [configurations, gradeScaleSets] = await Promise.all([
+    getReportConfigurations(schoolId),
+    getGradeScaleSets(schoolId),
+  ]);
 
   const configuration = configurations.find(
     (item) => item.id === configurationId,
@@ -44,6 +50,10 @@ export default async function EditReportConfigurationPage({
     null,
     configuration.id,
   );
+
+  const availableGradeScaleSets = gradeScaleSets
+    .filter((set) => set.isActive || set.id === configuration.gradeScaleSetId)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -105,6 +115,47 @@ export default async function EditReportConfigurationPage({
           <p className="mt-2 text-xs text-slate-500">
             The report type cannot be changed after configuration creation.
           </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="gradeScaleSetId"
+            className="mb-2 block text-sm font-medium text-slate-700"
+          >
+            Grading Set
+          </label>
+
+          <select
+            id="gradeScaleSetId"
+            name="gradeScaleSetId"
+            required
+            defaultValue={String(configuration.gradeScaleSetId ?? "")}
+            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          >
+            <option value="" disabled>
+              Select a grading set
+            </option>
+
+            {availableGradeScaleSets.map((set) => (
+              <option key={set.id} value={set.id}>
+                {set.name}
+                {!set.isActive ? " (Inactive — currently assigned)" : ""}
+              </option>
+            ))}
+          </select>
+
+          <p className="mt-2 text-xs leading-5 text-slate-500">
+            This report will use the grading bands in the selected set. Multiple
+            reports can share a grading set. Changes to a shared set affect
+            every report configuration that uses it.
+          </p>
+
+          {availableGradeScaleSets.length === 0 && (
+            <p className="mt-2 text-sm text-amber-700">
+              No active grading sets are available. Create a grading set before
+              saving this configuration.
+            </p>
+          )}
         </div>
 
         <div className="rounded-lg border border-slate-200 p-4">

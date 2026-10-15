@@ -8,6 +8,7 @@ import {
 } from "@/lib/services/assessment.service";
 import AssessmentScoreEntry from "./assessment-score-entry";
 import { db } from "@/prisma/db";
+import { getAssessmentCategories } from "@/lib/services/report-configuration.service";
 
 type AssessmentDetailsPageProps = {
   params: Promise<{ id: string }>;
@@ -39,27 +40,34 @@ export default async function AssessmentDetailsPage({
     notFound();
   }
 
-  const [schoolClass, subject, term, students, scores] = await Promise.all([
-    db.orm.public.SchoolClass.where((item) =>
-      item.id.eq(assessment.classId),
-    ).first(),
+  const [schoolClass, subject, term, students, scores, categories] =
+    await Promise.all([
+      db.orm.public.SchoolClass.where((item) =>
+        item.id.eq(assessment.classId),
+      ).first(),
 
-    db.orm.public.Subject.where((item) =>
-      item.id.eq(assessment.subjectId),
-    ).first(),
+      db.orm.public.Subject.where((item) =>
+        item.id.eq(assessment.subjectId),
+      ).first(),
 
-    db.orm.public.Term.where((item) => item.id.eq(assessment.termId)).first(),
+      db.orm.public.Term.where((item) => item.id.eq(assessment.termId)).first(),
 
-    db.orm.public.Student.where((item) => item.classId.eq(assessment.classId))
-      .all()
-      .then((classStudents) =>
-        classStudents.filter(
-          (student) => student.schoolId === schoolId && student.isActive,
+      db.orm.public.Student.where((item) => item.classId.eq(assessment.classId))
+        .all()
+        .then((classStudents) =>
+          classStudents.filter(
+            (student) => student.schoolId === schoolId && student.isActive,
+          ),
         ),
-      ),
 
-    getAssessmentScores(schoolId, assessmentId),
-  ]);
+      getAssessmentScores(schoolId, assessmentId),
+
+      getAssessmentCategories(schoolId),
+    ]);
+
+  const assessmentCategory = categories.find(
+    (category) => category.id === assessment.assessmentCategoryId,
+  );
 
   const academicSession = term
     ? await db.orm.public.AcademicSession.where((item) =>
@@ -165,6 +173,13 @@ export default async function AssessmentDetailsPage({
           <p className="text-sm text-gray-500">Weight</p>
           <p className="mt-1 font-semibold text-gray-900">
             {assessment.weight}
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <p className="text-sm text-gray-500">Assessment Category</p>
+          <p className="mt-1 font-semibold text-gray-900">
+            {assessmentCategory?.name ?? "No category assigned"}
           </p>
         </div>
 

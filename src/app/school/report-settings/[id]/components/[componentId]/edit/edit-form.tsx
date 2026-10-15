@@ -1,18 +1,30 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import {
   updateReportComponentAction,
   type UpdateComponentFormState,
 } from "./actions";
 
+type AssessmentType =
+  "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+
+interface AssessmentCategoryOption {
+  id: number;
+  name: string;
+  type: AssessmentType;
+  displayOrder: number;
+}
+
 interface EditReportComponentFormProps {
   configurationId: number;
+  categories: AssessmentCategoryOption[];
   component: {
     id: number;
     name: string;
     assessmentType: string | null;
+    assessmentCategoryId: number | null;
     maxScore: number | null;
     displayOrder: number;
     isRequired: boolean;
@@ -24,10 +36,45 @@ const initialState: UpdateComponentFormState = {
   error: null,
 };
 
+const assessmentTypes: {
+  value: AssessmentType;
+  label: string;
+}[] = [
+  { value: "ASSIGNMENT", label: "Assignment" },
+  { value: "TEST", label: "Test" },
+  { value: "CA", label: "Continuous Assessment (CA)" },
+  { value: "EXAM", label: "Examination" },
+  { value: "PROJECT", label: "Project" },
+  { value: "PRACTICAL", label: "Practical" },
+  { value: "OTHER", label: "Other" },
+];
+
 export default function EditReportComponentForm({
   configurationId,
+  categories,
   component,
 }: EditReportComponentFormProps) {
+  const initialAssessmentType: AssessmentType = assessmentTypes.some(
+    (item) => item.value === component.assessmentType,
+  )
+    ? (component.assessmentType as AssessmentType)
+    : "CA";
+
+  const [selectedAssessmentType, setSelectedAssessmentType] =
+    useState<AssessmentType>(initialAssessmentType);
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    component.assessmentCategoryId == null
+      ? ""
+      : String(component.assessmentCategoryId),
+  );
+
+  const filteredCategories = categories
+    .filter((category) => category.type === selectedAssessmentType)
+    .sort(
+      (a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name),
+    );
+
   const updateAction = updateReportComponentAction.bind(
     null,
     configurationId,
@@ -38,6 +85,23 @@ export default function EditReportComponentForm({
     updateAction,
     initialState,
   );
+
+  function handleAssessmentTypeChange(
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) {
+    const nextType = event.target.value as AssessmentType;
+
+    setSelectedAssessmentType(nextType);
+
+    // Keep the selected category only if it belongs to the new type.
+    const selectedCategory = categories.find(
+      (category) => String(category.id) === selectedCategoryId,
+    );
+
+    if (selectedCategory && selectedCategory.type !== nextType) {
+      setSelectedCategoryId("");
+    }
+  }
 
   return (
     <main className="mx-auto max-w-2xl p-6">
@@ -94,17 +158,54 @@ export default function EditReportComponentForm({
             id="assessmentType"
             name="assessmentType"
             required
-            defaultValue={component.assessmentType ?? "CA"}
+            value={selectedAssessmentType}
+            onChange={handleAssessmentTypeChange}
             className="w-full rounded-md border border-slate-300 px-3 py-2"
           >
-            <option value="ASSIGNMENT">Assignment</option>
-            <option value="TEST">Test</option>
-            <option value="CA">Continuous Assessment (CA)</option>
-            <option value="EXAM">Examination</option>
-            <option value="PROJECT">Project</option>
-            <option value="PRACTICAL">Practical</option>
-            <option value="OTHER">Other</option>
+            {assessmentTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="assessmentCategoryId"
+            className="mb-1 block text-sm font-medium"
+          >
+            Assessment Category
+          </label>
+
+          <select
+            id="assessmentCategoryId"
+            name="assessmentCategoryId"
+            value={selectedCategoryId}
+            onChange={(event) => setSelectedCategoryId(event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-3 py-2"
+          >
+            <option value="">No category (legacy)</option>
+
+            {filteredCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <p className="mt-1 text-xs text-slate-500">
+            Choose a category matching the assessment type. The uncategorized
+            option is retained for legacy assessments.
+          </p>
+
+          {filteredCategories.length === 0 && (
+            <p className="mt-1 text-xs text-amber-700">
+              No active categories are available for this assessment type. You
+              can keep this component uncategorized or create a category in your
+              assessment settings.
+            </p>
+          )}
         </div>
 
         <div>

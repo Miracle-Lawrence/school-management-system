@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/prisma/db";
 import { requireRole } from "@/lib/auth/authorization";
 import { getStudentReportCardData } from "@/lib/services/report-card.service";
+import { getReportConfigurations } from "@/lib/services/report-configuration.service";
 
 import PrintButton from "./print-button";
 
@@ -12,6 +13,7 @@ type SearchParams = {
   termId?: string;
   classId?: string;
   studentId?: string;
+  configurationId?: string;
 };
 
 type ReportCardPageProps = {
@@ -29,6 +31,16 @@ export default async function ReportCardPage({
   }
 
   const params = await searchParams;
+  const reportConfigurations = (await getReportConfigurations(schoolId))
+    .filter((configuration) => configuration.isActive)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const selectedConfigurationId =
+    Number(params.configurationId) || reportConfigurations[0]?.id;
+
+  const selectedConfiguration = reportConfigurations.find(
+    (configuration) => configuration.id === selectedConfigurationId,
+  );
 
   const [sessions, classes] = await Promise.all([
     db.orm.public.AcademicSession.where((item) =>
@@ -64,28 +76,11 @@ export default async function ReportCardPage({
       ).all()
     : [];
 
-  const historicalTermResults =
-    selectedClassId && selectedTermId
-      ? await db.orm.public.StudentTermResult.where((item) =>
-          item.studentId.gt(0),
-        ).all()
-      : [];
+  
+const classStudents = students
+  .filter((student) => student.classId === selectedClassId)
+  .sort((a, b) => a.lastName.localeCompare(b.lastName));
 
-  const historicalStudentIds = new Set(
-    historicalTermResults
-      .filter(
-        (result) =>
-          result.schoolId === schoolId &&
-          result.classId === selectedClassId &&
-          result.termId === selectedTermId &&
-          result.reportType === "TERMINAL",
-      )
-      .map((result) => result.studentId),
-  );
-
-  const classStudents = students
-    .filter((student) => historicalStudentIds.has(student.id))
-    .sort((a, b) => a.lastName.localeCompare(b.lastName));
 
   const selectedStudentId = Number(params.studentId) || classStudents[0]?.id;
 
@@ -96,17 +91,25 @@ export default async function ReportCardPage({
   let reportCardData = null;
 
   if (selectedStudent && selectedTermId && selectedClassId) {
+   
     try {
+      if (!selectedConfiguration) {
+        throw new Error("No active report configuration is available.");
+      }
+
       reportCardData = await getStudentReportCardData(
         schoolId,
         selectedStudent.id,
         selectedClassId,
         selectedTermId,
-        "TERMINAL",
+        selectedConfiguration.reportType,
+        selectedConfiguration.id,
       );
-    } catch {
+    } catch (error) {
+      console.error("[Report Card] Failed to load report data:", error);
       reportCardData = null;
     }
+
   }
 
   /*
@@ -281,7 +284,7 @@ export default async function ReportCardPage({
             method="GET"
             className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
           >
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               <div className="space-y-2">
                 <label
                   htmlFor="sessionId"
@@ -370,6 +373,29 @@ export default async function ReportCardPage({
                   ))}
                 </select>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="configurationId"
+                className="text-sm font-medium text-slate-700"
+              >
+                Report Configuration
+              </label>
+
+              <select
+                id="configurationId"
+                name="configurationId"
+                defaultValue={selectedConfigurationId ?? ""}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                {reportConfigurations.map((configuration) => (
+                  <option key={configuration.id} value={configuration.id}>
+                    {configuration.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mt-5 flex justify-end">
@@ -506,7 +532,7 @@ export default async function ReportCardPage({
                   className="text-lg font-black uppercase tracking-[0.12em]"
                   style={{ color: primaryColor }}
                 >
-                  Terminal Report Sheet
+                  {reportCardData.reportConfiguration.name}
                 </h2>
 
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-600">
@@ -709,7 +735,9 @@ export default async function ReportCardPage({
                   </p>
 
                   <p className="mt-1 text-lg font-black">
-                    {academic.averageScore.toFixed(2)}
+                    {academic.averageScore !== null
+                      ? academic.averageScore.toFixed(2)
+                      : "Pending"}
                   </p>
                 </div>
 
@@ -831,8 +859,6 @@ export default async function ReportCardPage({
             {/* ================================
                 PSYCHOMOTOR / BEHAVIOURAL
             ================================= */}
-
-          
 
             <section className="report-section px-7 pt-5">
               <h3
@@ -1128,7 +1154,7 @@ export default async function ReportCardPage({
               </p>
 
               <p className="mt-0.5 opacity-90">
-                Terminal Report Sheet ·{" "}
+                {reportCardData.reportConfiguration.name} ·{" "}
                 {reportCardData.academicSession?.name ?? "Academic Session"} ·{" "}
                 {reportCardData.term?.name ?? "Term"}
               </p>

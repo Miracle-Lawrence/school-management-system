@@ -10,7 +10,7 @@ type GradebookEntryPageProps = {
     classId?: string;
     subjectId?: string;
     termId?: string;
-    reportType?: string;
+    configurationId?: string;
   }>;
 };
 
@@ -40,14 +40,9 @@ export default async function TeacherGradebookEntryPage({
   const classId = parsePositiveInteger(params.classId);
   const subjectId = parsePositiveInteger(params.subjectId);
   const termId = parsePositiveInteger(params.termId);
-  const reportType = params.reportType;
+  const configurationId = parsePositiveInteger(params.configurationId);
 
-  if (
-    !classId ||
-    !subjectId ||
-    !termId ||
-    (reportType !== "MID_TERM" && reportType !== "TERMINAL")
-  ) {
+  if (!classId || !subjectId || !termId || !configurationId) {
     notFound();
   }
 
@@ -133,8 +128,9 @@ export default async function TeacherGradebookEntryPage({
     notFound();
   }
 
+  // Use the exact configuration selected by the teacher.
   const configuration = configurations.find(
-    (item) => item.reportType === reportType && item.isActive,
+    (item) => item.id === configurationId && item.isActive,
   );
 
   if (!configuration) {
@@ -148,14 +144,28 @@ export default async function TeacherGradebookEntryPage({
         </Link>
 
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-800">
-          No active {reportType === "MID_TERM" ? "mid-term" : "terminal"} report
-          configuration exists. Please contact your school administrator.
+          The selected report configuration is unavailable or inactive. Please
+          return to the gradebook and select an active configuration.
         </div>
       </main>
     );
   }
 
-  const assessments = allAssessments
+  // Load the assessment fields defined by this configuration.
+  const reportComponents = await db.orm.public.ReportComponent.where((item) =>
+    item.configurationId.eq(configuration.id),
+  ).all();
+
+  const assessmentComponents = reportComponents
+    .filter(
+      (component) =>
+        component.type === "ASSESSMENT" &&
+        component.isVisible &&
+        component.assessmentType !== null,
+    )
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  const classAssessments = allAssessments
     .filter(
       (assessment) =>
         assessment.schoolId === schoolId &&
@@ -174,6 +184,42 @@ export default async function TeacherGradebookEntryPage({
       );
     });
 
+  /*
+   * Map each visible configured field to assessments with the exact
+   * assessment type and category. If multiple assessments match a field,
+   * include each one instead of arbitrarily choosing one.
+   */
+  const configuredAssessments = assessmentComponents.flatMap((component) => {
+    const matchingAssessments = classAssessments.filter(
+      (assessment) =>
+        assessment.type === component.assessmentType &&
+        (assessment.assessmentCategoryId ?? null) ===
+          (component.assessmentCategoryId ?? null),
+    );
+
+    return matchingAssessments.map((assessment) => ({
+      id: assessment.id,
+      title:
+        matchingAssessments.length > 1
+          ? `${component.name} — ${assessment.title}`
+          : component.name,
+      type: assessment.type,
+      maxScore: assessment.maxScore,
+      componentName: component.name,
+      assessmentTitle: assessment.title,
+    }));
+  });
+
+  const missingComponents = assessmentComponents.filter(
+    (component) =>
+      !classAssessments.some(
+        (assessment) =>
+          assessment.type === component.assessmentType &&
+          (assessment.assessmentCategoryId ?? null) ===
+            (component.assessmentCategoryId ?? null),
+      ),
+  );
+
   const students = allStudents
     .filter(
       (student) =>
@@ -187,22 +233,22 @@ export default async function TeacherGradebookEntryPage({
         a.firstName.localeCompare(b.firstName),
     );
 
-  const assessmentIds = new Set(assessments.map((item) => item.id));
+  const assessmentIds = new Set(
+    configuredAssessments.map((assessment) => assessment.id),
+  );
+
+  const studentIds = new Set(students.map((student) => student.id));
 
   const existingScores = allScores
     .filter((score) => assessmentIds.has(score.assessmentId))
-    .filter((score) =>
-      students.some((student) => student.id === score.studentId),
-    );
+    .filter((score) => studentIds.has(score.studentId));
 
   const markedStudentIds = new Set(
     existingScores.map((score) => score.studentId),
   );
 
-  const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeZone: "UTC",
-  });
+  const reportLabel =
+    configuration.reportType === "MID_TERM" ? "Mid-term" : "Terminal";
 
   return (
     <main className="space-y-6">
@@ -228,11 +274,19 @@ export default async function TeacherGradebookEntryPage({
 
         <div className="mt-5 flex flex-wrap gap-3 text-sm">
           <span className="rounded-lg bg-white/10 px-3 py-2">
-            Report: {reportType === "MID_TERM" ? "Mid-term" : "Terminal"}
+            Configuration: {configuration.name}
           </span>
 
           <span className="rounded-lg bg-white/10 px-3 py-2">
-            Assessments: {assessments.length}
+            Report: {reportLabel}
+          </span>
+
+          <span className="rounded-lg bg-white/10 px-3 py-2">
+            Configured assessment fields: {assessmentComponents.length}
+          </span>
+
+          <span className="rounded-lg bg-white/10 px-3 py-2">
+            Score columns: {configuredAssessments.length}
           </span>
 
           <span className="rounded-lg bg-white/10 px-3 py-2">
@@ -248,25 +302,47 @@ export default async function TeacherGradebookEntryPage({
       <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div>
           <h2 className="text-lg font-bold text-slate-900">
-            Assessment gradebook
+            {configuration.name} score entry
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Enter scores for your assigned class and subject. Existing scores
-            are loaded automatically, and you can save multiple student scores
-            together.
+            Enter scores across the configured assessment fields for all active
+            students, then save them together. Existing scores are loaded
+            automatically. Leaving a score blank will not erase a previously
+            saved score.
           </p>
         </div>
 
-        {assessments.length === 0 ? (
+        {missingComponents.length > 0 && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            <h3 className="font-semibold">
+              Some configured fields have no matching assessments
+            </h3>
+
+            <p className="mt-1 text-sm leading-6">
+              Ask your school administrator to create the corresponding
+              assessments for this class, subject, and term. These fields cannot
+              accept scores until matching assessments exist.
+            </p>
+
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
+              {missingComponents.map((component) => (
+                <li key={component.id}>{component.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {configuredAssessments.length === 0 ? (
           <div className="rounded-xl border border-dashed border-slate-300 p-6 text-center">
             <h3 className="font-semibold text-slate-900">
-              No assessments configured
+              No matching assessment fields are ready for entry
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Ask your school administrator to create assessments for this
-              class, subject, and term before entering scores.
+              Check that this report configuration has visible assessment
+              components and that matching assessments exist for the selected
+              class, subject, and term.
             </p>
           </div>
         ) : students.length === 0 ? (
@@ -278,7 +354,8 @@ export default async function TeacherGradebookEntryPage({
             classId={classId}
             subjectId={subjectId}
             termId={termId}
-            assessments={assessments.map((assessment) => ({
+            configurationId={configuration.id}
+            assessments={configuredAssessments.map((assessment) => ({
               id: assessment.id,
               title: assessment.title,
               type: assessment.type,
@@ -299,8 +376,6 @@ export default async function TeacherGradebookEntryPage({
           />
         )}
       </section>
-
-      
     </main>
   );
 }

@@ -1,5 +1,43 @@
 import { db } from "@/prisma/db";
 import { calculateAndSaveSubjectResult } from "@/lib/services/result-calculation.service";
+type DatabaseClient = Pick<typeof db, "orm">;
+
+type AssessmentType =
+  "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+
+async function validateAssessmentCategory(
+  schoolId: number,
+  assessmentCategoryId: number | null | undefined,
+  assessmentType: AssessmentType,
+): Promise<number | null> {
+  if (assessmentCategoryId == null) {
+    return null;
+  }
+
+  if (!Number.isInteger(assessmentCategoryId) || assessmentCategoryId <= 0) {
+    throw new Error("Invalid assessment category.");
+  }
+
+  const category = await db.orm.public.AssessmentCategory.where((item) =>
+    item.id.eq(assessmentCategoryId),
+  ).first();
+
+  if (!category || category.schoolId !== schoolId) {
+    throw new Error("Assessment category not found.");
+  }
+
+  if (!category.isActive) {
+    throw new Error("This assessment category is inactive.");
+  }
+
+  if (category.type !== assessmentType) {
+    throw new Error(
+      "The assessment type must match the selected category type.",
+    );
+  }
+
+  return category.id;
+}
 
 type CreateAssessmentInput = {
   schoolId: number;
@@ -8,12 +46,12 @@ type CreateAssessmentInput = {
   termId: number;
   createdById: number;
   title: string;
-  type:
-    "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+  type: AssessmentType;
   maxScore: number;
   weight: number;
   date?: string;
   description?: string;
+  assessmentCategoryId?: number | null;
 };
 
 export async function createAssessment(input: CreateAssessmentInput) {
@@ -29,23 +67,22 @@ export async function createAssessment(input: CreateAssessmentInput) {
     weight,
     date,
     description,
+    assessmentCategoryId,
   } = input;
 
   if (!title.trim()) {
     throw new Error("Assessment title is required.");
   }
 
-  
-if (!Number.isFinite(maxScore) || maxScore <= 0) {
-  throw new Error("Maximum score must be a finite number greater than zero.");
-}
+  if (!Number.isFinite(maxScore) || maxScore <= 0) {
+    throw new Error("Maximum score must be a finite number greater than zero.");
+  }
 
-if (!Number.isFinite(weight) || weight <= 0) {
-  throw new Error(
-    "Assessment weight must be a finite number greater than zero.",
-  );
-}
-
+  if (!Number.isFinite(weight) || weight <= 0) {
+    throw new Error(
+      "Assessment weight must be a finite number greater than zero.",
+    );
+  }
 
   const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.id.eq(classId),
@@ -126,6 +163,12 @@ if (!Number.isFinite(weight) || weight <= 0) {
     throw new Error("Invalid assessment creator.");
   }
 
+  const validatedCategoryId = await validateAssessmentCategory(
+    schoolId,
+    assessmentCategoryId,
+    type,
+  );
+
   return db.orm.public.Assessment.create({
     schoolId,
     classId,
@@ -136,6 +179,7 @@ if (!Number.isFinite(weight) || weight <= 0) {
     type,
     maxScore,
     weight,
+    assessmentCategoryId: validatedCategoryId,
     date: date ? globalThis.Temporal.Instant.from(`${date}T00:00:00Z`) : null,
     description: description?.trim() || null,
   });
@@ -146,12 +190,13 @@ type GetAssessmentsInput = {
   classId?: number;
   subjectId?: number;
   termId?: number;
-  type?:
-    "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+  type?: AssessmentType;
+  assessmentCategoryId?: number | null;
 };
 
 export async function getAssessments(input: GetAssessmentsInput) {
-  const { schoolId, classId, subjectId, termId, type } = input;
+  const { schoolId, classId, subjectId, termId, type, assessmentCategoryId } =
+    input;
 
   const assessments = await db.orm.public.Assessment.where((assessment) =>
     assessment.schoolId.eq(schoolId),
@@ -171,6 +216,13 @@ export async function getAssessments(input: GetAssessmentsInput) {
     }
 
     if (type !== undefined && assessment.type !== type) {
+      return false;
+    }
+
+    if (
+      assessmentCategoryId !== undefined &&
+      (assessment.assessmentCategoryId ?? null) !== assessmentCategoryId
+    ) {
       return false;
     }
 
@@ -200,12 +252,12 @@ type UpdateAssessmentInput = {
   subjectId?: number;
   termId?: number;
   title?: string;
-  type?:
-    "ASSIGNMENT" | "TEST" | "CA" | "EXAM" | "PROJECT" | "PRACTICAL" | "OTHER";
+  type?: AssessmentType;
   maxScore?: number;
   weight?: number;
   date?: string | null;
   description?: string | null;
+  assessmentCategoryId?: number | null;
 };
 
 export async function updateAssessment(input: UpdateAssessmentInput) {
@@ -221,6 +273,7 @@ export async function updateAssessment(input: UpdateAssessmentInput) {
     weight,
     date,
     description,
+    assessmentCategoryId,
   } = input;
 
   const assessment = await db.orm.public.Assessment.where((assessment) =>
@@ -248,6 +301,15 @@ export async function updateAssessment(input: UpdateAssessmentInput) {
   const newClassId = classId ?? assessment.classId;
   const newSubjectId = subjectId ?? assessment.subjectId;
   const newTermId = termId ?? assessment.termId;
+  const newType = type ?? assessment.type;
+
+  const newCategoryId = await validateAssessmentCategory(
+    schoolId,
+    assessmentCategoryId === undefined
+      ? assessment.assessmentCategoryId
+      : assessmentCategoryId,
+    newType,
+  );
 
   const schoolClass = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.id.eq(newClassId),
@@ -344,7 +406,8 @@ export async function updateAssessment(input: UpdateAssessmentInput) {
     subjectId: newSubjectId,
     termId: newTermId,
     title: title !== undefined ? title.trim() : assessment.title,
-    type: type ?? assessment.type,
+    type: newType,
+    assessmentCategoryId: newCategoryId,
     maxScore: maxScore ?? assessment.maxScore,
     weight: weight ?? assessment.weight,
     date:
@@ -392,10 +455,13 @@ type RecordAssessmentScoreInput = {
   remarks?: string;
 };
 
-export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
+export async function recordAssessmentScore(
+  input: RecordAssessmentScoreInput,
+  client: DatabaseClient = db,
+) {
   const { schoolId, assessmentId, studentId, score, remarks } = input;
 
-  const assessment = await db.orm.public.Assessment.where((assessment) =>
+  const assessment = await client.orm.public.Assessment.where((assessment) =>
     assessment.id.eq(assessmentId),
   ).first();
 
@@ -403,7 +469,7 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     throw new Error("Assessment not found.");
   }
 
-  const student = await db.orm.public.Student.where((student) =>
+  const student = await client.orm.public.Student.where((student) =>
     student.id.eq(studentId),
   ).first();
 
@@ -421,30 +487,28 @@ export async function recordAssessmentScore(input: RecordAssessmentScoreInput) {
     throw new Error("Student is not assigned to this class.");
   }
 
- 
-if (!Number.isFinite(score)) {
-  throw new Error("Score must be a valid finite number.");
-}
+  if (!Number.isFinite(score)) {
+    throw new Error("Score must be a valid finite number.");
+  }
 
-if (score < 0) {
-  throw new Error("Score cannot be negative.");
-}
+  if (score < 0) {
+    throw new Error("Score cannot be negative.");
+  }
 
-if (score > assessment.maxScore) {
-  throw new Error(
-    `Score cannot be greater than the maximum score of ${assessment.maxScore}.`,
-  );
-}
+  if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
+    throw new Error("The assessment maximum score is invalid.");
+  }
 
-if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
-  throw new Error("The assessment maximum score is invalid.");
-}
-
+  if (score > assessment.maxScore) {
+    throw new Error(
+      `Score cannot be greater than the maximum score of ${assessment.maxScore}.`,
+    );
+  }
 
   /*
    * Save or update the assessment score first.
    */
-  const existingScores = await db.orm.public.AssessmentScore.where(
+  const existingScores = await client.orm.public.AssessmentScore.where(
     (scoreRecord) => scoreRecord.assessmentId.eq(assessmentId),
   ).all();
 
@@ -455,14 +519,14 @@ if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
   let savedScore;
 
   if (existingScore) {
-    savedScore = await db.orm.public.AssessmentScore.where((scoreRecord) =>
+    savedScore = await client.orm.public.AssessmentScore.where((scoreRecord) =>
       scoreRecord.id.eq(existingScore.id),
     ).update({
       score,
       remarks: remarks?.trim() || null,
     });
   } else {
-    savedScore = await db.orm.public.AssessmentScore.create({
+    savedScore = await client.orm.public.AssessmentScore.create({
       assessmentId,
       studentId,
       score,
@@ -471,12 +535,10 @@ if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
   }
 
   /*
-   * ------------------------------------------------------------
-   * Recalculate only report configurations that actually use
-   * this assessment type.
-   * ------------------------------------------------------------
+   * Recalculate only configurations that use this assessment type
+   * and this exact assessment category.
    */
-  const configurations = await db.orm.public.ReportConfiguration.where(
+  const configurations = await client.orm.public.ReportConfiguration.where(
     (configuration) => configuration.schoolId.eq(schoolId),
   ).all();
 
@@ -485,45 +547,40 @@ if (!Number.isFinite(assessment.maxScore) || assessment.maxScore <= 0) {
   );
 
   for (const configuration of activeConfigurations) {
-    const components = await db.orm.public.ReportComponent.where((component) =>
+    const components = await client.orm.public.ReportComponent.where((component) =>
       component.configurationId.eq(configuration.id),
     ).all();
 
-    /*
-     * Find whether this report configuration actually uses
-     * the assessment type of the assessment being saved.
-     */
-    const usesAssessmentType = components.some(
+    const usesAssessmentComponent = components.some(
       (component) =>
         component.type === "ASSESSMENT" &&
-        component.assessmentType === assessment.type,
+        component.assessmentType === assessment.type &&
+        (component.assessmentCategoryId ?? null) ===
+          (assessment.assessmentCategoryId ?? null),
     );
 
-    /*
-     * If this report configuration does not use this assessment
-     * type, there is nothing to recalculate for this report.
-     */
-    if (!usesAssessmentType) {
+    if (!usesAssessmentComponent) {
       continue;
     }
 
-    /*
-     * The configuration uses this assessment type, so recalculate
-     * the student's complete subject result using ALL configured
-     * components and calculation rules.
-     */
-    await calculateAndSaveSubjectResult({
-      schoolId,
-      studentId,
-      classId: assessment.classId,
-      subjectId: assessment.subjectId,
-      termId: assessment.termId,
-      reportType: configuration.reportType,
-    });
+    
+await calculateAndSaveSubjectResult(
+  {
+    schoolId,
+    studentId,
+    classId: assessment.classId,
+    subjectId: assessment.subjectId,
+    termId: assessment.termId,
+    reportType: configuration.reportType,
+  },
+  client,
+);
+
   }
 
   return savedScore;
 }
+
 export async function getAssessmentScores(
   schoolId: number,
   assessmentId: number,

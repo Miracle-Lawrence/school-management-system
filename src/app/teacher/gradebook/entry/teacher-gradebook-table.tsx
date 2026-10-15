@@ -27,6 +27,7 @@ type TeacherGradebookTableProps = {
   classId: number;
   subjectId: number;
   termId: number;
+  configurationId: number;
   assessments: AssessmentRow[];
   students: StudentRow[];
   existingScores: ExistingScoreRow[];
@@ -36,6 +37,7 @@ export default function TeacherGradebookTable({
   classId,
   subjectId,
   termId,
+  configurationId,
   assessments,
   students,
   existingScores,
@@ -67,13 +69,15 @@ export default function TeacherGradebookTable({
   }
 
   async function saveScores() {
+    if (saving) return;
+
     setMessage("");
     setMessageType("");
 
     const entries: {
       assessmentId: number;
       studentId: number;
-      score: number | null;
+      score: number;
     }[] = [];
 
     for (const student of students) {
@@ -81,10 +85,8 @@ export default function TeacherGradebookTable({
         const key = `${assessment.id}:${student.id}`;
         const value = scores[key]?.trim() ?? "";
 
-        // Blank values are not submitted, so existing scores are preserved.
-        if (value === "") {
-          continue;
-        }
+        // Blank fields are not submitted and do not erase existing scores.
+        if (value === "") continue;
 
         const score = Number(value);
 
@@ -138,6 +140,7 @@ export default function TeacherGradebookTable({
           classId,
           subjectId,
           termId,
+          configurationId,
           scores: entries,
         }),
       });

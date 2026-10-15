@@ -32,6 +32,10 @@
       "model": "GradeScale",
       "namespace": "public"
     },
+    "GradeScaleSet": {
+      "model": "GradeScaleSet",
+      "namespace": "public"
+    },
     "Parent": {
       "model": "Parent",
       "namespace": "public"
@@ -1382,6 +1386,13 @@
                   "kind": "scalar"
                 }
               },
+              "gradeScaleSetId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1440,6 +1451,22 @@
               }
             },
             "relations": {
+              "gradeScaleSet": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "gradeScaleSetId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "GradeScaleSet",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1468,6 +1495,9 @@
                 "displayOrder": {
                   "column": "displayOrder"
                 },
+                "gradeScaleSetId": {
+                  "column": "gradeScaleSetId"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -1495,6 +1525,124 @@
               },
               "namespaceId": "public",
               "table": "GradeScale"
+            }
+          },
+          "GradeScaleSet": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "gradeScales": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "gradeScaleSetId"
+                  ]
+                },
+                "to": {
+                  "model": "GradeScale",
+                  "namespace": "public"
+                }
+              },
+              "reportConfigurations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "gradeScaleSetId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportConfiguration",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "GradeScaleSet"
             }
           },
           "Parent": {
@@ -2603,6 +2751,13 @@
                   "kind": "scalar"
                 }
               },
+              "gradeScaleSetId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -2703,6 +2858,22 @@
                   "namespace": "public"
                 }
               },
+              "gradeScaleSet": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "gradeScaleSetId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "GradeScaleSet",
+                  "namespace": "public"
+                }
+              },
               "school": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -2724,6 +2895,9 @@
               "fields": {
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "gradeScaleSetId": {
+                  "column": "gradeScaleSetId"
                 },
                 "id": {
                   "column": "id"
@@ -3142,6 +3316,21 @@
                 },
                 "to": {
                   "model": "SchoolClass",
+                  "namespace": "public"
+                }
+              },
+              "gradeScaleSets": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "GradeScaleSet",
                   "namespace": "public"
                 }
               },
@@ -7082,6 +7271,11 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "gradeScaleSetId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -7147,9 +7341,33 @@
                     "namespaceId": "public",
                     "tableName": "School"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "gradeScaleSetId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "GradeScale"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "GradeScaleSet"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "gradeScaleSetId"
+                  ],
+                  "name": "GradeScale_gradeScaleSetId_idx_40aa63f0",
+                  "prefix": "GradeScale_gradeScaleSetId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "schoolId"
@@ -7167,8 +7385,95 @@
               "uniques": [
                 {
                   "columns": [
-                    "schoolId",
+                    "gradeScaleSetId",
                     "code"
+                  ]
+                }
+              ]
+            },
+            "GradeScaleSet": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "GradeScaleSet"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "GradeScaleSet_schoolId_idx_82b454d7",
+                  "prefix": "GradeScaleSet_schoolId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "schoolId",
+                    "name"
                   ]
                 }
               ]
@@ -8132,6 +8437,11 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "gradeScaleSetId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -8238,9 +8548,33 @@
                     "namespaceId": "public",
                     "tableName": "School"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "gradeScaleSetId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportConfiguration"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "GradeScaleSet"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "gradeScaleSetId"
+                  ],
+                  "name": "ReportConfiguration_gradeScaleSetId_idx_40aa63f0",
+                  "prefix": "ReportConfiguration_gradeScaleSetId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "schoolId"
@@ -10673,10 +11007,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a50238f2dbc03699315447d078b5454f87807742920b5ece3bb88e919b938502"
+    "storageHash": "8f3789b80da9240f5246e6ec9ee8aabc8628c4737641d16e451a11fb0af4d76d"
   },
   "execution": {
-    "executionHash": "b4f4f5b0035a457f896990a606c7f95345b36e9f1d850593b6e0a360733167c3",
+    "executionHash": "fab4edc2eae701ba674a05dd84b0465eba16b5f161d1d5c133cee9b92ee748d6",
     "mutations": {
       "defaults": [
         {
@@ -10782,6 +11116,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "GradeScale"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "GradeScaleSet"
           }
         },
         {

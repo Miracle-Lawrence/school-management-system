@@ -8,6 +8,10 @@ import { updateReportConfiguration } from "@/lib/services/report-configuration.s
 
 const updateSchema = z.object({
   name: z.string().trim().min(1, "Configuration name is required."),
+  gradeScaleSetId: z
+    .number()
+    .int("Please select a valid grading set.")
+    .positive("Please select a valid grading set."),
   isActive: z.boolean(),
   showClassPosition: z.boolean(),
   showClassTeacherName: z.boolean(),
@@ -28,8 +32,18 @@ export async function updateReportConfigurationAction(
     throw new Error("School context is required.");
   }
 
+  const rawGradeScaleSetId = String(
+    formData.get("gradeScaleSetId") ?? "",
+  ).trim();
+
+  const gradeScaleSetId = Number(rawGradeScaleSetId);
+
   const parsed = updateSchema.safeParse({
     name: formData.get("name"),
+    gradeScaleSetId:
+      rawGradeScaleSetId !== "" && Number.isInteger(gradeScaleSetId)
+        ? gradeScaleSetId
+        : undefined,
     isActive: formData.get("isActive") === "on",
     showClassPosition: formData.get("showClassPosition") === "on",
     showClassTeacherName: formData.get("showClassTeacherName") === "on",

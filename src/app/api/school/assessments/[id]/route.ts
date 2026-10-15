@@ -69,6 +69,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       termId: data.termId,
       title: data.title,
       type: data.type,
+      assessmentCategoryId: data.assessmentCategoryId,
       maxScore: data.maxScore,
       weight: data.weight,
       date: data.date || null,

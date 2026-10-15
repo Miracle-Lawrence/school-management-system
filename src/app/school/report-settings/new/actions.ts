@@ -25,10 +25,17 @@ export async function createReportConfigurationAction(formData: FormData) {
     throw new Error("Invalid report type.");
   }
 
+  const gradeScaleSetId = Number(formData.get("gradeScaleSetId"));
+
+  if (!Number.isInteger(gradeScaleSetId) || gradeScaleSetId <= 0) {
+    throw new Error("Please select a valid grading set.");
+  }
+
   await createReportConfiguration({
     schoolId,
     name,
     reportType,
+    gradeScaleSetId,
   });
     redirect("/school/report-settings");
 }

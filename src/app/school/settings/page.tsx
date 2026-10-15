@@ -204,6 +204,22 @@ export default async function SchoolSettingsPage() {
         </p>
       </div>
 
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Assessment Categories
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Create and manage reusable categories such as First CA, Second CA,
+          Assignments, and Projects for assessment and report calculations.
+        </p>
+        <Link
+          href="/school/settings/assessment-categories"
+          className="mt-4 inline-flex rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800"
+        >
+          Manage Assessment Categories
+        </Link>
+      </div>
+
       {/* School information */}
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 px-6 py-5 sm:px-8">

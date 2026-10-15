@@ -7,6 +7,9 @@ import { db } from "@/prisma/db";
 
 import AssessmentForm from "../../new/assessment-form";
 
+import { getActiveAssessmentCategories } from "@/lib/services/report-configuration.service";
+
+
 type EditAssessmentPageProps = {
   params: Promise<{ id: string }>;
 };
@@ -21,6 +24,10 @@ export default async function EditAssessmentPage({
   if (!schoolId) {
     throw new Error("School context is required.");
   }
+
+  
+const categories = await getActiveAssessmentCategories(schoolId);
+
 
   const { id } = await params;
   const assessmentId = Number(id);
@@ -117,6 +124,7 @@ export default async function EditAssessmentPage({
         classes={classOptions}
         subjects={subjectOptions}
         assignments={assignmentOptions}
+        categories={categories}
         terms={availableTerms}
         assessment={{
           id: assessment.id,
@@ -125,6 +133,7 @@ export default async function EditAssessmentPage({
           termId: assessment.termId,
           title: assessment.title,
           type: assessment.type,
+          assessmentCategoryId: assessment.assessmentCategoryId ?? null,
           maxScore: assessment.maxScore,
           weight: assessment.weight,
           date: assessment.date?.toString() ?? null,

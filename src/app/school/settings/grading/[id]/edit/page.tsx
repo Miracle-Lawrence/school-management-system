@@ -18,7 +18,6 @@ export default async function EditGradeScalePage({
   params,
 }: EditGradeScalePageProps) {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -28,24 +27,33 @@ export default async function EditGradeScalePage({
   const { id } = await params;
   const gradeScaleId = Number(id);
 
-  if (!Number.isInteger(gradeScaleId)) {
+  if (!Number.isInteger(gradeScaleId) || gradeScaleId < 1) {
     notFound();
   }
 
-  const gradeScale = await getGradeScale(schoolId, gradeScaleId);
+  let gradeScale;
 
-  if (!gradeScale) {
+  try {
+    gradeScale = await getGradeScale(schoolId, gradeScaleId);
+  } catch {
     notFound();
   }
+
+  if (!gradeScale || gradeScale.gradeScaleSetId === null) {
+    notFound();
+  }
+
+  const gradeScaleSetId = gradeScale.gradeScaleSetId;
+  const gradingPageUrl = `/school/settings/grading?gradeScaleSetId=${gradeScaleSetId}`;
 
   async function updateGradeScaleAction(formData: FormData) {
     "use server";
 
-    const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+    const actionSession = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
 
-    const schoolId = session.user.schoolId;
+    const actionSchoolId = actionSession.user.schoolId;
 
-    if (!schoolId) {
+    if (!actionSchoolId) {
       throw new Error("School context is required.");
     }
 
@@ -69,7 +77,7 @@ export default async function EditGradeScalePage({
       throw new Error("Minimum score must be less than maximum score.");
     }
 
-    await updateGradeScale(schoolId, gradeScaleId, {
+    await updateGradeScale(actionSchoolId, gradeScaleId, {
       name: result.data.name,
       code: result.data.code,
       minScore: result.data.minScore,
@@ -79,25 +87,27 @@ export default async function EditGradeScalePage({
       isActive: result.data.isActive ?? true,
     });
 
-    redirect("/school/settings/grading");
+    redirect(gradingPageUrl);
   }
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-2 sm:px-4">
       <div>
         <Link
-          href="/school/settings/grading"
+          href={gradingPageUrl}
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          ← Back to Grading Scale
+          ← Back to Grading Scales
         </Link>
 
-        <h1 className="mt-3 text-2xl font-bold text-gray-900">
-          Edit Grade Scale
-        </h1>
+        <h1 className="mt-3 text-2xl font-bold text-gray-900">Edit Grade</h1>
 
         <p className="mt-1 text-sm text-gray-600">
-          Update the score range, grade, remark, or status.
+          Update the score range, grade, remark, or status in this grading set.
+        </p>
+
+        <p className="mt-3 inline-flex rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-800">
+          Grading Set ID: {gradeScaleSetId}
         </p>
       </div>
 
@@ -241,7 +251,7 @@ export default async function EditGradeScalePage({
 
         <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end">
           <Link
-            href="/school/settings/grading"
+            href={gradingPageUrl}
             className="rounded-lg border border-gray-300 px-5 py-2.5 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50"
           >
             Cancel
