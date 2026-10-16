@@ -25,6 +25,12 @@ const navigation = [
     label: "Gradebook",
     href: "/teacher/gradebook",
   },
+  {
+    label: "Subject Results",
+    href: "/teacher/subject-results",
+  },
+  { label: "Report Comments", href: "/teacher/report-comments" },
+  { label: "Psychomotor Assessments", href: "/teacher/psychomotor" },
 ];
 
 export default function TeacherPortalShell({

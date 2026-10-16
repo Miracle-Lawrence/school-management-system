@@ -25,7 +25,6 @@ export default async function ReportCommentsPage({
   searchParams,
 }: ReportCommentsPageProps) {
   const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
@@ -62,7 +61,11 @@ export default async function ReportCommentsPage({
 
   const classStudents = students
     .filter((student) => student.classId === selectedClassId)
-    .sort((a, b) => a.lastName.localeCompare(b.lastName));
+    .sort(
+      (a, b) =>
+        a.lastName.localeCompare(b.lastName) ||
+        a.firstName.localeCompare(b.firstName),
+    );
 
   const selectedStudentId = Number(params.studentId) || classStudents[0]?.id;
 
@@ -85,7 +88,6 @@ export default async function ReportCommentsPage({
     "use server";
 
     const currentSession = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
-
     const currentSchoolId = currentSession.user.schoolId;
 
     if (!currentSchoolId) {
@@ -95,8 +97,6 @@ export default async function ReportCommentsPage({
     const studentId = Number(formData.get("studentId"));
     const termId = Number(formData.get("termId"));
 
-    const teacherComment = String(formData.get("teacherComment") ?? "");
-
     const principalComment = String(formData.get("principalComment") ?? "");
 
     try {
@@ -104,14 +104,13 @@ export default async function ReportCommentsPage({
         studentId,
         termId,
         reportType: "TERMINAL",
-        teacherComment,
         principalComment,
       });
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : "Unable to save report comments.";
+          : "Unable to save the principal's comment.";
 
       redirect(
         `/school/results/report-card/comments?sessionId=${selectedSessionId}&termId=${termId}&classId=${selectedClassId}&studentId=${studentId}&error=${encodeURIComponent(message)}`,
@@ -125,14 +124,16 @@ export default async function ReportCommentsPage({
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Report Comments</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Principal's Report Comments
+          </h1>
 
           <p className="text-sm text-muted-foreground">
-            Enter teacher and principal comments for a student's terminal
-            report.
+            Enter the principal or head teacher's comment for a student's
+            terminal report. Teachers enter their own comments through the
+            teacher portal.
           </p>
         </div>
 
@@ -153,10 +154,9 @@ export default async function ReportCommentsPage({
         </div>
       </div>
 
-      {/* Success / Error Messages */}
       {params.saved === "1" && (
         <div className="rounded-md border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800">
-          Report comments saved successfully.
+          Principal's comment saved successfully.
         </div>
       )}
 
@@ -166,10 +166,8 @@ export default async function ReportCommentsPage({
         </div>
       )}
 
-      {/* Selector */}
       <form method="GET" className="rounded-lg border bg-card p-5 shadow-sm">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* Session */}
           <div className="space-y-2">
             <label htmlFor="sessionId" className="text-sm font-medium">
               Academic Session
@@ -189,7 +187,6 @@ export default async function ReportCommentsPage({
             </select>
           </div>
 
-          {/* Term */}
           <div className="space-y-2">
             <label htmlFor="termId" className="text-sm font-medium">
               Term
@@ -209,7 +206,6 @@ export default async function ReportCommentsPage({
             </select>
           </div>
 
-          {/* Class */}
           <div className="space-y-2">
             <label htmlFor="classId" className="text-sm font-medium">
               Class
@@ -229,14 +225,12 @@ export default async function ReportCommentsPage({
             </select>
           </div>
 
-          {/* Student */}
           <div className="space-y-2">
             <label htmlFor="studentId" className="text-sm font-medium">
               Student
             </label>
 
             <select
-              key={`student-selector-${selectedStudentId}`}
               id="studentId"
               name="studentId"
               defaultValue={selectedStudentId ?? ""}
@@ -261,15 +255,13 @@ export default async function ReportCommentsPage({
         </div>
       </form>
 
-      {/* Comment Form */}
       {selectedStudent && selectedTermId ? (
         <form
-          key={`comment-form-${selectedStudent.id}-${selectedTermId}`}
+          key={`principal-comment-form-${selectedStudent.id}-${selectedTermId}`}
           action={saveComments}
           className="rounded-lg border bg-card shadow-sm"
         >
           <input type="hidden" name="studentId" value={selectedStudent.id} />
-
           <input type="hidden" name="termId" value={selectedTermId} />
 
           <div className="border-b px-6 py-5">
@@ -279,59 +271,30 @@ export default async function ReportCommentsPage({
 
             <p className="mt-1 text-sm text-muted-foreground">
               {selectedStudent.admissionNumber} ·{" "}
-              {
-                classes.find(
-                  (schoolClass) => schoolClass.id === selectedClassId,
-                )?.name
-              }{" "}
-              · {terms.find((term) => term.id === selectedTermId)?.name}
+              {classes.find((item) => item.id === selectedClassId)?.name} ·{" "}
+              {terms.find((item) => item.id === selectedTermId)?.name}
             </p>
           </div>
 
-          <div className="space-y-6 p-6">
-            {/* Teacher Comment */}
-            <div className="space-y-2">
-              <label htmlFor="teacherComment" className="text-sm font-medium">
-                Teacher's Comment
-              </label>
+          <div className="space-y-2 p-6">
+            <label htmlFor="principalComment" className="text-sm font-medium">
+              Principal / Head Teacher's Comment
+            </label>
 
-              <textarea
-                key={`teacher-comment-${selectedStudent.id}-${selectedTermId}`}
-                id="teacherComment"
-                name="teacherComment"
-                defaultValue={existingComment?.teacherComment ?? ""}
-                rows={5}
-                maxLength={1000}
-                placeholder="Enter the teacher's comment about the student's academic performance, conduct, strengths, and areas for improvement."
-                className="w-full resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-              />
+            <textarea
+              key={`principal-comment-${selectedStudent.id}-${selectedTermId}`}
+              id="principalComment"
+              name="principalComment"
+              defaultValue={existingComment?.principalComment ?? ""}
+              rows={5}
+              maxLength={1000}
+              placeholder="Enter the principal or head teacher's official comment."
+              className="w-full resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
 
-              <p className="text-xs text-muted-foreground">
-                Maximum 1000 characters.
-              </p>
-            </div>
-
-            {/* Principal Comment */}
-            <div className="space-y-2">
-              <label htmlFor="principalComment" className="text-sm font-medium">
-                Principal / Head Teacher's Comment
-              </label>
-
-              <textarea
-                key={`principal-comment-${selectedStudent.id}-${selectedTermId}`}
-                id="principalComment"
-                name="principalComment"
-                defaultValue={existingComment?.principalComment ?? ""}
-                rows={5}
-                maxLength={1000}
-                placeholder="Enter the principal or head teacher's official comment."
-                className="w-full resize-y rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-              />
-
-              <p className="text-xs text-muted-foreground">
-                Maximum 1000 characters.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Maximum 1000 characters.
+            </p>
           </div>
 
           <div className="flex items-center justify-end gap-3 border-t px-6 py-4">
@@ -346,16 +309,15 @@ export default async function ReportCommentsPage({
               type="submit"
               className="rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
-              Save Comments
+              Save Principal's Comment
             </button>
           </div>
         </form>
       ) : (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="font-medium">Select a valid student and term.</p>
-
           <p className="mt-1 text-sm text-muted-foreground">
-            The student's report comments will appear here.
+            The principal's comment will appear here.
           </p>
         </div>
       )}

@@ -181,6 +181,28 @@ export default async function SchoolSettingsPage() {
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
+                Reusable Grading Sets
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-600">
+                Create and manage reusable grading bands, score ranges, grades,
+                and remarks for different report configurations.
+              </p>
+            </div>
+
+            <Link
+              href="/school/settings/grading-sets"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Manage Grading Sets
+            </Link>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
                 Psychomotor & Behaviour
               </h2>
 

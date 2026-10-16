@@ -152,7 +152,9 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
     input.maxScore,
   );
 
+ 
   return db.orm.public.GradeScale.create({
+    schoolId: input.schoolId,
     gradeScaleSetId: input.gradeScaleSetId,
     name,
     code,
@@ -162,6 +164,7 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
     displayOrder: input.displayOrder,
     isActive: input.isActive ?? true,
   });
+
 }
 
 /**

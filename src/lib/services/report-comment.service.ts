@@ -62,6 +62,7 @@ export async function getReportComment(
   );
 }
 
+
 export async function saveReportComment(
   schoolId: number,
   input: ReportCommentInput,
@@ -78,26 +79,35 @@ export async function saveReportComment(
 
   await validateReportCommentContext(schoolId, data.studentId, data.termId);
 
-  const existingComments = await db.orm.public.ReportComment.where((item) =>
-    item.studentId.eq(data.studentId),
-  ).all();
+  const existingComment = await getReportComment(
+    schoolId,
+    data.studentId,
+    data.termId,
+    data.reportType,
+  );
 
-  const existingComment =
-    existingComments.find(
-      (comment) =>
-        comment.schoolId === schoolId &&
-        comment.termId === data.termId &&
-        comment.reportType === data.reportType,
-    ) ?? null;
-
-  const commentData = {
+  const commentData: {
+    schoolId: number;
+    studentId: number;
+    termId: number;
+    reportType: ReportType;
+    teacherComment?: string | null;
+    principalComment?: string | null;
+  } = {
     schoolId,
     studentId: data.studentId,
     termId: data.termId,
     reportType: data.reportType,
-    teacherComment: data.teacherComment?.trim() || null,
-    principalComment: data.principalComment?.trim() || null,
   };
+
+  // Update only fields supplied by the caller.
+  if (data.teacherComment !== undefined) {
+    commentData.teacherComment = data.teacherComment.trim() || null;
+  }
+
+  if (data.principalComment !== undefined) {
+    commentData.principalComment = data.principalComment.trim() || null;
+  }
 
   if (existingComment) {
     return db.orm.public.ReportComment.where((item) =>
@@ -105,7 +115,11 @@ export async function saveReportComment(
     ).update(commentData);
   }
 
-  return db.orm.public.ReportComment.create(commentData);
+  return db.orm.public.ReportComment.create({
+    ...commentData,
+    teacherComment: commentData.teacherComment ?? null,
+    principalComment: commentData.principalComment ?? null,
+  });
 }
 
 export async function deleteReportComment(schoolId: number, commentId: number) {
