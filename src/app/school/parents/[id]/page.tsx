@@ -1,10 +1,11 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { updateParent } from "@/lib/services/parent.service";
+import ResetPasswordControl from "./reset-password-control";
 
 type ParentPageProps = {
   params: Promise<{
@@ -103,7 +104,7 @@ export default async function ParentDetailsPage({ params }: ParentPageProps) {
           href="/school/parents"
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          ← Back to Parents
+          â† Back to Parents
         </Link>
       </div>
 
@@ -388,6 +389,9 @@ export default async function ParentDetailsPage({ params }: ParentPageProps) {
           </div>
         </form>
       </details>
+
+      <ResetPasswordControl parentId={parentId} />
     </div>
   );
 }
+

@@ -6100,6 +6100,13 @@
                   "kind": "scalar"
                 }
               },
+              "mustChangePassword": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "name": {
                 "nullable": true,
                 "type": {
@@ -6271,6 +6278,9 @@
                 },
                 "lastLoginAt": {
                   "column": "lastLoginAt"
+                },
+                "mustChangePassword": {
+                  "column": "mustChangePassword"
                 },
                 "name": {
                   "column": "name"
@@ -10808,6 +10818,15 @@
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
+                "mustChangePassword": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -11007,7 +11026,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8f3789b80da9240f5246e6ec9ee8aabc8628c4737641d16e451a11fb0af4d76d"
+    "storageHash": "adb55de101e190917148e2716f7c64bd0e77b9dc2d40d2586a601baae7529e3a"
   },
   "execution": {
     "executionHash": "fab4edc2eae701ba674a05dd84b0465eba16b5f161d1d5c133cee9b92ee748d6",

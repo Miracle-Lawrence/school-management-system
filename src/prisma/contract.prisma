@@ -512,6 +512,7 @@ model User {
   role               UserRole
   isActive           Boolean                    @default(true)
   sessionVersion     Int                        @default(0)
+  mustChangePassword Boolean                    @default(false)
   emailVerifiedAt    DateTime?
   lastLoginAt        DateTime?
   student            Student?

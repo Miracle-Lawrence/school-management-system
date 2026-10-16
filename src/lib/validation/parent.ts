@@ -23,9 +23,13 @@ export const createParentSchema = z.object({
   email: z
     .string()
     .trim()
-    .email("Enter a valid email address.")
-    .optional()
-    .or(z.literal("")),
+    .email("Enter a valid email address."),
+  
+  password: z
+    .string()
+    .min(4, "Password must be at least 4 characters.")
+    .max(128),
+    
 
   address: z
     .string()

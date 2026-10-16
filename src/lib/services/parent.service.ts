@@ -1,48 +1,69 @@
+import { hashPassword } from "@/lib/auth/password";
 import { db } from "@/prisma/db";
+import type { CreateParentInput } from "@/lib/validation/parent";
 
-type CreateParentData = {
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-};
+export async function createParent(schoolId: number, data: CreateParentInput) {
+  const normalizedEmail = data.email.trim().toLowerCase();
 
-export async function createParent(schoolId: number, data: CreateParentData) {
-  const parent = await db.orm.public.Parent.create({
+  const existingUser = await db.orm.public.User.where((user) =>
+    user.email.eq(normalizedEmail),
+  ).first();
+
+  if (existingUser) {
+    throw new Error("An account with this email address already exists.");
+  }
+
+  const passwordHash = await hashPassword(data.password);
+
+  const user = await db.orm.public.User.create({
     schoolId,
-    firstName: data.firstName,
-    lastName: data.lastName,
+    email: normalizedEmail,
+    passwordHash,
+    name: `${data.firstName.trim()} ${data.lastName.trim()}`,
     phone: data.phone || null,
-    email: data.email || null,
-    address: data.address || null,
+    role: "PARENT",
+    isActive: true,
+    mustChangePassword: true,
   });
 
-  return parent;
-}
+  try {
+    return await db.orm.public.Parent.create({
+      schoolId,
+      userId: user.id,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      phone: data.phone || null,
+      email: normalizedEmail,
+      address: data.address || null,
+    });
+  } catch (error) {
+    // Clean up the login if creating its parent profile failed.
+    await db.orm.public.User.where((record) => record.id.eq(user.id)).delete();
 
-type UpdateParentData = {
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-};
+    throw error;
+  }
+}
 
 export async function updateParent(
   schoolId: number,
   parentId: number,
-  data: UpdateParentData,
+  data: {
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+  },
 ) {
-  const parent = await db.orm.public.Parent.where((parent) =>
-    parent.id.eq(parentId),
+  const parent = await db.orm.public.Parent.where((record) =>
+    record.id.eq(parentId),
   ).first();
 
   if (!parent || parent.schoolId !== schoolId) {
     throw new Error("Parent not found.");
   }
 
-  return db.orm.public.Parent.where((parent) => parent.id.eq(parentId)).update({
+  return db.orm.public.Parent.where((record) => record.id.eq(parentId)).update({
     firstName: data.firstName,
     lastName: data.lastName,
     phone: data.phone || null,

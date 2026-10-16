@@ -22,6 +22,7 @@ export default function NewParentPage() {
       lastName: formData.get("lastName"),
       phone: formData.get("phone"),
       email: formData.get("email"),
+      password: formData.get("password"),
       address: formData.get("address"),
     });
 
@@ -141,9 +142,36 @@ export default function NewParentPage() {
                 id="email"
                 name="email"
                 type="email"
+                required
                 placeholder="parent@example.com"
                 className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-semibold text-slate-700"
+              >
+                Initial Portal Password
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                minLength={4}
+                maxLength={128}
+                autoComplete="new-password"
+                placeholder="At least 4 characters"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+
+              <p className="mt-1 text-xs text-slate-500">
+                Give this temporary password to the parent securely. They should
+                change it after signing in.
+              </p>
             </div>
 
             <div>
