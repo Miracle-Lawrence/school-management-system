@@ -1,0 +1,1736 @@
+[
+  {
+    "id": "table.FeeCategory",
+    "label": "Create table \"FeeCategory\"",
+    "summary": "Creates table \"FeeCategory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "FeeCategory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"FeeCategory\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"FeeCategory\"",
+        "sql": "CREATE TABLE \"public\".\"FeeCategory\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"FeeCategory\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.FeePayment",
+    "label": "Create table \"FeePayment\"",
+    "summary": "Creates table \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"FeePayment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"FeePayment\"",
+        "sql": "CREATE TABLE \"public\".\"FeePayment\" (\n  \"amount\" numeric NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"invoiceId\" int4 NOT NULL,\n  \"method\" text NOT NULL,\n  \"notes\" text,\n  \"paidAt\" timestamptz,\n  \"providerReference\" text,\n  \"recordedByUserId\" int4,\n  \"reference\" text NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"FeePayment_method_check_0f145c4e\" CHECK (\"method\" IN ('CASH', 'BANK_TRANSFER', 'PAYSTACK', 'OTHER')),\n  CONSTRAINT \"FeePayment_status_check_147e2653\" CHECK (\"status\" IN ('PENDING', 'CONFIRMED', 'FAILED', 'REFUNDED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"FeePayment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.FeeStructure",
+    "label": "Create table \"FeeStructure\"",
+    "summary": "Creates table \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"FeeStructure\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"FeeStructure\"",
+        "sql": "CREATE TABLE \"public\".\"FeeStructure\" (\n  \"amount\" numeric NOT NULL,\n  \"categoryId\" int4 NOT NULL,\n  \"classId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"isMandatory\" bool DEFAULT true NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"sessionId\" int4 NOT NULL,\n  \"termId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"FeeStructure\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.InvoiceItem",
+    "label": "Create table \"InvoiceItem\"",
+    "summary": "Creates table \"InvoiceItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "InvoiceItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"InvoiceItem\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"InvoiceItem\"",
+        "sql": "CREATE TABLE \"public\".\"InvoiceItem\" (\n  \"amount\" numeric NOT NULL,\n  \"categoryId\" int4,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"invoiceId\" int4 NOT NULL,\n  \"quantity\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"InvoiceItem\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.StudentInvoice",
+    "label": "Create table \"StudentInvoice\"",
+    "summary": "Creates table \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"StudentInvoice\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"StudentInvoice\"",
+        "sql": "CREATE TABLE \"public\".\"StudentInvoice\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"dueDate\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"invoiceNumber\" text NOT NULL,\n  \"issuedAt\" timestamptz,\n  \"schoolId\" int4 NOT NULL,\n  \"sessionId\" int4 NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"termId\" int4 NOT NULL,\n  \"termInvoiceKey\" text,\n  \"title\" text,\n  \"totalAmount\" numeric DEFAULT '0'::numeric NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"StudentInvoice_status_check_c484ea39\" CHECK (\"status\" IN ('DRAFT', 'ISSUED', 'CANCELLED')),\n  CONSTRAINT \"StudentInvoice_type_check_f256648a\" CHECK (\"type\" IN ('TERM', 'ONE_OFF'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"StudentInvoice\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.FeeCategory.FeeCategory_schoolId_name_key",
+    "label": "Add unique constraint on \"FeeCategory\" (schoolId, name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "FeeCategory_schoolId_name_key",
+        "table": "FeeCategory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"FeeCategory_schoolId_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeCategory_schoolId_name_key",
+          "public",
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"FeeCategory_schoolId_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"FeeCategory\" ADD CONSTRAINT \"FeeCategory_schoolId_name_key\" UNIQUE (\"schoolId\", \"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"FeeCategory_schoolId_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeCategory_schoolId_name_key",
+          "public",
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.FeePayment.FeePayment_reference_key",
+    "label": "Add unique constraint on \"FeePayment\" (reference)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "FeePayment_reference_key",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"FeePayment_reference_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_reference_key",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"FeePayment_reference_key\"",
+        "sql": "ALTER TABLE \"public\".\"FeePayment\" ADD CONSTRAINT \"FeePayment_reference_key\" UNIQUE (\"reference\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"FeePayment_reference_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_reference_key",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.FeeStructure.FeeStructure_categoryId_classId_termId_key",
+    "label": "Add unique constraint on \"FeeStructure\" (categoryId, classId, termId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "FeeStructure_categoryId_classId_termId_key",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"FeeStructure_categoryId_classId_termId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_categoryId_classId_termId_key",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"FeeStructure_categoryId_classId_termId_key\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\" ADD CONSTRAINT \"FeeStructure_categoryId_classId_termId_key\" UNIQUE (\"categoryId\", \"classId\", \"termId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"FeeStructure_categoryId_classId_termId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_categoryId_classId_termId_key",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentInvoice.StudentInvoice_termInvoiceKey_key",
+    "label": "Add unique constraint on \"StudentInvoice\" (termInvoiceKey)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentInvoice_termInvoiceKey_key",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentInvoice_termInvoiceKey_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_termInvoiceKey_key",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentInvoice_termInvoiceKey_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\" ADD CONSTRAINT \"StudentInvoice_termInvoiceKey_key\" UNIQUE (\"termInvoiceKey\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentInvoice_termInvoiceKey_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_termInvoiceKey_key",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentInvoice.StudentInvoice_schoolId_invoiceNumber_key",
+    "label": "Add unique constraint on \"StudentInvoice\" (schoolId, invoiceNumber)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentInvoice_schoolId_invoiceNumber_key",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentInvoice_schoolId_invoiceNumber_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_schoolId_invoiceNumber_key",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentInvoice_schoolId_invoiceNumber_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\" ADD CONSTRAINT \"StudentInvoice_schoolId_invoiceNumber_key\" UNIQUE (\"schoolId\", \"invoiceNumber\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentInvoice_schoolId_invoiceNumber_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_schoolId_invoiceNumber_key",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeCategory.FeeCategory_schoolId_idx_82b454d7",
+    "label": "Create index \"FeeCategory_schoolId_idx_82b454d7\" on \"FeeCategory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeCategory_schoolId_idx_82b454d7",
+        "table": "FeeCategory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeCategory_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeCategory_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"FeeCategory_schoolId_idx_82b454d7\" ON \"public\".\"FeeCategory\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeCategory_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeCategory.FeeCategory_schoolId_isActive_idx_567af6bb",
+    "label": "Create index \"FeeCategory_schoolId_isActive_idx_567af6bb\" on \"FeeCategory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeCategory_schoolId_isActive_idx_567af6bb",
+        "table": "FeeCategory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeCategory_schoolId_isActive_idx_567af6bb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory_schoolId_isActive_idx_567af6bb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeCategory_schoolId_isActive_idx_567af6bb\"",
+        "sql": "CREATE INDEX \"FeeCategory_schoolId_isActive_idx_567af6bb\" ON \"public\".\"FeeCategory\" (\"schoolId\", \"isActive\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeCategory_schoolId_isActive_idx_567af6bb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeCategory_schoolId_isActive_idx_567af6bb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeePayment.FeePayment_createdAt_idx_9575dbd7",
+    "label": "Create index \"FeePayment_createdAt_idx_9575dbd7\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeePayment_createdAt_idx_9575dbd7",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeePayment_createdAt_idx_9575dbd7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeePayment_createdAt_idx_9575dbd7\"",
+        "sql": "CREATE INDEX \"FeePayment_createdAt_idx_9575dbd7\" ON \"public\".\"FeePayment\" (\"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeePayment_createdAt_idx_9575dbd7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeePayment.FeePayment_invoiceId_idx_d5c4f70e",
+    "label": "Create index \"FeePayment_invoiceId_idx_d5c4f70e\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeePayment_invoiceId_idx_d5c4f70e",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeePayment_invoiceId_idx_d5c4f70e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeePayment_invoiceId_idx_d5c4f70e\"",
+        "sql": "CREATE INDEX \"FeePayment_invoiceId_idx_d5c4f70e\" ON \"public\".\"FeePayment\" (\"invoiceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeePayment_invoiceId_idx_d5c4f70e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeePayment.FeePayment_invoiceId_status_idx_7d5bfaf7",
+    "label": "Create index \"FeePayment_invoiceId_status_idx_7d5bfaf7\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeePayment_invoiceId_status_idx_7d5bfaf7",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeePayment_invoiceId_status_idx_7d5bfaf7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_invoiceId_status_idx_7d5bfaf7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeePayment_invoiceId_status_idx_7d5bfaf7\"",
+        "sql": "CREATE INDEX \"FeePayment_invoiceId_status_idx_7d5bfaf7\" ON \"public\".\"FeePayment\" (\"invoiceId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeePayment_invoiceId_status_idx_7d5bfaf7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_invoiceId_status_idx_7d5bfaf7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeePayment.FeePayment_recordedByUserId_idx_29221a0d",
+    "label": "Create index \"FeePayment_recordedByUserId_idx_29221a0d\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeePayment_recordedByUserId_idx_29221a0d",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeePayment_recordedByUserId_idx_29221a0d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_recordedByUserId_idx_29221a0d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeePayment_recordedByUserId_idx_29221a0d\"",
+        "sql": "CREATE INDEX \"FeePayment_recordedByUserId_idx_29221a0d\" ON \"public\".\"FeePayment\" (\"recordedByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeePayment_recordedByUserId_idx_29221a0d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeePayment_recordedByUserId_idx_29221a0d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_categoryId_idx_15c304f2",
+    "label": "Create index \"FeeStructure_categoryId_idx_15c304f2\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_categoryId_idx_15c304f2",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_categoryId_idx_15c304f2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_categoryId_idx_15c304f2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_categoryId_idx_15c304f2\"",
+        "sql": "CREATE INDEX \"FeeStructure_categoryId_idx_15c304f2\" ON \"public\".\"FeeStructure\" (\"categoryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_categoryId_idx_15c304f2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_categoryId_idx_15c304f2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_classId_idx_0089e5e7",
+    "label": "Create index \"FeeStructure_classId_idx_0089e5e7\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_classId_idx_0089e5e7",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_classId_idx_0089e5e7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_classId_idx_0089e5e7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_classId_idx_0089e5e7\"",
+        "sql": "CREATE INDEX \"FeeStructure_classId_idx_0089e5e7\" ON \"public\".\"FeeStructure\" (\"classId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_classId_idx_0089e5e7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_classId_idx_0089e5e7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_schoolId_idx_82b454d7",
+    "label": "Create index \"FeeStructure_schoolId_idx_82b454d7\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_schoolId_idx_82b454d7",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"FeeStructure_schoolId_idx_82b454d7\" ON \"public\".\"FeeStructure\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b",
+    "label": "Create index \"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\"",
+        "sql": "CREATE INDEX \"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\" ON \"public\".\"FeeStructure\" (\"schoolId\", \"sessionId\", \"termId\", \"classId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_sessionId_idx_29f415d4",
+    "label": "Create index \"FeeStructure_sessionId_idx_29f415d4\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_sessionId_idx_29f415d4",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_sessionId_idx_29f415d4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_sessionId_idx_29f415d4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_sessionId_idx_29f415d4\"",
+        "sql": "CREATE INDEX \"FeeStructure_sessionId_idx_29f415d4\" ON \"public\".\"FeeStructure\" (\"sessionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_sessionId_idx_29f415d4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_sessionId_idx_29f415d4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.FeeStructure.FeeStructure_termId_idx_1b74c9af",
+    "label": "Create index \"FeeStructure_termId_idx_1b74c9af\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FeeStructure_termId_idx_1b74c9af",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FeeStructure_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FeeStructure_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"FeeStructure_termId_idx_1b74c9af\" ON \"public\".\"FeeStructure\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FeeStructure_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FeeStructure_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.InvoiceItem.InvoiceItem_categoryId_idx_15c304f2",
+    "label": "Create index \"InvoiceItem_categoryId_idx_15c304f2\" on \"InvoiceItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "InvoiceItem_categoryId_idx_15c304f2",
+        "table": "InvoiceItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"InvoiceItem_categoryId_idx_15c304f2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem_categoryId_idx_15c304f2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"InvoiceItem_categoryId_idx_15c304f2\"",
+        "sql": "CREATE INDEX \"InvoiceItem_categoryId_idx_15c304f2\" ON \"public\".\"InvoiceItem\" (\"categoryId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"InvoiceItem_categoryId_idx_15c304f2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem_categoryId_idx_15c304f2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.InvoiceItem.InvoiceItem_invoiceId_idx_d5c4f70e",
+    "label": "Create index \"InvoiceItem_invoiceId_idx_d5c4f70e\" on \"InvoiceItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "InvoiceItem_invoiceId_idx_d5c4f70e",
+        "table": "InvoiceItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"InvoiceItem_invoiceId_idx_d5c4f70e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"InvoiceItem_invoiceId_idx_d5c4f70e\"",
+        "sql": "CREATE INDEX \"InvoiceItem_invoiceId_idx_d5c4f70e\" ON \"public\".\"InvoiceItem\" (\"invoiceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"InvoiceItem_invoiceId_idx_d5c4f70e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"InvoiceItem_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentInvoice.StudentInvoice_schoolId_idx_82b454d7",
+    "label": "Create index \"StudentInvoice_schoolId_idx_82b454d7\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentInvoice_schoolId_idx_82b454d7",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentInvoice_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentInvoice_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"StudentInvoice_schoolId_idx_82b454d7\" ON \"public\".\"StudentInvoice\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentInvoice_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentInvoice.StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b",
+    "label": "Create index \"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\"",
+        "sql": "CREATE INDEX \"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\" ON \"public\".\"StudentInvoice\" (\"schoolId\", \"studentId\", \"termId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentInvoice.StudentInvoice_sessionId_idx_29f415d4",
+    "label": "Create index \"StudentInvoice_sessionId_idx_29f415d4\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentInvoice_sessionId_idx_29f415d4",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentInvoice_sessionId_idx_29f415d4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_sessionId_idx_29f415d4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentInvoice_sessionId_idx_29f415d4\"",
+        "sql": "CREATE INDEX \"StudentInvoice_sessionId_idx_29f415d4\" ON \"public\".\"StudentInvoice\" (\"sessionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentInvoice_sessionId_idx_29f415d4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_sessionId_idx_29f415d4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentInvoice.StudentInvoice_studentId_idx_bf255322",
+    "label": "Create index \"StudentInvoice_studentId_idx_bf255322\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentInvoice_studentId_idx_bf255322",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentInvoice_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentInvoice_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"StudentInvoice_studentId_idx_bf255322\" ON \"public\".\"StudentInvoice\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentInvoice_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentInvoice.StudentInvoice_termId_idx_1b74c9af",
+    "label": "Create index \"StudentInvoice_termId_idx_1b74c9af\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentInvoice_termId_idx_1b74c9af",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentInvoice_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentInvoice_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"StudentInvoice_termId_idx_1b74c9af\" ON \"public\".\"StudentInvoice\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentInvoice_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentInvoice_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeCategory.FeeCategory_schoolId_fkey",
+    "label": "Add foreign key \"FeeCategory_schoolId_fkey\" on \"FeeCategory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeCategory_schoolId_fkey",
+        "table": "FeeCategory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeCategory_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeCategory_schoolId_fkey",
+          "public",
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeCategory_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeCategory\"\nADD CONSTRAINT \"FeeCategory_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeCategory_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeCategory_schoolId_fkey",
+          "public",
+          "\"public\".\"FeeCategory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeePayment.FeePayment_invoiceId_fkey",
+    "label": "Add foreign key \"FeePayment_invoiceId_fkey\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeePayment_invoiceId_fkey",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeePayment_invoiceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_invoiceId_fkey",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeePayment_invoiceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeePayment\"\nADD CONSTRAINT \"FeePayment_invoiceId_fkey\"\nFOREIGN KEY (\"invoiceId\")\nREFERENCES \"public\".\"StudentInvoice\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeePayment_invoiceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_invoiceId_fkey",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeePayment.FeePayment_recordedByUserId_fkey",
+    "label": "Add foreign key \"FeePayment_recordedByUserId_fkey\" on \"FeePayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeePayment_recordedByUserId_fkey",
+        "table": "FeePayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeePayment_recordedByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_recordedByUserId_fkey",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeePayment_recordedByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeePayment\"\nADD CONSTRAINT \"FeePayment_recordedByUserId_fkey\"\nFOREIGN KEY (\"recordedByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeePayment_recordedByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeePayment_recordedByUserId_fkey",
+          "public",
+          "\"public\".\"FeePayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeStructure.FeeStructure_schoolId_fkey",
+    "label": "Add foreign key \"FeeStructure_schoolId_fkey\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeStructure_schoolId_fkey",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeStructure_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_schoolId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeStructure_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\"\nADD CONSTRAINT \"FeeStructure_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeStructure_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_schoolId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeStructure.FeeStructure_categoryId_fkey",
+    "label": "Add foreign key \"FeeStructure_categoryId_fkey\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeStructure_categoryId_fkey",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeStructure_categoryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_categoryId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeStructure_categoryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\"\nADD CONSTRAINT \"FeeStructure_categoryId_fkey\"\nFOREIGN KEY (\"categoryId\")\nREFERENCES \"public\".\"FeeCategory\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeStructure_categoryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_categoryId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeStructure.FeeStructure_classId_fkey",
+    "label": "Add foreign key \"FeeStructure_classId_fkey\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeStructure_classId_fkey",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeStructure_classId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_classId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeStructure_classId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\"\nADD CONSTRAINT \"FeeStructure_classId_fkey\"\nFOREIGN KEY (\"classId\")\nREFERENCES \"public\".\"SchoolClass\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeStructure_classId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_classId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeStructure.FeeStructure_sessionId_fkey",
+    "label": "Add foreign key \"FeeStructure_sessionId_fkey\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeStructure_sessionId_fkey",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeStructure_sessionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_sessionId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeStructure_sessionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\"\nADD CONSTRAINT \"FeeStructure_sessionId_fkey\"\nFOREIGN KEY (\"sessionId\")\nREFERENCES \"public\".\"AcademicSession\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeStructure_sessionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_sessionId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FeeStructure.FeeStructure_termId_fkey",
+    "label": "Add foreign key \"FeeStructure_termId_fkey\" on \"FeeStructure\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FeeStructure_termId_fkey",
+        "table": "FeeStructure"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FeeStructure_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_termId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FeeStructure_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FeeStructure\"\nADD CONSTRAINT \"FeeStructure_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FeeStructure_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FeeStructure_termId_fkey",
+          "public",
+          "\"public\".\"FeeStructure\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.InvoiceItem.InvoiceItem_invoiceId_fkey",
+    "label": "Add foreign key \"InvoiceItem_invoiceId_fkey\" on \"InvoiceItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "InvoiceItem_invoiceId_fkey",
+        "table": "InvoiceItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"InvoiceItem_invoiceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "InvoiceItem_invoiceId_fkey",
+          "public",
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"InvoiceItem_invoiceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"InvoiceItem\"\nADD CONSTRAINT \"InvoiceItem_invoiceId_fkey\"\nFOREIGN KEY (\"invoiceId\")\nREFERENCES \"public\".\"StudentInvoice\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"InvoiceItem_invoiceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "InvoiceItem_invoiceId_fkey",
+          "public",
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.InvoiceItem.InvoiceItem_categoryId_fkey",
+    "label": "Add foreign key \"InvoiceItem_categoryId_fkey\" on \"InvoiceItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "InvoiceItem_categoryId_fkey",
+        "table": "InvoiceItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"InvoiceItem_categoryId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "InvoiceItem_categoryId_fkey",
+          "public",
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"InvoiceItem_categoryId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"InvoiceItem\"\nADD CONSTRAINT \"InvoiceItem_categoryId_fkey\"\nFOREIGN KEY (\"categoryId\")\nREFERENCES \"public\".\"FeeCategory\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"InvoiceItem_categoryId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "InvoiceItem_categoryId_fkey",
+          "public",
+          "\"public\".\"InvoiceItem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentInvoice.StudentInvoice_schoolId_fkey",
+    "label": "Add foreign key \"StudentInvoice_schoolId_fkey\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentInvoice_schoolId_fkey",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentInvoice_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_schoolId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentInvoice_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\"\nADD CONSTRAINT \"StudentInvoice_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentInvoice_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_schoolId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentInvoice.StudentInvoice_studentId_fkey",
+    "label": "Add foreign key \"StudentInvoice_studentId_fkey\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentInvoice_studentId_fkey",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentInvoice_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_studentId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentInvoice_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\"\nADD CONSTRAINT \"StudentInvoice_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentInvoice_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_studentId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentInvoice.StudentInvoice_sessionId_fkey",
+    "label": "Add foreign key \"StudentInvoice_sessionId_fkey\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentInvoice_sessionId_fkey",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentInvoice_sessionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_sessionId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentInvoice_sessionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\"\nADD CONSTRAINT \"StudentInvoice_sessionId_fkey\"\nFOREIGN KEY (\"sessionId\")\nREFERENCES \"public\".\"AcademicSession\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentInvoice_sessionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_sessionId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentInvoice.StudentInvoice_termId_fkey",
+    "label": "Add foreign key \"StudentInvoice_termId_fkey\" on \"StudentInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentInvoice_termId_fkey",
+        "table": "StudentInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentInvoice_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_termId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentInvoice_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentInvoice\"\nADD CONSTRAINT \"StudentInvoice_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentInvoice_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentInvoice_termId_fkey",
+          "public",
+          "\"public\".\"StudentInvoice\""
+        ]
+      }
+    ]
+  }
+]

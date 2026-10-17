@@ -127,6 +127,27 @@ export default function SchoolPortalShell({
           </Link>
 
           <Link
+            href="/school/fee-categories"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Fee Categories
+          </Link>
+
+          <Link
+            href="/school/fee-structures"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Fee Structures
+          </Link>
+
+          <Link
+            href="/school/student-invoices"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Student Fee Invoicing
+          </Link>
+
+          <Link
             href="/school/report-settings"
             className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
           >

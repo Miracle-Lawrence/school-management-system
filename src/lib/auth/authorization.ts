@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { db } from "@/prisma/db";
 
-export async function requireAuth() {
+async function getValidSession() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/login");
+    return null;
   }
 
   const user = await db.orm.public.User.where((user) =>
@@ -14,7 +15,7 @@ export async function requireAuth() {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    return null;
   }
 
   const schoolScopedRoles = [
@@ -27,7 +28,7 @@ export async function requireAuth() {
 
   if (schoolScopedRoles.includes(user.role)) {
     if (!user.schoolId) {
-      redirect("/login");
+      return null;
     }
 
     const school = await db.orm.public.School.where((school) =>
@@ -35,7 +36,7 @@ export async function requireAuth() {
     ).first();
 
     if (!school || school.status !== "ACTIVE") {
-      redirect("/login");
+      return null;
     }
   }
 
@@ -48,6 +49,16 @@ export async function requireAuth() {
       schoolId: user.schoolId,
     },
   };
+}
+
+export async function requireAuth() {
+  const session = await getValidSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  return session;
 }
 
 export async function requireRole(allowedRoles: string[]) {
@@ -78,6 +89,26 @@ export async function requireRole(allowedRoles: string[]) {
     default:
       redirect("/login");
   }
+}
+
+export async function requireApiRole(allowedRoles: string[]) {
+  const session = await getValidSession();
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Authentication required." },
+      { status: 401 },
+    );
+  }
+
+  if (!allowedRoles.includes(session.user.role)) {
+    return NextResponse.json(
+      { error: "You do not have permission to access this resource." },
+      { status: 403 },
+    );
+  }
+
+  return session;
 }
 
 export async function requireSchoolUser() {

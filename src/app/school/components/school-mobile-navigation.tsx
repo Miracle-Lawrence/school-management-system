@@ -12,6 +12,9 @@ const navigation = [
   ["Subjects", "/school/subjects"],
   ["Assessments", "/school/assessments"],
   ["Academic Sessions", "/school/academic-sessions"],
+  ["Fee Categories", "/school/fee-categories"],
+  ["Fee Structures", "/school/fee-structures"],
+  ["Student Fee Invoicing", "/school/student-invoices"],
   ["Report Settings", "/school/report-settings"],
   ["Results", "/school/results"],
   ["Settings", "/school/settings"],
@@ -95,7 +98,7 @@ export default function SchoolMobileNavigation({
             <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
               {navigation.map(([label, href], index) => (
                 <div key={href}>
-                  {index === 10 && (
+                  {index === navigation.length - 1 && (
                     <div className="my-4 border-t border-slate-800" />
                   )}
 

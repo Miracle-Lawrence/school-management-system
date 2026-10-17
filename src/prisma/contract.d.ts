@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'adb55de101e190917148e2716f7c64bd0e77b9dc2d40d2586a601baae7529e3a'>;
+  StorageHashBase<'af1a15139dcc3deddfaa657697e2eeb8ee7f6b292ec3fb191f7a01b943104bb3'>;
 export type ExecutionHash =
-  ExecutionHashBase<'fab4edc2eae701ba674a05dd84b0465eba16b5f161d1d5c133cee9b92ee748d6'>;
+  ExecutionHashBase<'c864b90985a3e491ac583c0847fa1101e286502dcfed76727d4634e16444685e'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -317,6 +317,42 @@ export type FieldOutputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly FeeCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly FeePayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'];
+      readonly method: 'CASH' | 'BANK_TRANSFER' | 'PAYSTACK' | 'OTHER';
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly providerReference: CodecTypes['pg/text@1']['output'] | null;
+      readonly recordedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly reference: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly FeeStructure: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly categoryId: CodecTypes['pg/int4@1']['output'];
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly isMandatory: CodecTypes['pg/bool@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly GradeScale: {
       readonly code: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -338,6 +374,15 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly InvoiceItem: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly categoryId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'];
+      readonly quantity: CodecTypes['pg/int4@1']['output'];
     };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
@@ -516,6 +561,23 @@ export type FieldOutputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
+    };
+    readonly StudentInvoice: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceNumber: CodecTypes['pg/text@1']['output'];
+      readonly issuedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'DRAFT' | 'ISSUED' | 'CANCELLED';
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly termInvoiceKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'] | null;
+      readonly totalAmount: CodecTypes['pg/numeric@1']['output'];
+      readonly type: 'TERM' | 'ONE_OFF';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly StudentPsychomotorRating: {
       readonly comment: CodecTypes['pg/text@1']['output'] | null;
@@ -721,6 +783,42 @@ export type FieldInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly FeeCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly FeePayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'];
+      readonly method: 'CASH' | 'BANK_TRANSFER' | 'PAYSTACK' | 'OTHER';
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly providerReference: CodecTypes['pg/text@1']['input'] | null;
+      readonly recordedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly reference: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly FeeStructure: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly categoryId: CodecTypes['pg/int4@1']['input'];
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly isMandatory: CodecTypes['pg/bool@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly GradeScale: {
       readonly code: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -742,6 +840,15 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly InvoiceItem: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly categoryId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'];
+      readonly quantity: CodecTypes['pg/int4@1']['input'];
     };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
@@ -920,6 +1027,23 @@ export type FieldInputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
+    };
+    readonly StudentInvoice: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceNumber: CodecTypes['pg/text@1']['input'];
+      readonly issuedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'DRAFT' | 'ISSUED' | 'CANCELLED';
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly termInvoiceKey: CodecTypes['pg/text@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'] | null;
+      readonly totalAmount: CodecTypes['pg/numeric@1']['input'];
+      readonly type: 'TERM' | 'ONE_OFF';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly StudentPsychomotorRating: {
       readonly comment: CodecTypes['pg/text@1']['input'] | null;
@@ -1125,6 +1249,42 @@ export type StorageColumnTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly FeeCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly FeePayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'];
+      readonly method: 'CASH' | 'BANK_TRANSFER' | 'PAYSTACK' | 'OTHER';
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly providerReference: CodecTypes['pg/text@1']['output'] | null;
+      readonly recordedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly reference: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly FeeStructure: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly categoryId: CodecTypes['pg/int4@1']['output'];
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly isMandatory: CodecTypes['pg/bool@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly GradeScale: {
       readonly code: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1146,6 +1306,15 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly InvoiceItem: {
+      readonly amount: CodecTypes['pg/numeric@1']['output'];
+      readonly categoryId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'];
+      readonly quantity: CodecTypes['pg/int4@1']['output'];
     };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
@@ -1324,6 +1493,23 @@ export type StorageColumnTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
+    };
+    readonly StudentInvoice: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceNumber: CodecTypes['pg/text@1']['output'];
+      readonly issuedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'DRAFT' | 'ISSUED' | 'CANCELLED';
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly termInvoiceKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'] | null;
+      readonly totalAmount: CodecTypes['pg/numeric@1']['output'];
+      readonly type: 'TERM' | 'ONE_OFF';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly StudentPsychomotorRating: {
       readonly comment: CodecTypes['pg/text@1']['output'] | null;
@@ -1529,6 +1715,42 @@ export type StorageColumnInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly FeeCategory: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly FeePayment: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'];
+      readonly method: 'CASH' | 'BANK_TRANSFER' | 'PAYSTACK' | 'OTHER';
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly paidAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly providerReference: CodecTypes['pg/text@1']['input'] | null;
+      readonly recordedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly reference: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly FeeStructure: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly categoryId: CodecTypes['pg/int4@1']['input'];
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly isMandatory: CodecTypes['pg/bool@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly GradeScale: {
       readonly code: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1550,6 +1772,15 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly InvoiceItem: {
+      readonly amount: CodecTypes['pg/numeric@1']['input'];
+      readonly categoryId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'];
+      readonly quantity: CodecTypes['pg/int4@1']['input'];
     };
     readonly Parent: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
@@ -1729,6 +1960,23 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
+    readonly StudentInvoice: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceNumber: CodecTypes['pg/text@1']['input'];
+      readonly issuedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'DRAFT' | 'ISSUED' | 'CANCELLED';
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly termInvoiceKey: CodecTypes['pg/text@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'] | null;
+      readonly totalAmount: CodecTypes['pg/numeric@1']['input'];
+      readonly type: 'TERM' | 'ONE_OFF';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly StudentPsychomotorRating: {
       readonly comment: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1875,9 +2123,11 @@ export namespace Models {
     schoolId: CodecTypes['pg/int4@1']['output'];
     startDate: CodecTypes['pg/timestamptz-temporal@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    feeInvoices: public_StudentInvoice[];
+    feeStructures: public_FeeStructure[];
     school: public_School;
     terms: public_Term[];
-    readonly [RelationKeys]?: 'school' | 'terms';
+    readonly [RelationKeys]?: 'feeInvoices' | 'feeStructures' | 'school' | 'terms';
   };
   export type public_Assessment = {
     assessmentCategoryId: CodecTypes['pg/int4@1']['output'] | null;
@@ -1962,6 +2212,55 @@ export namespace Models {
     subject: public_Subject;
     readonly [RelationKeys]?: 'class' | 'school' | 'subject';
   };
+  export type public_FeeCategory = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    invoiceItems: public_InvoiceItem[];
+    school: public_School;
+    structures: public_FeeStructure[];
+    readonly [RelationKeys]?: 'invoiceItems' | 'school' | 'structures';
+  };
+  export type public_FeePayment = {
+    amount: CodecTypes['pg/numeric@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    invoiceId: CodecTypes['pg/int4@1']['output'];
+    method: 'CASH' | 'BANK_TRANSFER' | 'PAYSTACK' | 'OTHER';
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    paidAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    providerReference: CodecTypes['pg/text@1']['output'] | null;
+    recordedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+    reference: CodecTypes['pg/text@1']['output'];
+    status: 'PENDING' | 'CONFIRMED' | 'FAILED' | 'REFUNDED';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    invoice: public_StudentInvoice;
+    recordedBy: public_User | null;
+    readonly [RelationKeys]?: 'invoice' | 'recordedBy';
+  };
+  export type public_FeeStructure = {
+    amount: CodecTypes['pg/numeric@1']['output'];
+    categoryId: CodecTypes['pg/int4@1']['output'];
+    classId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    isMandatory: CodecTypes['pg/bool@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    sessionId: CodecTypes['pg/int4@1']['output'];
+    termId: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    category: public_FeeCategory;
+    school: public_School;
+    schoolClass: public_SchoolClass;
+    session: public_AcademicSession;
+    term: public_Term;
+    readonly [RelationKeys]?: 'category' | 'school' | 'schoolClass' | 'session' | 'term';
+  };
   export type public_GradeScale = {
     code: CodecTypes['pg/text@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1990,6 +2289,18 @@ export namespace Models {
     reportConfigurations: public_ReportConfiguration[];
     school: public_School;
     readonly [RelationKeys]?: 'gradeScales' | 'reportConfigurations' | 'school';
+  };
+  export type public_InvoiceItem = {
+    amount: CodecTypes['pg/numeric@1']['output'];
+    categoryId: CodecTypes['pg/int4@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    description: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    invoiceId: CodecTypes['pg/int4@1']['output'];
+    quantity: CodecTypes['pg/int4@1']['output'];
+    category: public_FeeCategory | null;
+    invoice: public_StudentInvoice;
+    readonly [RelationKeys]?: 'category' | 'invoice';
   };
   export type public_Parent = {
     address: CodecTypes['pg/text@1']['output'] | null;
@@ -2166,6 +2477,9 @@ export namespace Models {
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
     classes: public_SchoolClass[];
+    feeCategories: public_FeeCategory[];
+    feeInvoices: public_StudentInvoice[];
+    feeStructures: public_FeeStructure[];
     gradeScaleSets: public_GradeScaleSet[];
     gradeScales: public_GradeScale[];
     parents: public_Parent[];
@@ -2189,6 +2503,9 @@ export namespace Models {
       | 'attendanceRecords'
       | 'classSubjects'
       | 'classes'
+      | 'feeCategories'
+      | 'feeInvoices'
+      | 'feeStructures'
       | 'gradeScaleSets'
       | 'gradeScales'
       | 'parents'
@@ -2219,6 +2536,7 @@ export namespace Models {
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
     classTeacher: public_Teacher | null;
+    feeStructures: public_FeeStructure[];
     school: public_School;
     studentTermResults: public_StudentTermResult[];
     students: public_Student[];
@@ -2229,6 +2547,7 @@ export namespace Models {
       | 'attendanceRecords'
       | 'classSubjects'
       | 'classTeacher'
+      | 'feeStructures'
       | 'school'
       | 'studentTermResults'
       | 'students'
@@ -2274,6 +2593,7 @@ export namespace Models {
     assessmentScores: public_AssessmentScore[];
     attendanceRecords: public_Attendance[];
     class: public_SchoolClass | null;
+    feeInvoices: public_StudentInvoice[];
     parents: public_ParentStudent[];
     psychomotorRatings: public_StudentPsychomotorRating[];
     reportComments: public_ReportComment[];
@@ -2285,6 +2605,7 @@ export namespace Models {
       | 'assessmentScores'
       | 'attendanceRecords'
       | 'class'
+      | 'feeInvoices'
       | 'parents'
       | 'psychomotorRatings'
       | 'reportComments'
@@ -2292,6 +2613,30 @@ export namespace Models {
       | 'studentTermResults'
       | 'subjectResults'
       | 'user';
+  };
+  export type public_StudentInvoice = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    invoiceNumber: CodecTypes['pg/text@1']['output'];
+    issuedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    sessionId: CodecTypes['pg/int4@1']['output'];
+    status: 'DRAFT' | 'ISSUED' | 'CANCELLED';
+    studentId: CodecTypes['pg/int4@1']['output'];
+    termId: CodecTypes['pg/int4@1']['output'];
+    termInvoiceKey: CodecTypes['pg/text@1']['output'] | null;
+    title: CodecTypes['pg/text@1']['output'] | null;
+    totalAmount: CodecTypes['pg/numeric@1']['output'];
+    type: 'TERM' | 'ONE_OFF';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    items: public_InvoiceItem[];
+    payments: public_FeePayment[];
+    school: public_School;
+    session: public_AcademicSession;
+    student: public_Student;
+    term: public_Term;
+    readonly [RelationKeys]?: 'items' | 'payments' | 'school' | 'session' | 'student' | 'term';
   };
   export type public_StudentPsychomotorRating = {
     comment: CodecTypes['pg/text@1']['output'] | null;
@@ -2447,6 +2792,8 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     assessments: public_Assessment[];
     attendanceRecords: public_Attendance[];
+    feeInvoices: public_StudentInvoice[];
+    feeStructures: public_FeeStructure[];
     psychomotorRatings: public_StudentPsychomotorRating[];
     reportComments: public_ReportComment[];
     session: public_AcademicSession;
@@ -2455,6 +2802,8 @@ export namespace Models {
     readonly [RelationKeys]?:
       | 'assessments'
       | 'attendanceRecords'
+      | 'feeInvoices'
+      | 'feeStructures'
       | 'psychomotorRatings'
       | 'reportComments'
       | 'session'
@@ -2484,13 +2833,20 @@ export namespace Models {
     sessionVersion: CodecTypes['pg/int4@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdAssessments: public_Assessment[];
+    feePaymentsRecorded: public_FeePayment[];
     parent: public_Parent | null;
     recordedAttendance: public_Attendance[];
     school: public_School | null;
     student: public_Student | null;
     teacher: public_Teacher | null;
     readonly [RelationKeys]?:
-      'createdAssessments' | 'parent' | 'recordedAttendance' | 'school' | 'student' | 'teacher';
+      | 'createdAssessments'
+      | 'feePaymentsRecorded'
+      | 'parent'
+      | 'recordedAttendance'
+      | 'school'
+      | 'student'
+      | 'teacher';
   };
 }
 
@@ -2502,8 +2858,12 @@ export declare const models: {
     AssessmentScore: Models.public_AssessmentScore;
     Attendance: Models.public_Attendance;
     ClassSubject: Models.public_ClassSubject;
+    FeeCategory: Models.public_FeeCategory;
+    FeePayment: Models.public_FeePayment;
+    FeeStructure: Models.public_FeeStructure;
     GradeScale: Models.public_GradeScale;
     GradeScaleSet: Models.public_GradeScaleSet;
+    InvoiceItem: Models.public_InvoiceItem;
     Parent: Models.public_Parent;
     ParentStudent: Models.public_ParentStudent;
     PlatformSetting: Models.public_PlatformSetting;
@@ -2518,6 +2878,7 @@ export declare const models: {
     SchoolClass: Models.public_SchoolClass;
     SchoolSubscription: Models.public_SchoolSubscription;
     Student: Models.public_Student;
+    StudentInvoice: Models.public_StudentInvoice;
     StudentPsychomotorRating: Models.public_StudentPsychomotorRating;
     StudentTermResult: Models.public_StudentTermResult;
     Subject: Models.public_Subject;
@@ -3262,6 +3623,387 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly FeeCategory: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['schoolId', 'name'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'FeeCategory_schoolId_idx_82b454d7';
+                  readonly prefix: 'FeeCategory_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeCategory_schoolId_isActive_idx_567af6bb';
+                  readonly prefix: 'FeeCategory_schoolId_isActive_idx';
+                  readonly columns: readonly ['schoolId', 'isActive'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeCategory';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly FeePayment: {
+              columns: {
+                readonly amount: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly invoiceId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly method: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly notes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly paidAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly providerReference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly recordedByUserId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly reference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['reference'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'FeePayment_createdAt_idx_9575dbd7';
+                  readonly prefix: 'FeePayment_createdAt_idx';
+                  readonly columns: readonly ['createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeePayment_invoiceId_idx_d5c4f70e';
+                  readonly prefix: 'FeePayment_invoiceId_idx';
+                  readonly columns: readonly ['invoiceId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeePayment_invoiceId_status_idx_7d5bfaf7';
+                  readonly prefix: 'FeePayment_invoiceId_status_idx';
+                  readonly columns: readonly ['invoiceId', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeePayment_recordedByUserId_idx_29221a0d';
+                  readonly prefix: 'FeePayment_recordedByUserId_idx';
+                  readonly columns: readonly ['recordedByUserId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeePayment';
+                    readonly columns: readonly ['invoiceId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeePayment';
+                    readonly columns: readonly ['recordedByUserId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly FeeStructure: {
+              columns: {
+                readonly amount: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                };
+                readonly categoryId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly classId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly isMandatory: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly sessionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly termId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [
+                { readonly columns: readonly ['categoryId', 'classId', 'termId'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'FeeStructure_categoryId_idx_15c304f2';
+                  readonly prefix: 'FeeStructure_categoryId_idx';
+                  readonly columns: readonly ['categoryId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeStructure_classId_idx_0089e5e7';
+                  readonly prefix: 'FeeStructure_classId_idx';
+                  readonly columns: readonly ['classId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeStructure_schoolId_idx_82b454d7';
+                  readonly prefix: 'FeeStructure_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeStructure_schoolId_sessionId_termId_classId_idx_5b960f1b';
+                  readonly prefix: 'FeeStructure_schoolId_sessionId_termId_classId_idx';
+                  readonly columns: readonly ['schoolId', 'sessionId', 'termId', 'classId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeStructure_sessionId_idx_29f415d4';
+                  readonly prefix: 'FeeStructure_sessionId_idx';
+                  readonly columns: readonly ['sessionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'FeeStructure_termId_idx_1b74c9af';
+                  readonly prefix: 'FeeStructure_termId_idx';
+                  readonly columns: readonly ['termId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeStructure';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeStructure';
+                    readonly columns: readonly ['categoryId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeCategory';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeStructure';
+                    readonly columns: readonly ['classId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolClass';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeStructure';
+                    readonly columns: readonly ['sessionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AcademicSession';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeStructure';
+                    readonly columns: readonly ['termId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Term';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly GradeScale: {
               columns: {
                 readonly code: {
@@ -3439,6 +4181,96 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly InvoiceItem: {
+              columns: {
+                readonly amount: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                };
+                readonly categoryId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly invoiceId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly quantity: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'InvoiceItem_categoryId_idx_15c304f2';
+                  readonly prefix: 'InvoiceItem_categoryId_idx';
+                  readonly columns: readonly ['categoryId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'InvoiceItem_invoiceId_idx_d5c4f70e';
+                  readonly prefix: 'InvoiceItem_invoiceId_idx';
+                  readonly columns: readonly ['invoiceId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'InvoiceItem';
+                    readonly columns: readonly ['invoiceId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'InvoiceItem';
+                    readonly columns: readonly ['categoryId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FeeCategory';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -4912,6 +5744,185 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly StudentInvoice: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly dueDate: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly invoiceNumber: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly issuedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly sessionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'DRAFT'>;
+                  };
+                };
+                readonly studentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly termId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly termInvoiceKey: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly totalAmount: {
+                  readonly nativeType: 'numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/numeric@1', '0'>;
+                  };
+                };
+                readonly type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [
+                { readonly columns: readonly ['termInvoiceKey'] },
+                { readonly columns: readonly ['schoolId', 'invoiceNumber'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'StudentInvoice_schoolId_idx_82b454d7';
+                  readonly prefix: 'StudentInvoice_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'StudentInvoice_schoolId_studentId_termId_status_idx_6ec17c4b';
+                  readonly prefix: 'StudentInvoice_schoolId_studentId_termId_status_idx';
+                  readonly columns: readonly ['schoolId', 'studentId', 'termId', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'StudentInvoice_sessionId_idx_29f415d4';
+                  readonly prefix: 'StudentInvoice_sessionId_idx';
+                  readonly columns: readonly ['sessionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'StudentInvoice_studentId_idx_bf255322';
+                  readonly prefix: 'StudentInvoice_studentId_idx';
+                  readonly columns: readonly ['studentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'StudentInvoice_termId_idx_1b74c9af';
+                  readonly prefix: 'StudentInvoice_termId_idx';
+                  readonly columns: readonly ['termId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['studentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Student';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['sessionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AcademicSession';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
+                    readonly columns: readonly ['termId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Term';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly StudentPsychomotorRating: {
               columns: {
                 readonly comment: {
@@ -6132,6 +7143,22 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['MONTHLY', 'QUARTERLY', 'YEARLY'];
             };
+            readonly FeeInvoiceStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['DRAFT', 'ISSUED', 'CANCELLED'];
+            };
+            readonly FeeInvoiceType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['TERM', 'ONE_OFF'];
+            };
+            readonly FeePaymentMethod: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['CASH', 'BANK_TRANSFER', 'PAYSTACK', 'OTHER'];
+            };
+            readonly FeePaymentStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'CONFIRMED', 'FAILED', 'REFUNDED'];
+            };
             readonly Gender: {
               readonly kind: 'valueSet';
               readonly values: readonly ['MALE', 'FEMALE'];
@@ -6214,6 +7241,18 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ClassSubject';
     };
+    readonly FeeCategory: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'FeeCategory';
+    };
+    readonly FeePayment: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'FeePayment';
+    };
+    readonly FeeStructure: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'FeeStructure';
+    };
     readonly GradeScale: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'GradeScale';
@@ -6221,6 +7260,10 @@ type ContractBase = Omit<
     readonly GradeScaleSet: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'GradeScaleSet';
+    };
+    readonly InvoiceItem: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'InvoiceItem';
     };
     readonly Parent: { readonly namespace: 'public' & NamespaceId; readonly model: 'Parent' };
     readonly ParentStudent: {
@@ -6269,6 +7312,10 @@ type ContractBase = Omit<
       readonly model: 'SchoolSubscription';
     };
     readonly Student: { readonly namespace: 'public' & NamespaceId; readonly model: 'Student' };
+    readonly StudentInvoice: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'StudentInvoice';
+    };
     readonly StudentPsychomotorRating: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'StudentPsychomotorRating';
@@ -6350,6 +7397,28 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly feeInvoices: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sessionId'];
+                };
+              };
+              readonly feeStructures: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sessionId'];
+                };
+              };
               readonly school: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -6942,6 +8011,325 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly FeeCategory: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly invoiceItems: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'InvoiceItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['categoryId'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly structures: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['categoryId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'FeeCategory';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly name: { readonly column: 'name' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly FeePayment: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly invoiceId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly method: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly paidAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly providerReference: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly recordedByUserId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly reference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly invoice: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['invoiceId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly recordedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['recordedByUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'FeePayment';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly amount: { readonly column: 'amount' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly invoiceId: { readonly column: 'invoiceId' };
+                readonly method: { readonly column: 'method' };
+                readonly notes: { readonly column: 'notes' };
+                readonly paidAt: { readonly column: 'paidAt' };
+                readonly providerReference: { readonly column: 'providerReference' };
+                readonly recordedByUserId: { readonly column: 'recordedByUserId' };
+                readonly reference: { readonly column: 'reference' };
+                readonly status: { readonly column: 'status' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly FeeStructure: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly categoryId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly classId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly isMandatory: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sessionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly termId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly category: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeCategory';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['categoryId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly schoolClass: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolClass';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['classId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly session: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AcademicSession';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['sessionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly term: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['termId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'FeeStructure';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly amount: { readonly column: 'amount' };
+                readonly categoryId: { readonly column: 'categoryId' };
+                readonly classId: { readonly column: 'classId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly isMandatory: { readonly column: 'isMandatory' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly sessionId: { readonly column: 'sessionId' };
+                readonly termId: { readonly column: 'termId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly GradeScale: {
             readonly fields: {
               readonly code: {
@@ -7123,6 +8511,80 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly InvoiceItem: {
+            readonly fields: {
+              readonly amount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly categoryId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly invoiceId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly quantity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly category: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeCategory';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['categoryId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly invoice: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['invoiceId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'InvoiceItem';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly amount: { readonly column: 'amount' };
+                readonly categoryId: { readonly column: 'categoryId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly invoiceId: { readonly column: 'invoiceId' };
+                readonly quantity: { readonly column: 'quantity' };
               };
             };
           };
@@ -8183,6 +9645,39 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly feeCategories: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeCategory';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
+              readonly feeInvoices: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
+              readonly feeStructures: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly gradeScaleSets: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -8473,6 +9968,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['classTeacherId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly feeStructures: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['classId'];
                 };
               };
               readonly school: {
@@ -8790,6 +10296,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly feeInvoices: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['studentId'];
+                };
+              };
               readonly parents: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -8888,6 +10405,172 @@ type ContractBase = Omit<
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly userId: { readonly column: 'userId' };
+              };
+            };
+          };
+          readonly StudentInvoice: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly dueDate: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly invoiceNumber: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly issuedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sessionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly studentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly termId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly termInvoiceKey: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly title: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly totalAmount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/numeric@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly items: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'InvoiceItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['invoiceId'];
+                };
+              };
+              readonly payments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeePayment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['invoiceId'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly session: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AcademicSession';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['sessionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly student: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Student';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['studentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly term: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['termId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'StudentInvoice';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly dueDate: { readonly column: 'dueDate' };
+                readonly id: { readonly column: 'id' };
+                readonly invoiceNumber: { readonly column: 'invoiceNumber' };
+                readonly issuedAt: { readonly column: 'issuedAt' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly sessionId: { readonly column: 'sessionId' };
+                readonly status: { readonly column: 'status' };
+                readonly studentId: { readonly column: 'studentId' };
+                readonly termId: { readonly column: 'termId' };
+                readonly termInvoiceKey: { readonly column: 'termInvoiceKey' };
+                readonly title: { readonly column: 'title' };
+                readonly totalAmount: { readonly column: 'totalAmount' };
+                readonly type: { readonly column: 'type' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
           };
@@ -9892,6 +11575,28 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['termId'];
                 };
               };
+              readonly feeInvoices: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['termId'];
+                };
+              };
+              readonly feeStructures: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['termId'];
+                };
+              };
               readonly psychomotorRatings: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -10047,6 +11752,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['createdById'];
                 };
               };
+              readonly feePaymentsRecorded: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FeePayment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['recordedByUserId'];
+                };
+              };
               readonly parent: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -10164,6 +11880,39 @@ type ContractBase = Omit<
               { readonly name: 'MONTHLY'; readonly value: 'MONTHLY' },
               { readonly name: 'QUARTERLY'; readonly value: 'QUARTERLY' },
               { readonly name: 'YEARLY'; readonly value: 'YEARLY' },
+            ];
+          };
+          readonly FeeInvoiceStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'DRAFT'; readonly value: 'DRAFT' },
+              { readonly name: 'ISSUED'; readonly value: 'ISSUED' },
+              { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+            ];
+          };
+          readonly FeeInvoiceType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'TERM'; readonly value: 'TERM' },
+              { readonly name: 'ONE_OFF'; readonly value: 'ONE_OFF' },
+            ];
+          };
+          readonly FeePaymentMethod: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'CASH'; readonly value: 'CASH' },
+              { readonly name: 'BANK_TRANSFER'; readonly value: 'BANK_TRANSFER' },
+              { readonly name: 'PAYSTACK'; readonly value: 'PAYSTACK' },
+              { readonly name: 'OTHER'; readonly value: 'OTHER' },
+            ];
+          };
+          readonly FeePaymentStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'CONFIRMED'; readonly value: 'CONFIRMED' },
+              { readonly name: 'FAILED'; readonly value: 'FAILED' },
+              { readonly name: 'REFUNDED'; readonly value: 'REFUNDED' },
             ];
           };
           readonly Gender: {
@@ -10323,6 +12072,33 @@ type ContractBase = Omit<
           readonly ref: {
             readonly column: 'updatedAt';
             readonly namespace: 'public';
+            readonly table: 'FeeCategory';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'FeePayment';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'FeeStructure';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
             readonly table: 'GradeScale';
           };
         },
@@ -10450,6 +12226,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Student';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'StudentInvoice';
           };
         },
         {
