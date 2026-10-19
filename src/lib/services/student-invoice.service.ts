@@ -10,29 +10,40 @@ type CreateTermInvoiceData = CreateTermInvoiceInput & {
 };
 
 export async function getStudentInvoiceOptions(schoolId: number) {
-  const [students, classes, sessions, terms, categories, structures] =
-    await Promise.all([
-      db.orm.public.Student.where((item) => item.schoolId.eq(schoolId)).all(),
-      db.orm.public.SchoolClass.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-      db.orm.public.AcademicSession.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-      db.orm.public.Term.where((item) => item.id.gt(0)).all(),
-      db.orm.public.FeeCategory.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-      db.orm.public.FeeStructure.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-    ]);
+  const [students, classes, sessions, categories] = await Promise.all([
+    db.orm.public.Student.where((item) => item.schoolId.eq(schoolId)).all(),
 
-  const sessionIds = new Set(sessions.map((item) => item.id));
+    db.orm.public.SchoolClass.where((item) => item.schoolId.eq(schoolId)).all(),
+
+    db.orm.public.AcademicSession.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all(),
+
+    db.orm.public.FeeCategory.where((item) => item.schoolId.eq(schoolId))
+      .where((item) => item.isActive.eq(true))
+      .all(),
+  ]);
+
+  const sessionIds = sessions.map((item) => item.id);
+  const activeCategoryIds = categories.map((item) => item.id);
+
+  const [terms, structures] = await Promise.all([
+    sessionIds.length > 0
+      ? db.orm.public.Term.where((item) => item.sessionId.in(sessionIds)).all()
+      : Promise.resolve([]),
+
+    sessionIds.length > 0 && activeCategoryIds.length > 0
+      ? db.orm.public.FeeStructure.where((item) => item.schoolId.eq(schoolId))
+          .where((item) => item.sessionId.in(sessionIds))
+          .where((item) => item.categoryId.in(activeCategoryIds))
+          .where((item) => item.isActive.eq(true))
+          .all()
+      : Promise.resolve([]),
+  ]);
+
+  const sessionIdSet = new Set(sessionIds);
   const classIds = new Set(classes.map((item) => item.id));
-  const categoryIds = new Set(
-    categories.filter((item) => item.isActive).map((item) => item.id),
-  );
+  const categoryIds = new Set(activeCategoryIds);
 
   return {
     students: students
@@ -51,16 +62,18 @@ export async function getStudentInvoiceOptions(schoolId: number) {
         lastName: item.lastName,
         classId: item.classId,
       })),
+
     classes: classes.sort((a, b) => a.name.localeCompare(b.name)),
     sessions: sessions.sort((a, b) => b.name.localeCompare(a.name)),
-    terms: terms.filter((item) => sessionIds.has(item.sessionId)),
-    categories: categories.filter((item) => item.isActive),
+    terms: terms.filter((item) => sessionIdSet.has(item.sessionId)),
+    categories,
+
     structures: structures
       .filter(
         (item) =>
           item.isActive &&
           categoryIds.has(item.categoryId) &&
-          sessionIds.has(item.sessionId),
+          sessionIdSet.has(item.sessionId),
       )
       .map((item) => ({
         id: item.id,
@@ -75,29 +88,55 @@ export async function getStudentInvoiceOptions(schoolId: number) {
 }
 
 export async function getStudentInvoices(schoolId: number) {
-  const [invoices, students, sessions, terms, items, allPayments, allUsers] =
-    await Promise.all([
-      db.orm.public.StudentInvoice.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
+  const [invoices, students, sessions] = await Promise.all([
+    db.orm.public.StudentInvoice.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all(),
 
-      db.orm.public.Student.where((item) => item.schoolId.eq(schoolId)).all(),
+    db.orm.public.Student.where((item) => item.schoolId.eq(schoolId)).all(),
 
-      db.orm.public.AcademicSession.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
+    db.orm.public.AcademicSession.where((item) =>
+      item.schoolId.eq(schoolId),
+    ).all(),
+  ]);
 
-      db.orm.public.Term.where((item) => item.id.gt(0)).all(),
+  const invoiceIds = invoices.map((invoice) => invoice.id);
+  const sessionIds = sessions.map((session) => session.id);
 
-      db.orm.public.InvoiceItem.where((item) => item.id.gt(0)).all(),
+  const [terms, items, allPayments] = await Promise.all([
+    sessionIds.length > 0
+      ? db.orm.public.Term.where((item) => item.sessionId.in(sessionIds)).all()
+      : Promise.resolve([]),
 
-      db.orm.public.FeePayment.where((item) => item.id.gt(0)).all(),
+    invoiceIds.length > 0
+      ? db.orm.public.InvoiceItem.where((item) =>
+          item.invoiceId.in(invoiceIds),
+        ).all()
+      : Promise.resolve([]),
 
-      db.orm.public.User.where((item) => item.id.gt(0)).all(),
-    ]);
+    invoiceIds.length > 0
+      ? db.orm.public.FeePayment.where((item) =>
+          item.invoiceId.in(invoiceIds),
+        ).all()
+      : Promise.resolve([]),
+  ]);
 
-  // Restrict all returned payment information to this school's invoices.
-  const schoolInvoiceIds = new Set(invoices.map((invoice) => invoice.id));
+  const recordedByUserIds = [
+    ...new Set(
+      allPayments.flatMap((payment) =>
+        payment.recordedByUserId !== null ? [payment.recordedByUserId] : [],
+      ),
+    ),
+  ];
+
+  const allUsers =
+    recordedByUserIds.length > 0
+      ? await db.orm.public.User.where((item) =>
+          item.id.in(recordedByUserIds),
+        ).all()
+      : [];
+
+  const schoolInvoiceIds = new Set(invoiceIds);
 
   const payments = allPayments.filter((payment) =>
     schoolInvoiceIds.has(payment.invoiceId),
@@ -111,7 +150,6 @@ export async function getStudentInvoices(schoolId: number) {
   const itemsByInvoice = new Map<number, typeof items>();
 
   for (const item of items) {
-    // Only include items belonging to invoices in this school.
     if (!schoolInvoiceIds.has(item.invoiceId)) continue;
 
     const invoiceItems = itemsByInvoice.get(item.invoiceId) ?? [];
@@ -135,7 +173,6 @@ export async function getStudentInvoices(schoolId: number) {
       const term = termMap.get(invoice.termId);
       const invoicePayments = paymentsByInvoice.get(invoice.id) ?? [];
 
-      // Use integer kobo for monetary calculations.
       const totalKobo = Math.round(Number(invoice.totalAmount) * 100);
 
       const paidKobo = invoicePayments
@@ -168,7 +205,7 @@ export async function getStudentInvoices(schoolId: number) {
           2,
         ),
 
-        payments: invoicePayments
+        payments: [...invoicePayments]
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
           .map((payment) => ({
             ...payment,
@@ -184,23 +221,15 @@ export async function getStudentInvoices(schoolId: number) {
 export async function createTermInvoice(input: CreateTermInvoiceData) {
   const { schoolId, studentId, sessionId, termId, dueDate } = input;
 
-  const [student, session, term, structures, categories, existingInvoices] =
-    await Promise.all([
-      db.orm.public.Student.where((item) => item.id.eq(studentId)).first(),
-      db.orm.public.AcademicSession.where((item) =>
-        item.id.eq(sessionId),
-      ).first(),
-      db.orm.public.Term.where((item) => item.id.eq(termId)).first(),
-      db.orm.public.FeeStructure.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-      db.orm.public.FeeCategory.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-      db.orm.public.StudentInvoice.where((item) =>
-        item.schoolId.eq(schoolId),
-      ).all(),
-    ]);
+  const [student, session, term] = await Promise.all([
+    db.orm.public.Student.where((item) => item.id.eq(studentId)).first(),
+
+    db.orm.public.AcademicSession.where((item) =>
+      item.id.eq(sessionId),
+    ).first(),
+
+    db.orm.public.Term.where((item) => item.id.eq(termId)).first(),
+  ]);
 
   if (!student || student.schoolId !== schoolId || !student.isActive) {
     throw new Error("Select an active student belonging to your school.");
@@ -218,25 +247,36 @@ export async function createTermInvoice(input: CreateTermInvoiceData) {
     throw new Error("Select a term belonging to the selected session.");
   }
 
+  const [structures, categories, existingTermInvoice] = await Promise.all([
+    db.orm.public.FeeStructure.where((item) => item.schoolId.eq(schoolId))
+      .where((item) => item.classId.eq(student.classId!))
+      .where((item) => item.sessionId.eq(sessionId))
+      .where((item) => item.termId.eq(termId))
+      .where((item) => item.isActive.eq(true))
+      .all(),
+
+    db.orm.public.FeeCategory.where((item) => item.schoolId.eq(schoolId))
+      .where((item) => item.isActive.eq(true))
+      .all(),
+
+    db.orm.public.StudentInvoice.where({
+      schoolId,
+      studentId,
+      sessionId,
+      termId,
+      type: "TERM",
+    }).first(),
+  ]);
+
   const termInvoiceKey = `${schoolId}:${studentId}:${sessionId}:${termId}`;
 
-  if (
-    existingInvoices.some(
-      (invoice) =>
-        invoice.studentId === studentId &&
-        invoice.sessionId === sessionId &&
-        invoice.termId === termId &&
-        invoice.type === "TERM",
-    )
-  ) {
+  if (existingTermInvoice) {
     throw new Error(
       "A term invoice already exists for this student, session, and term.",
     );
   }
 
-  const activeCategoryIds = new Set(
-    categories.filter((item) => item.isActive).map((item) => item.id),
-  );
+  const activeCategoryIds = new Set(categories.map((item) => item.id));
 
   const applicableStructures = structures.filter(
     (item) =>
@@ -284,28 +324,30 @@ export async function createTermInvoice(input: CreateTermInvoiceData) {
     0,
   );
 
-  const invoiceNumber = `INV-${Date.now()}-${randomUUID().slice(0, 8).toUpperCase()}`;
+  const invoiceNumber = `INV-${Date.now()}-${randomUUID()
+    .slice(0, 8)
+    .toUpperCase()}`;
 
-  const invoice = await db.orm.public.StudentInvoice.create({
-    schoolId,
-    studentId,
-    sessionId,
-    termId,
-    invoiceNumber,
-    type: "TERM",
-    status: "ISSUED",
-    title: `Term fees - ${term.name}`,
-    issuedAt: new Date().toISOString(),
-    dueDate: dueDate
-      ? globalThis.Temporal.Instant.from(`${dueDate}T00:00:00Z`)
-      : null,
-    totalAmount: totalAmount.toFixed(2),
-    termInvoiceKey,
-  });
+  return db.transaction(async (tx) => {
+    const invoice = await tx.orm.public.StudentInvoice.create({
+      schoolId,
+      studentId,
+      sessionId,
+      termId,
+      invoiceNumber,
+      type: "TERM",
+      status: "ISSUED",
+      title: `Term fees - ${term.name}`,
+      issuedAt: new Date().toISOString(),
+      dueDate: dueDate
+        ? globalThis.Temporal.Instant.from(`${dueDate}T00:00:00Z`)
+        : null,
+      totalAmount: totalAmount.toFixed(2),
+      termInvoiceKey,
+    });
 
-  try {
     for (const item of lineItems) {
-      await db.orm.public.InvoiceItem.create({
+      await tx.orm.public.InvoiceItem.create({
         invoiceId: invoice.id,
         categoryId: item.categoryId,
         description: item.description,
@@ -313,31 +355,17 @@ export async function createTermInvoice(input: CreateTermInvoiceData) {
         amount: item.amount,
       });
     }
-  } catch (error) {
-    try {
-      await db.orm.public.InvoiceItem.where((item) =>
-        item.invoiceId.eq(invoice.id),
-      ).delete();
 
-      await db.orm.public.StudentInvoice.where((item) =>
-        item.id.eq(invoice.id),
-      ).delete();
-    } catch (rollbackError) {
-      console.error("Invoice cleanup failed:", rollbackError);
-    }
-
-    throw error;
-  }
-
-  return {
-    ...invoice,
-    items: lineItems.map((item) => ({
-      categoryId: item.categoryId,
-      description: item.description,
-      quantity: 1,
-      amount: item.amount,
-    })),
-  };
+    return {
+      ...invoice,
+      items: lineItems.map((item) => ({
+        categoryId: item.categoryId,
+        description: item.description,
+        quantity: 1,
+        amount: item.amount,
+      })),
+    };
+  });
 }
 
 type CreateFeePaymentData = CreateFeePaymentInput & {
@@ -349,7 +377,6 @@ export async function createFeePayment(input: CreateFeePaymentData) {
   const { schoolId, invoiceId, amount, method, notes, recordedByUserId } =
     input;
 
-  // Work in integer kobo to avoid floating-point balance errors.
   const amountKobo = Math.round(amount * 100);
 
   if (
@@ -376,16 +403,11 @@ export async function createFeePayment(input: CreateFeePaymentData) {
       throw new Error("Payments can only be recorded against issued invoices.");
     }
 
-    /*
-     * Updating the invoice row to its existing status acquires a PostgreSQL
-     * row lock. Concurrent payment attempts for this invoice must wait here.
-     */
     await tx.orm.public.StudentInvoice.where({
       id: invoiceId,
       schoolId,
     }).update({ status: invoice.status });
 
-    // Re-read after acquiring the row lock.
     const lockedInvoice = await tx.orm.public.StudentInvoice.where({
       id: invoiceId,
       schoolId,
@@ -395,16 +417,18 @@ export async function createFeePayment(input: CreateFeePaymentData) {
       throw new Error("This invoice is no longer available for payment.");
     }
 
-    const existingPayments = await tx.orm.public.FeePayment.where((item) =>
-      item.invoiceId.eq(invoiceId),
-    ).all();
+    
+const confirmedPayments = await tx.orm.public.FeePayment.where((item) =>
+  item.invoiceId.eq(invoiceId),
+)
+  .where((item) => item.status.eq("CONFIRMED"))
+  .all();
 
-    const confirmedKobo = existingPayments
-      .filter((payment) => payment.status === "CONFIRMED")
-      .reduce((total, payment) => {
-        const paymentKobo = Math.round(Number(payment.amount) * 100);
-        return total + paymentKobo;
-      }, 0);
+const confirmedKobo = confirmedPayments.reduce(
+  (total, payment) => total + Math.round(Number(payment.amount) * 100),
+  0,
+);
+
 
     const totalKobo = Math.round(Number(lockedInvoice.totalAmount) * 100);
     const outstandingKobo = totalKobo - confirmedKobo;
@@ -504,7 +528,6 @@ export async function getFeePaymentReceipt(
     b: (typeof invoicePayments)[number],
   ) => {
     const dateComparison = a.createdAt.localeCompare(b.createdAt);
-
     return dateComparison !== 0 ? dateComparison : a.id - b.id;
   };
 

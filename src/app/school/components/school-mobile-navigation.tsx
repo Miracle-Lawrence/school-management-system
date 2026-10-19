@@ -14,6 +14,7 @@ const navigation = [
   ["Academic Sessions", "/school/academic-sessions"],
   ["Fee Categories", "/school/fee-categories"],
   ["Fee Structures", "/school/fee-structures"],
+  ["Fee Collection Dashboard", "/school/fee-payments"],
   ["Student Fee Invoicing", "/school/student-invoices"],
   ["Report Settings", "/school/report-settings"],
   ["Results", "/school/results"],

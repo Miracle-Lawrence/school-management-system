@@ -148,6 +148,13 @@ export default function SchoolPortalShell({
           </Link>
 
           <Link
+            href="/school/fee-payments"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Fee Collection Dashboard
+          </Link>
+
+          <Link
             href="/school/report-settings"
             className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
           >
