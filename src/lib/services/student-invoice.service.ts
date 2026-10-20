@@ -417,6 +417,17 @@ export async function createFeePayment(input: CreateFeePaymentData) {
       throw new Error("This invoice is no longer available for payment.");
     }
 
+    const pendingPaystackPayment = await tx.orm.public.FeePayment.where({
+      invoiceId,
+      method: "PAYSTACK",
+      status: "PENDING",
+    }).first();
+
+    if (pendingPaystackPayment) {
+      throw new Error(
+        "A Paystack payment is already in progress for this invoice.",
+      );
+    }
     
 const confirmedPayments = await tx.orm.public.FeePayment.where((item) =>
   item.invoiceId.eq(invoiceId),

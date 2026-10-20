@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import PayButton from "./pay-button";
+import CheckPaymentStatusButton from "./check-payment-status-button";
 
 function formatMoney(amountKobo: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -54,6 +56,7 @@ export default async function ParentFinancePage() {
           <h1 className="font-semibold text-amber-900">
             Parent profile not linked
           </h1>
+
           <p className="mt-2 text-sm text-amber-800">
             Contact your school administrator to link your parent account before
             accessing financial records.
@@ -116,6 +119,16 @@ export default async function ParentFinancePage() {
   const sessionMap = new Map(sessions.map((item) => [item.id, item.name]));
   const termMap = new Map(terms.map((item) => [item.id, item.name]));
 
+  // Track pending Paystack payments so parents can check their status.
+  const pendingPaystackByInvoice = new Map<number, string>();
+
+  for (const payment of payments) {
+    if (payment.method === "PAYSTACK" && payment.status === "PENDING") {
+      pendingPaystackByInvoice.set(payment.invoiceId, payment.reference);
+    }
+  }
+
+  // Calculate confirmed payments for each invoice.
   const paidByInvoice = new Map<number, number>();
 
   for (const payment of payments) {
@@ -227,6 +240,7 @@ export default async function ParentFinancePage() {
         </p>
       </header>
 
+      {/* Finance summary */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {summary.map((item) => (
           <article
@@ -234,21 +248,26 @@ export default async function ParentFinancePage() {
             className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
           >
             <p className="text-sm font-medium text-slate-600">{item.label}</p>
+
             <p className={`mt-3 text-2xl font-bold ${item.color}`}>
               {item.value}
             </p>
+
             <p className="mt-2 text-xs text-slate-500">{item.description}</p>
           </article>
         ))}
       </section>
 
+      {/* Invoices and payment actions */}
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 p-5">
           <h2 className="text-lg font-semibold text-slate-900">
             My children&apos;s invoices
           </h2>
+
           <p className="mt-1 text-sm text-slate-600">
-            Only issued invoices for your linked children are displayed.
+            Only issued invoices for your linked children are displayed. You can
+            pay any invoice with an outstanding balance.
           </p>
         </div>
 
@@ -267,50 +286,79 @@ export default async function ParentFinancePage() {
                   <th className="p-3 text-right font-medium">Total</th>
                   <th className="p-3 text-right font-medium">Paid</th>
                   <th className="p-3 text-right font-medium">Balance</th>
+                  <th className="p-3 font-medium">Payment</th>
                 </tr>
               </thead>
+
               <tbody>
-                {invoiceRows.map((row) => (
-                  <tr
-                    key={row.invoice.id}
-                    className="border-t border-slate-100"
-                  >
-                    <td className="whitespace-nowrap p-3 font-medium text-slate-900">
-                      {row.invoice.invoiceNumber}
-                    </td>
-                    <td className="whitespace-nowrap p-3">
-                      {row.child
-                        ? `${row.child.firstName} ${row.child.lastName}`
-                        : "—"}
-                    </td>
-                    <td className="whitespace-nowrap p-3 text-slate-600">
-                      {row.sessionName}
-                      <span className="block text-xs text-slate-500">
-                        {row.termName}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap p-3 text-right">
-                      {formatMoney(row.totalKobo)}
-                    </td>
-                    <td className="whitespace-nowrap p-3 text-right text-emerald-700">
-                      {formatMoney(row.paidKobo)}
-                    </td>
-                    <td className="whitespace-nowrap p-3 text-right font-semibold text-amber-700">
-                      {formatMoney(row.outstandingKobo)}
-                    </td>
-                  </tr>
-                ))}
+                {invoiceRows.map((row) => {
+                  const pendingReference = pendingPaystackByInvoice.get(
+                    row.invoice.id,
+                  );
+
+                  return (
+                    <tr
+                      key={row.invoice.id}
+                      className="border-t border-slate-100"
+                    >
+                      <td className="whitespace-nowrap p-3 font-medium text-slate-900">
+                        {row.invoice.invoiceNumber}
+                      </td>
+
+                      <td className="whitespace-nowrap p-3">
+                        {row.child
+                          ? `${row.child.firstName} ${row.child.lastName}`
+                          : "—"}
+                      </td>
+
+                      <td className="whitespace-nowrap p-3 text-slate-600">
+                        {row.sessionName}
+                        <span className="block text-xs text-slate-500">
+                          {row.termName}
+                        </span>
+                      </td>
+
+                      <td className="whitespace-nowrap p-3 text-right">
+                        {formatMoney(row.totalKobo)}
+                      </td>
+
+                      <td className="whitespace-nowrap p-3 text-right text-emerald-700">
+                        {formatMoney(row.paidKobo)}
+                      </td>
+
+                      <td className="whitespace-nowrap p-3 text-right font-semibold text-amber-700">
+                        {formatMoney(row.outstandingKobo)}
+                      </td>
+
+                      <td className="whitespace-nowrap p-3">
+                        {row.outstandingKobo <= 0 ? (
+                          <span className="text-xs font-medium text-emerald-700">
+                            Fully paid
+                          </span>
+                        ) : pendingReference ? (
+                          <CheckPaymentStatusButton
+                            reference={pendingReference}
+                          />
+                        ) : (
+                          <PayButton invoiceId={row.invoice.id} />
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
       </section>
 
+      {/* Payment history and receipts */}
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 p-5">
           <h2 className="text-lg font-semibold text-slate-900">
             Payment history
           </h2>
+
           <p className="mt-1 text-sm text-slate-600">
             Payment records associated with your children&apos;s issued
             invoices.
@@ -335,23 +383,28 @@ export default async function ParentFinancePage() {
                   <th className="p-3 font-medium">Receipt</th>
                 </tr>
               </thead>
+
               <tbody>
                 {paymentRows.map(({ payment, row }) => (
                   <tr key={payment.id} className="border-t border-slate-100">
                     <td className="whitespace-nowrap p-3">
                       {formatDate(payment.paidAt ?? payment.createdAt)}
                     </td>
+
                     <td className="whitespace-nowrap p-3">
                       {row.child
                         ? `${row.child.firstName} ${row.child.lastName}`
                         : "—"}
                     </td>
+
                     <td className="max-w-48 break-all p-3 text-xs text-slate-600">
                       {payment.reference}
                     </td>
+
                     <td className="whitespace-nowrap p-3">
                       {payment.method.replace("_", " ")}
                     </td>
+
                     <td className="p-3">
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-medium ${
@@ -365,14 +418,17 @@ export default async function ParentFinancePage() {
                         {payment.status}
                       </span>
                     </td>
+
                     <td className="whitespace-nowrap p-3 text-right font-semibold">
                       {formatMoney(Math.round(Number(payment.amount) * 100))}
                     </td>
+
                     <td className="whitespace-nowrap p-3">
                       {payment.status === "CONFIRMED" ? (
                         <Link
                           href={`/parent/finance/${payment.id}/receipt`}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="font-medium text-blue-700 hover:underline"
                         >
                           View receipt
@@ -392,7 +448,8 @@ export default async function ParentFinancePage() {
       <p className="text-xs leading-5 text-slate-500">
         Financial summaries include issued invoices and confirmed payments.
         Receipts are available only for confirmed payments and must be
-        authorized against your linked children.
+        authorized against your linked children. Online payments remain
+        unconfirmed until payment verification succeeds.
       </p>
     </main>
   );
