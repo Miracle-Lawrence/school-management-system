@@ -52,6 +52,14 @@
       "model": "InvoiceItem",
       "namespace": "public"
     },
+    "Notification": {
+      "model": "Notification",
+      "namespace": "public"
+    },
+    "NotificationRecipient": {
+      "model": "NotificationRecipient",
+      "namespace": "public"
+    },
     "Parent": {
       "model": "Parent",
       "namespace": "public"
@@ -340,6 +348,56 @@
               {
                 "name": "RAW_SCORE",
                 "value": "RAW_SCORE"
+              }
+            ]
+          },
+          "NotificationCategory": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "FEE_REMINDER",
+                "value": "FEE_REMINDER"
+              },
+              {
+                "name": "REPORT_PUBLISHED",
+                "value": "REPORT_PUBLISHED"
+              },
+              {
+                "name": "ACADEMIC",
+                "value": "ACADEMIC"
+              },
+              {
+                "name": "EVENT",
+                "value": "EVENT"
+              },
+              {
+                "name": "ANNOUNCEMENT",
+                "value": "ANNOUNCEMENT"
+              },
+              {
+                "name": "URGENT",
+                "value": "URGENT"
+              }
+            ]
+          },
+          "NotificationStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DRAFT",
+                "value": "DRAFT"
+              },
+              {
+                "name": "SCHEDULED",
+                "value": "SCHEDULED"
+              },
+              {
+                "name": "SENT",
+                "value": "SENT"
+              },
+              {
+                "name": "CANCELLED",
+                "value": "CANCELLED"
               }
             ]
           },
@@ -2391,6 +2449,281 @@
               "table": "InvoiceItem"
             }
           },
+          "Notification": {
+            "fields": {
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationCategory",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdByUserId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "scheduledAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "createdByUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "recipients": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "notificationId"
+                  ]
+                },
+                "to": {
+                  "model": "NotificationRecipient",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdByUserId": {
+                  "column": "createdByUserId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "scheduledAt": {
+                  "column": "scheduledAt"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Notification"
+            }
+          },
+          "NotificationRecipient": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notificationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "readAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "notification": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "notificationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "notificationId": {
+                  "column": "notificationId"
+                },
+                "readAt": {
+                  "column": "readAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "NotificationRecipient"
+            }
+          },
           "Parent": {
             "fields": {
               "address": {
@@ -4355,6 +4688,21 @@
                 },
                 "to": {
                   "model": "GradeScale",
+                  "namespace": "public"
+                }
+              },
+              "notifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
                   "namespace": "public"
                 }
               },
@@ -7561,6 +7909,21 @@
                   "namespace": "public"
                 }
               },
+              "createdNotifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "createdByUserId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
               "feePaymentsRecorded": {
                 "cardinality": "1:N",
                 "on": {
@@ -7573,6 +7936,21 @@
                 },
                 "to": {
                   "model": "FeePayment",
+                  "namespace": "public"
+                }
+              },
+              "notificationRecipients": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "NotificationRecipient",
                   "namespace": "public"
                 }
               },
@@ -9529,6 +9907,301 @@
                 ]
               },
               "uniques": []
+            },
+            "Notification": {
+              "checks": [
+                {
+                  "expression": "\"category\" IN ('FEE_REMINDER', 'REPORT_PUBLISHED', 'ACADEMIC', 'EVENT', 'ANNOUNCEMENT', 'URGENT')",
+                  "name": "Notification_category_check_c954437d",
+                  "prefix": "Notification_category_check"
+                },
+                {
+                  "expression": "\"status\" IN ('DRAFT', 'SCHEDULED', 'SENT', 'CANCELLED')",
+                  "name": "Notification_status_check_c5557860",
+                  "prefix": "Notification_status_check"
+                }
+              ],
+              "columns": {
+                "category": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "ANNOUNCEMENT"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationCategory",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "createdByUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "scheduledAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "DRAFT"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "createdByUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdByUserId"
+                  ],
+                  "name": "Notification_createdByUserId_idx_93e8a540",
+                  "prefix": "Notification_createdByUserId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "category"
+                  ],
+                  "name": "Notification_schoolId_category_idx_a39fc059",
+                  "prefix": "Notification_schoolId_category_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "Notification_schoolId_idx_82b454d7",
+                  "prefix": "Notification_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "scheduledAt"
+                  ],
+                  "name": "Notification_schoolId_scheduledAt_idx_910010d5",
+                  "prefix": "Notification_schoolId_scheduledAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "status"
+                  ],
+                  "name": "Notification_schoolId_status_idx_7110c695",
+                  "prefix": "Notification_schoolId_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "NotificationRecipient": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "notificationId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "readAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "userId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "notificationId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "NotificationRecipient"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "NotificationRecipient"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "notificationId"
+                  ],
+                  "name": "NotificationRecipient_notificationId_idx_adfe2654",
+                  "prefix": "NotificationRecipient_notificationId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "NotificationRecipient_userId_idx_a489d58a",
+                  "prefix": "NotificationRecipient_userId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId",
+                    "readAt"
+                  ],
+                  "name": "NotificationRecipient_userId_readAt_idx_8bd92969",
+                  "prefix": "NotificationRecipient_userId_readAt_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "notificationId",
+                    "userId"
+                  ]
+                }
+              ]
             },
             "Parent": {
               "columns": {
@@ -13525,6 +14198,26 @@
                 "RAW_SCORE"
               ]
             },
+            "NotificationCategory": {
+              "kind": "valueSet",
+              "values": [
+                "FEE_REMINDER",
+                "REPORT_PUBLISHED",
+                "ACADEMIC",
+                "EVENT",
+                "ANNOUNCEMENT",
+                "URGENT"
+              ]
+            },
+            "NotificationStatus": {
+              "kind": "valueSet",
+              "values": [
+                "DRAFT",
+                "SCHEDULED",
+                "SENT",
+                "CANCELLED"
+              ]
+            },
             "PaymentStatus": {
               "kind": "valueSet",
               "values": [
@@ -13585,10 +14278,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7cc47ac321a887374dcc021188ad788dcd084f7a01dc2a1d4edd64e9358ed0b3"
+    "storageHash": "9bdf1e33ff6afb1464692a03dcbc1cb825b7883ae92d2b8b453568bc7c96aba0"
   },
   "execution": {
-    "executionHash": "2d0f645ce9f21e1736f9d15e9bd336a2c06d95ccbfb14de340871e904ea4fd61",
+    "executionHash": "65e992c9c950c7e664a3a64f5ba2274c5719c000e1469e9833cea7f3d3730237",
     "mutations": {
       "defaults": [
         {
@@ -13754,6 +14447,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "GradeScaleSet"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "Notification"
           }
         },
         {

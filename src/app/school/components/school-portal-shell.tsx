@@ -134,6 +134,13 @@ export default function SchoolPortalShell({
           </Link>
 
           <Link
+            href="/school/notifications"
+            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+          >
+            Communication Centre
+          </Link>
+
+          <Link
             href="/school/fee-structures"
             className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
           >

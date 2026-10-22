@@ -1,0 +1,602 @@
+[
+  {
+    "id": "table.Notification",
+    "label": "Create table \"Notification\"",
+    "summary": "Creates table \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Notification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Notification\"",
+        "sql": "CREATE TABLE \"public\".\"Notification\" (\n  \"category\" text DEFAULT 'ANNOUNCEMENT' NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdByUserId\" int4,\n  \"id\" SERIAL NOT NULL,\n  \"message\" text NOT NULL,\n  \"scheduledAt\" timestamptz,\n  \"schoolId\" int4 NOT NULL,\n  \"sentAt\" timestamptz,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Notification_category_check_c954437d\" CHECK (\"category\" IN ('FEE_REMINDER', 'REPORT_PUBLISHED', 'ACADEMIC', 'EVENT', 'ANNOUNCEMENT', 'URGENT')),\n  CONSTRAINT \"Notification_status_check_c5557860\" CHECK (\"status\" IN ('DRAFT', 'SCHEDULED', 'SENT', 'CANCELLED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Notification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.NotificationRecipient",
+    "label": "Create table \"NotificationRecipient\"",
+    "summary": "Creates table \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"NotificationRecipient\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"NotificationRecipient\"",
+        "sql": "CREATE TABLE \"public\".\"NotificationRecipient\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"notificationId\" int4 NOT NULL,\n  \"readAt\" timestamptz,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"NotificationRecipient\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.NotificationRecipient.NotificationRecipient_notificationId_userId_key",
+    "label": "Add unique constraint on \"NotificationRecipient\" (notificationId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "NotificationRecipient_notificationId_userId_key",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"NotificationRecipient_notificationId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_notificationId_userId_key",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"NotificationRecipient_notificationId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"NotificationRecipient\" ADD CONSTRAINT \"NotificationRecipient_notificationId_userId_key\" UNIQUE (\"notificationId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"NotificationRecipient_notificationId_userId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_notificationId_userId_key",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_createdByUserId_idx_93e8a540",
+    "label": "Create index \"Notification_createdByUserId_idx_93e8a540\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_createdByUserId_idx_93e8a540",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_createdByUserId_idx_93e8a540\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_createdByUserId_idx_93e8a540\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_createdByUserId_idx_93e8a540\"",
+        "sql": "CREATE INDEX \"Notification_createdByUserId_idx_93e8a540\" ON \"public\".\"Notification\" (\"createdByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_createdByUserId_idx_93e8a540\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_createdByUserId_idx_93e8a540\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_schoolId_category_idx_a39fc059",
+    "label": "Create index \"Notification_schoolId_category_idx_a39fc059\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_schoolId_category_idx_a39fc059",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_schoolId_category_idx_a39fc059\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_category_idx_a39fc059\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_schoolId_category_idx_a39fc059\"",
+        "sql": "CREATE INDEX \"Notification_schoolId_category_idx_a39fc059\" ON \"public\".\"Notification\" (\"schoolId\", \"category\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_schoolId_category_idx_a39fc059\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_category_idx_a39fc059\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_schoolId_idx_82b454d7",
+    "label": "Create index \"Notification_schoolId_idx_82b454d7\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_schoolId_idx_82b454d7",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"Notification_schoolId_idx_82b454d7\" ON \"public\".\"Notification\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_schoolId_scheduledAt_idx_910010d5",
+    "label": "Create index \"Notification_schoolId_scheduledAt_idx_910010d5\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_schoolId_scheduledAt_idx_910010d5",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_schoolId_scheduledAt_idx_910010d5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_scheduledAt_idx_910010d5\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_schoolId_scheduledAt_idx_910010d5\"",
+        "sql": "CREATE INDEX \"Notification_schoolId_scheduledAt_idx_910010d5\" ON \"public\".\"Notification\" (\"schoolId\", \"scheduledAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_schoolId_scheduledAt_idx_910010d5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_scheduledAt_idx_910010d5\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_schoolId_status_idx_7110c695",
+    "label": "Create index \"Notification_schoolId_status_idx_7110c695\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_schoolId_status_idx_7110c695",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_schoolId_status_idx_7110c695\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_status_idx_7110c695\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_schoolId_status_idx_7110c695\"",
+        "sql": "CREATE INDEX \"Notification_schoolId_status_idx_7110c695\" ON \"public\".\"Notification\" (\"schoolId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_schoolId_status_idx_7110c695\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_schoolId_status_idx_7110c695\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.NotificationRecipient.NotificationRecipient_notificationId_idx_adfe2654",
+    "label": "Create index \"NotificationRecipient_notificationId_idx_adfe2654\" on \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "NotificationRecipient_notificationId_idx_adfe2654",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"NotificationRecipient_notificationId_idx_adfe2654\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_notificationId_idx_adfe2654\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"NotificationRecipient_notificationId_idx_adfe2654\"",
+        "sql": "CREATE INDEX \"NotificationRecipient_notificationId_idx_adfe2654\" ON \"public\".\"NotificationRecipient\" (\"notificationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"NotificationRecipient_notificationId_idx_adfe2654\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_notificationId_idx_adfe2654\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.NotificationRecipient.NotificationRecipient_userId_idx_a489d58a",
+    "label": "Create index \"NotificationRecipient_userId_idx_a489d58a\" on \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "NotificationRecipient_userId_idx_a489d58a",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"NotificationRecipient_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"NotificationRecipient_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"NotificationRecipient_userId_idx_a489d58a\" ON \"public\".\"NotificationRecipient\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"NotificationRecipient_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.NotificationRecipient.NotificationRecipient_userId_readAt_idx_8bd92969",
+    "label": "Create index \"NotificationRecipient_userId_readAt_idx_8bd92969\" on \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "NotificationRecipient_userId_readAt_idx_8bd92969",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"NotificationRecipient_userId_readAt_idx_8bd92969\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_userId_readAt_idx_8bd92969\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"NotificationRecipient_userId_readAt_idx_8bd92969\"",
+        "sql": "CREATE INDEX \"NotificationRecipient_userId_readAt_idx_8bd92969\" ON \"public\".\"NotificationRecipient\" (\"userId\", \"readAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"NotificationRecipient_userId_readAt_idx_8bd92969\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationRecipient_userId_readAt_idx_8bd92969\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Notification.Notification_schoolId_fkey",
+    "label": "Add foreign key \"Notification_schoolId_fkey\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Notification_schoolId_fkey",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Notification_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_schoolId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Notification_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\"\nADD CONSTRAINT \"Notification_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Notification_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_schoolId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Notification.Notification_createdByUserId_fkey",
+    "label": "Add foreign key \"Notification_createdByUserId_fkey\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Notification_createdByUserId_fkey",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Notification_createdByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_createdByUserId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Notification_createdByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\"\nADD CONSTRAINT \"Notification_createdByUserId_fkey\"\nFOREIGN KEY (\"createdByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Notification_createdByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_createdByUserId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.NotificationRecipient.NotificationRecipient_notificationId_fkey",
+    "label": "Add foreign key \"NotificationRecipient_notificationId_fkey\" on \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "NotificationRecipient_notificationId_fkey",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"NotificationRecipient_notificationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_notificationId_fkey",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"NotificationRecipient_notificationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"NotificationRecipient\"\nADD CONSTRAINT \"NotificationRecipient_notificationId_fkey\"\nFOREIGN KEY (\"notificationId\")\nREFERENCES \"public\".\"Notification\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"NotificationRecipient_notificationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_notificationId_fkey",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.NotificationRecipient.NotificationRecipient_userId_fkey",
+    "label": "Add foreign key \"NotificationRecipient_userId_fkey\" on \"NotificationRecipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "NotificationRecipient_userId_fkey",
+        "table": "NotificationRecipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"NotificationRecipient_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_userId_fkey",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"NotificationRecipient_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"NotificationRecipient\"\nADD CONSTRAINT \"NotificationRecipient_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"NotificationRecipient_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationRecipient_userId_fkey",
+          "public",
+          "\"public\".\"NotificationRecipient\""
+        ]
+      }
+    ]
+  }
+]
