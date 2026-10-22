@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'af1a15139dcc3deddfaa657697e2eeb8ee7f6b292ec3fb191f7a01b943104bb3'>;
+  StorageHashBase<'7cc47ac321a887374dcc021188ad788dcd084f7a01dc2a1d4edd64e9358ed0b3'>;
 export type ExecutionHash =
-  ExecutionHashBase<'c864b90985a3e491ac583c0847fa1101e286502dcfed76727d4634e16444685e'>;
+  ExecutionHashBase<'2d0f645ce9f21e1736f9d15e9bd336a2c06d95ccbfb14de340871e904ea4fd61'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -482,6 +482,20 @@ export type FieldOutputTypes = {
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['output'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['output'];
       readonly showSchoolStamp: CodecTypes['pg/bool@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly ReportPublication: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly publishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly reportType: 'MID_TERM' | 'TERMINAL';
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly unpublishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly unpublishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly ResultComponentScore: {
@@ -950,6 +964,20 @@ export type FieldInputTypes = {
       readonly showSchoolStamp: CodecTypes['pg/bool@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly ReportPublication: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly publishedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly reportType: 'MID_TERM' | 'TERMINAL';
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly unpublishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly unpublishedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly ResultComponentScore: {
       readonly componentId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1416,6 +1444,20 @@ export type StorageColumnTypes = {
       readonly showSchoolStamp: CodecTypes['pg/bool@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly ReportPublication: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly publishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly reportType: 'MID_TERM' | 'TERMINAL';
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly unpublishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly unpublishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly ResultComponentScore: {
       readonly componentId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1880,6 +1922,20 @@ export type StorageColumnInputTypes = {
       readonly showClassTeacherName: CodecTypes['pg/bool@1']['input'];
       readonly showPrincipalSignature: CodecTypes['pg/bool@1']['input'];
       readonly showSchoolStamp: CodecTypes['pg/bool@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ReportPublication: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly publishedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly reportType: 'MID_TERM' | 'TERMINAL';
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly unpublishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly unpublishedByUserId: CodecTypes['pg/int4@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ResultComponentScore: {
@@ -2434,6 +2490,26 @@ export namespace Models {
     school: public_School;
     readonly [RelationKeys]?: 'components' | 'gradeScaleSet' | 'school';
   };
+  export type public_ReportPublication = {
+    classId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isPublished: CodecTypes['pg/bool@1']['output'];
+    publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    publishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+    reportType: 'MID_TERM' | 'TERMINAL';
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    termId: CodecTypes['pg/int4@1']['output'];
+    unpublishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    unpublishedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    class: public_SchoolClass;
+    publishedBy: public_User | null;
+    school: public_School;
+    term: public_Term;
+    unpublishedBy: public_User | null;
+    readonly [RelationKeys]?: 'class' | 'publishedBy' | 'school' | 'term' | 'unpublishedBy';
+  };
   export type public_ResultComponentScore = {
     componentId: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2488,6 +2564,7 @@ export namespace Models {
     psychomotorRatings: public_StudentPsychomotorRating[];
     reportComments: public_ReportComment[];
     reportConfigurations: public_ReportConfiguration[];
+    reportPublications: public_ReportPublication[];
     sessions: public_AcademicSession[];
     studentTermResults: public_StudentTermResult[];
     students: public_Student[];
@@ -2514,6 +2591,7 @@ export namespace Models {
       | 'psychomotorRatings'
       | 'reportComments'
       | 'reportConfigurations'
+      | 'reportPublications'
       | 'sessions'
       | 'studentTermResults'
       | 'students'
@@ -2537,6 +2615,7 @@ export namespace Models {
     classSubjects: public_ClassSubject[];
     classTeacher: public_Teacher | null;
     feeStructures: public_FeeStructure[];
+    reportPublications: public_ReportPublication[];
     school: public_School;
     studentTermResults: public_StudentTermResult[];
     students: public_Student[];
@@ -2548,6 +2627,7 @@ export namespace Models {
       | 'classSubjects'
       | 'classTeacher'
       | 'feeStructures'
+      | 'reportPublications'
       | 'school'
       | 'studentTermResults'
       | 'students'
@@ -2796,6 +2876,7 @@ export namespace Models {
     feeStructures: public_FeeStructure[];
     psychomotorRatings: public_StudentPsychomotorRating[];
     reportComments: public_ReportComment[];
+    reportPublications: public_ReportPublication[];
     session: public_AcademicSession;
     studentTermResults: public_StudentTermResult[];
     subjectResults: public_SubjectResult[];
@@ -2806,6 +2887,7 @@ export namespace Models {
       | 'feeStructures'
       | 'psychomotorRatings'
       | 'reportComments'
+      | 'reportPublications'
       | 'session'
       | 'studentTermResults'
       | 'subjectResults';
@@ -2835,18 +2917,22 @@ export namespace Models {
     createdAssessments: public_Assessment[];
     feePaymentsRecorded: public_FeePayment[];
     parent: public_Parent | null;
+    publishedReportPublications: public_ReportPublication[];
     recordedAttendance: public_Attendance[];
     school: public_School | null;
     student: public_Student | null;
     teacher: public_Teacher | null;
+    unpublishedReportPublications: public_ReportPublication[];
     readonly [RelationKeys]?:
       | 'createdAssessments'
       | 'feePaymentsRecorded'
       | 'parent'
+      | 'publishedReportPublications'
       | 'recordedAttendance'
       | 'school'
       | 'student'
-      | 'teacher';
+      | 'teacher'
+      | 'unpublishedReportPublications';
   };
 }
 
@@ -2873,6 +2959,7 @@ export declare const models: {
     ReportComponent: Models.public_ReportComponent;
     ReportComponentRule: Models.public_ReportComponentRule;
     ReportConfiguration: Models.public_ReportConfiguration;
+    ReportPublication: Models.public_ReportPublication;
     ResultComponentScore: Models.public_ResultComponentScore;
     School: Models.public_School;
     SchoolClass: Models.public_SchoolClass;
@@ -5144,6 +5231,183 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly ReportPublication: {
+              columns: {
+                readonly classId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isPublished: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly publishedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly publishedByUserId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly reportType: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly termId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly unpublishedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly unpublishedByUserId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [
+                { readonly columns: readonly ['schoolId', 'classId', 'termId', 'reportType'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'ReportPublication_classId_idx_0089e5e7';
+                  readonly prefix: 'ReportPublication_classId_idx';
+                  readonly columns: readonly ['classId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ReportPublication_isPublished_idx_d7ee5985';
+                  readonly prefix: 'ReportPublication_isPublished_idx';
+                  readonly columns: readonly ['isPublished'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ReportPublication_publishedByUserId_idx_53844f7c';
+                  readonly prefix: 'ReportPublication_publishedByUserId_idx';
+                  readonly columns: readonly ['publishedByUserId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ReportPublication_schoolId_idx_82b454d7';
+                  readonly prefix: 'ReportPublication_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ReportPublication_termId_idx_1b74c9af';
+                  readonly prefix: 'ReportPublication_termId_idx';
+                  readonly columns: readonly ['termId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ReportPublication_unpublishedByUserId_idx_21be54e2';
+                  readonly prefix: 'ReportPublication_unpublishedByUserId_idx';
+                  readonly columns: readonly ['unpublishedByUserId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportPublication';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportPublication';
+                    readonly columns: readonly ['classId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolClass';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportPublication';
+                    readonly columns: readonly ['termId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Term';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportPublication';
+                    readonly columns: readonly ['publishedByUserId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ReportPublication';
+                    readonly columns: readonly ['unpublishedByUserId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly ResultComponentScore: {
               columns: {
                 readonly componentId: {
@@ -7298,6 +7562,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ReportConfiguration';
     };
+    readonly ReportPublication: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ReportPublication';
+    };
     readonly ResultComponentScore: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ResultComponentScore';
@@ -9396,6 +9664,141 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly ReportPublication: {
+            readonly fields: {
+              readonly classId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isPublished: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly publishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly publishedByUserId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly reportType: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly termId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly unpublishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly unpublishedByUserId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly class: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolClass';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['classId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly publishedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['publishedByUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly term: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Term' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['termId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly unpublishedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['unpublishedByUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ReportPublication';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly classId: { readonly column: 'classId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly isPublished: { readonly column: 'isPublished' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly publishedByUserId: { readonly column: 'publishedByUserId' };
+                readonly reportType: { readonly column: 'reportType' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly termId: { readonly column: 'termId' };
+                readonly unpublishedAt: { readonly column: 'unpublishedAt' };
+                readonly unpublishedByUserId: { readonly column: 'unpublishedByUserId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly ResultComponentScore: {
             readonly fields: {
               readonly componentId: {
@@ -9766,6 +10169,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly reportPublications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportPublication';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly sessions: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -9974,6 +10388,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'FeeStructure';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['classId'];
+                };
+              };
+              readonly reportPublications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportPublication';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -11619,6 +12044,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['termId'];
                 };
               };
+              readonly reportPublications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportPublication';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['termId'];
+                };
+              };
               readonly session: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -11775,6 +12211,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['userId'];
                 };
               };
+              readonly publishedReportPublications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportPublication';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['publishedByUserId'];
+                };
+              };
               readonly recordedAttendance: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -11820,6 +12267,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['userId'];
+                };
+              };
+              readonly unpublishedReportPublications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ReportPublication';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['unpublishedByUserId'];
                 };
               };
             };
@@ -12181,6 +12639,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'ReportConfiguration';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'ReportPublication';
           };
         },
         {

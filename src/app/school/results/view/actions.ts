@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { calculateClassTermResults } from "@/lib/services/result-calculation.service";
+import { db } from "@/prisma/db";
 
 function parsePositiveId(value: FormDataEntryValue | null) {
   if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) {
@@ -99,4 +100,196 @@ export async function generateResultsAction(formData: FormData) {
     status,
     message,
   });
+}
+
+
+type PublicationReportType = "MID_TERM" | "TERMINAL";
+
+async function validatePublicationRequest(formData: FormData) {
+  const session = await requireRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+  const schoolId = session.user.schoolId;
+  const userId = Number(session.user.id);
+
+  const reportType = formData.get("reportType");
+  const sessionId = parsePositiveId(formData.get("sessionId"));
+  const classId = parsePositiveId(formData.get("classId"));
+  const termId = parsePositiveId(formData.get("termId"));
+
+  if (
+    !schoolId ||
+    !Number.isSafeInteger(userId) ||
+    userId <= 0 ||
+    typeof reportType !== "string" ||
+    !["MID_TERM", "TERMINAL"].includes(reportType) ||
+    !sessionId ||
+    !classId ||
+    !termId
+  ) {
+    throw new Error("Invalid report publication request.");
+  }
+
+  const [academicSession, schoolClass, term] = await Promise.all([
+    db.orm.public.AcademicSession.where({
+      id: sessionId,
+      schoolId,
+    }).first(),
+    db.orm.public.SchoolClass.where({
+      id: classId,
+      schoolId,
+    }).first(),
+    db.orm.public.Term.where({
+      id: termId,
+      sessionId,
+    }).first(),
+  ]);
+
+  if (!academicSession || !schoolClass || !term) {
+    throw new Error("The selected class, session, or term is invalid.");
+  }
+
+  const existingResult = await db.orm.public.StudentTermResult.where({
+    schoolId,
+    classId,
+    termId,
+    reportType: reportType as "MID_TERM" | "TERMINAL",
+  }).first();
+
+  return {
+    schoolId,
+    userId,
+    sessionId,
+    classId,
+    termId,
+    reportType: reportType as PublicationReportType,
+    hasResults: Boolean(existingResult),
+  };
+}
+
+export async function publishReportsAction(formData: FormData) {
+  const data = await validatePublicationRequest(formData);
+
+  if (!data.hasResults) {
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "error",
+      message: "Generate results before publishing reports.",
+    });
+  }
+
+  try {
+    const existing = await db.orm.public.ReportPublication.where({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      termId: data.termId,
+      reportType: data.reportType,
+    }).first();
+
+    const now = new Date().toISOString();
+
+    if (existing) {
+      await db.orm.public.ReportPublication.where({
+        id: existing.id,
+        schoolId: data.schoolId,
+      }).update({
+        isPublished: true,
+        publishedAt: now,
+        publishedByUserId: data.userId,
+        unpublishedAt: null,
+        unpublishedByUserId: null,
+      });
+    } else {
+      await db.orm.public.ReportPublication.create({
+        schoolId: data.schoolId,
+        classId: data.classId,
+        termId: data.termId,
+        reportType: data.reportType,
+        isPublished: true,
+        publishedAt: now,
+        publishedByUserId: data.userId,
+        unpublishedAt: null,
+        unpublishedByUserId: null,
+      });
+    }
+
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "success",
+      message: "Reports published successfully.",
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "error",
+      message: "Unable to publish reports. Please try again.",
+    });
+  }
+}
+
+export async function unpublishReportsAction(formData: FormData) {
+  const data = await validatePublicationRequest(formData);
+
+  try {
+    const existing = await db.orm.public.ReportPublication.where({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      termId: data.termId,
+      reportType: data.reportType,
+    }).first();
+
+    if (!existing || !existing.isPublished) {
+      redirectWithMessage({
+        reportType: data.reportType,
+        sessionId: data.sessionId,
+        classId: data.classId,
+        termId: data.termId,
+        status: "error",
+        message: "These reports are not currently published.",
+      });
+    }
+
+    await db.orm.public.ReportPublication.where({
+      id: existing.id,
+      schoolId: data.schoolId,
+      isPublished: true,
+    }).update({
+      isPublished: false,
+      unpublishedAt: new Date().toISOString(),
+      unpublishedByUserId: data.userId,
+    });
+
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "success",
+      message: "Reports unpublished successfully.",
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "error",
+      message: "Unable to unpublish reports. Please try again.",
+    });
+  }
 }

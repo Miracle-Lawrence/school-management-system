@@ -4,7 +4,11 @@ import { notFound, redirect } from "next/navigation";
 import { db } from "@/prisma/db";
 import { requireRole } from "@/lib/auth/authorization";
 import { getClassTermResults } from "@/lib/services/result-calculation.service";
-import { generateResultsAction } from "./actions";
+import {
+  generateResultsAction,
+  publishReportsAction,
+  unpublishReportsAction,
+} from "./actions";
 
 type PageProps = {
   searchParams: Promise<{
@@ -79,13 +83,21 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
     notFound();
   }
 
-  const [students, savedResults] = await Promise.all([
-    db.orm.public.Student.where(
-      (item) => item.schoolId.eq(schoolId) && item.classId.eq(classId),
-    ).all(),
+ const [students, savedResults, publication] = await Promise.all([
+   db.orm.public.Student.where(
+     (item) => item.schoolId.eq(schoolId) && item.classId.eq(classId),
+   ).all(),
 
-    getClassTermResults(schoolId, classId, termId, selectedReportType),
-  ]);
+   getClassTermResults(schoolId, classId, termId, selectedReportType),
+
+   db.orm.public.ReportPublication.where(
+     (item) =>
+       item.schoolId.eq(schoolId) &&
+       item.classId.eq(classId) &&
+       item.termId.eq(termId) &&
+       item.reportType.eq(selectedReportType),
+   ).first(),
+ ]);
 
   const sortedStudents = [...students].sort((a, b) => {
     const nameA = `${a.lastName} ${a.firstName} ${a.middleName ?? ""}`;
@@ -103,6 +115,9 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
   ).length;
 
   const pendingCount = sortedStudents.length - completedCount;
+
+  const isPublished = publication?.isPublished ?? false;
+  const canPublish = sortedStudents.length > 0 && pendingCount === 0;
 
   const reportLabel =
     selectedReportType === "MID_TERM" ? "Mid-Term" : "Terminal";
@@ -143,7 +158,7 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <form action={generateResultsAction}>
             <input type="hidden" name="reportType" value={selectedReportType} />
             <input type="hidden" name="sessionId" value={sessionId} />
@@ -158,13 +173,57 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
             </button>
           </form>
 
+          {isPublished ? (
+            <form action={unpublishReportsAction}>
+              <input
+                type="hidden"
+                name="reportType"
+                value={selectedReportType}
+              />
+              <input type="hidden" name="sessionId" value={sessionId} />
+              <input type="hidden" name="classId" value={classId} />
+              <input type="hidden" name="termId" value={termId} />
+
+              <button
+                type="submit"
+                className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+              >
+                Unpublish Reports
+              </button>
+            </form>
+          ) : (
+            <form action={publishReportsAction}>
+              <input
+                type="hidden"
+                name="reportType"
+                value={selectedReportType}
+              />
+              <input type="hidden" name="sessionId" value={sessionId} />
+              <input type="hidden" name="classId" value={classId} />
+              <input type="hidden" name="termId" value={termId} />
+
+              <button
+                type="submit"
+                disabled={!canPublish}
+                title={
+                  canPublish
+                    ? "Make these reports available to parents"
+                    : "Generate complete results for every student before publishing"
+                }
+                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Publish Reports
+              </button>
+            </form>
+          )}
+
           <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             {reportLabel}
           </span>
         </div>
       </div>
 
-      <section className="grid gap-4 rounded-xl border bg-white p-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 rounded-xl border bg-white p-5 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <p className="text-sm text-gray-500">Academic Session</p>
           <p className="mt-1 font-semibold">{academicSession.name}</p>
@@ -183,6 +242,17 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
         <div>
           <p className="text-sm text-gray-500">Report Type</p>
           <p className="mt-1 font-semibold">{reportLabel}</p>
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500">Parent Portal Status</p>
+          <p
+            className={`mt-1 font-semibold ${
+              isPublished ? "text-green-700" : "text-amber-700"
+            }`}
+          >
+            {isPublished ? "Published" : "Not Published"}
+          </p>
         </div>
       </section>
 

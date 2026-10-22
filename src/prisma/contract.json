@@ -88,6 +88,10 @@
       "model": "ReportConfiguration",
       "namespace": "public"
     },
+    "ReportPublication": {
+      "model": "ReportPublication",
+      "namespace": "public"
+    },
     "ResultComponentScore": {
       "model": "ResultComponentScore",
       "namespace": "public"
@@ -3679,6 +3683,224 @@
               "table": "ReportConfiguration"
             }
           },
+          "ReportPublication": {
+            "fields": {
+              "classId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isPublished": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "publishedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "publishedByUserId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "reportType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ReportType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "termId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "unpublishedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "unpublishedByUserId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "class": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "classId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolClass",
+                  "namespace": "public"
+                }
+              },
+              "publishedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "publishedByUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              },
+              "term": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "termId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Term",
+                  "namespace": "public"
+                }
+              },
+              "unpublishedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "unpublishedByUserId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "classId": {
+                  "column": "classId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isPublished": {
+                  "column": "isPublished"
+                },
+                "publishedAt": {
+                  "column": "publishedAt"
+                },
+                "publishedByUserId": {
+                  "column": "publishedByUserId"
+                },
+                "reportType": {
+                  "column": "reportType"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "termId": {
+                  "column": "termId"
+                },
+                "unpublishedAt": {
+                  "column": "unpublishedAt"
+                },
+                "unpublishedByUserId": {
+                  "column": "unpublishedByUserId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ReportPublication"
+            }
+          },
           "ResultComponentScore": {
             "fields": {
               "componentId": {
@@ -4226,6 +4448,21 @@
                   "namespace": "public"
                 }
               },
+              "reportPublications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportPublication",
+                  "namespace": "public"
+                }
+              },
               "sessions": {
                 "cardinality": "1:N",
                 "on": {
@@ -4559,6 +4796,21 @@
                 },
                 "to": {
                   "model": "FeeStructure",
+                  "namespace": "public"
+                }
+              },
+              "reportPublications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "classId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportPublication",
                   "namespace": "public"
                 }
               },
@@ -7093,6 +7345,21 @@
                   "namespace": "public"
                 }
               },
+              "reportPublications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "termId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportPublication",
+                  "namespace": "public"
+                }
+              },
               "session": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -7325,6 +7592,21 @@
                   "namespace": "public"
                 }
               },
+              "publishedReportPublications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "publishedByUserId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportPublication",
+                  "namespace": "public"
+                }
+              },
               "recordedAttendance": {
                 "cardinality": "1:N",
                 "on": {
@@ -7385,6 +7667,21 @@
                 },
                 "to": {
                   "model": "Teacher",
+                  "namespace": "public"
+                }
+              },
+              "unpublishedReportPublications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "unpublishedByUserId"
+                  ]
+                },
+                "to": {
+                  "model": "ReportPublication",
                   "namespace": "public"
                 }
               }
@@ -10353,6 +10650,242 @@
                 }
               ]
             },
+            "ReportPublication": {
+              "checks": [
+                {
+                  "expression": "\"reportType\" IN ('MID_TERM', 'TERMINAL')",
+                  "name": "ReportPublication_reportType_check_6c6f706e",
+                  "prefix": "ReportPublication_reportType_check"
+                }
+              ],
+              "columns": {
+                "classId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isPublished": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "publishedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "publishedByUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "reportType": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ReportType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "termId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "unpublishedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "unpublishedByUserId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportPublication"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "classId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportPublication"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolClass"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "termId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportPublication"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Term"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "publishedByUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportPublication"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "unpublishedByUserId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ReportPublication"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "classId"
+                  ],
+                  "name": "ReportPublication_classId_idx_0089e5e7",
+                  "prefix": "ReportPublication_classId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "isPublished"
+                  ],
+                  "name": "ReportPublication_isPublished_idx_d7ee5985",
+                  "prefix": "ReportPublication_isPublished_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "publishedByUserId"
+                  ],
+                  "name": "ReportPublication_publishedByUserId_idx_53844f7c",
+                  "prefix": "ReportPublication_publishedByUserId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "ReportPublication_schoolId_idx_82b454d7",
+                  "prefix": "ReportPublication_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "termId"
+                  ],
+                  "name": "ReportPublication_termId_idx_1b74c9af",
+                  "prefix": "ReportPublication_termId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "unpublishedByUserId"
+                  ],
+                  "name": "ReportPublication_unpublishedByUserId_idx_21be54e2",
+                  "prefix": "ReportPublication_unpublishedByUserId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "schoolId",
+                    "classId",
+                    "termId",
+                    "reportType"
+                  ]
+                }
+              ]
+            },
             "ResultComponentScore": {
               "columns": {
                 "componentId": {
@@ -13052,10 +13585,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "af1a15139dcc3deddfaa657697e2eeb8ee7f6b292ec3fb191f7a01b943104bb3"
+    "storageHash": "7cc47ac321a887374dcc021188ad788dcd084f7a01dc2a1d4edd64e9358ed0b3"
   },
   "execution": {
-    "executionHash": "c864b90985a3e491ac583c0847fa1101e286502dcfed76727d4634e16444685e",
+    "executionHash": "2d0f645ce9f21e1736f9d15e9bd336a2c06d95ccbfb14de340871e904ea4fd61",
     "mutations": {
       "defaults": [
         {
@@ -13341,6 +13874,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "ReportConfiguration"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "ReportPublication"
           }
         },
         {

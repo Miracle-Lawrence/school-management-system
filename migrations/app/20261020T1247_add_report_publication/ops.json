@@ -1,0 +1,527 @@
+[
+  {
+    "id": "table.ReportPublication",
+    "label": "Create table \"ReportPublication\"",
+    "summary": "Creates table \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ReportPublication\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ReportPublication\"",
+        "sql": "CREATE TABLE \"public\".\"ReportPublication\" (\n  \"classId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isPublished\" bool DEFAULT false NOT NULL,\n  \"publishedAt\" timestamptz,\n  \"publishedByUserId\" int4,\n  \"reportType\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"termId\" int4 NOT NULL,\n  \"unpublishedAt\" timestamptz,\n  \"unpublishedByUserId\" int4,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"ReportPublication_reportType_check_6c6f706e\" CHECK (\"reportType\" IN ('MID_TERM', 'TERMINAL'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ReportPublication\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.ReportPublication.ReportPublication_schoolId_classId_termId_reportType_key",
+    "label": "Add unique constraint on \"ReportPublication\" (schoolId, classId, termId, reportType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "ReportPublication_schoolId_classId_termId_reportType_key",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ReportPublication_schoolId_classId_termId_reportType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_schoolId_classId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"ReportPublication_schoolId_classId_termId_reportType_key\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\" ADD CONSTRAINT \"ReportPublication_schoolId_classId_termId_reportType_key\" UNIQUE (\"schoolId\", \"classId\", \"termId\", \"reportType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ReportPublication_schoolId_classId_termId_reportType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_schoolId_classId_termId_reportType_key",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_classId_idx_0089e5e7",
+    "label": "Create index \"ReportPublication_classId_idx_0089e5e7\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_classId_idx_0089e5e7",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_classId_idx_0089e5e7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_classId_idx_0089e5e7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_classId_idx_0089e5e7\"",
+        "sql": "CREATE INDEX \"ReportPublication_classId_idx_0089e5e7\" ON \"public\".\"ReportPublication\" (\"classId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_classId_idx_0089e5e7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_classId_idx_0089e5e7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_isPublished_idx_d7ee5985",
+    "label": "Create index \"ReportPublication_isPublished_idx_d7ee5985\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_isPublished_idx_d7ee5985",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_isPublished_idx_d7ee5985\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_isPublished_idx_d7ee5985\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_isPublished_idx_d7ee5985\"",
+        "sql": "CREATE INDEX \"ReportPublication_isPublished_idx_d7ee5985\" ON \"public\".\"ReportPublication\" (\"isPublished\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_isPublished_idx_d7ee5985\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_isPublished_idx_d7ee5985\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_publishedByUserId_idx_53844f7c",
+    "label": "Create index \"ReportPublication_publishedByUserId_idx_53844f7c\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_publishedByUserId_idx_53844f7c",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_publishedByUserId_idx_53844f7c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_publishedByUserId_idx_53844f7c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_publishedByUserId_idx_53844f7c\"",
+        "sql": "CREATE INDEX \"ReportPublication_publishedByUserId_idx_53844f7c\" ON \"public\".\"ReportPublication\" (\"publishedByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_publishedByUserId_idx_53844f7c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_publishedByUserId_idx_53844f7c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_schoolId_idx_82b454d7",
+    "label": "Create index \"ReportPublication_schoolId_idx_82b454d7\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_schoolId_idx_82b454d7",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"ReportPublication_schoolId_idx_82b454d7\" ON \"public\".\"ReportPublication\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_termId_idx_1b74c9af",
+    "label": "Create index \"ReportPublication_termId_idx_1b74c9af\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_termId_idx_1b74c9af",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"ReportPublication_termId_idx_1b74c9af\" ON \"public\".\"ReportPublication\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ReportPublication.ReportPublication_unpublishedByUserId_idx_21be54e2",
+    "label": "Create index \"ReportPublication_unpublishedByUserId_idx_21be54e2\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ReportPublication_unpublishedByUserId_idx_21be54e2",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ReportPublication_unpublishedByUserId_idx_21be54e2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_unpublishedByUserId_idx_21be54e2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ReportPublication_unpublishedByUserId_idx_21be54e2\"",
+        "sql": "CREATE INDEX \"ReportPublication_unpublishedByUserId_idx_21be54e2\" ON \"public\".\"ReportPublication\" (\"unpublishedByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ReportPublication_unpublishedByUserId_idx_21be54e2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ReportPublication_unpublishedByUserId_idx_21be54e2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportPublication.ReportPublication_schoolId_fkey",
+    "label": "Add foreign key \"ReportPublication_schoolId_fkey\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportPublication_schoolId_fkey",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportPublication_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportPublication_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\"\nADD CONSTRAINT \"ReportPublication_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportPublication_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_schoolId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportPublication.ReportPublication_classId_fkey",
+    "label": "Add foreign key \"ReportPublication_classId_fkey\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportPublication_classId_fkey",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportPublication_classId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_classId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportPublication_classId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\"\nADD CONSTRAINT \"ReportPublication_classId_fkey\"\nFOREIGN KEY (\"classId\")\nREFERENCES \"public\".\"SchoolClass\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportPublication_classId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_classId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportPublication.ReportPublication_termId_fkey",
+    "label": "Add foreign key \"ReportPublication_termId_fkey\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportPublication_termId_fkey",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportPublication_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_termId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportPublication_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\"\nADD CONSTRAINT \"ReportPublication_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportPublication_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_termId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportPublication.ReportPublication_publishedByUserId_fkey",
+    "label": "Add foreign key \"ReportPublication_publishedByUserId_fkey\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportPublication_publishedByUserId_fkey",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportPublication_publishedByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_publishedByUserId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportPublication_publishedByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\"\nADD CONSTRAINT \"ReportPublication_publishedByUserId_fkey\"\nFOREIGN KEY (\"publishedByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportPublication_publishedByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_publishedByUserId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ReportPublication.ReportPublication_unpublishedByUserId_fkey",
+    "label": "Add foreign key \"ReportPublication_unpublishedByUserId_fkey\" on \"ReportPublication\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ReportPublication_unpublishedByUserId_fkey",
+        "table": "ReportPublication"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ReportPublication_unpublishedByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_unpublishedByUserId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ReportPublication_unpublishedByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ReportPublication\"\nADD CONSTRAINT \"ReportPublication_unpublishedByUserId_fkey\"\nFOREIGN KEY (\"unpublishedByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ReportPublication_unpublishedByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ReportPublication_unpublishedByUserId_fkey",
+          "public",
+          "\"public\".\"ReportPublication\""
+        ]
+      }
+    ]
+  }
+]

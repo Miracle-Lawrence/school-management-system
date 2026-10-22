@@ -157,6 +157,7 @@ model School {
   psychomotorRatings       StudentPsychomotorRating[]
   createdAt                TimestamptzString          @default(now())
   updatedAt                temporal.updatedAtString()
+  reportPublications ReportPublication[]
 }
 
 model SubscriptionPlan {
@@ -552,6 +553,8 @@ model User {
   recordedAttendance Attendance[]               @relation("AttendanceRecordedBy")
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
+  publishedReportPublications ReportPublication[] @relation("ReportPublicationPublishedBy")
+  unpublishedReportPublications ReportPublication[] @relation("ReportPublicationUnpublishedBy")
 }
 
 model Student {
@@ -659,6 +662,7 @@ model SchoolClass {
   @@unique([schoolId, name])
   @@index([schoolId])
   @@index([classTeacherId])
+  reportPublications ReportPublication[]
 }
 
 model Subject {
@@ -755,6 +759,7 @@ model Term {
 
   @@unique([sessionId, name])
   @@index([sessionId])
+  reportPublications ReportPublication[]
 }
 
 model Assessment {
@@ -976,4 +981,30 @@ model FeePayment {
 
   @@index([invoiceId, status])
   @@index([createdAt])
+}
+
+model ReportPublication {
+  id                  Int               @id @default(autoincrement())
+  school              School            @relation(fields:[schoolId], references:[id])
+  schoolId            Int
+  class               SchoolClass       @relation(fields:[classId], references:[id])
+  classId             Int
+  term                Term              @relation(fields:[termId], references:[id])
+  termId              Int
+  reportType          ReportType
+  isPublished         Boolean           @default(false)
+  publishedAt         TimestamptzString?
+  publishedBy         User?             @relation("ReportPublicationPublishedBy", fields:[publishedByUserId], references:[id])
+  publishedByUserId   Int?
+  unpublishedAt       TimestamptzString?
+  unpublishedBy       User?             @relation("ReportPublicationUnpublishedBy", fields:[unpublishedByUserId], references:[id])
+  unpublishedByUserId Int?
+  createdAt           TimestamptzString @default(now())
+  updatedAt           temporal.updatedAtString()
+
+  @@unique([schoolId, classId, termId, reportType])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([termId])
+  @@index([isPublished])
 }
