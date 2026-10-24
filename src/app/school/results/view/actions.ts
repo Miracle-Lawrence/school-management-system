@@ -6,6 +6,9 @@ import { requireRole } from "@/lib/auth/authorization";
 import { calculateClassTermResults } from "@/lib/services/result-calculation.service";
 import { db } from "@/prisma/db";
 
+import { notifyParentsOfPublishedReports } from "@/lib/services/report-publication-notification.service";
+
+
 function parsePositiveId(value: FormDataEntryValue | null) {
   if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) {
     return null;
@@ -187,6 +190,8 @@ export async function publishReportsAction(formData: FormData) {
       reportType: data.reportType,
     }).first();
 
+    const wasAlreadyPublished = existing?.isPublished === true;
+
     const now = new Date().toISOString();
 
     if (existing) {
@@ -213,6 +218,33 @@ export async function publishReportsAction(formData: FormData) {
         unpublishedByUserId: null,
       });
     }
+
+    
+if (!wasAlreadyPublished) {
+  try {
+    const result = await notifyParentsOfPublishedReports({
+      schoolId: data.schoolId,
+      createdByUserId: data.userId,
+      classId: data.classId,
+      termId: data.termId,
+      reportType: data.reportType,
+    });
+
+    console.info("Report publication notifications processed.", {
+      schoolId: data.schoolId,
+      classId: data.classId,
+      termId: data.termId,
+      reportType: data.reportType,
+      recipientCount: result.recipientCount,
+      skipped: result.skipped,
+    });
+  } catch (notificationError) {
+    console.error(
+      "Reports were published, but parent notifications could not be created.",
+      notificationError,
+    );
+  }
+}
 
     redirectWithMessage({
       reportType: data.reportType,

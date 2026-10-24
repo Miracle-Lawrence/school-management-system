@@ -1,4 +1,5 @@
 ﻿import { requireRole } from "@/lib/auth/authorization";
+import FeeReminderButton from "./fee-reminder-button";
 import StudentInvoiceManager from "./student-invoice-manager";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,8 @@ export default async function StudentInvoicesPage() {
           Generate term fee invoices and track invoices issued to students.
         </p>
       </div>
+
+      <FeeReminderButton />
 
       <StudentInvoiceManager />
     </main>

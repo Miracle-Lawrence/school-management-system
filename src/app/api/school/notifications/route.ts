@@ -122,13 +122,18 @@ export async function POST(request: Request) {
       createdByUserId,
     });
 
-    return NextResponse.json(
-      {
-        message: "Notification sent successfully.",
-        notification,
-      },
-      { status: 201 },
-    );
+   
+return NextResponse.json(
+  {
+    message:
+      notification.status === "SCHEDULED"
+        ? "Notification scheduled successfully."
+        : "Notification sent successfully.",
+    notification,
+  },
+  { status: 201 },
+);
+
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to send notification.";
@@ -148,10 +153,99 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: 403 });
     }
 
+    
+if (message === "Scheduled delivery must be in the future.") {
+  return NextResponse.json({ error: message }, { status: 400 });
+}
+
+
     console.error("Failed to send school notification:", error);
 
     return NextResponse.json(
       { error: "Unable to send notification." },
+      { status: 500 },
+    );
+  }
+}
+
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await requireApiRole(["SCHOOL_OWNER", "SCHOOL_ADMIN"]);
+
+    if (session instanceof NextResponse) {
+      return session;
+    }
+
+    const schoolId = session.user.schoolId;
+
+    if (!schoolId) {
+      return NextResponse.json(
+        { error: "School context is required." },
+        { status: 400 },
+      );
+    }
+
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Request body must contain valid JSON." },
+        { status: 400 },
+      );
+    }
+
+    if (
+      typeof body !== "object" ||
+      body === null ||
+      !("notificationId" in body) ||
+      typeof body.notificationId !== "number" ||
+      !Number.isSafeInteger(body.notificationId) ||
+      body.notificationId <= 0
+    ) {
+      return NextResponse.json(
+        { error: "A valid notification ID is required." },
+        { status: 400 },
+      );
+    }
+
+    const notification = await db.orm.public.Notification.where({
+      id: body.notificationId,
+      schoolId,
+    }).first();
+
+    if (!notification) {
+      return NextResponse.json(
+        { error: "Notification not found." },
+        { status: 404 },
+      );
+    }
+
+    if (notification.status !== "SCHEDULED") {
+      return NextResponse.json(
+        { error: "Only scheduled notifications can be cancelled." },
+        { status: 409 },
+      );
+    }
+
+    await db.orm.public.Notification.where({
+      id: notification.id,
+      schoolId,
+    }).update({
+      status: "CANCELLED",
+    });
+
+    return NextResponse.json({
+      message: "Scheduled notification cancelled.",
+      notificationId: notification.id,
+    });
+  } catch (error) {
+    console.error("Failed to cancel scheduled notification:", error);
+
+    return NextResponse.json(
+      { error: "Unable to cancel scheduled notification." },
       { status: 500 },
     );
   }

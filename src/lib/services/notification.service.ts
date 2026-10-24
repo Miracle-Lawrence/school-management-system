@@ -22,7 +22,22 @@ export async function createSchoolNotification(input: CreateNotificationData) {
     throw new Error("Message must be between 5 and 5000 characters.");
   }
 
-  const [school, creator, parentProfiles] = await Promise.all([
+  let scheduledAt: string | null = null;
+
+  if (input.scheduledAt !== undefined) {
+    const scheduledDate = new Date(input.scheduledAt);
+
+    if (
+      Number.isNaN(scheduledDate.getTime()) ||
+      scheduledDate.getTime() <= Date.now()
+    ) {
+      throw new Error("Scheduled delivery must be in the future.");
+    }
+
+    scheduledAt = scheduledDate.toISOString();
+  }
+
+  const [school, creator] = await Promise.all([
     db.orm.public.School.where({
       id: input.schoolId,
     }).first(),
@@ -31,10 +46,6 @@ export async function createSchoolNotification(input: CreateNotificationData) {
       id: input.createdByUserId,
       schoolId: input.schoolId,
     }).first(),
-
-    db.orm.public.Parent.where({
-      schoolId: input.schoolId,
-    }).all(),
   ]);
 
   if (!school) {
@@ -49,6 +60,34 @@ export async function createSchoolNotification(input: CreateNotificationData) {
   ) {
     throw new Error("You are not authorized to send school notifications.");
   }
+
+  if (scheduledAt) {
+    const notification = await db.orm.public.Notification.create({
+      schoolId: input.schoolId,
+      createdByUserId: input.createdByUserId,
+      title,
+      message,
+      category: input.category,
+      status: "SCHEDULED",
+      scheduledAt,
+      sentAt: null,
+    });
+
+    return {
+      id: notification.id,
+      title: notification.title,
+      message: notification.message,
+      category: notification.category,
+      status: "SCHEDULED" as const,
+      scheduledAt,
+      sentAt: null,
+      recipientCount: 0,
+    };
+  }
+
+  const parentProfiles = await db.orm.public.Parent.where({
+    schoolId: input.schoolId,
+  }).all();
 
   const parentUserIds = [
     ...new Set(

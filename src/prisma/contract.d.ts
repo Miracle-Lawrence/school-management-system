@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'9bdf1e33ff6afb1464692a03dcbc1cb825b7883ae92d2b8b453568bc7c96aba0'>;
+  StorageHashBase<'6527becba76c878212d9175d9eedcd1f383c3212ced75cb39a4c017738ac2820'>;
 export type ExecutionHash =
-  ExecutionHashBase<'65e992c9c950c7e664a3a64f5ba2274c5719c000e1469e9833cea7f3d3730237'>;
+  ExecutionHashBase<'cd8c824b096780c0d04f2542355cd98f4b350b99bd0c7c128fb4a5fd4177da16'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -317,6 +317,23 @@ export type FieldOutputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly EmailDelivery: {
+      readonly attemptCount: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lastError: CodecTypes['pg/text@1']['output'] | null;
+      readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly notificationId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly providerMessageId: CodecTypes['pg/text@1']['output'] | null;
+      readonly recipientEmail: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
+      readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'] | null;
+    };
     readonly FeeCategory: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -390,6 +407,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdByUserId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'] | null;
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly scheduledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
@@ -818,6 +836,23 @@ export type FieldInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly EmailDelivery: {
+      readonly attemptCount: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lastError: CodecTypes['pg/text@1']['input'] | null;
+      readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly notificationId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly providerMessageId: CodecTypes['pg/text@1']['input'] | null;
+      readonly recipientEmail: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
+      readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'] | null;
+    };
     readonly FeeCategory: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -891,6 +926,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdByUserId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'] | null;
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly scheduledAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
@@ -1319,6 +1355,23 @@ export type StorageColumnTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly EmailDelivery: {
+      readonly attemptCount: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lastError: CodecTypes['pg/text@1']['output'] | null;
+      readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly notificationId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly providerMessageId: CodecTypes['pg/text@1']['output'] | null;
+      readonly recipientEmail: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
+      readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly userId: CodecTypes['pg/int4@1']['output'] | null;
+    };
     readonly FeeCategory: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -1392,6 +1445,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdByUserId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['output'] | null;
       readonly message: CodecTypes['pg/text@1']['output'];
       readonly scheduledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
@@ -1820,6 +1874,23 @@ export type StorageColumnInputTypes = {
       readonly subjectId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly EmailDelivery: {
+      readonly attemptCount: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lastError: CodecTypes['pg/text@1']['input'] | null;
+      readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly notificationId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly providerMessageId: CodecTypes['pg/text@1']['input'] | null;
+      readonly recipientEmail: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
+      readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly userId: CodecTypes['pg/int4@1']['input'] | null;
+    };
     readonly FeeCategory: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -1893,6 +1964,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdByUserId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly invoiceId: CodecTypes['pg/int4@1']['input'] | null;
       readonly message: CodecTypes['pg/text@1']['input'];
       readonly scheduledAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
@@ -2352,6 +2424,27 @@ export namespace Models {
     subject: public_Subject;
     readonly [RelationKeys]?: 'class' | 'school' | 'subject';
   };
+  export type public_EmailDelivery = {
+    attemptCount: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    lastError: CodecTypes['pg/text@1']['output'] | null;
+    nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    notificationId: CodecTypes['pg/int4@1']['output'] | null;
+    providerMessageId: CodecTypes['pg/text@1']['output'] | null;
+    recipientEmail: CodecTypes['pg/text@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
+    subject: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    userId: CodecTypes['pg/int4@1']['output'] | null;
+    notification: public_Notification | null;
+    school: public_School;
+    user: public_User | null;
+    readonly [RelationKeys]?: 'notification' | 'school' | 'user';
+  };
   export type public_FeeCategory = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     description: CodecTypes['pg/text@1']['output'] | null;
@@ -2448,6 +2541,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdByUserId: CodecTypes['pg/int4@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
+    invoiceId: CodecTypes['pg/int4@1']['output'] | null;
     message: CodecTypes['pg/text@1']['output'];
     scheduledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     schoolId: CodecTypes['pg/int4@1']['output'];
@@ -2456,9 +2550,11 @@ export namespace Models {
     title: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdBy: public_User | null;
+    emailDeliveries: public_EmailDelivery[];
+    invoice: public_StudentInvoice | null;
     recipients: public_NotificationRecipient[];
     school: public_School;
-    readonly [RelationKeys]?: 'createdBy' | 'recipients' | 'school';
+    readonly [RelationKeys]?: 'createdBy' | 'emailDeliveries' | 'invoice' | 'recipients' | 'school';
   };
   export type public_NotificationRecipient = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2665,6 +2761,7 @@ export namespace Models {
     attendanceRecords: public_Attendance[];
     classSubjects: public_ClassSubject[];
     classes: public_SchoolClass[];
+    emailDeliveries: public_EmailDelivery[];
     feeCategories: public_FeeCategory[];
     feeInvoices: public_StudentInvoice[];
     feeStructures: public_FeeStructure[];
@@ -2693,6 +2790,7 @@ export namespace Models {
       | 'attendanceRecords'
       | 'classSubjects'
       | 'classes'
+      | 'emailDeliveries'
       | 'feeCategories'
       | 'feeInvoices'
       | 'feeStructures'
@@ -2824,13 +2922,15 @@ export namespace Models {
     totalAmount: CodecTypes['pg/numeric@1']['output'];
     type: 'TERM' | 'ONE_OFF';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    feeReminderNotifications: public_Notification[];
     items: public_InvoiceItem[];
     payments: public_FeePayment[];
     school: public_School;
     session: public_AcademicSession;
     student: public_Student;
     term: public_Term;
-    readonly [RelationKeys]?: 'items' | 'payments' | 'school' | 'session' | 'student' | 'term';
+    readonly [RelationKeys]?:
+      'feeReminderNotifications' | 'items' | 'payments' | 'school' | 'session' | 'student' | 'term';
   };
   export type public_StudentPsychomotorRating = {
     comment: CodecTypes['pg/text@1']['output'] | null;
@@ -3030,6 +3130,7 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     createdAssessments: public_Assessment[];
     createdNotifications: public_Notification[];
+    emailDeliveries: public_EmailDelivery[];
     feePaymentsRecorded: public_FeePayment[];
     notificationRecipients: public_NotificationRecipient[];
     parent: public_Parent | null;
@@ -3042,6 +3143,7 @@ export namespace Models {
     readonly [RelationKeys]?:
       | 'createdAssessments'
       | 'createdNotifications'
+      | 'emailDeliveries'
       | 'feePaymentsRecorded'
       | 'notificationRecipients'
       | 'parent'
@@ -3062,6 +3164,7 @@ export declare const models: {
     AssessmentScore: Models.public_AssessmentScore;
     Attendance: Models.public_Attendance;
     ClassSubject: Models.public_ClassSubject;
+    EmailDelivery: Models.public_EmailDelivery;
     FeeCategory: Models.public_FeeCategory;
     FeePayment: Models.public_FeePayment;
     FeeStructure: Models.public_FeeStructure;
@@ -3830,6 +3933,176 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly EmailDelivery: {
+              columns: {
+                readonly attemptCount: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly deliveredAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly lastError: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly nextRetryAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly notificationId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly providerMessageId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly recipientEmail: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly sentAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly subject: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly userId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'EmailDelivery_notificationId_idx_adfe2654';
+                  readonly prefix: 'EmailDelivery_notificationId_idx';
+                  readonly columns: readonly ['notificationId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'EmailDelivery_providerMessageId_idx_6aba4afa';
+                  readonly prefix: 'EmailDelivery_providerMessageId_idx';
+                  readonly columns: readonly ['providerMessageId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'EmailDelivery_schoolId_createdAt_idx_1d6ae506';
+                  readonly prefix: 'EmailDelivery_schoolId_createdAt_idx';
+                  readonly columns: readonly ['schoolId', 'createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'EmailDelivery_schoolId_idx_82b454d7';
+                  readonly prefix: 'EmailDelivery_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'EmailDelivery_status_nextRetryAt_idx_58d36316';
+                  readonly prefix: 'EmailDelivery_status_nextRetryAt_idx';
+                  readonly columns: readonly ['status', 'nextRetryAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'EmailDelivery_userId_idx_a489d58a';
+                  readonly prefix: 'EmailDelivery_userId_idx';
+                  readonly columns: readonly ['userId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'EmailDelivery';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'EmailDelivery';
+                    readonly columns: readonly ['notificationId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Notification';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'EmailDelivery';
+                    readonly columns: readonly ['userId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly FeeCategory: {
               columns: {
                 readonly createdAt: {
@@ -4514,6 +4787,11 @@ type ContractBase = Omit<
                     readonly expression: 'autoincrement()';
                   };
                 };
+                readonly invoiceId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
                 readonly message: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -4564,6 +4842,12 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
+                  readonly name: 'Notification_invoiceId_idx_d5c4f70e';
+                  readonly prefix: 'Notification_invoiceId_idx';
+                  readonly columns: readonly ['invoiceId'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'Notification_schoolId_category_idx_a39fc059';
                   readonly prefix: 'Notification_schoolId_category_idx';
                   readonly columns: readonly ['schoolId', 'category'];
@@ -4598,6 +4882,18 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Notification';
+                    readonly columns: readonly ['invoiceId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'StudentInvoice';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -7741,6 +8037,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['MONTHLY', 'QUARTERLY', 'YEARLY'];
             };
+            readonly EmailDeliveryStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'SENT', 'DELIVERED', 'FAILED'];
+            };
             readonly FeeInvoiceStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['DRAFT', 'ISSUED', 'CANCELLED'];
@@ -7853,6 +8153,10 @@ type ContractBase = Omit<
     readonly ClassSubject: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ClassSubject';
+    };
+    readonly EmailDelivery: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'EmailDelivery';
     };
     readonly FeeCategory: {
       readonly namespace: 'public' & NamespaceId;
@@ -8636,6 +8940,141 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly EmailDelivery: {
+            readonly fields: {
+              readonly attemptCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deliveredAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lastError: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly nextRetryAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly notificationId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly providerMessageId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly recipientEmail: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sentAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly subject: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly userId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly notification: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['notificationId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'EmailDelivery';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly attemptCount: { readonly column: 'attemptCount' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deliveredAt: { readonly column: 'deliveredAt' };
+                readonly id: { readonly column: 'id' };
+                readonly lastError: { readonly column: 'lastError' };
+                readonly nextRetryAt: { readonly column: 'nextRetryAt' };
+                readonly notificationId: { readonly column: 'notificationId' };
+                readonly providerMessageId: { readonly column: 'providerMessageId' };
+                readonly recipientEmail: { readonly column: 'recipientEmail' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly sentAt: { readonly column: 'sentAt' };
+                readonly status: { readonly column: 'status' };
+                readonly subject: { readonly column: 'subject' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly userId: { readonly column: 'userId' };
+              };
+            };
+          };
           readonly FeeCategory: {
             readonly fields: {
               readonly createdAt: {
@@ -9234,6 +9673,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly invoiceId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly message: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -9282,6 +9725,29 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly emailDeliveries: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'EmailDelivery';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['notificationId'];
+                };
+              };
+              readonly invoice: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'StudentInvoice';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['invoiceId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly recipients: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -9314,6 +9780,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly createdByUserId: { readonly column: 'createdByUserId' };
                 readonly id: { readonly column: 'id' };
+                readonly invoiceId: { readonly column: 'invoiceId' };
                 readonly message: { readonly column: 'message' };
                 readonly scheduledAt: { readonly column: 'scheduledAt' };
                 readonly schoolId: { readonly column: 'schoolId' };
@@ -10580,6 +11047,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly emailDeliveries: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'EmailDelivery';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly feeCategories: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -11452,6 +11930,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly feeReminderNotifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['invoiceId'];
+                };
+              };
               readonly items: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -12742,6 +13231,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['createdByUserId'];
                 };
               };
+              readonly emailDeliveries: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'EmailDelivery';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly feePaymentsRecorded: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -12903,6 +13403,15 @@ type ContractBase = Omit<
               { readonly name: 'MONTHLY'; readonly value: 'MONTHLY' },
               { readonly name: 'QUARTERLY'; readonly value: 'QUARTERLY' },
               { readonly name: 'YEARLY'; readonly value: 'YEARLY' },
+            ];
+          };
+          readonly EmailDeliveryStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'SENT'; readonly value: 'SENT' },
+              { readonly name: 'DELIVERED'; readonly value: 'DELIVERED' },
+              { readonly name: 'FAILED'; readonly value: 'FAILED' },
             ];
           };
           readonly FeeInvoiceStatus: {
@@ -13107,6 +13616,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'ClassSubject';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'EmailDelivery';
           };
         },
         {

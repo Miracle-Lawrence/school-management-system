@@ -1,0 +1,401 @@
+[
+  {
+    "id": "table.EmailDelivery",
+    "label": "Create table \"EmailDelivery\"",
+    "summary": "Creates table \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EmailDelivery\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EmailDelivery\"",
+        "sql": "CREATE TABLE \"public\".\"EmailDelivery\" (\n  \"attemptCount\" int4 DEFAULT 0 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deliveredAt\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"lastError\" text,\n  \"nextRetryAt\" timestamptz,\n  \"notificationId\" int4,\n  \"providerMessageId\" text,\n  \"recipientEmail\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"sentAt\" timestamptz,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"subject\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" int4,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"EmailDelivery_status_check_3c607dd6\" CHECK (\"status\" IN ('PENDING', 'SENT', 'DELIVERED', 'FAILED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EmailDelivery\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_notificationId_idx_adfe2654",
+    "label": "Create index \"EmailDelivery_notificationId_idx_adfe2654\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_notificationId_idx_adfe2654",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_notificationId_idx_adfe2654\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_notificationId_idx_adfe2654\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_notificationId_idx_adfe2654\"",
+        "sql": "CREATE INDEX \"EmailDelivery_notificationId_idx_adfe2654\" ON \"public\".\"EmailDelivery\" (\"notificationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_notificationId_idx_adfe2654\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_notificationId_idx_adfe2654\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_providerMessageId_idx_6aba4afa",
+    "label": "Create index \"EmailDelivery_providerMessageId_idx_6aba4afa\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_providerMessageId_idx_6aba4afa",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_providerMessageId_idx_6aba4afa\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_providerMessageId_idx_6aba4afa\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_providerMessageId_idx_6aba4afa\"",
+        "sql": "CREATE INDEX \"EmailDelivery_providerMessageId_idx_6aba4afa\" ON \"public\".\"EmailDelivery\" (\"providerMessageId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_providerMessageId_idx_6aba4afa\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_providerMessageId_idx_6aba4afa\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_schoolId_createdAt_idx_1d6ae506",
+    "label": "Create index \"EmailDelivery_schoolId_createdAt_idx_1d6ae506\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_schoolId_createdAt_idx_1d6ae506",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_schoolId_createdAt_idx_1d6ae506\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_schoolId_createdAt_idx_1d6ae506\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_schoolId_createdAt_idx_1d6ae506\"",
+        "sql": "CREATE INDEX \"EmailDelivery_schoolId_createdAt_idx_1d6ae506\" ON \"public\".\"EmailDelivery\" (\"schoolId\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_schoolId_createdAt_idx_1d6ae506\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_schoolId_createdAt_idx_1d6ae506\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_schoolId_idx_82b454d7",
+    "label": "Create index \"EmailDelivery_schoolId_idx_82b454d7\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_schoolId_idx_82b454d7",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"EmailDelivery_schoolId_idx_82b454d7\" ON \"public\".\"EmailDelivery\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_status_nextRetryAt_idx_58d36316",
+    "label": "Create index \"EmailDelivery_status_nextRetryAt_idx_58d36316\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_status_nextRetryAt_idx_58d36316",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_status_nextRetryAt_idx_58d36316\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_status_nextRetryAt_idx_58d36316\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_status_nextRetryAt_idx_58d36316\"",
+        "sql": "CREATE INDEX \"EmailDelivery_status_nextRetryAt_idx_58d36316\" ON \"public\".\"EmailDelivery\" (\"status\", \"nextRetryAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_status_nextRetryAt_idx_58d36316\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_status_nextRetryAt_idx_58d36316\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDelivery.EmailDelivery_userId_idx_a489d58a",
+    "label": "Create index \"EmailDelivery_userId_idx_a489d58a\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDelivery_userId_idx_a489d58a",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDelivery_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDelivery_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"EmailDelivery_userId_idx_a489d58a\" ON \"public\".\"EmailDelivery\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDelivery_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDelivery_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmailDelivery.EmailDelivery_schoolId_fkey",
+    "label": "Add foreign key \"EmailDelivery_schoolId_fkey\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmailDelivery_schoolId_fkey",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmailDelivery_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_schoolId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmailDelivery_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmailDelivery\"\nADD CONSTRAINT \"EmailDelivery_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmailDelivery_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_schoolId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmailDelivery.EmailDelivery_notificationId_fkey",
+    "label": "Add foreign key \"EmailDelivery_notificationId_fkey\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmailDelivery_notificationId_fkey",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmailDelivery_notificationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_notificationId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmailDelivery_notificationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmailDelivery\"\nADD CONSTRAINT \"EmailDelivery_notificationId_fkey\"\nFOREIGN KEY (\"notificationId\")\nREFERENCES \"public\".\"Notification\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmailDelivery_notificationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_notificationId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmailDelivery.EmailDelivery_userId_fkey",
+    "label": "Add foreign key \"EmailDelivery_userId_fkey\" on \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmailDelivery_userId_fkey",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmailDelivery_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_userId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmailDelivery_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmailDelivery\"\nADD CONSTRAINT \"EmailDelivery_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmailDelivery_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmailDelivery_userId_fkey",
+          "public",
+          "\"public\".\"EmailDelivery\""
+        ]
+      }
+    ]
+  }
+]

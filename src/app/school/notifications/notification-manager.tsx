@@ -53,11 +53,29 @@ function categoryLabel(category: NotificationCategory) {
   return categories.find((item) => item.value === category)?.label ?? category;
 }
 
+
+function getLocalDateTimeMinimum() {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() + 1);
+  date.setSeconds(0, 0);
+
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offset * 60_000);
+
+  return localDate.toISOString().slice(0, 16);
+}
+
+
 export default function NotificationManager() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [category, setCategory] =
     useState<NotificationCategory>("ANNOUNCEMENT");
+    
+const [deliveryMode, setDeliveryMode] = useState<"NOW" | "SCHEDULED">("NOW");
+const [scheduledAt, setScheduledAt] = useState("");
+const [cancellingId, setCancellingId] = useState<number | null>(null);
+
 
   const [notifications, setNotifications] = useState<SchoolNotification[]>([]);
 
@@ -96,55 +114,84 @@ export default function NotificationManager() {
     void loadNotifications();
   }, [loadNotifications]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setSuccess("");
+  
+async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  setError("");
+  setSuccess("");
 
-    const confirmed = window.confirm(
-      "Send this notification to all active parent accounts linked to your school? This action cannot currently be undone.",
+  let scheduledAtIso: string | undefined;
+
+  if (deliveryMode === "SCHEDULED") {
+    if (!scheduledAt) {
+      setError("Choose a date and time for delivery.");
+      return;
+    }
+
+    const date = new Date(scheduledAt);
+
+    if (Number.isNaN(date.getTime()) || date.getTime() <= Date.now()) {
+      setError("Scheduled delivery must be in the future.");
+      return;
+    }
+
+    scheduledAtIso = date.toISOString();
+  }
+
+  const confirmed = window.confirm(
+    deliveryMode === "SCHEDULED"
+      ? `Schedule this notification for ${new Date(scheduledAt).toLocaleString()}?`
+      : "Send this notification to all active parent accounts linked to your school?",
+  );
+
+  if (!confirmed) return;
+
+  setSubmitting(true);
+
+  try {
+    const payload = {
+      title,
+      message,
+      category,
+      ...(scheduledAtIso ? { scheduledAt: scheduledAtIso } : {}),
+    };
+
+    const response = await fetch("/api/school/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error ?? "Unable to process notification.");
+    }
+
+    setSuccess(
+      deliveryMode === "SCHEDULED"
+        ? `Notification scheduled for ${new Date(scheduledAt).toLocaleString()}.`
+        : `Notification sent successfully to ${data.notification.recipientCount} parent account(s).`,
     );
 
-    if (!confirmed) return;
+    setTitle("");
+    setMessage("");
+    setCategory("ANNOUNCEMENT");
+    setScheduledAt("");
+    setDeliveryMode("NOW");
 
-    setSubmitting(true);
-
-    try {
-      const response = await fetch("/api/school/notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          message,
-          category,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error ?? "Unable to send notification.");
-      }
-
-      setSuccess(
-        `Notification sent successfully to ${data.notification.recipientCount} parent account(s).`,
-      );
-
-      setTitle("");
-      setMessage("");
-      setCategory("ANNOUNCEMENT");
-
-      await loadNotifications();
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to send notification.",
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    await loadNotifications();
+  } catch (err) {
+    setError(
+      err instanceof Error ? err.message : "Unable to process notification.",
+    );
+  } finally {
+    setSubmitting(false);
   }
+}
+
 
   return (
     <div className="space-y-8">
@@ -223,6 +270,59 @@ export default function NotificationManager() {
             </select>
           </div>
 
+          <div className="space-y-3">
+            <p className="text-sm font-medium">Delivery</p>
+
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="delivery-mode"
+                  value="NOW"
+                  checked={deliveryMode === "NOW"}
+                  onChange={() => setDeliveryMode("NOW")}
+                />
+                Send now
+              </label>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="delivery-mode"
+                  value="SCHEDULED"
+                  checked={deliveryMode === "SCHEDULED"}
+                  onChange={() => setDeliveryMode("SCHEDULED")}
+                />
+                Schedule for later
+              </label>
+            </div>
+
+            {deliveryMode === "SCHEDULED" && (
+              <div className="space-y-2">
+                <label
+                  htmlFor="notification-scheduled-at"
+                  className="text-sm font-medium"
+                >
+                  Delivery date and time
+                </label>
+
+                <input
+                  id="notification-scheduled-at"
+                  type="datetime-local"
+                  value={scheduledAt}
+                  min={getLocalDateTimeMinimum()}
+                  onChange={(event) => setScheduledAt(event.target.value)}
+                  required
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                />
+
+                <p className="text-xs text-muted-foreground">
+                  The time is interpreted in your browser's local timezone.
+                </p>
+              </div>
+            )}
+          </div>
+
           <div className="space-y-2">
             <label
               htmlFor="notification-message"
@@ -259,7 +359,11 @@ export default function NotificationManager() {
             disabled={submitting}
             className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting ? "Sending..." : "Send notification"}
+            {submitting
+              ? "Processing..."
+              : deliveryMode === "SCHEDULED"
+                ? "Schedule notification"
+                : "Send notification"}
           </button>
         </form>
       </section>
@@ -304,6 +408,63 @@ export default function NotificationManager() {
                       </span>
                     </div>
 
+                    {notification.status === "SCHEDULED" && (
+                      <button
+                        type="button"
+                        disabled={cancellingId === notification.id}
+                        onClick={async () => {
+                          const confirmed = window.confirm(
+                            "Cancel this scheduled notification?",
+                          );
+
+                          if (!confirmed) return;
+
+                          setError("");
+                          setSuccess("");
+                          setCancellingId(notification.id);
+
+                          try {
+                            const response = await fetch(
+                              "/api/school/notifications",
+                              {
+                                method: "PATCH",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                  notificationId: notification.id,
+                                }),
+                              },
+                            );
+
+                            const data = await response.json();
+
+                            if (!response.ok) {
+                              throw new Error(
+                                data.error ?? "Unable to cancel notification.",
+                              );
+                            }
+
+                            setSuccess("Scheduled notification cancelled.");
+                            await loadNotifications();
+                          } catch (err) {
+                            setError(
+                              err instanceof Error
+                                ? err.message
+                                : "Unable to cancel notification.",
+                            );
+                          } finally {
+                            setCancellingId(null);
+                          }
+                        }}
+                        className="mt-4 rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+                      >
+                        {cancellingId === notification.id
+                          ? "Cancelling..."
+                          : "Cancel scheduled notification"}
+                      </button>
+                    )}
+
                     <h3 className="font-semibold">{notification.title}</h3>
 
                     <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
@@ -317,9 +478,13 @@ export default function NotificationManager() {
                     </p>
 
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {formatDate(
-                        notification.sentAt ?? notification.createdAt,
-                      )}
+                      {notification.status === "SCHEDULED"
+                        ? `Scheduled for ${formatDate(notification.scheduledAt)}`
+                        : notification.status === "CANCELLED"
+                          ? `Cancelled · ${formatDate(notification.createdAt)}`
+                          : formatDate(
+                              notification.sentAt ?? notification.createdAt,
+                            )}
                     </p>
                   </div>
                 </div>

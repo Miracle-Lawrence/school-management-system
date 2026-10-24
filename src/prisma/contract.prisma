@@ -120,6 +120,13 @@ enum NotificationStatus {
   CANCELLED
 }
 
+enum EmailDeliveryStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
 model School {
   id                       Int                        @id @default(autoincrement())
   name                     String
@@ -140,6 +147,7 @@ model School {
   subjects                 Subject[]
   classSubjects            ClassSubject[]
   assessments              Assessment[]
+  emailDeliveries          EmailDelivery[]
   logoUrl                  String?
   faviconUrl               String?
   motto                    String?
@@ -565,6 +573,7 @@ model User {
   student            Student?
   teacher            Teacher?
   parent             Parent?
+  emailDeliveries     EmailDelivery[]
   feePaymentsRecorded FeePayment[]
   createdAssessments Assessment[]               @relation("AssessmentCreatedBy")
   recordedAttendance Attendance[]               @relation("AttendanceRecordedBy")
@@ -961,6 +970,9 @@ model StudentInvoice {
   termInvoiceKey    String?           @unique
   items             InvoiceItem[]
   payments          FeePayment[]
+  
+  feeReminderNotifications Notification[]
+
   createdAt         TimestamptzString @default(now())
   updatedAt         temporal.updatedAtString()
 
@@ -1032,6 +1044,10 @@ model Notification {
   id              Int                  @id @default(autoincrement())
   school          School               @relation(fields: [schoolId], references: [id])
   schoolId        Int
+  
+  invoice           StudentInvoice? @relation(fields: [invoiceId], references: [id])
+  invoiceId         Int?
+
   createdBy       User?                @relation("NotificationCreatedBy", fields: [createdByUserId], references: [id])
   createdByUserId Int?
   title           String
@@ -1041,6 +1057,7 @@ model Notification {
   scheduledAt     TimestamptzString?
   sentAt          TimestamptzString?
   recipients      NotificationRecipient[]
+  emailDeliveries EmailDelivery[]
   createdAt       TimestamptzString    @default(now())
   updatedAt       temporal.updatedAtString()
 
@@ -1060,4 +1077,38 @@ model NotificationRecipient {
 
   @@unique([notificationId, userId])
   @@index([userId, readAt])
+}
+
+model EmailDelivery {
+  id                Int                @id @default(autoincrement())
+
+  school            School             @relation(fields: [schoolId], references: [id])
+  schoolId          Int
+
+  notification      Notification?      @relation(fields: [notificationId], references: [id])
+  notificationId    Int?
+
+  user              User?              @relation(fields: [userId], references: [id])
+  userId            Int?
+
+  recipientEmail    String
+  subject           String
+  status            EmailDeliveryStatus @default(PENDING)
+
+  attemptCount      Int                @default(0)
+  providerMessageId String?
+  lastError         String?
+  nextRetryAt       TimestamptzString?
+
+  sentAt            TimestamptzString?
+  deliveredAt       TimestamptzString?
+
+  createdAt         TimestamptzString  @default(now())
+  updatedAt         temporal.updatedAtString()
+
+  @@index([schoolId, createdAt])
+  @@index([status, nextRetryAt])
+  @@index([notificationId])
+  @@index([userId])
+  @@index([providerMessageId])
 }

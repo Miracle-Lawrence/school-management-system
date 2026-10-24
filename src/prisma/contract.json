@@ -28,6 +28,10 @@
       "model": "ClassSubject",
       "namespace": "public"
     },
+    "EmailDelivery": {
+      "model": "EmailDelivery",
+      "namespace": "public"
+    },
     "FeeCategory": {
       "model": "FeeCategory",
       "namespace": "public"
@@ -250,6 +254,27 @@
               {
                 "name": "YEARLY",
                 "value": "YEARLY"
+              }
+            ]
+          },
+          "EmailDeliveryStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "SENT",
+                "value": "SENT"
+              },
+              {
+                "name": "DELIVERED",
+                "value": "DELIVERED"
+              },
+              {
+                "name": "FAILED",
+                "value": "FAILED"
               }
             ]
           },
@@ -1547,6 +1572,222 @@
               "table": "ClassSubject"
             }
           },
+          "EmailDelivery": {
+            "fields": {
+              "attemptCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "deliveredAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastError": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "nextRetryAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "notificationId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "providerMessageId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "recipientEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "EmailDeliveryStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "subject": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "notification": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "notificationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "attemptCount": {
+                  "column": "attemptCount"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "deliveredAt": {
+                  "column": "deliveredAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "lastError": {
+                  "column": "lastError"
+                },
+                "nextRetryAt": {
+                  "column": "nextRetryAt"
+                },
+                "notificationId": {
+                  "column": "notificationId"
+                },
+                "providerMessageId": {
+                  "column": "providerMessageId"
+                },
+                "recipientEmail": {
+                  "column": "recipientEmail"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "subject": {
+                  "column": "subject"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "EmailDelivery"
+            }
+          },
           "FeeCategory": {
             "fields": {
               "createdAt": {
@@ -2485,6 +2726,13 @@
                   "kind": "scalar"
                 }
               },
+              "invoiceId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "message": {
                 "nullable": false,
                 "type": {
@@ -2558,6 +2806,37 @@
                   "namespace": "public"
                 }
               },
+              "emailDeliveries": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "notificationId"
+                  ]
+                },
+                "to": {
+                  "model": "EmailDelivery",
+                  "namespace": "public"
+                }
+              },
+              "invoice": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "invoiceId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "StudentInvoice",
+                  "namespace": "public"
+                }
+              },
               "recipients": {
                 "cardinality": "1:N",
                 "on": {
@@ -2603,6 +2882,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "invoiceId": {
+                  "column": "invoiceId"
                 },
                 "message": {
                   "column": "message"
@@ -4616,6 +4898,21 @@
                   "namespace": "public"
                 }
               },
+              "emailDeliveries": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "EmailDelivery",
+                  "namespace": "public"
+                }
+              },
               "feeCategories": {
                 "cardinality": "1:N",
                 "on": {
@@ -5932,6 +6229,21 @@
               }
             },
             "relations": {
+              "feeReminderNotifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "invoiceId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              },
               "items": {
                 "cardinality": "1:N",
                 "on": {
@@ -7924,6 +8236,21 @@
                   "namespace": "public"
                 }
               },
+              "emailDeliveries": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "EmailDelivery",
+                  "namespace": "public"
+                }
+              },
               "feePaymentsRecorded": {
                 "cardinality": "1:N",
                 "on": {
@@ -9065,6 +9392,222 @@
                 }
               ]
             },
+            "EmailDelivery": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'SENT', 'DELIVERED', 'FAILED')",
+                  "name": "EmailDelivery_status_check_3c607dd6",
+                  "prefix": "EmailDelivery_status_check"
+                }
+              ],
+              "columns": {
+                "attemptCount": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "deliveredAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "lastError": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "nextRetryAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "notificationId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "providerMessageId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "recipientEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "EmailDeliveryStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "subject": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "EmailDelivery"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "notificationId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "EmailDelivery"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "EmailDelivery"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "notificationId"
+                  ],
+                  "name": "EmailDelivery_notificationId_idx_adfe2654",
+                  "prefix": "EmailDelivery_notificationId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "providerMessageId"
+                  ],
+                  "name": "EmailDelivery_providerMessageId_idx_6aba4afa",
+                  "prefix": "EmailDelivery_providerMessageId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "createdAt"
+                  ],
+                  "name": "EmailDelivery_schoolId_createdAt_idx_1d6ae506",
+                  "prefix": "EmailDelivery_schoolId_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "EmailDelivery_schoolId_idx_82b454d7",
+                  "prefix": "EmailDelivery_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status",
+                    "nextRetryAt"
+                  ],
+                  "name": "EmailDelivery_status_nextRetryAt_idx_58d36316",
+                  "prefix": "EmailDelivery_status_nextRetryAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "EmailDelivery_userId_idx_a489d58a",
+                  "prefix": "EmailDelivery_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "FeeCategory": {
               "columns": {
                 "createdAt": {
@@ -9960,6 +10503,11 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "invoiceId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
                 "message": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -10026,6 +10574,22 @@
                 {
                   "source": {
                     "columns": [
+                      "invoiceId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "StudentInvoice"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
                       "createdByUserId"
                     ],
                     "namespaceId": "public",
@@ -10047,6 +10611,14 @@
                   ],
                   "name": "Notification_createdByUserId_idx_93e8a540",
                   "prefix": "Notification_createdByUserId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "invoiceId"
+                  ],
+                  "name": "Notification_invoiceId_idx_d5c4f70e",
+                  "prefix": "Notification_invoiceId_idx",
                   "unique": false
                 },
                 {
@@ -14151,6 +14723,15 @@
                 "YEARLY"
               ]
             },
+            "EmailDeliveryStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "SENT",
+                "DELIVERED",
+                "FAILED"
+              ]
+            },
             "FeeInvoiceStatus": {
               "kind": "valueSet",
               "values": [
@@ -14278,10 +14859,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9bdf1e33ff6afb1464692a03dcbc1cb825b7883ae92d2b8b453568bc7c96aba0"
+    "storageHash": "6527becba76c878212d9175d9eedcd1f383c3212ced75cb39a4c017738ac2820"
   },
   "execution": {
-    "executionHash": "65e992c9c950c7e664a3a64f5ba2274c5719c000e1469e9833cea7f3d3730237",
+    "executionHash": "cd8c824b096780c0d04f2542355cd98f4b350b99bd0c7c128fb4a5fd4177da16",
     "mutations": {
       "defaults": [
         {
@@ -14372,6 +14953,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "ClassSubject"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "EmailDelivery"
           }
         },
         {

@@ -21,4 +21,6 @@ export const createNotificationSchema = z.object({
     "ANNOUNCEMENT",
     "URGENT",
   ]),
+
+  scheduledAt: z.string().datetime({ offset: true }).optional(),
 });
