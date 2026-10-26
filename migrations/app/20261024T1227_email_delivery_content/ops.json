@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.EmailDelivery.htmlBody",
+    "label": "Add column \"htmlBody\" to \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "htmlBody",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"htmlBody\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "EmailDelivery",
+          "htmlBody"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"htmlBody\"",
+        "sql": "ALTER TABLE \"public\".\"EmailDelivery\" ADD COLUMN \"htmlBody\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"htmlBody\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "EmailDelivery",
+          "htmlBody"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.EmailDelivery.textBody",
+    "label": "Add column \"textBody\" to \"EmailDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "textBody",
+        "table": "EmailDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"textBody\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "EmailDelivery",
+          "textBody"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"textBody\"",
+        "sql": "ALTER TABLE \"public\".\"EmailDelivery\" ADD COLUMN \"textBody\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"textBody\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "EmailDelivery",
+          "textBody"
+        ]
+      }
+    ]
+  }
+]

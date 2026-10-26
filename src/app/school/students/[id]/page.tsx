@@ -14,6 +14,7 @@ import { db } from "@/prisma/db";
 import { createStudentSchema } from "@/lib/validation/student";
 
 import StudentEditForm from "../student-edit-form";
+import StudentAccountControl from "../student-account-control";
 
 type StudentDetailsPageProps = {
   params: Promise<{
@@ -423,6 +424,15 @@ export default async function StudentDetailsPage({
           </div>
         </section>
       </div>
+
+            {/* Student login management */}
+      <StudentAccountControl
+        studentId={student.id}
+        hasLogin={Boolean(student.userId)}
+        studentEmail={student.email}
+      />
+
+      
 
       {/* Edit student */}
       <details className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">

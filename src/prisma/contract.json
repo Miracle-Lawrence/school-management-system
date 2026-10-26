@@ -1595,6 +1595,13 @@
                   "kind": "scalar"
                 }
               },
+              "htmlBody": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1666,6 +1673,13 @@
               },
               "subject": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "textBody": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1747,6 +1761,9 @@
                 "deliveredAt": {
                   "column": "deliveredAt"
                 },
+                "htmlBody": {
+                  "column": "htmlBody"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -1776,6 +1793,9 @@
                 },
                 "subject": {
                   "column": "subject"
+                },
+                "textBody": {
+                  "column": "textBody"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -9424,6 +9444,11 @@
                   "nativeType": "timestamptz",
                   "nullable": true
                 },
+                "htmlBody": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -9487,6 +9512,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "textBody": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -14859,7 +14889,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6527becba76c878212d9175d9eedcd1f383c3212ced75cb39a4c017738ac2820"
+    "storageHash": "387b2f6b1de820baecd33613ddceeb18fb5c3eeaa6f9f9089733c57790814cbe"
   },
   "execution": {
     "executionHash": "cd8c824b096780c0d04f2542355cd98f4b350b99bd0c7c128fb4a5fd4177da16",

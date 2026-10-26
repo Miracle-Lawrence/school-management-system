@@ -1093,6 +1093,8 @@ model EmailDelivery {
 
   recipientEmail    String
   subject           String
+  textBody          String?
+  htmlBody          String?
   status            EmailDeliveryStatus @default(PENDING)
 
   attemptCount      Int                @default(0)

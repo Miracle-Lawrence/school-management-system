@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'6527becba76c878212d9175d9eedcd1f383c3212ced75cb39a4c017738ac2820'>;
+  StorageHashBase<'387b2f6b1de820baecd33613ddceeb18fb5c3eeaa6f9f9089733c57790814cbe'>;
 export type ExecutionHash =
   ExecutionHashBase<'cd8c824b096780c0d04f2542355cd98f4b350b99bd0c7c128fb4a5fd4177da16'>;
 export type ProfileHash =
@@ -321,6 +321,7 @@ export type FieldOutputTypes = {
       readonly attemptCount: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly htmlBody: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastError: CodecTypes['pg/text@1']['output'] | null;
       readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -331,6 +332,7 @@ export type FieldOutputTypes = {
       readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
       readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly textBody: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
@@ -840,6 +842,7 @@ export type FieldInputTypes = {
       readonly attemptCount: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly htmlBody: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastError: CodecTypes['pg/text@1']['input'] | null;
       readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -850,6 +853,7 @@ export type FieldInputTypes = {
       readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
       readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly textBody: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
@@ -1359,6 +1363,7 @@ export type StorageColumnTypes = {
       readonly attemptCount: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly htmlBody: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastError: CodecTypes['pg/text@1']['output'] | null;
       readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -1369,6 +1374,7 @@ export type StorageColumnTypes = {
       readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
       readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly textBody: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
@@ -1878,6 +1884,7 @@ export type StorageColumnInputTypes = {
       readonly attemptCount: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly htmlBody: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastError: CodecTypes['pg/text@1']['input'] | null;
       readonly nextRetryAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -1888,6 +1895,7 @@ export type StorageColumnInputTypes = {
       readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
       readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly textBody: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
@@ -2428,6 +2436,7 @@ export namespace Models {
     attemptCount: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    htmlBody: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     lastError: CodecTypes['pg/text@1']['output'] | null;
     nextRetryAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -2438,6 +2447,7 @@ export namespace Models {
     sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     status: 'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED';
     subject: CodecTypes['pg/text@1']['output'];
+    textBody: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     userId: CodecTypes['pg/int4@1']['output'] | null;
     notification: public_Notification | null;
@@ -3955,6 +3965,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: true;
                 };
+                readonly htmlBody: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly id: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -4012,6 +4027,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                };
+                readonly textBody: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly updatedAt: {
                   readonly nativeType: 'timestamptz';
@@ -8960,6 +8980,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly htmlBody: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -9004,6 +9028,10 @@ type ContractBase = Omit<
               };
               readonly subject: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly textBody: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
@@ -9060,6 +9088,7 @@ type ContractBase = Omit<
                 readonly attemptCount: { readonly column: 'attemptCount' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly deliveredAt: { readonly column: 'deliveredAt' };
+                readonly htmlBody: { readonly column: 'htmlBody' };
                 readonly id: { readonly column: 'id' };
                 readonly lastError: { readonly column: 'lastError' };
                 readonly nextRetryAt: { readonly column: 'nextRetryAt' };
@@ -9070,6 +9099,7 @@ type ContractBase = Omit<
                 readonly sentAt: { readonly column: 'sentAt' };
                 readonly status: { readonly column: 'status' };
                 readonly subject: { readonly column: 'subject' };
+                readonly textBody: { readonly column: 'textBody' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly userId: { readonly column: 'userId' };
               };
