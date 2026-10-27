@@ -388,6 +388,27 @@
               }
             ]
           },
+          "NotificationAudience": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PARENTS",
+                "value": "PARENTS"
+              },
+              {
+                "name": "STUDENTS",
+                "value": "STUDENTS"
+              },
+              {
+                "name": "TEACHERS",
+                "value": "TEACHERS"
+              },
+              {
+                "name": "EVERYONE",
+                "value": "EVERYONE"
+              }
+            ]
+          },
           "NotificationCategory": {
             "codecId": "pg/text@1",
             "members": [
@@ -3301,6 +3322,19 @@
           },
           "Notification": {
             "fields": {
+              "audience": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationAudience",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "category": {
                 "nullable": false,
                 "type": {
@@ -3480,6 +3514,9 @@
             },
             "storage": {
               "fields": {
+                "audience": {
+                  "column": "audience"
+                },
                 "category": {
                   "column": "category"
                 },
@@ -11805,6 +11842,11 @@
             "Notification": {
               "checks": [
                 {
+                  "expression": "\"audience\" IN ('PARENTS', 'STUDENTS', 'TEACHERS', 'EVERYONE')",
+                  "name": "Notification_audience_check_c5ab304b",
+                  "prefix": "Notification_audience_check"
+                },
+                {
                   "expression": "\"category\" IN ('FEE_REMINDER', 'REPORT_PUBLISHED', 'ACADEMIC', 'EVENT', 'ANNOUNCEMENT', 'URGENT')",
                   "name": "Notification_category_check_c954437d",
                   "prefix": "Notification_category_check"
@@ -11816,6 +11858,21 @@
                 }
               ],
               "columns": {
+                "audience": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PARENTS"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationAudience",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
                 "category": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -16130,6 +16187,15 @@
                 "RAW_SCORE"
               ]
             },
+            "NotificationAudience": {
+              "kind": "valueSet",
+              "values": [
+                "PARENTS",
+                "STUDENTS",
+                "TEACHERS",
+                "EVERYONE"
+              ]
+            },
             "NotificationCategory": {
               "kind": "valueSet",
               "values": [
@@ -16210,7 +16276,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "ba3c259d546f2efac2c32dcc53d928db279f1cc3857e01f52eaa49194e308659"
+    "storageHash": "b45a4bab0f46e7d956ee2f1d0f568d5aae7823b4782532be5e1473a0001f90ec"
   },
   "execution": {
     "executionHash": "9292865a08ffd05e3ea25b41bf16189b7dff15860d2f9f8011ee6c3745837870",

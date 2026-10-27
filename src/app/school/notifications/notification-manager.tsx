@@ -1,6 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
+
+type NotificationAudience = "PARENTS" | "STUDENTS" | "TEACHERS" | "EVERYONE";
 
 type NotificationCategory =
   | "FEE_REMINDER"
@@ -15,6 +17,7 @@ type SchoolNotification = {
   title: string;
   message: string;
   category: NotificationCategory;
+  audience: NotificationAudience;
   status: "DRAFT" | "SCHEDULED" | "SENT" | "CANCELLED";
   scheduledAt: string | null;
   sentAt: string | null;
@@ -53,6 +56,17 @@ function categoryLabel(category: NotificationCategory) {
   return categories.find((item) => item.value === category)?.label ?? category;
 }
 
+function audienceLabel(audience: NotificationAudience) {
+  const labels: Record<NotificationAudience, string> = {
+    PARENTS: "Parents",
+    STUDENTS: "Students",
+    TEACHERS: "Teachers",
+    EVERYONE: "Everyone",
+  };
+
+  return labels[audience];
+}
+
 
 function getLocalDateTimeMinimum() {
   const date = new Date();
@@ -71,6 +85,8 @@ export default function NotificationManager() {
   const [message, setMessage] = useState("");
   const [category, setCategory] =
     useState<NotificationCategory>("ANNOUNCEMENT");
+  const [audience, setAudience] =
+    useState<NotificationAudience>("PARENTS");
     
 const [deliveryMode, setDeliveryMode] = useState<"NOW" | "SCHEDULED">("NOW");
 const [scheduledAt, setScheduledAt] = useState("");
@@ -141,7 +157,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
   const confirmed = window.confirm(
     deliveryMode === "SCHEDULED"
       ? `Schedule this notification for ${new Date(scheduledAt).toLocaleString()}?`
-      : "Send this notification to all active parent accounts linked to your school?",
+      : category === "FEE_REMINDER" ? "Send this fee reminder to eligible parent accounts?" : `Send this notification to ${audience === "PARENTS" ? "parents" : audience === "STUDENTS" ? "students" : audience === "TEACHERS" ? "teachers" : "parents, students, and teachers"} linked to your school?`,
   );
 
   if (!confirmed) return;
@@ -153,6 +169,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
       title,
       message,
       category,
+      audience: category === "FEE_REMINDER" ? "PARENTS" : audience,
       ...(scheduledAtIso ? { scheduledAt: scheduledAtIso } : {}),
     };
 
@@ -173,12 +190,13 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     setSuccess(
       deliveryMode === "SCHEDULED"
         ? `Notification scheduled for ${new Date(scheduledAt).toLocaleString()}.`
-        : `Notification sent successfully to ${data.notification.recipientCount} parent account(s).`,
+        : `Notification sent successfully to ${data.notification.recipientCount} recipient account(s).`,
     );
 
     setTitle("");
     setMessage("");
     setCategory("ANNOUNCEMENT");
+    setAudience("PARENTS");
     setScheduledAt("");
     setDeliveryMode("NOW");
 
@@ -200,8 +218,9 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
           <h2 className="text-lg font-semibold">Compose a notification</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Your notification will be delivered to all active parent accounts
-            linked to your school.
+            {category === "FEE_REMINDER"
+              ? "Fee reminders will be delivered to eligible parent accounts."
+              : `This notification will be delivered to eligible ${audience === "PARENTS" ? "parent" : audience === "STUDENTS" ? "student" : audience === "TEACHERS" ? "teacher" : "parent, student, and teacher"} accounts linked to your school.`}
           </p>
         </div>
 
@@ -257,9 +276,14 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
             <select
               id="notification-category"
               value={category}
-              onChange={(event) =>
-                setCategory(event.target.value as NotificationCategory)
-              }
+              onChange={(event) => {
+                const nextCategory = event.target.value as NotificationCategory;
+                setCategory(nextCategory);
+
+                if (nextCategory === "FEE_REMINDER") {
+                  setAudience("PARENTS");
+                }
+              }}
               className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             >
               {categories.map((item) => (
@@ -271,6 +295,35 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
           </div>
 
           <div className="space-y-3">
+          <div className="space-y-2">
+            <label
+              htmlFor="notification-audience"
+              className="text-sm font-medium"
+            >
+              Audience
+            </label>
+            <select
+              id="notification-audience"
+              value={category === "FEE_REMINDER" ? "PARENTS" : audience}
+              disabled={category === "FEE_REMINDER"}
+              onChange={(event) =>
+                setAudience(event.target.value as NotificationAudience)
+              }
+              className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <option value="PARENTS">Parents</option>
+              <option value="STUDENTS">Students</option>
+              <option value="TEACHERS">Teachers</option>
+              <option value="EVERYONE">
+                Everyone (parents, students, and teachers)
+              </option>
+            </select>
+            {category === "FEE_REMINDER" && (
+              <p className="text-xs text-muted-foreground">
+                Fee reminders can only be sent to parents.
+              </p>
+            )}
+          </div>
             <p className="text-sm font-medium">Delivery</p>
 
             <div className="flex flex-wrap gap-4">
@@ -349,9 +402,11 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
           </div>
 
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
-            <strong>Audience:</strong> All active parent accounts linked to your
-            school. Do not include an individual student's private fee balance
-            or other confidential information in a school-wide message.
+            <strong>Audience:</strong>{" "}
+            {category === "FEE_REMINDER"
+              ? "Fee reminders are restricted to eligible parent accounts."
+              : `This notification targets eligible ${audience === "PARENTS" ? "parent" : audience === "STUDENTS" ? "student" : audience === "TEACHERS" ? "teacher" : "parent, student, and teacher"} accounts linked to your school.`}{" "}
+            Do not include an individual student's private fee balance or other confidential information in a school-wide message.
           </div>
 
           <button
@@ -373,8 +428,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
           <h2 className="text-lg font-semibold">Notification history</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Review the notifications created by your school and the number of
-            parent accounts targeted.
+            Review the notifications created by your school, their intended audiences, and the number of recipients targeted.
           </p>
         </div>
 
@@ -402,9 +456,8 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                       <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
                         {categoryLabel(notification.category)}
                       </span>
-
-                      <span className="rounded-full border px-2.5 py-1 text-xs">
-                        {notification.status}
+                      <span className="rounded-full bg-secondary px-2.5 py-1 text-xs">
+                        {audienceLabel(notification.audience)}
                       </span>
                     </div>
 
@@ -481,7 +534,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                       {notification.status === "SCHEDULED"
                         ? `Scheduled for ${formatDate(notification.scheduledAt)}`
                         : notification.status === "CANCELLED"
-                          ? `Cancelled · ${formatDate(notification.createdAt)}`
+                          ? `Cancelled Ã‚Â· ${formatDate(notification.createdAt)}`
                           : formatDate(
                               notification.sentAt ?? notification.createdAt,
                             )}
@@ -496,3 +549,4 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     </div>
   );
 }
+

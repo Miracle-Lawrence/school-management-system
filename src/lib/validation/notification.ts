@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 export const createNotificationSchema = z.object({
   title: z
@@ -21,6 +21,10 @@ export const createNotificationSchema = z.object({
     "ANNOUNCEMENT",
     "URGENT",
   ]),
+
+  audience: z
+    .enum(["PARENTS", "STUDENTS", "TEACHERS", "EVERYONE"])
+    .default("PARENTS"),
 
   scheduledAt: z.string().datetime({ offset: true }).optional(),
 });

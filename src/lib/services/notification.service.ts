@@ -1,18 +1,98 @@
-import { db } from "@/prisma/db";
+﻿import { db } from "@/prisma/db";
 
 import type { z } from "zod";
 import type { createNotificationSchema } from "@/lib/validation/notification";
 
 type CreateNotificationInput = z.infer<typeof createNotificationSchema>;
 
+type NotificationAudience = CreateNotificationInput["audience"];
+
 type CreateNotificationData = CreateNotificationInput & {
   schoolId: number;
   createdByUserId: number;
 };
 
-export async function createSchoolNotification(input: CreateNotificationData) {
+type NotificationOrm = typeof db.orm;
+
+const audienceRoles: Record<NotificationAudience, string[]> = {
+  PARENTS: ["PARENT"],
+  STUDENTS: ["STUDENT"],
+  TEACHERS: ["TEACHER"],
+  EVERYONE: ["PARENT", "STUDENT", "TEACHER"],
+};
+
+/**
+ * Resolves active, eligible portal accounts for one school and audience.
+ * Profile links are used to ensure that only actual school parents,
+ * students, and teachers are selected.
+ */
+export async function resolveNotificationRecipients(
+  orm: NotificationOrm,
+  schoolId: number,
+  audience: NotificationAudience,
+) {
+  const userIds = new Set<number>();
+
+  if (audience === "PARENTS" || audience === "EVERYONE") {
+    const profiles = await orm.public.Parent.where({ schoolId }).all();
+
+    for (const profile of profiles) {
+      if (profile.userId !== null) {
+        userIds.add(profile.userId);
+      }
+    }
+  }
+
+  if (audience === "STUDENTS" || audience === "EVERYONE") {
+    const profiles = await orm.public.Student.where({
+      schoolId,
+      isActive: true,
+    }).all();
+
+    for (const profile of profiles) {
+      if (profile.userId !== null) {
+        userIds.add(profile.userId);
+      }
+    }
+  }
+
+  if (audience === "TEACHERS" || audience === "EVERYONE") {
+    const profiles = await orm.public.Teacher.where({ schoolId }).all();
+
+    for (const profile of profiles) {
+      if (profile.userId !== null) {
+        userIds.add(profile.userId);
+      }
+    }
+  }
+
+  const ids = [...userIds];
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const users = await orm.public.User.where((user) =>
+    user.id.in(ids),
+  ).all();
+
+  const allowedRoles = audienceRoles[audience];
+
+  return users.filter(
+    (user) =>
+      user.schoolId === schoolId &&
+      user.isActive &&
+      !user.mustChangePassword &&
+      allowedRoles.includes(user.role),
+  );
+}
+
+export async function createSchoolNotification(
+  input: CreateNotificationData,
+) {
   const title = input.title.trim();
   const message = input.message.trim();
+  const audience = input.audience ?? "PARENTS";
 
   if (title.length < 3 || title.length > 150) {
     throw new Error("Title must be between 3 and 150 characters.");
@@ -20,6 +100,12 @@ export async function createSchoolNotification(input: CreateNotificationData) {
 
   if (message.length < 5 || message.length > 5000) {
     throw new Error("Message must be between 5 and 5000 characters.");
+  }
+
+  if (input.category === "FEE_REMINDER" && audience !== "PARENTS") {
+    throw new Error(
+      "Fee reminders can only be sent to parents. Individual fee balances must not be broadcast to other audiences.",
+    );
   }
 
   let scheduledAt: string | null = null;
@@ -68,6 +154,7 @@ export async function createSchoolNotification(input: CreateNotificationData) {
       title,
       message,
       category: input.category,
+      audience,
       status: "SCHEDULED",
       scheduledAt,
       sentAt: null,
@@ -78,6 +165,7 @@ export async function createSchoolNotification(input: CreateNotificationData) {
       title: notification.title,
       message: notification.message,
       category: notification.category,
+      audience: notification.audience,
       status: "SCHEDULED" as const,
       scheduledAt,
       sentAt: null,
@@ -85,36 +173,15 @@ export async function createSchoolNotification(input: CreateNotificationData) {
     };
   }
 
-  const parentProfiles = await db.orm.public.Parent.where({
-    schoolId: input.schoolId,
-  }).all();
-
-  const parentUserIds = [
-    ...new Set(
-      parentProfiles.flatMap((parent) =>
-        parent.userId !== null ? [parent.userId] : [],
-      ),
-    ),
-  ];
-
-  const parentUsers =
-    parentUserIds.length > 0
-      ? await db.orm.public.User.where((user) =>
-          user.id.in(parentUserIds),
-        ).all()
-      : [];
-
-  const recipients = parentUsers.filter(
-    (user) =>
-      user.schoolId === input.schoolId &&
-      user.isActive &&
-      !user.mustChangePassword &&
-      user.role === "PARENT",
+  const recipients = await resolveNotificationRecipients(
+    db.orm,
+    input.schoolId,
+    audience,
   );
 
   if (recipients.length === 0) {
     throw new Error(
-      "There are no active parent accounts available to receive this notification.",
+      `There are no active ${audience.toLowerCase()} accounts available to receive this notification.`,
     );
   }
 
@@ -125,6 +192,7 @@ export async function createSchoolNotification(input: CreateNotificationData) {
       title,
       message,
       category: input.category,
+      audience,
       status: "DRAFT",
       scheduledAt: null,
       sentAt: null,
@@ -153,6 +221,7 @@ export async function createSchoolNotification(input: CreateNotificationData) {
       title: notification.title,
       message: notification.message,
       category: notification.category,
+      audience: notification.audience,
       status: "SENT" as const,
       sentAt,
       recipientCount: recipients.length,

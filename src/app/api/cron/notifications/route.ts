@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
+import { resolveNotificationRecipients } from "@/lib/services/notification.service";
 import { db } from "@/prisma/db";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +48,12 @@ export async function GET(request: Request) {
 
     for (const notification of dueNotifications) {
       try {
+        const recipients = await resolveNotificationRecipients(
+          db.orm,
+          notification.schoolId,
+          notification.audience ?? "PARENTS",
+        );
+
         const result = await db.transaction(async (tx) => {
           const current = await tx.orm.public.Notification.where({
             id: notification.id,
@@ -61,33 +68,6 @@ export async function GET(request: Request) {
           ) {
             return "SKIPPED" as const;
           }
-
-          const parentProfiles = await tx.orm.public.Parent.where({
-            schoolId: current.schoolId,
-          }).all();
-
-          const parentUserIds = [
-            ...new Set(
-              parentProfiles.flatMap((parent) =>
-                parent.userId !== null ? [parent.userId] : [],
-              ),
-            ),
-          ];
-
-          const parentUsers =
-            parentUserIds.length > 0
-              ? await tx.orm.public.User.where((user) =>
-                  user.id.in(parentUserIds),
-                ).all()
-              : [];
-
-          const recipients = parentUsers.filter(
-            (user) =>
-              user.schoolId === current.schoolId &&
-              user.role === "PARENT" &&
-              user.isActive &&
-              !user.mustChangePassword,
-          );
 
           if (recipients.length === 0) {
             await tx.orm.public.Notification.where({
@@ -128,8 +108,11 @@ export async function GET(request: Request) {
 
           if (result === "NO_RECIPIENTS") {
             console.warn(
-              "Scheduled notification cancelled because no eligible parent accounts were available.",
-              { notificationId: notification.id },
+              "Scheduled notification cancelled because no eligible accounts were available for its audience.",
+              {
+                notificationId: notification.id,
+                audience: notification.audience,
+              },
             );
           }
         }

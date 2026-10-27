@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ba3c259d546f2efac2c32dcc53d928db279f1cc3857e01f52eaa49194e308659'>;
+  StorageHashBase<'b45a4bab0f46e7d956ee2f1d0f568d5aae7823b4782532be5e1473a0001f90ec'>;
 export type ExecutionHash =
   ExecutionHashBase<'9292865a08ffd05e3ea25b41bf16189b7dff15860d2f9f8011ee6c3745837870'>;
 export type ProfileHash =
@@ -445,6 +445,7 @@ export type FieldOutputTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['output'];
     };
     readonly Notification: {
+      readonly audience: 'PARENTS' | 'STUDENTS' | 'TEACHERS' | 'EVERYONE';
       readonly category:
         'FEE_REMINDER' | 'REPORT_PUBLISHED' | 'ACADEMIC' | 'EVENT' | 'ANNOUNCEMENT' | 'URGENT';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1007,6 +1008,7 @@ export type FieldInputTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['input'];
     };
     readonly Notification: {
+      readonly audience: 'PARENTS' | 'STUDENTS' | 'TEACHERS' | 'EVERYONE';
       readonly category:
         'FEE_REMINDER' | 'REPORT_PUBLISHED' | 'ACADEMIC' | 'EVENT' | 'ANNOUNCEMENT' | 'URGENT';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1569,6 +1571,7 @@ export type StorageColumnTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['output'];
     };
     readonly Notification: {
+      readonly audience: 'PARENTS' | 'STUDENTS' | 'TEACHERS' | 'EVERYONE';
       readonly category:
         'FEE_REMINDER' | 'REPORT_PUBLISHED' | 'ACADEMIC' | 'EVENT' | 'ANNOUNCEMENT' | 'URGENT';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2131,6 +2134,7 @@ export type StorageColumnInputTypes = {
       readonly quantity: CodecTypes['pg/int4@1']['input'];
     };
     readonly Notification: {
+      readonly audience: 'PARENTS' | 'STUDENTS' | 'TEACHERS' | 'EVERYONE';
       readonly category:
         'FEE_REMINDER' | 'REPORT_PUBLISHED' | 'ACADEMIC' | 'EVENT' | 'ANNOUNCEMENT' | 'URGENT';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -2766,6 +2770,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'category' | 'invoice';
   };
   export type public_Notification = {
+    audience: 'PARENTS' | 'STUDENTS' | 'TEACHERS' | 'EVERYONE';
     category:
       'FEE_REMINDER' | 'REPORT_PUBLISHED' | 'ACADEMIC' | 'EVENT' | 'ANNOUNCEMENT' | 'URGENT';
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -5497,6 +5502,15 @@ type ContractBase = Omit<
             };
             readonly Notification: {
               columns: {
+                readonly audience: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PARENTS'>;
+                  };
+                };
                 readonly category: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -8804,6 +8818,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['PERCENTAGE', 'RAW_SCORE'];
             };
+            readonly NotificationAudience: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PARENTS', 'STUDENTS', 'TEACHERS', 'EVERYONE'];
+            };
             readonly NotificationCategory: {
               readonly kind: 'valueSet';
               readonly values: readonly [
@@ -10796,6 +10814,10 @@ type ContractBase = Omit<
           };
           readonly Notification: {
             readonly fields: {
+              readonly audience: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly category: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -10918,6 +10940,7 @@ type ContractBase = Omit<
               readonly table: 'Notification';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly audience: { readonly column: 'audience' };
                 readonly category: { readonly column: 'category' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly createdByUserId: { readonly column: 'createdByUserId' };
@@ -14711,6 +14734,15 @@ type ContractBase = Omit<
             readonly members: readonly [
               { readonly name: 'PERCENTAGE'; readonly value: 'PERCENTAGE' },
               { readonly name: 'RAW_SCORE'; readonly value: 'RAW_SCORE' },
+            ];
+          };
+          readonly NotificationAudience: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PARENTS'; readonly value: 'PARENTS' },
+              { readonly name: 'STUDENTS'; readonly value: 'STUDENTS' },
+              { readonly name: 'TEACHERS'; readonly value: 'TEACHERS' },
+              { readonly name: 'EVERYONE'; readonly value: 'EVERYONE' },
             ];
           };
           readonly NotificationCategory: {

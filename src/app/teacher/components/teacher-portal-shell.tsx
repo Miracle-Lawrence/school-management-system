@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useState } from "react";
+import TeacherNotificationBadge from "./TeacherNotificationBadge";
 
 type TeacherPortalShellProps = {
   children: ReactNode;
@@ -34,6 +35,7 @@ const navigation = [
   },
   { label: "Report Comments", href: "/teacher/report-comments" },
   { label: "Psychomotor Assessments", href: "/teacher/psychomotor" },
+  { label: "Notifications", href: "/teacher/notifications" },
 ];
 
 export default function TeacherPortalShell({
@@ -93,7 +95,12 @@ export default function TeacherPortalShell({
               href={item.href}
               className={navigationLinkClass(item.href)}
             >
-              {item.label}
+              <span className="flex items-center">
+  {item.label}
+  {item.href === "/teacher/notifications" ? (
+    <TeacherNotificationBadge compact />
+  ) : null}
+</span>
             </Link>
           ))}
         </nav>
@@ -194,7 +201,12 @@ export default function TeacherPortalShell({
                     onClick={() => setMobileMenuOpen(false)}
                     className={navigationLinkClass(item.href)}
                   >
-                    {item.label}
+                    <span className="flex items-center">
+  {item.label}
+  {item.href === "/teacher/notifications" ? (
+    <TeacherNotificationBadge compact />
+  ) : null}
+</span>
                   </Link>
                 ))}
               </nav>
@@ -224,5 +236,6 @@ export default function TeacherPortalShell({
     </div>
   );
 }
+
 
 

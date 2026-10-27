@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ParentNotificationBadge from "./ParentNotificationBadge";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -106,7 +107,10 @@ export default function ParentMobileNavigation({
                         : "text-slate-200 hover:bg-slate-800 hover:text-white"
                     }`}
                   >
-                    {label}
+                    <span className="flex w-full items-center gap-2">
+                    <span>{label}</span>
+                    {href === "/parent/notifications" && <ParentNotificationBadge compact />}
+                  </span>
                   </Link>
                 );
               })}

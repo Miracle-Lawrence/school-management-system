@@ -113,6 +113,12 @@ enum NotificationCategory {
   URGENT
 }
 
+enum NotificationAudience {
+  PARENTS
+  STUDENTS
+  TEACHERS
+  EVERYONE
+}
 enum NotificationStatus {
   DRAFT
   SCHEDULED
@@ -1155,6 +1161,7 @@ model Notification {
   title           String
   message         String
   category        NotificationCategory @default(ANNOUNCEMENT)
+  audience        NotificationAudience @default(PARENTS)
   status          NotificationStatus   @default(DRAFT)
   scheduledAt     TimestamptzString?
   sentAt          TimestamptzString?

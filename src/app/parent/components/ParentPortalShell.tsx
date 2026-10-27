@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import ParentMobileNavigation from "./parent-mobile-navigation";
+import ParentNotificationBadge from "./ParentNotificationBadge";
 
 const navigation = [
   ["Dashboard", "/parent/dashboard"],
@@ -89,7 +90,10 @@ export default function ParentPortalShell({
                     : "text-slate-200 hover:bg-slate-800 hover:text-white"
                 }`}
               >
-                {label}
+                <span className="flex w-full items-center gap-2">
+                <span>{label}</span>
+                {href === "/parent/notifications" && <ParentNotificationBadge />}
+              </span>
               </Link>
             );
           })}

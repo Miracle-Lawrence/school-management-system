@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 
 import { requireApiRole } from "@/lib/auth/authorization";
 import { createSchoolNotification } from "@/lib/services/notification.service";
@@ -44,6 +44,7 @@ export async function GET() {
           title: notification.title,
           message: notification.message,
           category: notification.category,
+          audience: notification.audience,
           status: notification.status,
           scheduledAt: notification.scheduledAt,
           sentAt: notification.sentAt,
@@ -139,9 +140,13 @@ return NextResponse.json(
       error instanceof Error ? error.message : "Unable to send notification.";
 
     if (
-      message ===
-      "There are no active parent accounts available to receive this notification."
+      message.startsWith("There are no active ") &&
+      message.includes(" accounts available to receive this notification.")
     ) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+
+    if (message.startsWith("Fee reminders can only be sent to parents.")) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
@@ -250,3 +255,4 @@ export async function PATCH(request: Request) {
     );
   }
 }
+

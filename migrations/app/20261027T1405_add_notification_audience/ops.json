@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.Notification.audience",
+    "label": "Add column \"audience\" to \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "audience",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"audience\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "audience"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"audience\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD COLUMN \"audience\" text DEFAULT 'PARENTS' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"audience\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Notification",
+          "audience"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Notification.Notification_audience_check_c5ab304b",
+    "label": "Add check constraint \"Notification_audience_check_c5ab304b\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Notification_audience_check_c5ab304b",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Notification_audience_check_c5ab304b\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_audience_check_c5ab304b",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Notification_audience_check_c5ab304b\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD CONSTRAINT \"Notification_audience_check_c5ab304b\" CHECK (\"audience\" IN ('PARENTS', 'STUDENTS', 'TEACHERS', 'EVERYONE'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Notification_audience_check_c5ab304b\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_audience_check_c5ab304b",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  }
+]
