@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import StudentNotificationBadge from "./StudentNotificationBadge";
 
 const navigation = [
   ["Dashboard", "/student/dashboard"],
   ["My Profile", "/student/profile"],
   ["My Class & Subjects", "/student/subjects"],
-  ["Timetable", "/student/timetable"],
   ["Assignments", "/student/assignments"],
   ["My Results", "/student/results"],
   ["Attendance", "/student/attendance"],
@@ -110,7 +110,12 @@ export default function StudentMobileNavigation({
                         : "text-slate-200 hover:bg-slate-800 hover:text-white"
                     }`}
                   >
-                    {label}
+                    <span className="flex items-center justify-between gap-3">
+                      <span>{label}</span>
+                      {href === "/student/notifications" && (
+                        <StudentNotificationBadge compact />
+                      )}
+                    </span>
                   </Link>
                 );
               })}
@@ -121,3 +126,6 @@ export default function StudentMobileNavigation({
     </>
   );
 }
+
+
+

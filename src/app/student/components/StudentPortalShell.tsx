@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import StudentMobileNavigation from "./student-mobile-navigation";
+import StudentNotificationBadge from "./StudentNotificationBadge";
 
 const navigation = [
   { label: "Dashboard", href: "/student/dashboard", icon: "⌂" },
   { label: "My Profile", href: "/student/profile", icon: "◉" },
   { label: "My Class & Subjects", href: "/student/subjects", icon: "▤" },
-  { label: "Timetable", href: "/student/timetable", icon: "▦" },
   { label: "Assignments", href: "/student/assignments", icon: "✎" },
+  { label: "Class Notes", href: "/student/class-notes", icon: "▤" },
   { label: "My Results", href: "/student/results", icon: "▥" },
   { label: "Attendance", href: "/student/attendance", icon: "✓" },
   { label: "School Fees", href: "/student/fees", icon: "₦" },
@@ -95,6 +96,7 @@ export default function StudentPortalShell({
                   {icon}
                 </span>
                 <span>{label}</span>
+                {href === "/student/notifications" && <StudentNotificationBadge />}
               </Link>
             );
           })}
@@ -155,3 +157,6 @@ export default function StudentPortalShell({
     </div>
   );
 }
+
+
+

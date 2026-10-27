@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'387b2f6b1de820baecd33613ddceeb18fb5c3eeaa6f9f9089733c57790814cbe'>;
+  StorageHashBase<'ba3c259d546f2efac2c32dcc53d928db279f1cc3857e01f52eaa49194e308659'>;
 export type ExecutionHash =
-  ExecutionHashBase<'cd8c824b096780c0d04f2542355cd98f4b350b99bd0c7c128fb4a5fd4177da16'>;
+  ExecutionHashBase<'9292865a08ffd05e3ea25b41bf16189b7dff15860d2f9f8011ee6c3745837870'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -296,6 +296,34 @@ export type FieldOutputTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly Assignment: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly instructions: CodecTypes['pg/text@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly teacherId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly AssignmentSubmission: {
+      readonly answer: CodecTypes['pg/text@1']['output'] | null;
+      readonly assignmentId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly feedback: CodecTypes['pg/text@1']['output'] | null;
+      readonly gradedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly gradedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'] | null;
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Attendance: {
       readonly classId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -307,6 +335,19 @@ export type FieldOutputTypes = {
       readonly status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly ClassNote: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly content: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly teacherId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly ClassSubject: {
@@ -817,6 +858,34 @@ export type FieldInputTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly Assignment: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly instructions: CodecTypes['pg/text@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly teacherId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly AssignmentSubmission: {
+      readonly answer: CodecTypes['pg/text@1']['input'] | null;
+      readonly assignmentId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly feedback: CodecTypes['pg/text@1']['input'] | null;
+      readonly gradedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly gradedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'] | null;
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly Attendance: {
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -828,6 +897,19 @@ export type FieldInputTypes = {
       readonly status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
       readonly studentId: CodecTypes['pg/int4@1']['input'];
       readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ClassNote: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly content: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly teacherId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ClassSubject: {
@@ -1338,6 +1420,34 @@ export type StorageColumnTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly Assignment: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly instructions: CodecTypes['pg/text@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly teacherId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly AssignmentSubmission: {
+      readonly answer: CodecTypes['pg/text@1']['output'] | null;
+      readonly assignmentId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly feedback: CodecTypes['pg/text@1']['output'] | null;
+      readonly gradedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly gradedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'] | null;
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Attendance: {
       readonly classId: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1349,6 +1459,19 @@ export type StorageColumnTypes = {
       readonly status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly ClassNote: {
+      readonly classId: CodecTypes['pg/int4@1']['output'];
+      readonly content: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isPublished: CodecTypes['pg/bool@1']['output'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly teacherId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly ClassSubject: {
@@ -1859,6 +1982,34 @@ export type StorageColumnInputTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly Assignment: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dueDate: CodecTypes['pg/timestamptz-temporal@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly instructions: CodecTypes['pg/text@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly teacherId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly AssignmentSubmission: {
+      readonly answer: CodecTypes['pg/text@1']['input'] | null;
+      readonly assignmentId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly feedback: CodecTypes['pg/text@1']['input'] | null;
+      readonly gradedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly gradedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'] | null;
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly Attendance: {
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1870,6 +2021,19 @@ export type StorageColumnInputTypes = {
       readonly status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
       readonly studentId: CodecTypes['pg/int4@1']['input'];
       readonly termId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ClassNote: {
+      readonly classId: CodecTypes['pg/int4@1']['input'];
+      readonly content: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isPublished: CodecTypes['pg/bool@1']['input'];
+      readonly publishedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly teacherId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly ClassSubject: {
@@ -2401,6 +2565,44 @@ export namespace Models {
     student: public_Student;
     readonly [RelationKeys]?: 'assessment' | 'student';
   };
+  export type public_Assignment = {
+    classId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    dueDate: CodecTypes['pg/timestamptz-temporal@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    instructions: CodecTypes['pg/text@1']['output'];
+    isPublished: CodecTypes['pg/bool@1']['output'];
+    maxScore: CodecTypes['pg/float8@1']['output'];
+    publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    subjectId: CodecTypes['pg/int4@1']['output'];
+    teacherId: CodecTypes['pg/int4@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    class: public_SchoolClass;
+    school: public_School;
+    subject: public_Subject;
+    submissions: public_AssignmentSubmission[];
+    teacher: public_Teacher;
+    readonly [RelationKeys]?: 'class' | 'school' | 'subject' | 'submissions' | 'teacher';
+  };
+  export type public_AssignmentSubmission = {
+    answer: CodecTypes['pg/text@1']['output'] | null;
+    assignmentId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    feedback: CodecTypes['pg/text@1']['output'] | null;
+    gradedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    gradedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    marks: CodecTypes['pg/float8@1']['output'] | null;
+    studentId: CodecTypes['pg/int4@1']['output'];
+    submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    assignment: public_Assignment;
+    gradedBy: public_User | null;
+    student: public_Student;
+    readonly [RelationKeys]?: 'assignment' | 'gradedBy' | 'student';
+  };
   export type public_Attendance = {
     classId: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2419,6 +2621,24 @@ export namespace Models {
     student: public_Student;
     term: public_Term;
     readonly [RelationKeys]?: 'class' | 'recordedBy' | 'school' | 'student' | 'term';
+  };
+  export type public_ClassNote = {
+    classId: CodecTypes['pg/int4@1']['output'];
+    content: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isPublished: CodecTypes['pg/bool@1']['output'];
+    publishedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    subjectId: CodecTypes['pg/int4@1']['output'];
+    teacherId: CodecTypes['pg/int4@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    class: public_SchoolClass;
+    school: public_School;
+    subject: public_Subject;
+    teacher: public_Teacher;
+    readonly [RelationKeys]?: 'class' | 'school' | 'subject' | 'teacher';
   };
   export type public_ClassSubject = {
     classId: CodecTypes['pg/int4@1']['output'];
@@ -2768,7 +2988,9 @@ export namespace Models {
     SubscriptionStatus: public_SchoolSubscription[];
     assessmentCategories: public_AssessmentCategory[];
     assessments: public_Assessment[];
+    assignments: public_Assignment[];
     attendanceRecords: public_Attendance[];
+    classNotes: public_ClassNote[];
     classSubjects: public_ClassSubject[];
     classes: public_SchoolClass[];
     emailDeliveries: public_EmailDelivery[];
@@ -2797,7 +3019,9 @@ export namespace Models {
       | 'SubscriptionStatus'
       | 'assessmentCategories'
       | 'assessments'
+      | 'assignments'
       | 'attendanceRecords'
+      | 'classNotes'
       | 'classSubjects'
       | 'classes'
       | 'emailDeliveries'
@@ -2833,7 +3057,9 @@ export namespace Models {
     schoolId: CodecTypes['pg/int4@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     assessments: public_Assessment[];
+    assignments: public_Assignment[];
     attendanceRecords: public_Attendance[];
+    classNotes: public_ClassNote[];
     classSubjects: public_ClassSubject[];
     classTeacher: public_Teacher | null;
     feeStructures: public_FeeStructure[];
@@ -2845,7 +3071,9 @@ export namespace Models {
     teacherAssignments: public_TeacherAssignment[];
     readonly [RelationKeys]?:
       | 'assessments'
+      | 'assignments'
       | 'attendanceRecords'
+      | 'classNotes'
       | 'classSubjects'
       | 'classTeacher'
       | 'feeStructures'
@@ -2893,6 +3121,7 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     userId: CodecTypes['pg/int4@1']['output'] | null;
     assessmentScores: public_AssessmentScore[];
+    assignmentSubmissions: public_AssignmentSubmission[];
     attendanceRecords: public_Attendance[];
     class: public_SchoolClass | null;
     feeInvoices: public_StudentInvoice[];
@@ -2905,6 +3134,7 @@ export namespace Models {
     user: public_User | null;
     readonly [RelationKeys]?:
       | 'assessmentScores'
+      | 'assignmentSubmissions'
       | 'attendanceRecords'
       | 'class'
       | 'feeInvoices'
@@ -2990,12 +3220,20 @@ export namespace Models {
     schoolId: CodecTypes['pg/int4@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     assessments: public_Assessment[];
+    assignments: public_Assignment[];
+    classNotes: public_ClassNote[];
     classSubjects: public_ClassSubject[];
     school: public_School;
     subjectResults: public_SubjectResult[];
     teacherAssignments: public_TeacherAssignment[];
     readonly [RelationKeys]?:
-      'assessments' | 'classSubjects' | 'school' | 'subjectResults' | 'teacherAssignments';
+      | 'assessments'
+      | 'assignments'
+      | 'classNotes'
+      | 'classSubjects'
+      | 'school'
+      | 'subjectResults'
+      | 'teacherAssignments';
   };
   export type public_SubjectResult = {
     classId: CodecTypes['pg/int4@1']['output'];
@@ -3064,12 +3302,20 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     userId: CodecTypes['pg/int4@1']['output'] | null;
     assignments: public_TeacherAssignment[];
+    classNotes: public_ClassNote[];
     classTeacherOf: public_SchoolClass[];
+    createdAssignments: public_Assignment[];
     historicalClassTeacherResults: public_StudentTermResult[];
     school: public_School;
     user: public_User | null;
     readonly [RelationKeys]?:
-      'assignments' | 'classTeacherOf' | 'historicalClassTeacherResults' | 'school' | 'user';
+      | 'assignments'
+      | 'classNotes'
+      | 'classTeacherOf'
+      | 'createdAssignments'
+      | 'historicalClassTeacherResults'
+      | 'school'
+      | 'user';
   };
   export type public_TeacherAssignment = {
     classId: CodecTypes['pg/int4@1']['output'];
@@ -3142,6 +3388,7 @@ export namespace Models {
     createdNotifications: public_Notification[];
     emailDeliveries: public_EmailDelivery[];
     feePaymentsRecorded: public_FeePayment[];
+    gradedAssignmentSubmissions: public_AssignmentSubmission[];
     notificationRecipients: public_NotificationRecipient[];
     parent: public_Parent | null;
     publishedReportPublications: public_ReportPublication[];
@@ -3155,6 +3402,7 @@ export namespace Models {
       | 'createdNotifications'
       | 'emailDeliveries'
       | 'feePaymentsRecorded'
+      | 'gradedAssignmentSubmissions'
       | 'notificationRecipients'
       | 'parent'
       | 'publishedReportPublications'
@@ -3172,7 +3420,10 @@ export declare const models: {
     Assessment: Models.public_Assessment;
     AssessmentCategory: Models.public_AssessmentCategory;
     AssessmentScore: Models.public_AssessmentScore;
+    Assignment: Models.public_Assignment;
+    AssignmentSubmission: Models.public_AssignmentSubmission;
     Attendance: Models.public_Attendance;
+    ClassNote: Models.public_ClassNote;
     ClassSubject: Models.public_ClassSubject;
     EmailDelivery: Models.public_EmailDelivery;
     FeeCategory: Models.public_FeeCategory;
@@ -3678,6 +3929,316 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly Assignment: {
+              columns: {
+                readonly classId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly dueDate: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly instructions: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly isPublished: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly maxScore: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                };
+                readonly publishedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly subjectId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly teacherId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Assignment_classId_idx_0089e5e7';
+                  readonly prefix: 'Assignment_classId_idx';
+                  readonly columns: readonly ['classId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_classId_subjectId_idx_a6ea4d18';
+                  readonly prefix: 'Assignment_classId_subjectId_idx';
+                  readonly columns: readonly ['classId', 'subjectId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_dueDate_idx_fb527616';
+                  readonly prefix: 'Assignment_dueDate_idx';
+                  readonly columns: readonly ['dueDate'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_schoolId_idx_82b454d7';
+                  readonly prefix: 'Assignment_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_schoolId_isPublished_idx_31483fe4';
+                  readonly prefix: 'Assignment_schoolId_isPublished_idx';
+                  readonly columns: readonly ['schoolId', 'isPublished'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_subjectId_idx_84df2a1d';
+                  readonly prefix: 'Assignment_subjectId_idx';
+                  readonly columns: readonly ['subjectId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Assignment_teacherId_idx_bc266660';
+                  readonly prefix: 'Assignment_teacherId_idx';
+                  readonly columns: readonly ['teacherId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assignment';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assignment';
+                    readonly columns: readonly ['teacherId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Teacher';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assignment';
+                    readonly columns: readonly ['classId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolClass';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assignment';
+                    readonly columns: readonly ['subjectId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Subject';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly AssignmentSubmission: {
+              columns: {
+                readonly answer: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly assignmentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly feedback: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly gradedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly gradedByUserId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly marks: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly studentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly submittedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['assignmentId', 'studentId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'AssignmentSubmission_assignmentId_idx_8cfb4ac4';
+                  readonly prefix: 'AssignmentSubmission_assignmentId_idx';
+                  readonly columns: readonly ['assignmentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9';
+                  readonly prefix: 'AssignmentSubmission_assignmentId_submittedAt_idx';
+                  readonly columns: readonly ['assignmentId', 'submittedAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'AssignmentSubmission_gradedByUserId_idx_25e61c77';
+                  readonly prefix: 'AssignmentSubmission_gradedByUserId_idx';
+                  readonly columns: readonly ['gradedByUserId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'AssignmentSubmission_studentId_idx_bf255322';
+                  readonly prefix: 'AssignmentSubmission_studentId_idx';
+                  readonly columns: readonly ['studentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4';
+                  readonly prefix: 'AssignmentSubmission_studentId_submittedAt_idx';
+                  readonly columns: readonly ['studentId', 'submittedAt'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssignmentSubmission';
+                    readonly columns: readonly ['assignmentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assignment';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssignmentSubmission';
+                    readonly columns: readonly ['studentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Student';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'AssignmentSubmission';
+                    readonly columns: readonly ['gradedByUserId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Attendance: {
               columns: {
                 readonly classId: {
@@ -3839,6 +4400,164 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly ClassNote: {
+              columns: {
+                readonly classId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly content: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isPublished: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly publishedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly subjectId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly teacherId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'ClassNote_classId_idx_0089e5e7';
+                  readonly prefix: 'ClassNote_classId_idx';
+                  readonly columns: readonly ['classId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ClassNote_classId_subjectId_idx_a6ea4d18';
+                  readonly prefix: 'ClassNote_classId_subjectId_idx';
+                  readonly columns: readonly ['classId', 'subjectId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ClassNote_schoolId_idx_82b454d7';
+                  readonly prefix: 'ClassNote_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ClassNote_schoolId_isPublished_idx_31483fe4';
+                  readonly prefix: 'ClassNote_schoolId_isPublished_idx';
+                  readonly columns: readonly ['schoolId', 'isPublished'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ClassNote_subjectId_idx_84df2a1d';
+                  readonly prefix: 'ClassNote_subjectId_idx';
+                  readonly columns: readonly ['subjectId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ClassNote_teacherId_idx_bc266660';
+                  readonly prefix: 'ClassNote_teacherId_idx';
+                  readonly columns: readonly ['teacherId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ClassNote';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ClassNote';
+                    readonly columns: readonly ['teacherId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Teacher';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ClassNote';
+                    readonly columns: readonly ['classId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolClass';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ClassNote';
+                    readonly columns: readonly ['subjectId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Subject';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -8166,10 +8885,19 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'AssessmentScore';
     };
+    readonly Assignment: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Assignment';
+    };
+    readonly AssignmentSubmission: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'AssignmentSubmission';
+    };
     readonly Attendance: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Attendance';
     };
+    readonly ClassNote: { readonly namespace: 'public' & NamespaceId; readonly model: 'ClassNote' };
     readonly ClassSubject: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ClassSubject';
@@ -8746,6 +9474,266 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Assignment: {
+            readonly fields: {
+              readonly classId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly dueDate: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly instructions: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly isPublished: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly maxScore: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly publishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly subjectId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly teacherId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly class: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolClass';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['classId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly subject: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Subject';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['subjectId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly submissions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssignmentSubmission';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assignmentId'];
+                };
+              };
+              readonly teacher: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Teacher';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['teacherId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Assignment';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly classId: { readonly column: 'classId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly dueDate: { readonly column: 'dueDate' };
+                readonly id: { readonly column: 'id' };
+                readonly instructions: { readonly column: 'instructions' };
+                readonly isPublished: { readonly column: 'isPublished' };
+                readonly maxScore: { readonly column: 'maxScore' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly subjectId: { readonly column: 'subjectId' };
+                readonly teacherId: { readonly column: 'teacherId' };
+                readonly title: { readonly column: 'title' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly AssignmentSubmission: {
+            readonly fields: {
+              readonly answer: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly assignmentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly feedback: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly gradedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly gradedByUserId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly marks: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly studentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly submittedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly assignment: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assignment';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['assignmentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly gradedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['gradedByUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly student: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Student';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['studentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'AssignmentSubmission';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly answer: { readonly column: 'answer' };
+                readonly assignmentId: { readonly column: 'assignmentId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly feedback: { readonly column: 'feedback' };
+                readonly gradedAt: { readonly column: 'gradedAt' };
+                readonly gradedByUserId: { readonly column: 'gradedByUserId' };
+                readonly id: { readonly column: 'id' };
+                readonly marks: { readonly column: 'marks' };
+                readonly studentId: { readonly column: 'studentId' };
+                readonly submittedAt: { readonly column: 'submittedAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Attendance: {
             readonly fields: {
               readonly classId: {
@@ -8872,6 +9860,130 @@ type ContractBase = Omit<
                 readonly status: { readonly column: 'status' };
                 readonly studentId: { readonly column: 'studentId' };
                 readonly termId: { readonly column: 'termId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly ClassNote: {
+            readonly fields: {
+              readonly classId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly content: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isPublished: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly publishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly subjectId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly teacherId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly class: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolClass';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['classId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly subject: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Subject';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['subjectId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly teacher: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Teacher';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['teacherId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ClassNote';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly classId: { readonly column: 'classId' };
+                readonly content: { readonly column: 'content' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly isPublished: { readonly column: 'isPublished' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly subjectId: { readonly column: 'subjectId' };
+                readonly teacherId: { readonly column: 'teacherId' };
+                readonly title: { readonly column: 'title' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -11044,10 +12156,32 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly assignments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assignment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly attendanceRecords: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Attendance';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
+              readonly classNotes: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ClassNote';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -11401,10 +12535,32 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['classId'];
                 };
               };
+              readonly assignments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assignment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['classId'];
+                };
+              };
               readonly attendanceRecords: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Attendance';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['classId'];
+                };
+              };
+              readonly classNotes: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ClassNote';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -11742,6 +12898,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'AssessmentScore';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['studentId'];
+                };
+              };
+              readonly assignmentSubmissions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssignmentSubmission';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -12375,6 +13542,28 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['subjectId'];
                 };
               };
+              readonly assignments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assignment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['subjectId'];
+                };
+              };
+              readonly classNotes: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ClassNote';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['subjectId'];
+                };
+              };
               readonly classSubjects: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -12830,6 +14019,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['teacherId'];
                 };
               };
+              readonly classNotes: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ClassNote';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['teacherId'];
+                };
+              };
               readonly classTeacherOf: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -12839,6 +14039,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['classTeacherId'];
+                };
+              };
+              readonly createdAssignments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assignment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['teacherId'];
                 };
               };
               readonly historicalClassTeacherResults: {
@@ -13283,6 +14494,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['recordedByUserId'];
                 };
               };
+              readonly gradedAssignmentSubmissions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'AssignmentSubmission';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['gradedByUserId'];
+                };
+              };
               readonly notificationRecipients: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -13636,7 +14858,34 @@ type ContractBase = Omit<
           readonly ref: {
             readonly column: 'updatedAt';
             readonly namespace: 'public';
+            readonly table: 'Assignment';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'AssignmentSubmission';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
             readonly table: 'Attendance';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'ClassNote';
           };
         },
         {

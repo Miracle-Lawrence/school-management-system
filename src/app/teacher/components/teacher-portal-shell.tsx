@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,9 @@ const navigation = [
   { label: "Attendance", href: "/teacher/attendance" },
   { label: "Assessments", href: "/teacher/assessments" },
   { label: "My Profile", href: "/teacher/profile" },
+  { label: "Assignments", href: "/teacher/assignments" },
+  { label: "Assignment Grading", href: "/teacher/assignments/grading" },
+  { label: "Class Notes", href: "/teacher/class-notes" },
   {
     label: "Gradebook",
     href: "/teacher/gradebook",
@@ -132,9 +135,9 @@ export default function TeacherPortalShell({
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm md:hidden"
             >
               {mobileMenuOpen ? (
-                <span className="text-xl">×</span>
+                <span className="text-xl">Ã—</span>
               ) : (
-                <span className="text-xl">☰</span>
+                <span className="text-xl">â˜°</span>
               )}
             </button>
 
@@ -221,3 +224,5 @@ export default function TeacherPortalShell({
     </div>
   );
 }
+
+

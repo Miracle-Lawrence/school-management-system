@@ -36,6 +36,7 @@ export default function MarkAsReadButton({
         return;
       }
 
+      window.dispatchEvent(new Event("student-notifications-updated"));
       router.refresh();
     } catch {
       setError("A network error occurred. Please try again.");
@@ -63,3 +64,4 @@ export default function MarkAsReadButton({
     </div>
   );
 }
+

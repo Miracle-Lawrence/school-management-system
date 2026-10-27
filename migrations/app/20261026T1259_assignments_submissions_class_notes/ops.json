@@ -1,0 +1,1325 @@
+[
+  {
+    "id": "table.Assignment",
+    "label": "Create table \"Assignment\"",
+    "summary": "Creates table \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Assignment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Assignment\"",
+        "sql": "CREATE TABLE \"public\".\"Assignment\" (\n  \"classId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"dueDate\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"instructions\" text NOT NULL,\n  \"isPublished\" bool DEFAULT false NOT NULL,\n  \"maxScore\" float8 NOT NULL,\n  \"publishedAt\" timestamptz,\n  \"schoolId\" int4 NOT NULL,\n  \"subjectId\" int4 NOT NULL,\n  \"teacherId\" int4 NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Assignment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.AssignmentSubmission",
+    "label": "Create table \"AssignmentSubmission\"",
+    "summary": "Creates table \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"AssignmentSubmission\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"AssignmentSubmission\"",
+        "sql": "CREATE TABLE \"public\".\"AssignmentSubmission\" (\n  \"answer\" text,\n  \"assignmentId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"feedback\" text,\n  \"gradedAt\" timestamptz,\n  \"gradedByUserId\" int4,\n  \"id\" SERIAL NOT NULL,\n  \"marks\" float8,\n  \"studentId\" int4 NOT NULL,\n  \"submittedAt\" timestamptz,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"AssignmentSubmission\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.ClassNote",
+    "label": "Create table \"ClassNote\"",
+    "summary": "Creates table \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ClassNote\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ClassNote\"",
+        "sql": "CREATE TABLE \"public\".\"ClassNote\" (\n  \"classId\" int4 NOT NULL,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isPublished\" bool DEFAULT false NOT NULL,\n  \"publishedAt\" timestamptz,\n  \"schoolId\" int4 NOT NULL,\n  \"subjectId\" int4 NOT NULL,\n  \"teacherId\" int4 NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ClassNote\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.AssignmentSubmission.AssignmentSubmission_assignmentId_studentId_key",
+    "label": "Add unique constraint on \"AssignmentSubmission\" (assignmentId, studentId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "AssignmentSubmission_assignmentId_studentId_key",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"AssignmentSubmission_assignmentId_studentId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_assignmentId_studentId_key",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"AssignmentSubmission_assignmentId_studentId_key\"",
+        "sql": "ALTER TABLE \"public\".\"AssignmentSubmission\" ADD CONSTRAINT \"AssignmentSubmission_assignmentId_studentId_key\" UNIQUE (\"assignmentId\", \"studentId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"AssignmentSubmission_assignmentId_studentId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_assignmentId_studentId_key",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_classId_idx_0089e5e7",
+    "label": "Create index \"Assignment_classId_idx_0089e5e7\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_classId_idx_0089e5e7",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_classId_idx_0089e5e7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_classId_idx_0089e5e7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_classId_idx_0089e5e7\"",
+        "sql": "CREATE INDEX \"Assignment_classId_idx_0089e5e7\" ON \"public\".\"Assignment\" (\"classId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_classId_idx_0089e5e7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_classId_idx_0089e5e7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_classId_subjectId_idx_a6ea4d18",
+    "label": "Create index \"Assignment_classId_subjectId_idx_a6ea4d18\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_classId_subjectId_idx_a6ea4d18",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_classId_subjectId_idx_a6ea4d18\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_classId_subjectId_idx_a6ea4d18\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_classId_subjectId_idx_a6ea4d18\"",
+        "sql": "CREATE INDEX \"Assignment_classId_subjectId_idx_a6ea4d18\" ON \"public\".\"Assignment\" (\"classId\", \"subjectId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_classId_subjectId_idx_a6ea4d18\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_classId_subjectId_idx_a6ea4d18\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_dueDate_idx_fb527616",
+    "label": "Create index \"Assignment_dueDate_idx_fb527616\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_dueDate_idx_fb527616",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_dueDate_idx_fb527616\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_dueDate_idx_fb527616\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_dueDate_idx_fb527616\"",
+        "sql": "CREATE INDEX \"Assignment_dueDate_idx_fb527616\" ON \"public\".\"Assignment\" (\"dueDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_dueDate_idx_fb527616\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_dueDate_idx_fb527616\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_schoolId_idx_82b454d7",
+    "label": "Create index \"Assignment_schoolId_idx_82b454d7\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_schoolId_idx_82b454d7",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"Assignment_schoolId_idx_82b454d7\" ON \"public\".\"Assignment\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_schoolId_isPublished_idx_31483fe4",
+    "label": "Create index \"Assignment_schoolId_isPublished_idx_31483fe4\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_schoolId_isPublished_idx_31483fe4",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_schoolId_isPublished_idx_31483fe4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_schoolId_isPublished_idx_31483fe4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_schoolId_isPublished_idx_31483fe4\"",
+        "sql": "CREATE INDEX \"Assignment_schoolId_isPublished_idx_31483fe4\" ON \"public\".\"Assignment\" (\"schoolId\", \"isPublished\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_schoolId_isPublished_idx_31483fe4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_schoolId_isPublished_idx_31483fe4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_subjectId_idx_84df2a1d",
+    "label": "Create index \"Assignment_subjectId_idx_84df2a1d\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_subjectId_idx_84df2a1d",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_subjectId_idx_84df2a1d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_subjectId_idx_84df2a1d\"",
+        "sql": "CREATE INDEX \"Assignment_subjectId_idx_84df2a1d\" ON \"public\".\"Assignment\" (\"subjectId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_subjectId_idx_84df2a1d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Assignment.Assignment_teacherId_idx_bc266660",
+    "label": "Create index \"Assignment_teacherId_idx_bc266660\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Assignment_teacherId_idx_bc266660",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Assignment_teacherId_idx_bc266660\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_teacherId_idx_bc266660\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Assignment_teacherId_idx_bc266660\"",
+        "sql": "CREATE INDEX \"Assignment_teacherId_idx_bc266660\" ON \"public\".\"Assignment\" (\"teacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Assignment_teacherId_idx_bc266660\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Assignment_teacherId_idx_bc266660\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AssignmentSubmission.AssignmentSubmission_assignmentId_idx_8cfb4ac4",
+    "label": "Create index \"AssignmentSubmission_assignmentId_idx_8cfb4ac4\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AssignmentSubmission_assignmentId_idx_8cfb4ac4",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AssignmentSubmission_assignmentId_idx_8cfb4ac4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_assignmentId_idx_8cfb4ac4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AssignmentSubmission_assignmentId_idx_8cfb4ac4\"",
+        "sql": "CREATE INDEX \"AssignmentSubmission_assignmentId_idx_8cfb4ac4\" ON \"public\".\"AssignmentSubmission\" (\"assignmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AssignmentSubmission_assignmentId_idx_8cfb4ac4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_assignmentId_idx_8cfb4ac4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AssignmentSubmission.AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9",
+    "label": "Create index \"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\"",
+        "sql": "CREATE INDEX \"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\" ON \"public\".\"AssignmentSubmission\" (\"assignmentId\", \"submittedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_assignmentId_submittedAt_idx_1fa2b6b9\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AssignmentSubmission.AssignmentSubmission_gradedByUserId_idx_25e61c77",
+    "label": "Create index \"AssignmentSubmission_gradedByUserId_idx_25e61c77\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AssignmentSubmission_gradedByUserId_idx_25e61c77",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AssignmentSubmission_gradedByUserId_idx_25e61c77\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_gradedByUserId_idx_25e61c77\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AssignmentSubmission_gradedByUserId_idx_25e61c77\"",
+        "sql": "CREATE INDEX \"AssignmentSubmission_gradedByUserId_idx_25e61c77\" ON \"public\".\"AssignmentSubmission\" (\"gradedByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AssignmentSubmission_gradedByUserId_idx_25e61c77\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_gradedByUserId_idx_25e61c77\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AssignmentSubmission.AssignmentSubmission_studentId_idx_bf255322",
+    "label": "Create index \"AssignmentSubmission_studentId_idx_bf255322\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AssignmentSubmission_studentId_idx_bf255322",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AssignmentSubmission_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AssignmentSubmission_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"AssignmentSubmission_studentId_idx_bf255322\" ON \"public\".\"AssignmentSubmission\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AssignmentSubmission_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AssignmentSubmission.AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4",
+    "label": "Create index \"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\"",
+        "sql": "CREATE INDEX \"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\" ON \"public\".\"AssignmentSubmission\" (\"studentId\", \"submittedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AssignmentSubmission_studentId_submittedAt_idx_39a4bfc4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_classId_idx_0089e5e7",
+    "label": "Create index \"ClassNote_classId_idx_0089e5e7\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_classId_idx_0089e5e7",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_classId_idx_0089e5e7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_classId_idx_0089e5e7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_classId_idx_0089e5e7\"",
+        "sql": "CREATE INDEX \"ClassNote_classId_idx_0089e5e7\" ON \"public\".\"ClassNote\" (\"classId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_classId_idx_0089e5e7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_classId_idx_0089e5e7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_classId_subjectId_idx_a6ea4d18",
+    "label": "Create index \"ClassNote_classId_subjectId_idx_a6ea4d18\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_classId_subjectId_idx_a6ea4d18",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_classId_subjectId_idx_a6ea4d18\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_classId_subjectId_idx_a6ea4d18\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_classId_subjectId_idx_a6ea4d18\"",
+        "sql": "CREATE INDEX \"ClassNote_classId_subjectId_idx_a6ea4d18\" ON \"public\".\"ClassNote\" (\"classId\", \"subjectId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_classId_subjectId_idx_a6ea4d18\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_classId_subjectId_idx_a6ea4d18\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_schoolId_idx_82b454d7",
+    "label": "Create index \"ClassNote_schoolId_idx_82b454d7\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_schoolId_idx_82b454d7",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"ClassNote_schoolId_idx_82b454d7\" ON \"public\".\"ClassNote\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_schoolId_isPublished_idx_31483fe4",
+    "label": "Create index \"ClassNote_schoolId_isPublished_idx_31483fe4\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_schoolId_isPublished_idx_31483fe4",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_schoolId_isPublished_idx_31483fe4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_schoolId_isPublished_idx_31483fe4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_schoolId_isPublished_idx_31483fe4\"",
+        "sql": "CREATE INDEX \"ClassNote_schoolId_isPublished_idx_31483fe4\" ON \"public\".\"ClassNote\" (\"schoolId\", \"isPublished\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_schoolId_isPublished_idx_31483fe4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_schoolId_isPublished_idx_31483fe4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_subjectId_idx_84df2a1d",
+    "label": "Create index \"ClassNote_subjectId_idx_84df2a1d\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_subjectId_idx_84df2a1d",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_subjectId_idx_84df2a1d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_subjectId_idx_84df2a1d\"",
+        "sql": "CREATE INDEX \"ClassNote_subjectId_idx_84df2a1d\" ON \"public\".\"ClassNote\" (\"subjectId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_subjectId_idx_84df2a1d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ClassNote.ClassNote_teacherId_idx_bc266660",
+    "label": "Create index \"ClassNote_teacherId_idx_bc266660\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ClassNote_teacherId_idx_bc266660",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ClassNote_teacherId_idx_bc266660\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_teacherId_idx_bc266660\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ClassNote_teacherId_idx_bc266660\"",
+        "sql": "CREATE INDEX \"ClassNote_teacherId_idx_bc266660\" ON \"public\".\"ClassNote\" (\"teacherId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ClassNote_teacherId_idx_bc266660\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ClassNote_teacherId_idx_bc266660\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_schoolId_fkey",
+    "label": "Add foreign key \"Assignment_schoolId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_schoolId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_schoolId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_schoolId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_teacherId_fkey",
+    "label": "Add foreign key \"Assignment_teacherId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_teacherId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_teacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_teacherId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_teacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_teacherId_fkey\"\nFOREIGN KEY (\"teacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_teacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_teacherId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_classId_fkey",
+    "label": "Add foreign key \"Assignment_classId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_classId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_classId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_classId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_classId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_classId_fkey\"\nFOREIGN KEY (\"classId\")\nREFERENCES \"public\".\"SchoolClass\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_classId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_classId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Assignment.Assignment_subjectId_fkey",
+    "label": "Add foreign key \"Assignment_subjectId_fkey\" on \"Assignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Assignment_subjectId_fkey",
+        "table": "Assignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Assignment_subjectId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_subjectId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Assignment_subjectId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Assignment\"\nADD CONSTRAINT \"Assignment_subjectId_fkey\"\nFOREIGN KEY (\"subjectId\")\nREFERENCES \"public\".\"Subject\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Assignment_subjectId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Assignment_subjectId_fkey",
+          "public",
+          "\"public\".\"Assignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.AssignmentSubmission.AssignmentSubmission_assignmentId_fkey",
+    "label": "Add foreign key \"AssignmentSubmission_assignmentId_fkey\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "AssignmentSubmission_assignmentId_fkey",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"AssignmentSubmission_assignmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_assignmentId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"AssignmentSubmission_assignmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"AssignmentSubmission\"\nADD CONSTRAINT \"AssignmentSubmission_assignmentId_fkey\"\nFOREIGN KEY (\"assignmentId\")\nREFERENCES \"public\".\"Assignment\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"AssignmentSubmission_assignmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_assignmentId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.AssignmentSubmission.AssignmentSubmission_studentId_fkey",
+    "label": "Add foreign key \"AssignmentSubmission_studentId_fkey\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "AssignmentSubmission_studentId_fkey",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"AssignmentSubmission_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_studentId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"AssignmentSubmission_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"AssignmentSubmission\"\nADD CONSTRAINT \"AssignmentSubmission_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"AssignmentSubmission_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_studentId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.AssignmentSubmission.AssignmentSubmission_gradedByUserId_fkey",
+    "label": "Add foreign key \"AssignmentSubmission_gradedByUserId_fkey\" on \"AssignmentSubmission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "AssignmentSubmission_gradedByUserId_fkey",
+        "table": "AssignmentSubmission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"AssignmentSubmission_gradedByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_gradedByUserId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"AssignmentSubmission_gradedByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"AssignmentSubmission\"\nADD CONSTRAINT \"AssignmentSubmission_gradedByUserId_fkey\"\nFOREIGN KEY (\"gradedByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"AssignmentSubmission_gradedByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AssignmentSubmission_gradedByUserId_fkey",
+          "public",
+          "\"public\".\"AssignmentSubmission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ClassNote.ClassNote_schoolId_fkey",
+    "label": "Add foreign key \"ClassNote_schoolId_fkey\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ClassNote_schoolId_fkey",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ClassNote_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_schoolId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ClassNote_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ClassNote\"\nADD CONSTRAINT \"ClassNote_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ClassNote_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_schoolId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ClassNote.ClassNote_teacherId_fkey",
+    "label": "Add foreign key \"ClassNote_teacherId_fkey\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ClassNote_teacherId_fkey",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ClassNote_teacherId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_teacherId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ClassNote_teacherId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ClassNote\"\nADD CONSTRAINT \"ClassNote_teacherId_fkey\"\nFOREIGN KEY (\"teacherId\")\nREFERENCES \"public\".\"Teacher\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ClassNote_teacherId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_teacherId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ClassNote.ClassNote_classId_fkey",
+    "label": "Add foreign key \"ClassNote_classId_fkey\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ClassNote_classId_fkey",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ClassNote_classId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_classId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ClassNote_classId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ClassNote\"\nADD CONSTRAINT \"ClassNote_classId_fkey\"\nFOREIGN KEY (\"classId\")\nREFERENCES \"public\".\"SchoolClass\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ClassNote_classId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_classId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ClassNote.ClassNote_subjectId_fkey",
+    "label": "Add foreign key \"ClassNote_subjectId_fkey\" on \"ClassNote\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ClassNote_subjectId_fkey",
+        "table": "ClassNote"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ClassNote_subjectId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_subjectId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ClassNote_subjectId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ClassNote\"\nADD CONSTRAINT \"ClassNote_subjectId_fkey\"\nFOREIGN KEY (\"subjectId\")\nREFERENCES \"public\".\"Subject\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ClassNote_subjectId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ClassNote_subjectId_fkey",
+          "public",
+          "\"public\".\"ClassNote\""
+        ]
+      }
+    ]
+  }
+]

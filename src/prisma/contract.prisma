@@ -148,6 +148,8 @@ model School {
   classSubjects            ClassSubject[]
   assessments              Assessment[]
   emailDeliveries          EmailDelivery[]
+  assignments              Assignment[]
+  classNotes               ClassNote[]
   logoUrl                  String?
   faviconUrl               String?
   motto                    String?
@@ -575,6 +577,7 @@ model User {
   parent             Parent?
   emailDeliveries     EmailDelivery[]
   feePaymentsRecorded FeePayment[]
+  gradedAssignmentSubmissions AssignmentSubmission[] @relation("AssignmentSubmissionGradedBy")
   createdAssessments Assessment[]               @relation("AssessmentCreatedBy")
   recordedAttendance Attendance[]               @relation("AttendanceRecordedBy")
   createdAt          TimestamptzString          @default(now())
@@ -612,6 +615,7 @@ model Student {
   psychomotorRatings StudentPsychomotorRating[]
   reportComments     ReportComment[]
   feeInvoices        StudentInvoice[]
+  assignmentSubmissions AssignmentSubmission[]
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
@@ -630,6 +634,8 @@ model Teacher {
   lastName                      String
   phone                         String?
   email                         String?
+  createdAssignments            Assignment[]
+  classNotes                    ClassNote[]
   assignments                   TeacherAssignment[]
   historicalClassTeacherResults StudentTermResult[]        @relation("StudentTermResultClassTeacher")
   classTeacherOf                SchoolClass[]              @relation("ClassTeacher")
@@ -682,6 +688,8 @@ model SchoolClass {
   subjectResults     SubjectResult[]
   studentTermResults StudentTermResult[]
   feeStructures      FeeStructure[]
+  assignments        Assignment[]
+  classNotes         ClassNote[]
   classTeacher       Teacher?                   @relation("ClassTeacher", fields:[classTeacherId], references:[id])
   classTeacherId     Int?
   createdAt          TimestamptzString          @default(now())
@@ -704,6 +712,8 @@ model Subject {
   teacherAssignments TeacherAssignment[]
   assessments        Assessment[]
   subjectResults     SubjectResult[]
+  assignments        Assignment[]
+  classNotes         ClassNote[]
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
@@ -828,6 +838,98 @@ model Assessment {
   @@index([termId])
   @@index([createdById])
   @@index([assessmentCategoryId])
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+
+  school      School   @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId   Int
+
+  class       SchoolClass @relation(fields: [classId], references: [id])
+  classId     Int
+
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+
+  title       String
+  instructions String
+  dueDate     DateTime?
+  maxScore    Float
+
+  isPublished Boolean  @default(false)
+  publishedAt TimestamptzString?
+
+  submissions AssignmentSubmission[]
+
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([schoolId])
+  @@index([teacherId])
+  @@index([classId, subjectId])
+  @@index([schoolId, isPublished])
+  @@index([dueDate])
+}
+
+model AssignmentSubmission {
+  id           Int        @id @default(autoincrement())
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+
+  answer       String?
+  submittedAt  TimestamptzString?
+
+  marks        Float?
+  feedback     String?
+
+  gradedBy     User?      @relation("AssignmentSubmissionGradedBy", fields: [gradedByUserId], references: [id])
+  gradedByUserId Int?
+  gradedAt     TimestamptzString?
+
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId, submittedAt])
+  @@index([assignmentId, submittedAt])
+}
+
+model ClassNote {
+  id          Int        @id @default(autoincrement())
+
+  school      School     @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+
+  teacher     Teacher    @relation(fields: [teacherId], references: [id])
+  teacherId   Int
+
+  class       SchoolClass @relation(fields: [classId], references: [id])
+  classId     Int
+
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+
+  title       String
+  content     String
+
+  isPublished Boolean    @default(false)
+  publishedAt TimestamptzString?
+
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([schoolId])
+  @@index([teacherId])
+  @@index([classId, subjectId])
+  @@index([schoolId, isPublished])
 }
 
 model AssessmentCategory {
