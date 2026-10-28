@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import StudentNotificationBadge from "./StudentNotificationBadge";
+import { StudentContentUnreadBadge } from "./StudentContentUnreadBadges";
 
 const navigation = [
   ["Dashboard", "/student/dashboard"],
   ["My Profile", "/student/profile"],
   ["My Class & Subjects", "/student/subjects"],
   ["Assignments", "/student/assignments"],
+  ["Class Notes", "/student/class-notes"],
   ["My Results", "/student/results"],
   ["Attendance", "/student/attendance"],
   ["School Fees", "/student/fees"],
@@ -112,6 +114,18 @@ export default function StudentMobileNavigation({
                   >
                     <span className="flex items-center justify-between gap-3">
                       <span>{label}</span>
+              {href === "/student/class-notes" && (
+                <StudentContentUnreadBadge type="classNotes" compact />
+              )}
+              {href === "/student/assignments" && (
+                <span className="ml-auto flex items-center gap-1.5">
+                  <StudentContentUnreadBadge type="assignments" compact />
+                  <StudentContentUnreadBadge type="gradedAssignments" compact />
+                </span>
+              )}
+              {href === "/student/results" && (
+                <StudentContentUnreadBadge type="results" compact />
+              )}
                       {href === "/student/notifications" && (
                         <StudentNotificationBadge compact />
                       )}
@@ -126,6 +140,7 @@ export default function StudentMobileNavigation({
     </>
   );
 }
+
 
 
 

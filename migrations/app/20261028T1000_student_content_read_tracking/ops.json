@@ -1,0 +1,203 @@
+[
+  {
+    "id": "table.StudentContentRead",
+    "label": "Create table \"StudentContentRead\"",
+    "summary": "Creates table \"StudentContentRead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "StudentContentRead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"StudentContentRead\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"StudentContentRead\"",
+        "sql": "CREATE TABLE \"public\".\"StudentContentRead\" (\n  \"contentId\" int4 NOT NULL,\n  \"contentType\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"viewedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"viewedVersion\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"StudentContentRead_contentType_check_09973a7c\" CHECK (\"contentType\" IN ('CLASS_NOTE', 'ASSIGNMENT', 'GRADE', 'RESULT'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"StudentContentRead\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.StudentContentRead.StudentContentRead_studentId_contentType_contentId_key",
+    "label": "Add unique constraint on \"StudentContentRead\" (studentId, contentType, contentId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "StudentContentRead_studentId_contentType_contentId_key",
+        "table": "StudentContentRead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"StudentContentRead_studentId_contentType_contentId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentContentRead_studentId_contentType_contentId_key",
+          "public",
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"StudentContentRead_studentId_contentType_contentId_key\"",
+        "sql": "ALTER TABLE \"public\".\"StudentContentRead\" ADD CONSTRAINT \"StudentContentRead_studentId_contentType_contentId_key\" UNIQUE (\"studentId\", \"contentType\", \"contentId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"StudentContentRead_studentId_contentType_contentId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentContentRead_studentId_contentType_contentId_key",
+          "public",
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentContentRead.StudentContentRead_studentId_contentType_idx_2c410c37",
+    "label": "Create index \"StudentContentRead_studentId_contentType_idx_2c410c37\" on \"StudentContentRead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentContentRead_studentId_contentType_idx_2c410c37",
+        "table": "StudentContentRead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentContentRead_studentId_contentType_idx_2c410c37\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead_studentId_contentType_idx_2c410c37\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentContentRead_studentId_contentType_idx_2c410c37\"",
+        "sql": "CREATE INDEX \"StudentContentRead_studentId_contentType_idx_2c410c37\" ON \"public\".\"StudentContentRead\" (\"studentId\", \"contentType\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentContentRead_studentId_contentType_idx_2c410c37\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead_studentId_contentType_idx_2c410c37\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.StudentContentRead.StudentContentRead_studentId_idx_bf255322",
+    "label": "Create index \"StudentContentRead_studentId_idx_bf255322\" on \"StudentContentRead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "StudentContentRead_studentId_idx_bf255322",
+        "table": "StudentContentRead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"StudentContentRead_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"StudentContentRead_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"StudentContentRead_studentId_idx_bf255322\" ON \"public\".\"StudentContentRead\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"StudentContentRead_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"StudentContentRead_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.StudentContentRead.StudentContentRead_studentId_fkey",
+    "label": "Add foreign key \"StudentContentRead_studentId_fkey\" on \"StudentContentRead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "StudentContentRead_studentId_fkey",
+        "table": "StudentContentRead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"StudentContentRead_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentContentRead_studentId_fkey",
+          "public",
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"StudentContentRead_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"StudentContentRead\"\nADD CONSTRAINT \"StudentContentRead_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"StudentContentRead_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "StudentContentRead_studentId_fkey",
+          "public",
+          "\"public\".\"StudentContentRead\""
+        ]
+      }
+    ]
+  }
+]

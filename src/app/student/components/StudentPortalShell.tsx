@@ -6,6 +6,10 @@ import type { ReactNode } from "react";
 
 import StudentMobileNavigation from "./student-mobile-navigation";
 import StudentNotificationBadge from "./StudentNotificationBadge";
+import {
+  StudentContentUnreadBadge,
+  StudentContentUnreadProvider,
+} from "./StudentContentUnreadBadges";
 
 const navigation = [
   { label: "Dashboard", href: "/student/dashboard", icon: "⌂" },
@@ -47,6 +51,7 @@ export default function StudentPortalShell({
   }
 
   return (
+    <StudentContentUnreadProvider>
     <div className="flex min-h-screen bg-slate-50">
       <aside className="hidden w-64 shrink-0 flex-col bg-slate-900 text-white md:flex">
         <div className="border-b border-slate-800 px-5 py-6">
@@ -96,6 +101,18 @@ export default function StudentPortalShell({
                   {icon}
                 </span>
                 <span>{label}</span>
+                  {href === "/student/class-notes" && (
+                    <StudentContentUnreadBadge type="classNotes" />
+                  )}
+                  {href === "/student/assignments" && (
+                    <span className="ml-auto flex items-center gap-1.5">
+                      <StudentContentUnreadBadge type="assignments" />
+                      <StudentContentUnreadBadge type="gradedAssignments" />
+                    </span>
+                  )}
+                  {href === "/student/results" && (
+                    <StudentContentUnreadBadge type="results" />
+                  )}
                 {href === "/student/notifications" && <StudentNotificationBadge />}
               </Link>
             );
@@ -155,8 +172,10 @@ export default function StudentPortalShell({
         </main>
       </div>
     </div>
+      </StudentContentUnreadProvider>
   );
 }
+
 
 
 

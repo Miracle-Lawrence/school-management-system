@@ -347,6 +347,30 @@ export default function StudentClassNotesClient() {
                   onClick={() => {
                     setSelectedNote(note);
                     window.scrollTo({ top: 0, behavior: "smooth" });
+
+                    void fetch("/api/student/content-reads", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                      },
+                      body: JSON.stringify({
+                        contentType: "CLASS_NOTE",
+                        contentId: note.id,
+                      }),
+                    })
+                      .then((response) => {
+                        if (!response.ok) {
+                          return;
+                        }
+
+                        window.dispatchEvent(
+                          new Event("student-content-reads-updated"),
+                        );
+                      })
+                      .catch(() => {
+                        // Opening the note should still work if tracking fails.
+                      });
                   }}
                   className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
                 >
@@ -361,3 +385,4 @@ export default function StudentClassNotesClient() {
     </section>
   );
 }
+

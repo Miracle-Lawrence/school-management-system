@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 type SubmissionStatus = "PENDING" | "SUBMITTED" | "GRADED" | "OVERDUE";
 
@@ -53,6 +53,65 @@ function statusStyle(status: SubmissionStatus) {
   }
 }
 
+type TrackedContentType = "ASSIGNMENT" | "GRADE";
+
+function StudentContentReadObserver({
+  contentType,
+  contentId,
+  children,
+}: {
+  contentType: TrackedContentType;
+  contentId: number;
+  children: ReactNode;
+}) {
+  const [element, setElement] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!element) return;
+
+    let sent = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (sent || !entries.some((entry) => entry.isIntersecting)) {
+          return;
+        }
+
+        sent = true;
+        observer.disconnect();
+
+        void fetch("/api/student/content-reads", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            contentType,
+            contentId,
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              window.dispatchEvent(
+                new Event("student-content-reads-updated"),
+              );
+            }
+          })
+          .catch(() => {
+            // Tracking failures must not prevent students from viewing content.
+          });
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [element, contentType, contentId]);
+
+  return <div ref={setElement}>{children}</div>;
+}
 export default function StudentAssignmentsClient() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -241,8 +300,12 @@ export default function StudentAssignmentsClient() {
               assignment.status !== "OVERDUE";
 
             return (
-              <article
-                key={assignment.id}
+  <StudentContentReadObserver
+    key={assignment.id}
+    contentType="ASSIGNMENT"
+    contentId={assignment.id}
+  >
+    <article
                 className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 <div className="border-b border-slate-100 p-5 sm:p-6">
@@ -311,7 +374,11 @@ export default function StudentAssignmentsClient() {
                   )}
 
                   {assignment.status === "GRADED" && assignment.submission && (
-                    <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                    <StudentContentReadObserver
+                      contentType="GRADE"
+                      contentId={assignment.id}
+                    >
+                      <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                       <div>
                         <p className="text-sm font-semibold text-emerald-900">
                           Your marks
@@ -331,7 +398,8 @@ export default function StudentAssignmentsClient() {
                           </p>
                         </div>
                       )}
-                    </div>
+                      </div>
+                    </StudentContentReadObserver>
                   )}
 
                   {canSubmit ? (
@@ -396,7 +464,8 @@ export default function StudentAssignmentsClient() {
                     </p>
                   )}
                 </div>
-              </article>
+                </article>
+              </StudentContentReadObserver>
             );
           })}
         </section>
@@ -404,3 +473,4 @@ export default function StudentAssignmentsClient() {
     </div>
   );
 }
+

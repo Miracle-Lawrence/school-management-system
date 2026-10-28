@@ -1,6 +1,7 @@
-ï»¿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import StudentContentReadObserver from "../components/StudentContentReadObserver";
 
 const reportTypes = [
   { value: "MID_TERM", label: "Mid-Term Report" },
@@ -8,7 +9,7 @@ const reportTypes = [
 ] as const;
 
 function formatScore(value: number | null | undefined) {
-  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "â€”";
+  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "—";
 }
 
 export default async function StudentResultsPage() {
@@ -175,10 +176,13 @@ export default async function StudentResultsPage() {
             }
 
             return (
-              <section
-                key={section.id}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+              <StudentContentReadObserver
+                contentType="RESULT"
+                contentId={section.id}
               >
+                <section
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+                >
                 <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="font-semibold text-slate-900">
@@ -210,13 +214,13 @@ export default async function StudentResultsPage() {
                     <div className="rounded-lg bg-emerald-50 p-4">
                       <p className="text-xs text-slate-500">Grade</p>
                       <p className="mt-2 text-xl font-bold text-emerald-900">
-                        {section.overallResult.grade || "â€”"}
+                        {section.overallResult.grade || "—"}
                       </p>
                     </div>
                     <div className="rounded-lg bg-amber-50 p-4">
                       <p className="text-xs text-slate-500">Class Position</p>
                       <p className="mt-2 text-xl font-bold text-amber-900">
-                        {section.overallResult.position ?? "â€”"}
+                        {section.overallResult.position ?? "—"}
                       </p>
                     </div>
                   </div>
@@ -248,11 +252,11 @@ export default async function StudentResultsPage() {
                             </td>
                             <td className="px-5 py-4">
                               <span className="rounded-md bg-blue-50 px-2 py-1 font-semibold text-blue-700">
-                                {result.grade || "â€”"}
+                                {result.grade || "—"}
                               </span>
                             </td>
                             <td className="px-5 py-4 text-slate-600">
-                              {result.remark || "â€”"}
+                              {result.remark || "—"}
                             </td>
                           </tr>
                         ))}
@@ -271,7 +275,8 @@ export default async function StudentResultsPage() {
                     </p>
                   </div>
                 )}
-              </section>
+                </section>
+              </StudentContentReadObserver>
             );
           })}
         </div>
@@ -279,3 +284,4 @@ export default async function StudentResultsPage() {
     </main>
   );
 }
+
