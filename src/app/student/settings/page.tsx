@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -12,7 +12,7 @@ export default async function StudentSettingsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isSafeInteger(userId) || userId <= 0 || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const user = await db.orm.public.User.where({
@@ -20,7 +20,7 @@ export default async function StudentSettingsPage() {
   }).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (user.mustChangePassword) {

@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -53,7 +53,7 @@ export default async function StudentDashboardPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -61,7 +61,7 @@ export default async function StudentDashboardPage() {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (user.mustChangePassword) {
@@ -155,7 +155,7 @@ export default async function StudentDashboardPage() {
                 {item.description}
               </p>
               <span className="mt-4 inline-block text-sm font-semibold text-blue-700">
-                Open section →
+                Open section ?
               </span>
             </Link>
           ))}

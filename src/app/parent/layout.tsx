@@ -33,7 +33,7 @@ export default async function ParentLayout({ children }: ParentLayoutProps) {
   async function handleSignOut() {
     "use server";
 
-    await signOut({ redirectTo: "/login" });
+    await signOut({ redirectTo: "/school/login" });
   }
 
   const logoUrl = school.logoUrl || school.faviconUrl || "";

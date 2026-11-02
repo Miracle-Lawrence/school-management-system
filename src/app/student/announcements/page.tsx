@@ -1,4 +1,4 @@
-﻿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
@@ -24,7 +24,7 @@ export default async function StudentAnnouncementsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -128,7 +128,7 @@ export default async function StudentAnnouncementsPage() {
       {announcements.length === 0 ? (
         <section className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-2xl">
-            📢
+            ??
           </div>
           <h2 className="mt-4 text-lg font-semibold text-slate-900">
             No announcements yet
@@ -148,7 +148,7 @@ export default async function StudentAnnouncementsPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl">
-                    📢
+                    ??
                   </div>
                   <div>
                     <h2 className="font-semibold text-slate-900">

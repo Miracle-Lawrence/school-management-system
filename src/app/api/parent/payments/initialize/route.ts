@@ -1,9 +1,12 @@
-
-import { randomUUID } from "node:crypto";
+﻿import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { requireApiRole } from "@/lib/auth/authorization";
+import {
+  getPaystackSecretCandidates,
+  getPaystackSecretForNewPayment,
+} from "@/lib/payments/school-paystack";
 import { db } from "@/prisma/db";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +26,6 @@ type PaystackInitializeResponse = {
   };
 };
 
-
 type PaystackExistingTransactionResponse = {
   status: boolean;
   message?: string;
@@ -34,7 +36,6 @@ type PaystackExistingTransactionResponse = {
     currency?: string;
   };
 };
-
 
 export async function POST(request: Request) {
   let paymentId: number | null = null;
@@ -56,11 +57,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
     const appUrl = process.env.APP_URL;
 
-    if (!secretKey || !appUrl) {
-      console.error("Paystack configuration is missing.");
+    if (!appUrl) {
+      console.error("Application URL is missing.");
 
       return NextResponse.json(
         { error: "Online payments are not configured." },
@@ -169,7 +169,9 @@ export async function POST(request: Request) {
 
     if (!parentStudent) {
       return NextResponse.json(
-        { error: "You cannot pay an invoice for an unlinked student." },
+        {
+          error: "You cannot pay an invoice for an unlinked student.",
+        },
         { status: 403 },
       );
     }
@@ -194,91 +196,57 @@ export async function POST(request: Request) {
     }).first();
 
     if (existingPendingPayment) {
-      let existingVerificationResponse: Response;
+      const secretCandidates = await getPaystackSecretCandidates(schoolId);
 
-      try {
-        existingVerificationResponse = await fetch(
-          `https://api.paystack.co/transaction/verify/${encodeURIComponent(
-            existingPendingPayment.reference,
-          )}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${secretKey}`,
-              Accept: "application/json",
-            },
-            cache: "no-store",
-            signal: AbortSignal.timeout(15000),
-          },
-        );
-      } catch {
-        return NextResponse.json(
-          {
-            error:
-              "An existing payment could not be checked right now. Please check its status before trying again.",
-            reference: existingPendingPayment.reference,
-          },
-          { status: 409 },
-        );
-      }
+      let existingVerification: PaystackExistingTransactionResponse | null =
+        null;
 
-      let existingVerification: PaystackExistingTransactionResponse;
+      // Try each credential because this payment may have been
+      // initialized using the school's key or the legacy global key.
+      for (const candidateSecret of secretCandidates) {
+        let verificationResponse: Response;
 
-      try {
-        existingVerification =
-          (await existingVerificationResponse.json()) as PaystackExistingTransactionResponse;
-      } catch {
-        return NextResponse.json(
-          {
-            error:
-              "The existing payment status could not be determined. Please check its status before trying again.",
-            reference: existingPendingPayment.reference,
-          },
-          { status: 409 },
-        );
-      }
-
-      const existingTransaction = existingVerification.data;
-
-      if (
-        existingVerificationResponse.ok &&
-        existingVerification.status &&
-        existingTransaction?.reference === existingPendingPayment.reference
-      ) {
-        if (
-          existingTransaction.status === "failed" ||
-          existingTransaction.status === "abandoned"
-        ) {
-          // Only release the old attempt when Paystack explicitly
-          // reports that it failed or was abandoned.
-          await db.orm.public.FeePayment.where({
-            id: existingPendingPayment.id,
-            reference: existingPendingPayment.reference,
-            status: "PENDING",
-          }).update({
-            status: "FAILED",
-          });
-        } else {
-          // Do not create a second payment while the original
-          // transaction is pending or requires confirmation.
-          return NextResponse.json(
+        try {
+          verificationResponse = await fetch(
+            `https://api.paystack.co/transaction/verify/${encodeURIComponent(
+              existingPendingPayment.reference,
+            )}`,
             {
-              error:
-                existingTransaction.status === "success"
-                  ? "Paystack reports a successful transaction. Check its status before starting another payment."
-                  : "A payment is still being processed. Check its status before starting another payment.",
-              reference: existingPendingPayment.reference,
-              status:
-                existingTransaction.status === "success"
-                  ? "REQUIRES_VERIFICATION"
-                  : "PENDING",
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${candidateSecret}`,
+                Accept: "application/json",
+              },
+              cache: "no-store",
+              signal: AbortSignal.timeout(15000),
             },
-            { status: 409 },
           );
+        } catch {
+          continue;
         }
-      } else {
-        // An unavailable or unrecognized verification result is
-        // not proof of failure. Preserve the existing pending record.
+
+        let verification: PaystackExistingTransactionResponse;
+
+        try {
+          verification =
+            (await verificationResponse.json()) as PaystackExistingTransactionResponse;
+        } catch {
+          continue;
+        }
+
+        // Accept only a successful API response matching our exact
+        // locally stored payment reference.
+        if (
+          verificationResponse.ok &&
+          verification.status &&
+          verification.data?.reference === existingPendingPayment.reference
+        ) {
+          existingVerification = verification;
+          break;
+        }
+      }
+
+      if (!existingVerification) {
         return NextResponse.json(
           {
             error:
@@ -288,6 +256,52 @@ export async function POST(request: Request) {
           { status: 409 },
         );
       }
+
+      const existingTransaction = existingVerification.data;
+
+      if (
+        existingTransaction?.status === "failed" ||
+        existingTransaction?.status === "abandoned"
+      ) {
+        // Only release the old attempt when Paystack explicitly
+        // reports that it failed or was abandoned.
+        await db.orm.public.FeePayment.where({
+          id: existingPendingPayment.id,
+          reference: existingPendingPayment.reference,
+          status: "PENDING",
+        }).update({
+          status: "FAILED",
+        });
+      } else {
+        // Do not create a second payment while the original
+        // transaction is pending or requires confirmation.
+        return NextResponse.json(
+          {
+            error:
+              existingTransaction?.status === "success"
+                ? "Paystack reports a successful transaction. Check its status before starting another payment."
+                : "A payment is still being processed. Check its status before starting another payment.",
+            reference: existingPendingPayment.reference,
+            status:
+              existingTransaction?.status === "success"
+                ? "REQUIRES_VERIFICATION"
+                : "PENDING",
+          },
+          { status: 409 },
+        );
+      }
+    }
+
+    const secretKey = await getPaystackSecretForNewPayment(schoolId);
+
+    if (!secretKey) {
+      return NextResponse.json(
+        {
+          error:
+            "Online payments are not enabled for this school. Please contact the school administrator.",
+        },
+        { status: 503 },
+      );
     }
 
     const reference = `PAY-${randomUUID().toUpperCase()}`;
@@ -399,14 +413,20 @@ export async function POST(request: Request) {
         },
       );
     } catch {
-      await db.orm.public.FeePayment.where({
-        id: pendingPayment.id,
+      // The outcome is unknown: Paystack may have created the
+      // transaction before the connection failed. Keep it PENDING
+      // so the next request verifies it instead of creating a duplicate.
+      console.error("Paystack initialization outcome is unknown.", {
+        paymentId: pendingPayment.id,
         reference,
-        status: "PENDING",
-      }).update({ status: "FAILED" });
+      });
 
       return NextResponse.json(
-        { error: "Unable to connect to the payment provider." },
+        {
+          error:
+            "We could not confirm the payment initialization status. Please check the payment status before trying again.",
+          reference,
+        },
         { status: 502 },
       );
     }
@@ -429,19 +449,25 @@ export async function POST(request: Request) {
       !providerReference ||
       providerReference !== reference
     ) {
-      await db.orm.public.FeePayment.where({
-        id: pendingPayment.id,
-        reference,
-        status: "PENDING",
-      }).update({ status: "FAILED" });
-
-      console.error("Paystack initialization failed.", {
-        httpStatus: paystackResponse.status,
-        providerMessage: result.message,
-      });
+      // The response is unsuccessful or incomplete.
+      // Paystack may still have created a transaction.
+      // Keep the payment PENDING until its status is verified.
+      console.error(
+        "Paystack initialization response was unsuccessful or incomplete.",
+        {
+          httpStatus: paystackResponse.status,
+          providerMessage: result.message,
+          reference,
+          paymentId: pendingPayment.id,
+        },
+      );
 
       return NextResponse.json(
-        { error: "Unable to initialize your payment. Please try again." },
+        {
+          error:
+            "We could not confirm the payment initialization status. Check the payment status before trying again.",
+          reference,
+        },
         { status: 502 },
       );
     }

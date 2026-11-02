@@ -1,4 +1,4 @@
-﻿import { signOut } from "@/auth";
+import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
@@ -23,7 +23,7 @@ export default async function StudentLayout({
   const userId = Number(session.user.id);
 
   if (!Number.isInteger(userId)) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -31,7 +31,7 @@ export default async function StudentLayout({
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
 
@@ -45,7 +45,7 @@ export default async function StudentLayout({
 
   async function handleSignOut() {
     "use server";
-    await signOut({ redirectTo: "/login" });
+    await signOut({ redirectTo: "/school/login" });
   }
 
   return (

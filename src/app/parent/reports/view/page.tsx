@@ -50,7 +50,7 @@ export default async function ParentReportViewPage({
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (user.mustChangePassword) {

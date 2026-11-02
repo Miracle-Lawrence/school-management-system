@@ -1,13 +1,13 @@
-ï»¿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
 function formatDate(value: unknown): string {
-  if (!value) return "â€”";
+  if (!value) return "—";
 
   const date = new Date(String(value));
 
-  if (Number.isNaN(date.getTime())) return "â€”";
+  if (Number.isNaN(date.getTime())) return "—";
 
   return new Intl.DateTimeFormat("en-NG", {
     day: "numeric",
@@ -52,7 +52,7 @@ export default async function StudentAttendancePage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -289,10 +289,10 @@ export default async function StudentAttendancePage() {
                       {formatDate(record.date)}
                     </td>
                     <td className="px-5 py-4 text-slate-600">
-                      {classNames.get(record.classId) ?? "â€”"}
+                      {classNames.get(record.classId) ?? "—"}
                     </td>
                     <td className="px-5 py-4 text-slate-600">
-                      {termNames.get(record.termId) ?? "â€”"}
+                      {termNames.get(record.termId) ?? "—"}
                     </td>
                     <td className="px-5 py-4">
                       <span
@@ -302,7 +302,7 @@ export default async function StudentAttendancePage() {
                       </span>
                     </td>
                     <td className="max-w-xs px-5 py-4 text-slate-600">
-                      {record.notes || "â€”"}
+                      {record.notes || "—"}
                     </td>
                   </tr>
                 ))}

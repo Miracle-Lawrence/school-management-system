@@ -36,7 +36,7 @@ export default async function SubjectResultsPage({
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const requestedSessionId = parseId(params.sessionId);

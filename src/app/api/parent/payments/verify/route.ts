@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { requireApiRole } from "@/lib/auth/authorization";
+import { getPaystackSecretCandidates } from "@/lib/payments/school-paystack";
+import { confirmPaystackPayment } from "@/lib/payments/confirm-paystack-payment";
 import { db } from "@/prisma/db";
 
 export const dynamic = "force-dynamic";
@@ -39,15 +41,6 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Valid parent and school context are required." },
         { status: 400 },
-      );
-    }
-
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
-
-    if (!secretKey) {
-      return NextResponse.json(
-        { error: "Online payments are not configured." },
-        { status: 503 },
       );
     }
 
@@ -154,46 +147,67 @@ export async function POST(request: Request) {
       );
     }
 
-    let providerResponse: Response;
+    const secretCandidates =
+      await getPaystackSecretCandidates(schoolId);
 
-    try {
-      providerResponse = await fetch(
-        `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${secretKey}`,
-            Accept: "application/json",
+    let providerResponse: Response | null = null;
+    let result: PaystackVerifyResponse | null = null;
+
+    // Try the school's configured key and, when available,
+    // the legacy key for transactions created before migration.
+    for (const candidateSecret of secretCandidates) {
+      let candidateResponse: Response;
+
+      try {
+        candidateResponse = await fetch(
+          `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${candidateSecret}`,
+              Accept: "application/json",
+            },
+            cache: "no-store",
+            signal: AbortSignal.timeout(15000),
           },
-          cache: "no-store",
-          signal: AbortSignal.timeout(15000),
-        },
-      );
-    } catch {
-      return NextResponse.json(
-        {
-          status: "PENDING",
-          message: "Verification is temporarily unavailable. Please retry.",
-        },
-        { status: 503 },
-      );
+        );
+      } catch {
+        continue;
+      }
+
+      let candidateResult: PaystackVerifyResponse;
+
+      try {
+        candidateResult =
+          (await candidateResponse.json()) as PaystackVerifyResponse;
+      } catch {
+        continue;
+      }
+
+      // A candidate is accepted only when Paystack confirms the
+      // exact reference requested by this authenticated parent.
+      if (
+        candidateResponse.ok &&
+        candidateResult.status &&
+        candidateResult.data?.reference === reference
+      ) {
+        providerResponse = candidateResponse;
+        result = candidateResult;
+        break;
+      }
     }
 
-    let result: PaystackVerifyResponse;
-
-    try {
-      result = (await providerResponse.json()) as PaystackVerifyResponse;
-    } catch {
-      return NextResponse.json(
-        { error: "Unable to read the payment verification response." },
-        { status: 502 },
-      );
-    }
-
-    if (!providerResponse.ok || !result.status || !result.data) {
-      console.error("Paystack verification request failed.", {
-        httpStatus: providerResponse.status,
-        message: result.message,
+    if (
+      !providerResponse ||
+      !result ||
+      !providerResponse.ok ||
+      !result.status ||
+      !result.data
+    ) {
+      console.error("Paystack verification could not be established.", {
+        paymentId: payment.id,
+        reference,
+        httpStatus: providerResponse?.status,
       });
 
       return NextResponse.json(
@@ -258,93 +272,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const confirmed = await db.transaction(async (tx) => {
-      const currentPayment = await tx.orm.public.FeePayment.where({
-        id: payment.id,
-        reference,
-      }).first();
-
-      if (!currentPayment) {
-        throw new Error("PAYMENT_NOT_FOUND");
-      }
-
-      if (currentPayment.status === "CONFIRMED") {
-        return true;
-      }
-
-      if (currentPayment.status !== "PENDING") {
-        throw new Error("PAYMENT_NOT_PENDING");
-      }
-
-      const currentInvoice = await tx.orm.public.StudentInvoice.where({
-        id: currentPayment.invoiceId,
-        schoolId,
-      }).first();
-
-      if (!currentInvoice || currentInvoice.status !== "ISSUED") {
-        throw new Error("INVOICE_UNAVAILABLE");
-      }
-
-      // Follow the invoice-locking pattern already used by this project.
-      await tx.orm.public.StudentInvoice.where({
-        id: currentInvoice.id,
-        schoolId,
-      }).update({
-        status: currentInvoice.status,
-      });
-
-      const lockedInvoice = await tx.orm.public.StudentInvoice.where({
-        id: currentInvoice.id,
-        schoolId,
-      }).first();
-
-      if (!lockedInvoice || lockedInvoice.status !== "ISSUED") {
-        throw new Error("INVOICE_UNAVAILABLE");
-      }
-
-      const invoicePayments = await tx.orm.public.FeePayment.where((item) =>
-        item.invoiceId.eq(currentInvoice.id),
-      ).all();
-
-      const confirmedKobo = invoicePayments.reduce(
-        (total, item) =>
-          item.status === "CONFIRMED"
-            ? total + Math.round(Number(item.amount) * 100)
-            : total,
-        0,
-      );
-
-      const invoiceTotalKobo = Math.round(
-        Number(lockedInvoice.totalAmount) * 100,
-      );
-
-      const paymentAmountKobo = Math.round(Number(currentPayment.amount) * 100);
-
-      const outstandingKobo = invoiceTotalKobo - confirmedKobo;
-
-      if (
-        !Number.isSafeInteger(invoiceTotalKobo) ||
-        !Number.isSafeInteger(paymentAmountKobo) ||
-        paymentAmountKobo <= 0 ||
-        paymentAmountKobo > outstandingKobo
-      ) {
-        // Do not falsely confirm a payment if the invoice balance
-        // changed while Paystack was processing it.
-        throw new Error("OUTSTANDING_BALANCE_CHANGED");
-      }
-
-      await tx.orm.public.FeePayment.where({
-        id: currentPayment.id,
-        reference,
-        status: "PENDING",
-      }).update({
-        status: "CONFIRMED",
-        paidAt: new Date().toISOString(),
-        providerReference:
-          transaction.id !== undefined ? String(transaction.id) : reference,
-      });
-
-      return true;
+    const confirmed = await confirmPaystackPayment({
+      paymentId: payment.id,
+      reference,
+      schoolId,
+      providerReference:
+        transaction.id !== undefined ? String(transaction.id) : reference,
     });
 
     if (!confirmed) {
@@ -408,3 +341,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+

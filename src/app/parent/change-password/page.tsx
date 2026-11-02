@@ -50,7 +50,7 @@ async function changePasswordAction(formData: FormData) {
 
   // The sessionVersion change invalidates this session.
   // Have the parent sign in again with their new password.
-  redirect("/login?passwordChanged=1");
+  redirect("/school/login?passwordChanged=1");
 }
 
 export default async function ParentChangePasswordPage() {

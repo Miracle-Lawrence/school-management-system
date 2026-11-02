@@ -10,7 +10,7 @@ export default async function ParentReportsPage() {
   const schoolId = session.user.schoolId;
 
   if (!schoolId || !Number.isSafeInteger(userId) || userId <= 0) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -18,7 +18,7 @@ export default async function ParentReportsPage() {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (user.mustChangePassword) {

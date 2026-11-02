@@ -128,6 +128,10 @@
       "model": "SchoolClass",
       "namespace": "public"
     },
+    "SchoolPaymentConfig": {
+      "model": "SchoolPaymentConfig",
+      "namespace": "public"
+    },
     "SchoolSubscription": {
       "model": "SchoolSubscription",
       "namespace": "public"
@@ -5719,6 +5723,22 @@
                   "namespace": "public"
                 }
               },
+              "paymentConfig": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolPaymentConfig",
+                  "namespace": "public"
+                }
+              },
               "psychomotorFields": {
                 "cardinality": "1:N",
                 "on": {
@@ -6296,6 +6316,124 @@
               },
               "namespaceId": "public",
               "table": "SchoolClass"
+            }
+          },
+          "SchoolPaymentConfig": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "encryptedSecretKey": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastValidatedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "provider": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "publicKey": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "encryptedSecretKey": {
+                  "column": "encryptedSecretKey"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isEnabled": {
+                  "column": "isEnabled"
+                },
+                "lastValidatedAt": {
+                  "column": "lastValidatedAt"
+                },
+                "provider": {
+                  "column": "provider"
+                },
+                "publicKey": {
+                  "column": "publicKey"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SchoolPaymentConfig"
             }
           },
           "SchoolSubscription": {
@@ -14089,6 +14227,112 @@
                 }
               ]
             },
+            "SchoolPaymentConfig": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "encryptedSecretKey": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isEnabled": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "lastValidatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "provider": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PAYSTACK"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "publicKey": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolPaymentConfig"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "provider",
+                    "isEnabled"
+                  ],
+                  "name": "SchoolPaymentConfig_provider_isEnabled_idx_02148751",
+                  "prefix": "SchoolPaymentConfig_provider_isEnabled_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "schoolId"
+                  ]
+                }
+              ]
+            },
             "SchoolSubscription": {
               "checks": [
                 {
@@ -16559,10 +16803,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2f0973bbf02b9e9e0ec82c155fcfa6ac30724319229330e6448aa33e1cdd5e10"
+    "storageHash": "2cdf3cf64d2b23cbac2fb0cb5bab74061dc6100a932b17c1cf2adb75169fd05b"
   },
   "execution": {
-    "executionHash": "0e0381860bf35518908b54eedaa0b5b23198d6ee66f3480ee655a86257e203a1",
+    "executionHash": "415afa6b17d9ac4c068a257d2f8c65a796cf461023b7d7e5b7fee4d580459196",
     "mutations": {
       "defaults": [
         {
@@ -16983,6 +17227,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "SchoolClass"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "SchoolPaymentConfig"
           }
         },
         {

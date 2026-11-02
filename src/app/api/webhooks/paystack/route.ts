@@ -1,6 +1,8 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+﻿import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 
+import { getPaystackSecretCandidates } from "@/lib/payments/school-paystack";
+import { confirmPaystackPayment } from "@/lib/payments/confirm-paystack-payment";
 import { db } from "@/prisma/db";
 
 export const dynamic = "force-dynamic";
@@ -52,22 +54,11 @@ function verifySignature(
 }
 
 export async function POST(request: Request) {
-  const secretKey = process.env.PAYSTACK_SECRET_KEY;
-
-  if (!secretKey) {
-    console.error("Paystack webhook: secret key is not configured.");
-
-    return NextResponse.json(
-      { error: "Webhook is not configured." },
-      { status: 500 },
-    );
-  }
-
   let rawBody: string;
 
   try {
-    // Read the original request body before parsing JSON.
-    // Paystack's signature must be checked against these exact bytes.
+    // Read the original body. The signature must be checked against
+    // the exact body Paystack sent.
     rawBody = await request.text();
   } catch {
     return NextResponse.json(
@@ -76,20 +67,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const signature = request.headers.get("x-paystack-signature");
-
-  if (!signature || !verifySignature(rawBody, signature, secretKey)) {
-    console.warn("Paystack webhook rejected: invalid signature.");
-
-    return NextResponse.json(
-      { error: "Invalid webhook signature." },
-      { status: 401 },
-    );
-  }
-
   let payload: PaystackWebhookPayload;
 
   try {
+    // Parsing is only used to locate the local payment and its school.
+    // No event is trusted until its signature has been validated.
     payload = JSON.parse(rawBody) as PaystackWebhookPayload;
   } catch {
     return NextResponse.json(
@@ -98,6 +80,91 @@ export async function POST(request: Request) {
     );
   }
 
+  const signature = request.headers.get("x-paystack-signature");
+
+  if (!signature) {
+    console.warn("Paystack webhook rejected: signature is missing.");
+
+    return NextResponse.json(
+      { error: "Invalid webhook signature." },
+      { status: 401 },
+    );
+  }
+
+  // Start with the legacy credential for events that cannot be mapped
+  // to a local payment. When a payment is found, resolve its school's
+  // credential candidates instead.
+  const signatureCandidates: string[] = [];
+  const legacySecret = process.env.PAYSTACK_SECRET_KEY;
+
+  if (legacySecret) {
+    signatureCandidates.push(legacySecret);
+  }
+
+  const signatureReference = payload.data?.reference;
+
+  try {
+    if (
+      typeof signatureReference === "string" &&
+      signatureReference.length > 0
+    ) {
+      const paymentForSignature = await db.orm.public.FeePayment.where({
+        reference: signatureReference,
+        method: "PAYSTACK",
+      }).first();
+
+      if (paymentForSignature) {
+        const invoiceForSignature =
+          await db.orm.public.StudentInvoice.where({
+            id: paymentForSignature.invoiceId,
+          }).first();
+
+        if (invoiceForSignature) {
+          const schoolCandidates =
+            await getPaystackSecretCandidates(
+              invoiceForSignature.schoolId,
+            );
+
+          // Prefer the school's candidates while retaining any legacy
+          // credential returned by the helper.
+          signatureCandidates.splice(
+            0,
+            signatureCandidates.length,
+            ...schoolCandidates,
+          );
+        }
+      }
+    }
+  } catch {
+    console.error(
+      "Paystack webhook: unable to resolve payment credentials.",
+    );
+
+    return NextResponse.json(
+      { error: "Webhook credential resolution failed." },
+      { status: 500 },
+    );
+  }
+
+  // Remember which secret actually authenticated this exact payload.
+  // Use that same secret for independent transaction verification.
+  let verifiedSecretKey: string | null = null;
+
+  for (const candidateSecret of signatureCandidates) {
+    if (verifySignature(rawBody, signature, candidateSecret)) {
+      verifiedSecretKey = candidateSecret;
+      break;
+    }
+  }
+
+  if (!verifiedSecretKey) {
+    console.warn("Paystack webhook rejected: invalid signature.");
+
+    return NextResponse.json(
+      { error: "Invalid webhook signature." },
+      { status: 401 },
+    );
+  }
   // We only process successful customer payment events.
   // Other valid Paystack events can be acknowledged without action.
   if (payload.event !== "charge.success") {
@@ -168,7 +235,7 @@ export async function POST(request: Request) {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${secretKey}`,
+            Authorization: `Bearer ${verifiedSecretKey}`,
             Accept: "application/json",
           },
           cache: "no-store",
@@ -237,87 +304,21 @@ export async function POST(request: Request) {
       });
     }
 
-    await db.transaction(async (tx) => {
-      const currentPayment = await tx.orm.public.FeePayment.where({
-        id: payment.id,
-        reference,
+    const invoiceForConfirmation =
+      await db.orm.public.StudentInvoice.where({
+        id: payment.invoiceId,
       }).first();
 
-      if (!currentPayment) {
-        throw new Error("PAYMENT_NOT_FOUND");
-      }
+    if (!invoiceForConfirmation) {
+      throw new Error("INVOICE_UNAVAILABLE");
+    }
 
-      // Idempotency: callback and webhook may arrive at the same time.
-      if (currentPayment.status === "CONFIRMED") {
-        return;
-      }
-
-      if (currentPayment.status !== "PENDING") {
-        throw new Error("PAYMENT_NOT_PENDING");
-      }
-
-      const currentInvoice = await tx.orm.public.StudentInvoice.where({
-        id: currentPayment.invoiceId,
-      }).first();
-
-      if (!currentInvoice || currentInvoice.status !== "ISSUED") {
-        throw new Error("INVOICE_UNAVAILABLE");
-      }
-
-      // Preserve the invoice-update pattern currently used by this project.
-      await tx.orm.public.StudentInvoice.where({
-        id: currentInvoice.id,
-        schoolId: currentInvoice.schoolId,
-      }).update({
-        status: currentInvoice.status,
-      });
-
-      const invoice = await tx.orm.public.StudentInvoice.where({
-        id: currentInvoice.id,
-        schoolId: currentInvoice.schoolId,
-      }).first();
-
-      if (!invoice || invoice.status !== "ISSUED") {
-        throw new Error("INVOICE_UNAVAILABLE");
-      }
-
-      const invoicePayments = await tx.orm.public.FeePayment.where((item) =>
-        item.invoiceId.eq(invoice.id),
-      ).all();
-
-      const confirmedKobo = invoicePayments.reduce(
-        (total, item) =>
-          item.status === "CONFIRMED"
-            ? total + Math.round(Number(item.amount) * 100)
-            : total,
-        0,
-      );
-
-      const invoiceTotalKobo = Math.round(Number(invoice.totalAmount) * 100);
-
-      const paymentAmountKobo = Math.round(Number(currentPayment.amount) * 100);
-
-      const outstandingKobo = invoiceTotalKobo - confirmedKobo;
-
-      if (
-        !Number.isSafeInteger(invoiceTotalKobo) ||
-        !Number.isSafeInteger(paymentAmountKobo) ||
-        paymentAmountKobo <= 0 ||
-        paymentAmountKobo > outstandingKobo
-      ) {
-        throw new Error("OUTSTANDING_BALANCE_CHANGED");
-      }
-
-      await tx.orm.public.FeePayment.where({
-        id: currentPayment.id,
-        reference,
-        status: "PENDING",
-      }).update({
-        status: "CONFIRMED",
-        paidAt: new Date().toISOString(),
-        providerReference:
-          transaction.id !== undefined ? String(transaction.id) : reference,
-      });
+    await confirmPaystackPayment({
+      paymentId: payment.id,
+      reference,
+      schoolId: invoiceForConfirmation.schoolId,
+      providerReference:
+        transaction.id !== undefined ? String(transaction.id) : reference,
     });
 
     console.info("Paystack payment confirmed by webhook.", {

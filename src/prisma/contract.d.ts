@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'2f0973bbf02b9e9e0ec82c155fcfa6ac30724319229330e6448aa33e1cdd5e10'>;
+  StorageHashBase<'2cdf3cf64d2b23cbac2fb0cb5bab74061dc6100a932b17c1cf2adb75169fd05b'>;
 export type ExecutionHash =
-  ExecutionHashBase<'0e0381860bf35518908b54eedaa0b5b23198d6ee66f3480ee655a86257e203a1'>;
+  ExecutionHashBase<'415afa6b17d9ac4c068a257d2f8c65a796cf461023b7d7e5b7fee4d580459196'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -626,6 +626,17 @@ export type FieldOutputTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SchoolPaymentConfig: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly encryptedSecretKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly lastValidatedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly provider: CodecTypes['pg/text@1']['output'];
+      readonly publicKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly SchoolSubscription: {
       readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1196,6 +1207,17 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly level: CodecTypes['pg/text@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SchoolPaymentConfig: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly encryptedSecretKey: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly lastValidatedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly provider: CodecTypes['pg/text@1']['input'];
+      readonly publicKey: CodecTypes['pg/text@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -1772,6 +1794,17 @@ export type StorageColumnTypes = {
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SchoolPaymentConfig: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly encryptedSecretKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isEnabled: CodecTypes['pg/bool@1']['output'];
+      readonly lastValidatedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly provider: CodecTypes['pg/text@1']['output'];
+      readonly publicKey: CodecTypes['pg/text@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly SchoolSubscription: {
       readonly cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2342,6 +2375,17 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly level: CodecTypes['pg/text@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SchoolPaymentConfig: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly encryptedSecretKey: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isEnabled: CodecTypes['pg/bool@1']['input'];
+      readonly lastValidatedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly provider: CodecTypes['pg/text@1']['input'];
+      readonly publicKey: CodecTypes['pg/text@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -3046,6 +3090,7 @@ export namespace Models {
     gradeScales: public_GradeScale[];
     notifications: public_Notification[];
     parents: public_Parent[];
+    paymentConfig: public_SchoolPaymentConfig | null;
     psychomotorFields: public_PsychomotorField[];
     psychomotorRatingOptions: public_PsychomotorRatingOption[];
     psychomotorRatings: public_StudentPsychomotorRating[];
@@ -3077,6 +3122,7 @@ export namespace Models {
       | 'gradeScales'
       | 'notifications'
       | 'parents'
+      | 'paymentConfig'
       | 'psychomotorFields'
       | 'psychomotorRatingOptions'
       | 'psychomotorRatings'
@@ -3128,6 +3174,19 @@ export namespace Models {
       | 'students'
       | 'subjectResults'
       | 'teacherAssignments';
+  };
+  export type public_SchoolPaymentConfig = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    encryptedSecretKey: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isEnabled: CodecTypes['pg/bool@1']['output'];
+    lastValidatedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    provider: CodecTypes['pg/text@1']['output'];
+    publicKey: CodecTypes['pg/text@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    school: public_School;
+    readonly [RelationKeys]?: 'school';
   };
   export type public_SchoolSubscription = {
     cancelledAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -3506,6 +3565,7 @@ export declare const models: {
     ResultComponentScore: Models.public_ResultComponentScore;
     School: Models.public_School;
     SchoolClass: Models.public_SchoolClass;
+    SchoolPaymentConfig: Models.public_SchoolPaymentConfig;
     SchoolSubscription: Models.public_SchoolSubscription;
     Student: Models.public_Student;
     StudentContentRead: Models.public_StudentContentRead;
@@ -7164,6 +7224,92 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly SchoolPaymentConfig: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly encryptedSecretKey: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isEnabled: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly lastValidatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly provider: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PAYSTACK'>;
+                  };
+                };
+                readonly publicKey: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['schoolId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'SchoolPaymentConfig_provider_isEnabled_idx_02148751';
+                  readonly prefix: 'SchoolPaymentConfig_provider_isEnabled_idx';
+                  readonly columns: readonly ['provider', 'isEnabled'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SchoolPaymentConfig';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly SchoolSubscription: {
               columns: {
                 readonly cancelledAt: {
@@ -9142,6 +9288,10 @@ type ContractBase = Omit<
     readonly SchoolClass: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'SchoolClass';
+    };
+    readonly SchoolPaymentConfig: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SchoolPaymentConfig';
     };
     readonly SchoolSubscription: {
       readonly namespace: 'public' & NamespaceId;
@@ -12467,6 +12617,18 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly paymentConfig: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SchoolPaymentConfig';
+                };
+                readonly cardinality: '1:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly psychomotorFields: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -12848,6 +13010,84 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly level: { readonly column: 'level' };
                 readonly name: { readonly column: 'name' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly SchoolPaymentConfig: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly encryptedSecretKey: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isEnabled: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly lastValidatedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly provider: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly publicKey: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'SchoolPaymentConfig';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly encryptedSecretKey: { readonly column: 'encryptedSecretKey' };
+                readonly id: { readonly column: 'id' };
+                readonly isEnabled: { readonly column: 'isEnabled' };
+                readonly lastValidatedAt: { readonly column: 'lastValidatedAt' };
+                readonly provider: { readonly column: 'provider' };
+                readonly publicKey: { readonly column: 'publicKey' };
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -15336,6 +15576,15 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'SchoolClass';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'SchoolPaymentConfig';
           };
         },
         {

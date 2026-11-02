@@ -1,0 +1,164 @@
+[
+  {
+    "id": "table.SchoolPaymentConfig",
+    "label": "Create table \"SchoolPaymentConfig\"",
+    "summary": "Creates table \"SchoolPaymentConfig\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SchoolPaymentConfig"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SchoolPaymentConfig\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SchoolPaymentConfig\"",
+        "sql": "CREATE TABLE \"public\".\"SchoolPaymentConfig\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"encryptedSecretKey\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isEnabled\" bool DEFAULT false NOT NULL,\n  \"lastValidatedAt\" timestamptz,\n  \"provider\" text DEFAULT 'PAYSTACK' NOT NULL,\n  \"publicKey\" text,\n  \"schoolId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SchoolPaymentConfig\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.SchoolPaymentConfig.SchoolPaymentConfig_schoolId_key",
+    "label": "Add unique constraint on \"SchoolPaymentConfig\" (schoolId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "SchoolPaymentConfig_schoolId_key",
+        "table": "SchoolPaymentConfig"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"SchoolPaymentConfig_schoolId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolPaymentConfig_schoolId_key",
+          "public",
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"SchoolPaymentConfig_schoolId_key\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolPaymentConfig\" ADD CONSTRAINT \"SchoolPaymentConfig_schoolId_key\" UNIQUE (\"schoolId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"SchoolPaymentConfig_schoolId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolPaymentConfig_schoolId_key",
+          "public",
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolPaymentConfig.SchoolPaymentConfig_provider_isEnabled_idx_02148751",
+    "label": "Create index \"SchoolPaymentConfig_provider_isEnabled_idx_02148751\" on \"SchoolPaymentConfig\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolPaymentConfig_provider_isEnabled_idx_02148751",
+        "table": "SchoolPaymentConfig"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolPaymentConfig_provider_isEnabled_idx_02148751\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolPaymentConfig_provider_isEnabled_idx_02148751\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolPaymentConfig_provider_isEnabled_idx_02148751\"",
+        "sql": "CREATE INDEX \"SchoolPaymentConfig_provider_isEnabled_idx_02148751\" ON \"public\".\"SchoolPaymentConfig\" (\"provider\", \"isEnabled\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolPaymentConfig_provider_isEnabled_idx_02148751\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolPaymentConfig_provider_isEnabled_idx_02148751\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolPaymentConfig.SchoolPaymentConfig_schoolId_fkey",
+    "label": "Add foreign key \"SchoolPaymentConfig_schoolId_fkey\" on \"SchoolPaymentConfig\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolPaymentConfig_schoolId_fkey",
+        "table": "SchoolPaymentConfig"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolPaymentConfig_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolPaymentConfig_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolPaymentConfig_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolPaymentConfig\"\nADD CONSTRAINT \"SchoolPaymentConfig_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolPaymentConfig_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolPaymentConfig_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolPaymentConfig\""
+        ]
+      }
+    ]
+  }
+]

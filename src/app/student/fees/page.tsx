@@ -1,4 +1,4 @@
-ï»¿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
@@ -11,9 +11,9 @@ function amount(value: number): string {
 }
 
 function formatDate(value: string | Date | null | undefined): string {
-  if (!value) return "â€”";
+  if (!value) return "—";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "â€”";
+  if (Number.isNaN(date.getTime())) return "—";
 
   return new Intl.DateTimeFormat("en-NG", {
     day: "numeric",
@@ -61,7 +61,7 @@ export default async function StudentFeesPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -245,7 +245,7 @@ export default async function StudentFeesPage() {
       {invoiceDetails.length === 0 ? (
         <section className="rounded-xl border border-slate-200 bg-white p-8 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl text-blue-700">
-            â‚¦
+            ?
           </div>
           <h2 className="mt-4 text-lg font-semibold text-slate-900">
             No fee invoices available
@@ -275,7 +275,7 @@ export default async function StudentFeesPage() {
                     {invoice.title}
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    {invoice.sessionName} Â· {invoice.termName}
+                    {invoice.sessionName} · {invoice.termName}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -380,7 +380,7 @@ export default async function StudentFeesPage() {
                       >
                         <div>
                           <p className="font-medium text-slate-800">
-                            {amount(payment.amount)} Â· {payment.method}
+                            {amount(payment.amount)} · {payment.method}
                           </p>
                           <p className="mt-1 break-all text-xs text-slate-500">
                             Reference: {payment.reference}

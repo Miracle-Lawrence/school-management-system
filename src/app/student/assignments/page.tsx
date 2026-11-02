@@ -1,4 +1,4 @@
-﻿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { redirect } from "next/navigation";
 import StudentAssignmentsClient from "./components/StudentAssignmentsClient";
 
@@ -8,7 +8,7 @@ export default async function StudentAssignmentsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   return (

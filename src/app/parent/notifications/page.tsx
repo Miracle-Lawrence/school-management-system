@@ -37,7 +37,7 @@ export default async function ParentNotificationsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isSafeInteger(userId) || userId <= 0 || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const user = await db.orm.public.User.where({
@@ -45,7 +45,7 @@ export default async function ParentNotificationsPage() {
   }).first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (user.mustChangePassword) {

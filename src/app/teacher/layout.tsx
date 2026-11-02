@@ -27,7 +27,7 @@ export default async function TeacherLayout({
     "use server";
 
     await signOut({
-      redirectTo: "/login",
+      redirectTo: "/school/login",
     });
   }
 

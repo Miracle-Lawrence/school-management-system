@@ -192,6 +192,7 @@ model School {
   feeCategories            FeeCategory[]
   feeStructures            FeeStructure[]
   feeInvoices              StudentInvoice[]
+  paymentConfig            SchoolPaymentConfig?
 
   psychomotorFields        PsychomotorField[]
   psychomotorRatingOptions PsychomotorRatingOption[]
@@ -1246,4 +1247,19 @@ model StudentContentRead {
 
   @@unique([studentId, contentType, contentId])
   @@index([studentId, contentType])
+}
+
+model SchoolPaymentConfig {
+  id                     Int      @id @default(autoincrement())
+  school                 School   @relation(fields: [schoolId], references: [id])
+  schoolId               Int      @unique
+  provider               String   @default("PAYSTACK")
+  publicKey              String?
+  encryptedSecretKey     String?
+  isEnabled              Boolean  @default(false)
+  lastValidatedAt        TimestamptzString?
+  createdAt              TimestamptzString @default(now())
+  updatedAt              temporal.updatedAtString()
+
+  @@index([provider, isEnabled])
 }

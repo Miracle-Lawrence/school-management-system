@@ -1,4 +1,4 @@
-﻿import { requireRole } from "@/lib/auth/authorization";
+import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
@@ -8,7 +8,7 @@ export default async function StudentSubjectsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   const student = await db.orm.public.Student.where((item) =>

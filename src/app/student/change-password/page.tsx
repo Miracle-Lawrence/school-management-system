@@ -1,4 +1,4 @@
-﻿import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -51,7 +51,7 @@ async function changePasswordAction(formData: FormData) {
       sessionVersion: user.sessionVersion + 1,
     });
 
-  redirect("/login?passwordChanged=1");
+  redirect("/school/login?passwordChanged=1");
 }
 
 export default async function StudentChangePasswordPage({
@@ -67,7 +67,7 @@ export default async function StudentChangePasswordPage({
     .first();
 
   if (!user || !user.isActive) {
-    redirect("/login");
+    redirect("/school/login");
   }
 
   if (!user.mustChangePassword) {

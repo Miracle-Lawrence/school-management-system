@@ -51,18 +51,29 @@ async function getValidSession() {
   };
 }
 
-export async function requireAuth() {
+export async function requireAuth(redirectTo = "/login") {
   const session = await getValidSession();
 
   if (!session) {
-    redirect("/login");
+    redirect(redirectTo);
   }
 
   return session;
 }
 
 export async function requireRole(allowedRoles: string[]) {
-  const session = await requireAuth();
+  const schoolRoles = [
+    "SCHOOL_OWNER",
+    "SCHOOL_ADMIN",
+    "TEACHER",
+    "PARENT",
+    "STUDENT",
+  ];
+
+  const isSchoolRoute = allowedRoles.some((role) =>
+    schoolRoles.includes(role),
+  );
+  const session = await requireAuth(isSchoolRoute ? "/school/login" : "/login");
 
   if (allowedRoles.includes(session.user.role)) {
     return session;
@@ -112,7 +123,7 @@ export async function requireApiRole(allowedRoles: string[]) {
 }
 
 export async function requireSchoolUser() {
-  const session = await requireAuth();
+  const session = await requireAuth("/school/login");
 
   if (!session.user.schoolId) {
     throw new Error("School context is required.");
