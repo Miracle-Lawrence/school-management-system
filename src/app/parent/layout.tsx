@@ -1,5 +1,6 @@
-import { requireRole } from "@/lib/auth/authorization";
+﻿import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 
 import ParentPortalShell from "./components/ParentPortalShell";
 import ParentLayoutContent from "./components/ParentLayoutContent";
@@ -28,12 +29,12 @@ export default async function ParentLayout({ children }: ParentLayoutProps) {
       "School associated with this parent account was not found.",
     );
   }
-const logoUrl = school.logoUrl || school.faviconUrl || "";
+const logoUrl = await resolveImageUrl(school.logoUrl || school.faviconUrl);
 
   return (
     <ParentPortalShell
       schoolName={school.name}
-      logoUrl={logoUrl}
+      logoUrl={logoUrl ?? ""}
       userName={session.user.name ?? ""}
       userEmail={session.user.email ?? ""}
       userRole={session.user.role}
@@ -42,3 +43,5 @@ const logoUrl = school.logoUrl || school.faviconUrl || "";
     </ParentPortalShell>
   );
 }
+
+

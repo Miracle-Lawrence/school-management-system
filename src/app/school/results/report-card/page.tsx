@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -127,6 +128,15 @@ const classStudents = students
   const school = reportCardData?.school;
   const student = reportCardData?.student;
   const academic = reportCardData?.academic;
+  const [schoolLogoUrl, studentPhotoUrl, principalSignatureUrl, stampUrl] =
+    await Promise.all([
+      school?.logoUrl ? resolveImageUrl(school.logoUrl) : null,
+      student?.photoUrl ? resolveImageUrl(student.photoUrl, schoolId) : null,
+      school?.principalSignatureUrl
+        ? resolveImageUrl(school.principalSignatureUrl, schoolId)
+        : null,
+      school?.stampUrl ? resolveImageUrl(school.stampUrl, schoolId) : null,
+    ]);
 
  const classSize = academic?.classSize ?? classStudents.length;
 
@@ -443,7 +453,7 @@ const classStudents = students
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1">
                   {school.logoUrl ? (
                     <img
-                      src={school.logoUrl}
+                      src={schoolLogoUrl ?? ""}
                       alt={`${school.name} logo`}
                       className="h-full w-full object-contain"
                     />
@@ -507,7 +517,7 @@ const classStudents = students
                   <div className="h-24 w-20 overflow-hidden border-2 border-slate-400 bg-slate-100">
                     {student.photoUrl ? (
                       <img
-                        src={student.photoUrl}
+                        src={studentPhotoUrl ?? ""}
                         alt={`${student.firstName} ${student.lastName}`}
                         className="h-full w-full object-cover"
                       />
@@ -1090,7 +1100,7 @@ const classStudents = students
                       <div className="flex h-12 items-end justify-center border-b border-slate-500">
                         {school.principalSignatureUrl ? (
                           <img
-                            src={school.principalSignatureUrl}
+                            src={principalSignatureUrl ?? ""}
                             alt="Principal signature"
                             className="max-h-12 max-w-32 object-contain"
                           />
@@ -1119,7 +1129,7 @@ const classStudents = students
                       <div className="flex h-12 items-center justify-center border-b border-slate-500">
                         {school.stampUrl ? (
                           <img
-                            src={school.stampUrl}
+                            src={stampUrl ?? ""}
                             alt="Official school stamp"
                             className="h-16 w-16 object-contain"
                           />

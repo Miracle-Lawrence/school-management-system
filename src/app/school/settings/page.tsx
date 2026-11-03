@@ -12,6 +12,7 @@ import {
 } from "@/lib/utils/file-upload";
 import { db } from "@/prisma/db";
 import SchoolBrandingForm from "@/app/school/settings/components/school-branding-form";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 
 const updateSchoolSchema = z.object({
   name: z.string().trim().min(2).max(150),
@@ -68,6 +69,17 @@ export default async function SchoolSettingsPage() {
   if (!school) {
     throw new Error("School not found.");
   }
+  const [
+    schoolLogoUrl,
+    schoolFaviconUrl,
+    principalSignatureUrl,
+    schoolStampUrl,
+  ] = await Promise.all([
+    resolveImageUrl(school.logoUrl),
+    resolveImageUrl(school.faviconUrl),
+    resolveImageUrl(school.principalSignatureUrl, schoolId),
+    resolveImageUrl(school.stampUrl, schoolId),
+  ]);
 
   async function updateSchoolAction(formData: FormData) {
     "use server";
@@ -435,16 +447,16 @@ export default async function SchoolSettingsPage() {
           </div>
           <SchoolBrandingForm
             motto={school.motto ?? ""}
-            logoUrl={school.logoUrl ?? ""}
-            faviconUrl={school.faviconUrl ?? ""}
+            logoUrl={schoolLogoUrl ?? ""}
+            faviconUrl={schoolFaviconUrl ?? ""}
             primaryColor={school.primaryColor ?? ""}
             secondaryColor={school.secondaryColor ?? ""}
             accentColor={school.accentColor ?? ""}
             website={school.website ?? ""}
             principalName={school.principalName ?? ""}
             principalTitle={school.principalTitle ?? ""}
-            principalSignatureUrl={school.principalSignatureUrl ?? ""}
-            stampUrl={school.stampUrl ?? ""}
+            principalSignatureUrl={principalSignatureUrl ?? ""}
+            stampUrl={schoolStampUrl ?? ""}
           />
 
           {/* Actions */}

@@ -1,5 +1,6 @@
-import { requireRole } from "@/lib/auth/authorization";
+﻿import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import TeacherPortalShell from "./components/teacher-portal-shell";
 
 export default async function TeacherLayout({
@@ -21,13 +22,15 @@ export default async function TeacherLayout({
   if (!school) {
     throw new Error("School not found.");
   }
+  const logoUrl = await resolveImageUrl(school.logoUrl);
+  const faviconUrl = await resolveImageUrl(school.faviconUrl);
 return (
     <>
-      {school.faviconUrl ? <link rel="icon" href={school.faviconUrl} /> : null}
+      {faviconUrl ? <link rel="icon" href={faviconUrl} /> : null}
 
       <TeacherPortalShell
         schoolName={school.name}
-        logoUrl={school.logoUrl ?? ""}
+        logoUrl={logoUrl ?? ""}
         userName={session.user.name ?? "Teacher"}
         userEmail={session.user.email ?? ""}
         userRole="TEACHER"
@@ -37,3 +40,6 @@ return (
     </>
   );
 }
+
+
+

@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 
 export default async function StudentProfilePage() {
   const session = await requireRole(["STUDENT"]);
@@ -31,6 +32,7 @@ export default async function StudentProfilePage() {
       </div>
     );
   }
+  const studentPhotoUrl = await resolveImageUrl(student.photoUrl, schoolId);
 
   const fullName = [
     student.firstName,
@@ -82,7 +84,7 @@ export default async function StudentProfilePage() {
             <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/40 bg-white/15 text-2xl font-bold">
               {student.photoUrl ? (
                 <img
-                  src={student.photoUrl}
+                  src={studentPhotoUrl ?? ""}
                   alt={fullName}
                   className="h-full w-full object-cover"
                 />

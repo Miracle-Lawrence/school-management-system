@@ -1,5 +1,6 @@
-import { requireRole } from "@/lib/auth/authorization";
+﻿import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -41,10 +42,11 @@ export default async function StudentLayout({
   if (!school) {
     throw new Error("School associated with this student was not found.");
   }
+  const logoUrl = await resolveImageUrl(school.logoUrl || school.faviconUrl);
 return (
     <StudentPortalShell
       schoolName={school.name}
-      logoUrl={school.logoUrl || school.faviconUrl || ""}
+      logoUrl={logoUrl ?? ""}
       userName={session.user.name ?? ""}
       userEmail={session.user.email ?? ""}
       userRole={session.user.role}
@@ -53,4 +55,6 @@ return (
     </StudentPortalShell>
   );
 }
+
+
 

@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -169,6 +170,17 @@ export default async function ParentReportViewPage({
     comments,
     classTeacher,
   } = reportData;
+  const [schoolLogoUrl, studentPhotoUrl, principalSignatureUrl, stampUrl] =
+    await Promise.all([
+      school?.logoUrl ? resolveImageUrl(school.logoUrl) : null,
+      reportStudent?.photoUrl
+        ? resolveImageUrl(reportStudent.photoUrl, schoolId)
+        : null,
+      school?.principalSignatureUrl
+        ? resolveImageUrl(school.principalSignatureUrl, schoolId)
+        : null,
+      school?.stampUrl ? resolveImageUrl(school.stampUrl, schoolId) : null,
+    ]);
 
   // Build the component columns from the actual returned subject data.
   const componentColumns = [
@@ -253,7 +265,7 @@ export default async function ParentReportViewPage({
             <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 bg-white p-1 sm:h-20 sm:w-20">
               {school.logoUrl ? (
                 <img
-                  src={school.logoUrl}
+                  src={schoolLogoUrl ?? ""}
                   alt={`${school.name} logo`}
                   className="h-full w-full object-contain"
                 />
@@ -308,7 +320,7 @@ export default async function ParentReportViewPage({
             <div className="hidden h-24 w-20 justify-self-end overflow-hidden border-2 border-slate-400 bg-slate-100 sm:flex">
               {reportStudent.photoUrl ? (
                 <img
-                  src={reportStudent.photoUrl}
+                  src={studentPhotoUrl ?? ""}
                   alt={studentName}
                   className="h-full w-full object-cover"
                 />
@@ -635,7 +647,7 @@ export default async function ParentReportViewPage({
                   <div className="flex h-12 items-end justify-center border-b border-slate-500">
                     {school.principalSignatureUrl ? (
                       <img
-                        src={school.principalSignatureUrl}
+                        src={principalSignatureUrl ?? ""}
                         alt="Principal signature"
                         className="max-h-12 max-w-32 object-contain"
                       />
@@ -659,7 +671,7 @@ export default async function ParentReportViewPage({
                   <div className="flex h-12 items-center justify-center border-b border-slate-500">
                     {school.stampUrl ? (
                       <img
-                        src={school.stampUrl}
+                        src={stampUrl ?? ""}
                         alt="Official school stamp"
                         className="h-16 w-16 object-contain"
                       />

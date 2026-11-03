@@ -5,6 +5,7 @@ import SchoolLoginForm from "./components/school-login-form";
 
 import { signIn } from "@/auth";
 import { getSchoolFromHost } from "@/lib/tenant/school";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 
 export default async function SchoolLoginPage() {
   const requestHeaders = await headers();
@@ -50,6 +51,11 @@ export default async function SchoolLoginPage() {
       </main>
     );
   }
+
+  const [schoolLogoUrl, schoolLoginImageUrl] = await Promise.all([
+    resolveImageUrl(school.logoUrl),
+    resolveImageUrl(school.loginImageUrl),
+  ]);
 
   async function login(_previousState: { error?: string }, formData: FormData) {
     "use server";
@@ -103,7 +109,7 @@ export default async function SchoolLoginPage() {
           >
             {school.loginImageUrl ? (
               <img
-                src={school.loginImageUrl}
+                src={schoolLoginImageUrl ?? ""}
                 alt={`${school.name} campus`}
                 className="absolute inset-0 h-full w-full object-cover"
               />
@@ -123,7 +129,7 @@ export default async function SchoolLoginPage() {
                 {school.logoUrl && (
                   <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white p-3 shadow-lg">
                     <img
-                      src={school.logoUrl}
+                      src={schoolLogoUrl ?? ""}
                       alt={`${school.name} logo`}
                       className="max-h-full max-w-full object-contain"
                     />
@@ -157,7 +163,7 @@ export default async function SchoolLoginPage() {
                   <div className="mb-6 flex justify-center lg:hidden">
                     <div className="flex h-20 w-20 items-center justify-center rounded-xl border bg-white p-3 shadow-sm">
                       <img
-                        src={school.logoUrl}
+                        src={schoolLogoUrl ?? ""}
                         alt={`${school.name} logo`}
                         className="max-h-full max-w-full object-contain"
                       />

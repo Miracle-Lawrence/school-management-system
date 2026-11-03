@@ -11,6 +11,7 @@ import {
 } from "@/lib/services/student.service";
 import { saveStudentPhoto } from "@/lib/utils/file-upload";
 import { db } from "@/prisma/db";
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import { createStudentSchema } from "@/lib/validation/student";
 
 import StudentEditForm from "../student-edit-form";
@@ -51,6 +52,8 @@ export default async function StudentDetailsPage({
   if (!student || student.schoolId !== schoolId) {
     notFound();
   }
+
+  const studentPhotoUrl = await resolveImageUrl(student.photoUrl, schoolId);
 
   const classes = await db.orm.public.SchoolClass.where((schoolClass) =>
     schoolClass.schoolId.eq(schoolId),
@@ -210,7 +213,7 @@ export default async function StudentDetailsPage({
             <div className="flex items-center gap-4">
               {student.photoUrl ? (
                 <img
-                  src={student.photoUrl}
+                  src={studentPhotoUrl ?? ""}
                   alt={fullName}
                   className="h-20 w-16 shrink-0 rounded-lg border border-slate-200 object-cover"
                 />
@@ -452,7 +455,7 @@ export default async function StudentDetailsPage({
             email: student.email,
             phone: student.phone,
             address: student.address,
-            photoUrl: student.photoUrl,
+            photoUrl: studentPhotoUrl ?? "",
           }}
         />
       </details>

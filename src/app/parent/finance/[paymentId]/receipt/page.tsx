@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/storage/object-storage";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -113,6 +114,9 @@ export default async function ParentPaymentReceiptPage({ params }: PageProps) {
     invoice: receiptInvoice,
     payment: receiptPayment,
   } = receipt;
+  const schoolLogoUrl = school.logoUrl
+    ? await resolveImageUrl(school.logoUrl)
+    : null;
 
   return (
     <main className="mx-auto max-w-3xl p-4 sm:p-8">
@@ -132,7 +136,7 @@ export default async function ParentPaymentReceiptPage({ params }: PageProps) {
           {school.logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={school.logoUrl}
+              src={schoolLogoUrl ?? ""}
               alt={`${school.name} logo`}
               className="mx-auto mb-3 max-h-20 max-w-40 object-contain"
             />

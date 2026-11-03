@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 
+import { resolveImageUrl } from "@/lib/storage/object-storage";
+
 import { db } from "@/prisma/db";
 import { requireRole } from "@/lib/auth/authorization";
 import {
@@ -127,6 +129,10 @@ export default async function SchoolDetailsPage({
   if (!school) {
     notFound();
   }
+  const [schoolLogoUrl, schoolLoginImageUrl] = await Promise.all([
+    resolveImageUrl(school.logoUrl),
+    resolveImageUrl(school.loginImageUrl),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -288,8 +294,8 @@ export default async function SchoolDetailsPage({
         <SchoolLoginBrandingForm
           schoolName={school.name}
           motto={school.motto ?? ""}
-          logoUrl={school.logoUrl ?? ""}
-          loginImageUrl={school.loginImageUrl ?? ""}
+          logoUrl={schoolLogoUrl ?? ""}
+          loginImageUrl={schoolLoginImageUrl ?? ""}
           primaryColor={school.primaryColor ?? "#1D4ED8"}
           secondaryColor={school.secondaryColor ?? "#0F172A"}
           accentColor={school.accentColor ?? "#16A34A"}
