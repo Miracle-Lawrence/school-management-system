@@ -151,10 +151,10 @@ export async function resolveImageUrl(
     }
   }
 
-  const endpoint = process.env.AWS_ENDPOINT_URL_S3;
+  const endpoint = process.env.NEON_STORAGE_ENDPOINT_URL_S3;
 
   if (!endpoint) {
-    throw new Error("AWS_ENDPOINT_URL_S3 is not configured.");
+    throw new Error("NEON_STORAGE_ENDPOINT_URL_S3 is not configured.");
   }
 
   if (parsed.visibility === "public") {
