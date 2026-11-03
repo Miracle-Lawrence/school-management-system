@@ -24,7 +24,7 @@ export default async function StudentAnnouncementsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const student = await db.orm.public.Student.where(

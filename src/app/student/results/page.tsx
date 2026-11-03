@@ -9,7 +9,7 @@ const reportTypes = [
 ] as const;
 
 function formatScore(value: number | null | undefined) {
-  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "—";
+  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "ï¿½";
 }
 
 export default async function StudentResultsPage() {
@@ -18,7 +18,7 @@ export default async function StudentResultsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -214,13 +214,13 @@ export default async function StudentResultsPage() {
                     <div className="rounded-lg bg-emerald-50 p-4">
                       <p className="text-xs text-slate-500">Grade</p>
                       <p className="mt-2 text-xl font-bold text-emerald-900">
-                        {section.overallResult.grade || "—"}
+                        {section.overallResult.grade || "ï¿½"}
                       </p>
                     </div>
                     <div className="rounded-lg bg-amber-50 p-4">
                       <p className="text-xs text-slate-500">Class Position</p>
                       <p className="mt-2 text-xl font-bold text-amber-900">
-                        {section.overallResult.position ?? "—"}
+                        {section.overallResult.position ?? "ï¿½"}
                       </p>
                     </div>
                   </div>
@@ -252,11 +252,11 @@ export default async function StudentResultsPage() {
                             </td>
                             <td className="px-5 py-4">
                               <span className="rounded-md bg-blue-50 px-2 py-1 font-semibold text-blue-700">
-                                {result.grade || "—"}
+                                {result.grade || "ï¿½"}
                               </span>
                             </td>
                             <td className="px-5 py-4 text-slate-600">
-                              {result.remark || "—"}
+                              {result.remark || "ï¿½"}
                             </td>
                           </tr>
                         ))}

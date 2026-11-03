@@ -11,7 +11,7 @@ export default async function NewPsychomotorFieldPage() {
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   async function createFieldAction(formData: FormData) {

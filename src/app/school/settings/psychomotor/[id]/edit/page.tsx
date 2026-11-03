@@ -22,7 +22,7 @@ export default async function EditPsychomotorFieldPage({
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const { id } = await params;

@@ -12,7 +12,7 @@ export default async function AssignmentGradingPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isSafeInteger(userId) || userId <= 0 || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const teacher = await db.orm.public.Teacher.where({

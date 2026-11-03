@@ -11,7 +11,7 @@ export default async function NewPsychomotorRatingPage() {
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   async function createRatingAction(formData: FormData) {

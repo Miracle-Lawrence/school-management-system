@@ -53,7 +53,7 @@ export default async function StudentDashboardPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -61,7 +61,7 @@ export default async function StudentDashboardPage() {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   if (user.mustChangePassword) {

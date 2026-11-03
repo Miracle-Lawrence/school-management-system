@@ -1,4 +1,3 @@
-import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import TeacherPortalShell from "./components/teacher-portal-shell";
@@ -22,16 +21,7 @@ export default async function TeacherLayout({
   if (!school) {
     throw new Error("School not found.");
   }
-
-  async function handleSignOut() {
-    "use server";
-
-    await signOut({
-      redirectTo: "/school/login",
-    });
-  }
-
-  return (
+return (
     <>
       {school.faviconUrl ? <link rel="icon" href={school.faviconUrl} /> : null}
 
@@ -41,7 +31,6 @@ export default async function TeacherLayout({
         userName={session.user.name ?? "Teacher"}
         userEmail={session.user.email ?? ""}
         userRole="TEACHER"
-        signOutAction={handleSignOut}
       >
         {children}
       </TeacherPortalShell>

@@ -30,7 +30,7 @@ export default async function PsychomotorResultsPage({
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const params = await searchParams;

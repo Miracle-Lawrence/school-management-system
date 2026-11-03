@@ -1,5 +1,7 @@
 "use client";
 
+import { signOut } from "next-auth/react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -12,7 +14,6 @@ type SchoolPortalShellProps = {
   userName: string;
   userEmail: string;
   userRole: string;
-  signOutAction: () => Promise<void>;
 };
 
 export default function SchoolPortalShell({
@@ -22,8 +23,12 @@ export default function SchoolPortalShell({
   userName,
   userEmail,
   userRole,
-  signOutAction,
 }: SchoolPortalShellProps) {
+  async function handleSignOut() {
+    await signOut({ redirect: false });
+    window.location.assign("/login");
+  }
+
   const pathname = usePathname();
 
   const isReportCard = pathname === "/school/results/report-card";
@@ -199,7 +204,7 @@ export default function SchoolPortalShell({
             </span>
           </div>
 
-          <form action={signOutAction}>
+          <form onSubmit={(event) => { event.preventDefault(); void handleSignOut(); }}>
             <button
               type="submit"
               className="w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"

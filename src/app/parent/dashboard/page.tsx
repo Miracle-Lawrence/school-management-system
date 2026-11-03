@@ -13,7 +13,7 @@ export default async function ParentDashboardPage() {
     ).first();
 
     if (!user || !user.isActive) {
-      redirect("/school/login");
+      redirect("/login");
     }
 
     if (user.mustChangePassword) {

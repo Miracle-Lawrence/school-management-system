@@ -17,7 +17,7 @@ export default async function PsychomotorSettingsPage() {
   const schoolId = session.user.schoolId;
 
   if (!schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const [fields, ratingOptions] = await Promise.all([

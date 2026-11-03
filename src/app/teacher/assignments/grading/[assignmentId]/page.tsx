@@ -21,7 +21,7 @@ export default async function AssignmentGradingDetailPage({
   const assignmentId = Number(assignmentIdParam);
 
   if (!Number.isSafeInteger(userId) || userId <= 0 || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   if (!Number.isSafeInteger(assignmentId) || assignmentId <= 0) {

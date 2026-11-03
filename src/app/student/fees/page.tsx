@@ -11,9 +11,9 @@ function amount(value: number): string {
 }
 
 function formatDate(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "ï¿½";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "ï¿½";
 
   return new Intl.DateTimeFormat("en-NG", {
     day: "numeric",
@@ -61,7 +61,7 @@ export default async function StudentFeesPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -275,7 +275,7 @@ export default async function StudentFeesPage() {
                     {invoice.title}
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    {invoice.sessionName} · {invoice.termName}
+                    {invoice.sessionName} ï¿½ {invoice.termName}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -380,7 +380,7 @@ export default async function StudentFeesPage() {
                       >
                         <div>
                           <p className="font-medium text-slate-800">
-                            {amount(payment.amount)} · {payment.method}
+                            {amount(payment.amount)} ï¿½ {payment.method}
                           </p>
                           <p className="mt-1 break-all text-xs text-slate-500">
                             Reference: {payment.reference}

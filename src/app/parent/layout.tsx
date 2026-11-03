@@ -1,4 +1,3 @@
-import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 
@@ -29,14 +28,7 @@ export default async function ParentLayout({ children }: ParentLayoutProps) {
       "School associated with this parent account was not found.",
     );
   }
-
-  async function handleSignOut() {
-    "use server";
-
-    await signOut({ redirectTo: "/school/login" });
-  }
-
-  const logoUrl = school.logoUrl || school.faviconUrl || "";
+const logoUrl = school.logoUrl || school.faviconUrl || "";
 
   return (
     <ParentPortalShell
@@ -45,7 +37,6 @@ export default async function ParentLayout({ children }: ParentLayoutProps) {
       userName={session.user.name ?? ""}
       userEmail={session.user.email ?? ""}
       userRole={session.user.role}
-      signOutAction={handleSignOut}
     >
       <ParentLayoutContent>{children}</ParentLayoutContent>
     </ParentPortalShell>

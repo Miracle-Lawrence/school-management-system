@@ -3,11 +3,11 @@ import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
 function formatDate(value: unknown): string {
-  if (!value) return "—";
+  if (!value) return "ï¿½";
 
   const date = new Date(String(value));
 
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "ï¿½";
 
   return new Intl.DateTimeFormat("en-NG", {
     day: "numeric",
@@ -52,7 +52,7 @@ export default async function StudentAttendancePage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const student = await db.orm.public.Student.where(
@@ -289,10 +289,10 @@ export default async function StudentAttendancePage() {
                       {formatDate(record.date)}
                     </td>
                     <td className="px-5 py-4 text-slate-600">
-                      {classNames.get(record.classId) ?? "—"}
+                      {classNames.get(record.classId) ?? "ï¿½"}
                     </td>
                     <td className="px-5 py-4 text-slate-600">
-                      {termNames.get(record.termId) ?? "—"}
+                      {termNames.get(record.termId) ?? "ï¿½"}
                     </td>
                     <td className="px-5 py-4">
                       <span
@@ -302,7 +302,7 @@ export default async function StudentAttendancePage() {
                       </span>
                     </td>
                     <td className="max-w-xs px-5 py-4 text-slate-600">
-                      {record.notes || "—"}
+                      {record.notes || "ï¿½"}
                     </td>
                   </tr>
                 ))}

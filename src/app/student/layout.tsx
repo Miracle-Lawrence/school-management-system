@@ -1,4 +1,3 @@
-import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
@@ -23,7 +22,7 @@ export default async function StudentLayout({
   const userId = Number(session.user.id);
 
   if (!Number.isInteger(userId)) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -31,7 +30,7 @@ export default async function StudentLayout({
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
 
@@ -42,20 +41,13 @@ export default async function StudentLayout({
   if (!school) {
     throw new Error("School associated with this student was not found.");
   }
-
-  async function handleSignOut() {
-    "use server";
-    await signOut({ redirectTo: "/school/login" });
-  }
-
-  return (
+return (
     <StudentPortalShell
       schoolName={school.name}
       logoUrl={school.logoUrl || school.faviconUrl || ""}
       userName={session.user.name ?? ""}
       userEmail={session.user.email ?? ""}
       userRole={session.user.role}
-      signOutAction={handleSignOut}
     >
       {children}
     </StudentPortalShell>

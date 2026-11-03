@@ -30,7 +30,7 @@ export default async function ParentFinancePage() {
   const schoolId = session.user.schoolId;
 
   if (!schoolId || !Number.isInteger(userId)) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -38,7 +38,7 @@ export default async function ParentFinancePage() {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   if (user.mustChangePassword) {

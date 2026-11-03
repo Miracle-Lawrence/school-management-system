@@ -73,7 +73,7 @@ export async function requireRole(allowedRoles: string[]) {
   const isSchoolRoute = allowedRoles.some((role) =>
     schoolRoles.includes(role),
   );
-  const session = await requireAuth(isSchoolRoute ? "/school/login" : "/login");
+  const session = await requireAuth(isSchoolRoute ? "/login" : "/login");
 
   if (allowedRoles.includes(session.user.role)) {
     return session;
@@ -123,7 +123,7 @@ export async function requireApiRole(allowedRoles: string[]) {
 }
 
 export async function requireSchoolUser() {
-  const session = await requireAuth("/school/login");
+  const session = await requireAuth("/login");
 
   if (!session.user.schoolId) {
     throw new Error("School context is required.");

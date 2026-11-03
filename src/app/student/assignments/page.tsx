@@ -8,7 +8,7 @@ export default async function StudentAssignmentsPage() {
   const schoolId = session.user.schoolId;
 
   if (!Number.isInteger(userId) || !schoolId) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   return (

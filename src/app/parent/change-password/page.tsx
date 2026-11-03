@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { z } from "zod";
+import { ChangePasswordForm } from "@/components/auth/change-password-form";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { hashPassword } from "@/lib/auth/password";
@@ -15,7 +16,7 @@ const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
-async function changePasswordAction(formData: FormData) {
+async function changePasswordAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
   "use server";
 
   const session = await requireRole(["PARENT"]);
@@ -27,7 +28,7 @@ async function changePasswordAction(formData: FormData) {
   });
 
   if (!result.success) {
-    redirect("/parent/change-password?error=invalid");
+    return { success: false, error: "The passwords must match and contain between 8 and 128 characters." };
   }
 
   const user = await db.orm.public.User
@@ -50,7 +51,7 @@ async function changePasswordAction(formData: FormData) {
 
   // The sessionVersion change invalidates this session.
   // Have the parent sign in again with their new password.
-  redirect("/school/login?passwordChanged=1");
+  return { success: true };
 }
 
 export default async function ParentChangePasswordPage() {
@@ -70,54 +71,12 @@ export default async function ParentChangePasswordPage() {
       <header>
         <h1 className="text-2xl font-bold">Set your new password</h1>
         <p className="mt-2 text-sm text-slate-600">
-          For your account’s security, create a new password before continuing.
+          For your accountâ€™s security, create a new password before continuing.
           Use at least 8 characters.
         </p>
       </header>
 
-      <form action={changePasswordAction} className="space-y-4">
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            New password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            maxLength={128}
-            autoComplete="new-password"
-            className="w-full rounded-md border p-2"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="confirmPassword"
-            className="mb-1 block text-sm font-medium"
-          >
-            Confirm new password
-          </label>
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            required
-            minLength={8}
-            maxLength={128}
-            autoComplete="new-password"
-            className="w-full rounded-md border p-2"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full rounded-md bg-blue-600 px-4 py-2 font-semibold text-white"
-        >
-          Change password
-        </button>
-      </form>
+      <ChangePasswordForm action={changePasswordAction} variant="parent" />
     </main>
   );
 }

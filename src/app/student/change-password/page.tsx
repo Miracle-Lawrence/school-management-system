@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
+import { ChangePasswordForm } from "@/components/auth/change-password-form";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { hashPassword } from "@/lib/auth/password";
@@ -18,7 +20,7 @@ const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
-async function changePasswordAction(formData: FormData) {
+async function changePasswordAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
   "use server";
 
   const session = await requireRole(["STUDENT"]);
@@ -30,7 +32,7 @@ async function changePasswordAction(formData: FormData) {
   });
 
   if (!result.success) {
-    redirect("/student/change-password?error=invalid");
+    return { success: false, error: "The passwords must match and contain between 8 and 128 characters." };
   }
 
   const user = await db.orm.public.User
@@ -50,8 +52,7 @@ async function changePasswordAction(formData: FormData) {
       mustChangePassword: false,
       sessionVersion: user.sessionVersion + 1,
     });
-
-  redirect("/school/login?passwordChanged=1");
+  return { success: true };
 }
 
 export default async function StudentChangePasswordPage({
@@ -67,7 +68,7 @@ export default async function StudentChangePasswordPage({
     .first();
 
   if (!user || !user.isActive) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   if (!user.mustChangePassword) {
@@ -100,54 +101,7 @@ export default async function StudentChangePasswordPage({
         </p>
       )}
 
-      <form action={changePasswordAction} className="space-y-5">
-        <div>
-          <label
-            htmlFor="password"
-            className="mb-2 block text-sm font-semibold text-slate-800"
-          >
-            New password
-          </label>
-
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            maxLength={128}
-            autoComplete="new-password"
-            className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="confirmPassword"
-            className="mb-2 block text-sm font-semibold text-slate-800"
-          >
-            Confirm new password
-          </label>
-
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            required
-            minLength={8}
-            maxLength={128}
-            autoComplete="new-password"
-            className="w-full rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-        >
-          Change Password
-        </button>
-      </form>
+      <ChangePasswordForm action={changePasswordAction} variant="student" />
     </main>
   );
 }

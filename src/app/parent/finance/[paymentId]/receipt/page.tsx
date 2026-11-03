@@ -39,7 +39,7 @@ export default async function ParentPaymentReceiptPage({ params }: PageProps) {
   const schoolId = session.user.schoolId;
 
   if (!schoolId || !Number.isSafeInteger(userId)) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   const user = await db.orm.public.User.where((item) =>
@@ -47,7 +47,7 @@ export default async function ParentPaymentReceiptPage({ params }: PageProps) {
   ).first();
 
   if (!user || !user.isActive) {
-    redirect("/school/login");
+    redirect("/login");
   }
 
   if (user.mustChangePassword) {

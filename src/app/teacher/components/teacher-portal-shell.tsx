@@ -1,4 +1,6 @@
-﻿"use client";
+"use client";
+
+import { signOut } from "next-auth/react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,7 +15,6 @@ type TeacherPortalShellProps = {
   userName: string;
   userEmail: string;
   userRole: string;
-  signOutAction: () => Promise<void>;
 };
 
 const navigation = [
@@ -45,8 +46,12 @@ export default function TeacherPortalShell({
   userName,
   userEmail,
   userRole,
-  signOutAction,
 }: TeacherPortalShellProps) {
+  async function handleSignOut() {
+    await signOut({ redirect: false });
+    window.location.assign("/login");
+  }
+
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -116,7 +121,7 @@ export default function TeacherPortalShell({
             </span>
           </div>
 
-          <form action={signOutAction}>
+          <form onSubmit={(event) => { event.preventDefault(); void handleSignOut(); }}>
             <button
               type="submit"
               className="w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
@@ -218,7 +223,7 @@ export default function TeacherPortalShell({
                 <p className="mt-1 truncate text-xs text-slate-400">
                   {userEmail}
                 </p>
-                <form action={signOutAction} className="mt-4">
+                <form onSubmit={(event) => { event.preventDefault(); void handleSignOut(); }} className="mt-4">
                   <button
                     type="submit"
                     className="w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-200 hover:bg-slate-800"
