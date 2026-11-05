@@ -1,0 +1,167 @@
+[
+  {
+    "id": "column.public.PlatformSubscriptionPayment.rejectedAt",
+    "label": "Add column \"rejectedAt\" to \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "rejectedAt",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"rejectedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSubscriptionPayment",
+          "rejectedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"rejectedAt\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\" ADD COLUMN \"rejectedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"rejectedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSubscriptionPayment",
+          "rejectedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSubscriptionPayment.rejectedById",
+    "label": "Add column \"rejectedById\" to \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "rejectedById",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"rejectedById\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSubscriptionPayment",
+          "rejectedById"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"rejectedById\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\" ADD COLUMN \"rejectedById\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"rejectedById\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSubscriptionPayment",
+          "rejectedById"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_rejectedById_idx_a6ee2717",
+    "label": "Create index \"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_rejectedById_idx_a6ee2717",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\" ON \"public\".\"PlatformSubscriptionPayment\" (\"rejectedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_rejectedById_idx_a6ee2717\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionPayment.PlatformSubscriptionPayment_rejectedById_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionPayment_rejectedById_fkey\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionPayment_rejectedById_fkey",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionPayment_rejectedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_rejectedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionPayment_rejectedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\"\nADD CONSTRAINT \"PlatformSubscriptionPayment_rejectedById_fkey\"\nFOREIGN KEY (\"rejectedById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionPayment_rejectedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_rejectedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  }
+]

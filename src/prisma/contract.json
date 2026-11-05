@@ -88,6 +88,14 @@
       "model": "PlatformSetting",
       "namespace": "public"
     },
+    "PlatformSubscriptionInvoice": {
+      "model": "PlatformSubscriptionInvoice",
+      "namespace": "public"
+    },
+    "PlatformSubscriptionPayment": {
+      "model": "PlatformSubscriptionPayment",
+      "namespace": "public"
+    },
     "PsychomotorField": {
       "model": "PsychomotorField",
       "namespace": "public"
@@ -122,6 +130,10 @@
     },
     "School": {
       "model": "School",
+      "namespace": "public"
+    },
+    "SchoolBillingRate": {
+      "model": "SchoolBillingRate",
       "namespace": "public"
     },
     "SchoolClass": {
@@ -488,6 +500,65 @@
               }
             ]
           },
+          "PlatformInvoiceStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DRAFT",
+                "value": "DRAFT"
+              },
+              {
+                "name": "ISSUED",
+                "value": "ISSUED"
+              },
+              {
+                "name": "PARTIALLY_PAID",
+                "value": "PARTIALLY_PAID"
+              },
+              {
+                "name": "PAID",
+                "value": "PAID"
+              },
+              {
+                "name": "OVERDUE",
+                "value": "OVERDUE"
+              },
+              {
+                "name": "VOID",
+                "value": "VOID"
+              }
+            ]
+          },
+          "PlatformPaymentMethod": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "BANK_TRANSFER",
+                "value": "BANK_TRANSFER"
+              },
+              {
+                "name": "CASH",
+                "value": "CASH"
+              }
+            ]
+          },
+          "PlatformPaymentStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "CONFIRMED",
+                "value": "CONFIRMED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              }
+            ]
+          },
           "ReportComponentType": {
             "codecId": "pg/text@1",
             "members": [
@@ -703,6 +774,21 @@
                 },
                 "to": {
                   "model": "FeeStructure",
+                  "namespace": "public"
+                }
+              },
+              "platformInvoices": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "academicSessionId"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionInvoice",
                   "namespace": "public"
                 }
               },
@@ -3906,6 +3992,20 @@
           },
           "PlatformSetting": {
             "fields": {
+              "accentColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "businessAddress": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "defaultCurrency": {
                 "nullable": false,
                 "type": {
@@ -3924,6 +4024,20 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "invoiceFooterText": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "logoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -3948,10 +4062,24 @@
                   "kind": "scalar"
                 }
               },
+              "primaryColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "registrationEnabled": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "secondaryColor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -3975,11 +4103,24 @@
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
+              },
+              "website": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
               }
             },
             "relations": {},
             "storage": {
               "fields": {
+                "accentColor": {
+                  "column": "accentColor"
+                },
+                "businessAddress": {
+                  "column": "businessAddress"
+                },
                 "defaultCurrency": {
                   "column": "defaultCurrency"
                 },
@@ -3988,6 +4129,12 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "invoiceFooterText": {
+                  "column": "invoiceFooterText"
+                },
+                "logoUrl": {
+                  "column": "logoUrl"
                 },
                 "maintenanceMessage": {
                   "column": "maintenanceMessage"
@@ -3998,8 +4145,14 @@
                 "platformName": {
                   "column": "platformName"
                 },
+                "primaryColor": {
+                  "column": "primaryColor"
+                },
                 "registrationEnabled": {
                   "column": "registrationEnabled"
+                },
+                "secondaryColor": {
+                  "column": "secondaryColor"
                 },
                 "supportEmail": {
                   "column": "supportEmail"
@@ -4009,10 +4162,548 @@
                 },
                 "updatedAt": {
                   "column": "updatedAt"
+                },
+                "website": {
+                  "column": "website"
                 }
               },
               "namespaceId": "public",
               "table": "PlatformSetting"
+            }
+          },
+          "PlatformSubscriptionInvoice": {
+            "fields": {
+              "academicSessionId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "currency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "dueDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "invoiceNumber": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "platformBrandSnapshot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ratePerStudent": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolBrandSnapshot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PlatformInvoiceStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "studentCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "termId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "totalAmount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "academicSession": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "academicSessionId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "AcademicSession",
+                  "namespace": "public"
+                }
+              },
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "createdById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "payments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "invoiceId"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionPayment",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              },
+              "term": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "termId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Term",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "academicSessionId": {
+                  "column": "academicSessionId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "currency": {
+                  "column": "currency"
+                },
+                "dueDate": {
+                  "column": "dueDate"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "invoiceNumber": {
+                  "column": "invoiceNumber"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "platformBrandSnapshot": {
+                  "column": "platformBrandSnapshot"
+                },
+                "ratePerStudent": {
+                  "column": "ratePerStudent"
+                },
+                "schoolBrandSnapshot": {
+                  "column": "schoolBrandSnapshot"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "studentCount": {
+                  "column": "studentCount"
+                },
+                "termId": {
+                  "column": "termId"
+                },
+                "totalAmount": {
+                  "column": "totalAmount"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PlatformSubscriptionInvoice"
+            }
+          },
+          "PlatformSubscriptionPayment": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "confirmedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "confirmedById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "invoiceId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "method": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PlatformPaymentMethod",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "paidAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "paymentReference": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "platformBrandSnapshot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "receiptNumber": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "recordedById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "rejectedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "rejectedById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolBrandSnapshot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "PlatformPaymentStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "confirmedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "confirmedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "invoice": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "invoiceId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionInvoice",
+                  "namespace": "public"
+                }
+              },
+              "recordedBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "recordedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "rejectedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "rejectedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "confirmedAt": {
+                  "column": "confirmedAt"
+                },
+                "confirmedById": {
+                  "column": "confirmedById"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "invoiceId": {
+                  "column": "invoiceId"
+                },
+                "method": {
+                  "column": "method"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "paidAt": {
+                  "column": "paidAt"
+                },
+                "paymentReference": {
+                  "column": "paymentReference"
+                },
+                "platformBrandSnapshot": {
+                  "column": "platformBrandSnapshot"
+                },
+                "receiptNumber": {
+                  "column": "receiptNumber"
+                },
+                "recordedById": {
+                  "column": "recordedById"
+                },
+                "rejectedAt": {
+                  "column": "rejectedAt"
+                },
+                "rejectedById": {
+                  "column": "rejectedById"
+                },
+                "schoolBrandSnapshot": {
+                  "column": "schoolBrandSnapshot"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PlatformSubscriptionPayment"
             }
           },
           "PsychomotorField": {
@@ -5558,6 +6249,21 @@
                   "namespace": "public"
                 }
               },
+              "billingRates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolBillingRate",
+                  "namespace": "public"
+                }
+              },
               "classNotes": {
                 "cardinality": "1:N",
                 "on": {
@@ -5736,6 +6442,21 @@
                 },
                 "to": {
                   "model": "SchoolPaymentConfig",
+                  "namespace": "public"
+                }
+              },
+              "platformInvoices": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionInvoice",
                   "namespace": "public"
                 }
               },
@@ -6027,6 +6748,140 @@
               },
               "namespaceId": "public",
               "table": "School"
+            }
+          },
+          "SchoolBillingRate": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "currency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "isActive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ratePerStudent": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "createdById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "currency": {
+                  "column": "currency"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isActive": {
+                  "column": "isActive"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "ratePerStudent": {
+                  "column": "ratePerStudent"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SchoolBillingRate"
             }
           },
           "SchoolClass": {
@@ -9048,6 +9903,21 @@
                   "namespace": "public"
                 }
               },
+              "platformInvoices": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "termId"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionInvoice",
+                  "namespace": "public"
+                }
+              },
               "psychomotorRatings": {
                 "cardinality": "1:N",
                 "on": {
@@ -9279,6 +10149,21 @@
               }
             },
             "relations": {
+              "confirmedPlatformPayments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "confirmedById"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionPayment",
+                  "namespace": "public"
+                }
+              },
               "createdAssessments": {
                 "cardinality": "1:N",
                 "on": {
@@ -9306,6 +10191,36 @@
                 },
                 "to": {
                   "model": "Notification",
+                  "namespace": "public"
+                }
+              },
+              "createdPlatformInvoices": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "createdById"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionInvoice",
+                  "namespace": "public"
+                }
+              },
+              "createdSchoolBillingRates": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "createdById"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolBillingRate",
                   "namespace": "public"
                 }
               },
@@ -9412,6 +10327,36 @@
                 },
                 "to": {
                   "model": "Attendance",
+                  "namespace": "public"
+                }
+              },
+              "recordedPlatformPayments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "recordedById"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionPayment",
+                  "namespace": "public"
+                }
+              },
+              "rejectedPlatformPayments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "rejectedById"
+                  ]
+                },
+                "to": {
+                  "model": "PlatformSubscriptionPayment",
                   "namespace": "public"
                 }
               },
@@ -12668,6 +13613,16 @@
             },
             "PlatformSetting": {
               "columns": {
+                "accentColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "businessAddress": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "defaultCurrency": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -12695,6 +13650,16 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "invoiceFooterText": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "logoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "maintenanceMessage": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -12718,6 +13683,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "primaryColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "registrationEnabled": {
                   "codecId": "pg/bool@1",
                   "default": {
@@ -12726,6 +13696,11 @@
                   },
                   "nativeType": "bool",
                   "nullable": false
+                },
+                "secondaryColor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "supportEmail": {
                   "codecId": "pg/text@1",
@@ -12741,6 +13716,11 @@
                   "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "website": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [],
@@ -12751,6 +13731,532 @@
                 ]
               },
               "uniques": []
+            },
+            "PlatformSubscriptionInvoice": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('DRAFT', 'ISSUED', 'PARTIALLY_PAID', 'PAID', 'OVERDUE', 'VOID')",
+                  "name": "PlatformSubscriptionInvoice_status_check_234d9b32",
+                  "prefix": "PlatformSubscriptionInvoice_status_check"
+                }
+              ],
+              "columns": {
+                "academicSessionId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "currency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NGN"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "dueDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "invoiceNumber": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "platformBrandSnapshot": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "ratePerStudent": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "schoolBrandSnapshot": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "ISSUED"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PlatformInvoiceStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "studentCount": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "termId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "totalAmount": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionInvoice"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "academicSessionId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionInvoice"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "AcademicSession"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "termId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionInvoice"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Term"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "createdById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionInvoice"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "academicSessionId"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_academicSessionId_idx_54f76507",
+                  "prefix": "PlatformSubscriptionInvoice_academicSessionId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "createdById"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_createdById_idx_8bf640ed",
+                  "prefix": "PlatformSubscriptionInvoice_createdById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "dueDate"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_dueDate_idx_fb527616",
+                  "prefix": "PlatformSubscriptionInvoice_dueDate_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_schoolId_idx_82b454d7",
+                  "prefix": "PlatformSubscriptionInvoice_schoolId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "status"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_schoolId_status_idx_7110c695",
+                  "prefix": "PlatformSubscriptionInvoice_schoolId_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "termId"
+                  ],
+                  "name": "PlatformSubscriptionInvoice_termId_idx_1b74c9af",
+                  "prefix": "PlatformSubscriptionInvoice_termId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "academicSessionId",
+                    "termId"
+                  ],
+                  "name": "platform_invoice_session_term_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "invoiceNumber"
+                  ]
+                },
+                {
+                  "columns": [
+                    "schoolId",
+                    "academicSessionId",
+                    "termId"
+                  ]
+                }
+              ]
+            },
+            "PlatformSubscriptionPayment": {
+              "checks": [
+                {
+                  "expression": "\"method\" IN ('BANK_TRANSFER', 'CASH')",
+                  "name": "PlatformSubscriptionPayment_method_check_58b9b9ac",
+                  "prefix": "PlatformSubscriptionPayment_method_check"
+                },
+                {
+                  "expression": "\"status\" IN ('PENDING', 'CONFIRMED', 'REJECTED')",
+                  "name": "PlatformSubscriptionPayment_status_check_af8a6ba5",
+                  "prefix": "PlatformSubscriptionPayment_status_check"
+                }
+              ],
+              "columns": {
+                "amount": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "confirmedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "confirmedById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "invoiceId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "method": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PlatformPaymentMethod",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "paidAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "paymentReference": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "platformBrandSnapshot": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "receiptNumber": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "recordedById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "rejectedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "rejectedById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "schoolBrandSnapshot": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "PlatformPaymentStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "invoiceId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionPayment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionInvoice"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "recordedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionPayment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "confirmedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionPayment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "rejectedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PlatformSubscriptionPayment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "confirmedById"
+                  ],
+                  "name": "PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f",
+                  "prefix": "PlatformSubscriptionPayment_confirmedById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "invoiceId"
+                  ],
+                  "name": "PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e",
+                  "prefix": "PlatformSubscriptionPayment_invoiceId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "invoiceId",
+                    "status"
+                  ],
+                  "name": "PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7",
+                  "prefix": "PlatformSubscriptionPayment_invoiceId_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "paidAt"
+                  ],
+                  "name": "PlatformSubscriptionPayment_paidAt_idx_dbfd0b83",
+                  "prefix": "PlatformSubscriptionPayment_paidAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "recordedById"
+                  ],
+                  "name": "PlatformSubscriptionPayment_recordedById_idx_6595df66",
+                  "prefix": "PlatformSubscriptionPayment_recordedById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "rejectedById"
+                  ],
+                  "name": "PlatformSubscriptionPayment_rejectedById_idx_a6ee2717",
+                  "prefix": "PlatformSubscriptionPayment_rejectedById_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "receiptNumber"
+                  ]
+                },
+                {
+                  "columns": [
+                    "paymentReference"
+                  ]
+                }
+              ]
             },
             "PsychomotorField": {
               "columns": {
@@ -14106,6 +15612,135 @@
                 {
                   "columns": [
                     "slug"
+                  ]
+                }
+              ]
+            },
+            "SchoolBillingRate": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "currency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NGN"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "isActive": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "ratePerStudent": {
+                  "codecId": "pg/numeric@1",
+                  "nativeType": "numeric",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolBillingRate"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "createdById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SchoolBillingRate"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdById"
+                  ],
+                  "name": "SchoolBillingRate_createdById_idx_8bf640ed",
+                  "prefix": "SchoolBillingRate_createdById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "isActive"
+                  ],
+                  "name": "SchoolBillingRate_isActive_idx_77fe3ba1",
+                  "prefix": "SchoolBillingRate_isActive_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "schoolId"
                   ]
                 }
               ]
@@ -16743,6 +18378,32 @@
                 "REFUNDED"
               ]
             },
+            "PlatformInvoiceStatus": {
+              "kind": "valueSet",
+              "values": [
+                "DRAFT",
+                "ISSUED",
+                "PARTIALLY_PAID",
+                "PAID",
+                "OVERDUE",
+                "VOID"
+              ]
+            },
+            "PlatformPaymentMethod": {
+              "kind": "valueSet",
+              "values": [
+                "BANK_TRANSFER",
+                "CASH"
+              ]
+            },
+            "PlatformPaymentStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "CONFIRMED",
+                "REJECTED"
+              ]
+            },
             "ReportComponentType": {
               "kind": "valueSet",
               "values": [
@@ -16803,10 +18464,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2cdf3cf64d2b23cbac2fb0cb5bab74061dc6100a932b17c1cf2adb75169fd05b"
+    "storageHash": "e1c6ae023ccfe582c7b8a58e98623014782dce21563d5e11d5fece9e6a6d0b5c"
   },
   "execution": {
-    "executionHash": "415afa6b17d9ac4c068a257d2f8c65a796cf461023b7d7e5b7fee4d580459196",
+    "executionHash": "a3bfcac1cb96e7d1440df55b5863817dee51e7de94542d5b751ee30cdcde1a9f",
     "mutations": {
       "defaults": [
         {
@@ -17091,6 +18752,36 @@
           "ref": {
             "column": "updatedAt",
             "namespace": "public",
+            "table": "PlatformSubscriptionInvoice"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "PlatformSubscriptionPayment"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
             "table": "PsychomotorField"
           }
         },
@@ -17212,6 +18903,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "School"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "SchoolBillingRate"
           }
         },
         {

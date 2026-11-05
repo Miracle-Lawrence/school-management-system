@@ -1,0 +1,1547 @@
+[
+  {
+    "id": "table.PlatformSubscriptionInvoice",
+    "label": "Create table \"PlatformSubscriptionInvoice\"",
+    "summary": "Creates table \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"PlatformSubscriptionInvoice\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"PlatformSubscriptionInvoice\"",
+        "sql": "CREATE TABLE \"public\".\"PlatformSubscriptionInvoice\" (\n  \"academicSessionId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"currency\" text DEFAULT 'NGN' NOT NULL,\n  \"dueDate\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"invoiceNumber\" text NOT NULL,\n  \"notes\" text,\n  \"platformBrandSnapshot\" text NOT NULL,\n  \"ratePerStudent\" numeric NOT NULL,\n  \"schoolBrandSnapshot\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"status\" text DEFAULT 'ISSUED' NOT NULL,\n  \"studentCount\" int4 NOT NULL,\n  \"termId\" int4 NOT NULL,\n  \"totalAmount\" numeric NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"PlatformSubscriptionInvoice_status_check_234d9b32\" CHECK (\"status\" IN ('DRAFT', 'ISSUED', 'PARTIALLY_PAID', 'PAID', 'OVERDUE', 'VOID'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"PlatformSubscriptionInvoice\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.PlatformSubscriptionPayment",
+    "label": "Create table \"PlatformSubscriptionPayment\"",
+    "summary": "Creates table \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"PlatformSubscriptionPayment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"PlatformSubscriptionPayment\"",
+        "sql": "CREATE TABLE \"public\".\"PlatformSubscriptionPayment\" (\n  \"amount\" numeric NOT NULL,\n  \"confirmedAt\" timestamptz,\n  \"confirmedById\" int4,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"invoiceId\" int4 NOT NULL,\n  \"method\" text NOT NULL,\n  \"notes\" text,\n  \"paidAt\" timestamptz,\n  \"paymentReference\" text,\n  \"platformBrandSnapshot\" text NOT NULL,\n  \"receiptNumber\" text,\n  \"recordedById\" int4 NOT NULL,\n  \"schoolBrandSnapshot\" text NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"PlatformSubscriptionPayment_method_check_58b9b9ac\" CHECK (\"method\" IN ('BANK_TRANSFER', 'CASH')),\n  CONSTRAINT \"PlatformSubscriptionPayment_status_check_af8a6ba5\" CHECK (\"status\" IN ('PENDING', 'CONFIRMED', 'REJECTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"PlatformSubscriptionPayment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.SchoolBillingRate",
+    "label": "Create table \"SchoolBillingRate\"",
+    "summary": "Creates table \"SchoolBillingRate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SchoolBillingRate\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SchoolBillingRate\"",
+        "sql": "CREATE TABLE \"public\".\"SchoolBillingRate\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4,\n  \"currency\" text DEFAULT 'NGN' NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"notes\" text,\n  \"ratePerStudent\" numeric NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SchoolBillingRate\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.accentColor",
+    "label": "Add column \"accentColor\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "accentColor",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"accentColor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "accentColor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"accentColor\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"accentColor\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"accentColor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "accentColor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.businessAddress",
+    "label": "Add column \"businessAddress\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "businessAddress",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"businessAddress\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "businessAddress"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"businessAddress\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"businessAddress\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"businessAddress\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "businessAddress"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.invoiceFooterText",
+    "label": "Add column \"invoiceFooterText\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "invoiceFooterText",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"invoiceFooterText\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "invoiceFooterText"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"invoiceFooterText\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"invoiceFooterText\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"invoiceFooterText\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "invoiceFooterText"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.logoUrl",
+    "label": "Add column \"logoUrl\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "logoUrl",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"logoUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "logoUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"logoUrl\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"logoUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"logoUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "logoUrl"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.primaryColor",
+    "label": "Add column \"primaryColor\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "primaryColor",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"primaryColor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "primaryColor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"primaryColor\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"primaryColor\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"primaryColor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "primaryColor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.secondaryColor",
+    "label": "Add column \"secondaryColor\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "secondaryColor",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"secondaryColor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "secondaryColor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"secondaryColor\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"secondaryColor\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"secondaryColor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "secondaryColor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.PlatformSetting.website",
+    "label": "Add column \"website\" to \"PlatformSetting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "website",
+        "table": "PlatformSetting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"website\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "website"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"website\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSetting\" ADD COLUMN \"website\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"website\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "PlatformSetting",
+          "website"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_invoiceNumber_key",
+    "label": "Add unique constraint on \"PlatformSubscriptionInvoice\" (invoiceNumber)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "PlatformSubscriptionInvoice_invoiceNumber_key",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"PlatformSubscriptionInvoice_invoiceNumber_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_invoiceNumber_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"PlatformSubscriptionInvoice_invoiceNumber_key\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\" ADD CONSTRAINT \"PlatformSubscriptionInvoice_invoiceNumber_key\" UNIQUE (\"invoiceNumber\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"PlatformSubscriptionInvoice_invoiceNumber_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_invoiceNumber_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key",
+    "label": "Add unique constraint on \"PlatformSubscriptionInvoice\" (schoolId, academicSessionId, termId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\" ADD CONSTRAINT \"PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key\" UNIQUE (\"schoolId\", \"academicSessionId\", \"termId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_schoolId_academicSessionId_termId_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.PlatformSubscriptionPayment.PlatformSubscriptionPayment_receiptNumber_key",
+    "label": "Add unique constraint on \"PlatformSubscriptionPayment\" (receiptNumber)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "PlatformSubscriptionPayment_receiptNumber_key",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"PlatformSubscriptionPayment_receiptNumber_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_receiptNumber_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"PlatformSubscriptionPayment_receiptNumber_key\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\" ADD CONSTRAINT \"PlatformSubscriptionPayment_receiptNumber_key\" UNIQUE (\"receiptNumber\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"PlatformSubscriptionPayment_receiptNumber_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_receiptNumber_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.PlatformSubscriptionPayment.PlatformSubscriptionPayment_paymentReference_key",
+    "label": "Add unique constraint on \"PlatformSubscriptionPayment\" (paymentReference)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "PlatformSubscriptionPayment_paymentReference_key",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"PlatformSubscriptionPayment_paymentReference_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_paymentReference_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"PlatformSubscriptionPayment_paymentReference_key\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\" ADD CONSTRAINT \"PlatformSubscriptionPayment_paymentReference_key\" UNIQUE (\"paymentReference\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"PlatformSubscriptionPayment_paymentReference_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_paymentReference_key",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.SchoolBillingRate.SchoolBillingRate_schoolId_key",
+    "label": "Add unique constraint on \"SchoolBillingRate\" (schoolId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "SchoolBillingRate_schoolId_key",
+        "table": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"SchoolBillingRate_schoolId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_schoolId_key",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"SchoolBillingRate_schoolId_key\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolBillingRate\" ADD CONSTRAINT \"SchoolBillingRate_schoolId_key\" UNIQUE (\"schoolId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"SchoolBillingRate_schoolId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_schoolId_key",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_academicSessionId_idx_54f76507",
+    "label": "Create index \"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_academicSessionId_idx_54f76507",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"academicSessionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_academicSessionId_idx_54f76507\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_createdById_idx_8bf640ed",
+    "label": "Create index \"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_createdById_idx_8bf640ed",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_dueDate_idx_fb527616",
+    "label": "Create index \"PlatformSubscriptionInvoice_dueDate_idx_fb527616\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_dueDate_idx_fb527616",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_dueDate_idx_fb527616\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_dueDate_idx_fb527616\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_dueDate_idx_fb527616\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_dueDate_idx_fb527616\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"dueDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_dueDate_idx_fb527616\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_dueDate_idx_fb527616\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_schoolId_idx_82b454d7",
+    "label": "Create index \"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_schoolId_idx_82b454d7",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_schoolId_status_idx_7110c695",
+    "label": "Create index \"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_schoolId_status_idx_7110c695",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"schoolId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_schoolId_status_idx_7110c695\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_termId_idx_1b74c9af",
+    "label": "Create index \"PlatformSubscriptionInvoice_termId_idx_1b74c9af\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionInvoice_termId_idx_1b74c9af",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionInvoice_termId_idx_1b74c9af\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_termId_idx_1b74c9af\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionInvoice_termId_idx_1b74c9af\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionInvoice_termId_idx_1b74c9af\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionInvoice_termId_idx_1b74c9af\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionInvoice_termId_idx_1b74c9af\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionInvoice.platform_invoice_session_term_idx",
+    "label": "Create index \"platform_invoice_session_term_idx\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "platform_invoice_session_term_idx",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"platform_invoice_session_term_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"platform_invoice_session_term_idx\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"platform_invoice_session_term_idx\"",
+        "sql": "CREATE INDEX \"platform_invoice_session_term_idx\" ON \"public\".\"PlatformSubscriptionInvoice\" (\"academicSessionId\", \"termId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"platform_invoice_session_term_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"platform_invoice_session_term_idx\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f",
+    "label": "Create index \"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\" ON \"public\".\"PlatformSubscriptionPayment\" (\"confirmedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_confirmedById_idx_bf02ea5f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e",
+    "label": "Create index \"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\" ON \"public\".\"PlatformSubscriptionPayment\" (\"invoiceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_invoiceId_idx_d5c4f70e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7",
+    "label": "Create index \"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\" ON \"public\".\"PlatformSubscriptionPayment\" (\"invoiceId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_invoiceId_status_idx_7d5bfaf7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_paidAt_idx_dbfd0b83",
+    "label": "Create index \"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_paidAt_idx_dbfd0b83",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\" ON \"public\".\"PlatformSubscriptionPayment\" (\"paidAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_paidAt_idx_dbfd0b83\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.PlatformSubscriptionPayment.PlatformSubscriptionPayment_recordedById_idx_6595df66",
+    "label": "Create index \"PlatformSubscriptionPayment_recordedById_idx_6595df66\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "PlatformSubscriptionPayment_recordedById_idx_6595df66",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"PlatformSubscriptionPayment_recordedById_idx_6595df66\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_recordedById_idx_6595df66\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"PlatformSubscriptionPayment_recordedById_idx_6595df66\"",
+        "sql": "CREATE INDEX \"PlatformSubscriptionPayment_recordedById_idx_6595df66\" ON \"public\".\"PlatformSubscriptionPayment\" (\"recordedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"PlatformSubscriptionPayment_recordedById_idx_6595df66\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PlatformSubscriptionPayment_recordedById_idx_6595df66\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolBillingRate.SchoolBillingRate_createdById_idx_8bf640ed",
+    "label": "Create index \"SchoolBillingRate_createdById_idx_8bf640ed\" on \"SchoolBillingRate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolBillingRate_createdById_idx_8bf640ed",
+        "table": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolBillingRate_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolBillingRate_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"SchoolBillingRate_createdById_idx_8bf640ed\" ON \"public\".\"SchoolBillingRate\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolBillingRate_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolBillingRate.SchoolBillingRate_isActive_idx_77fe3ba1",
+    "label": "Create index \"SchoolBillingRate_isActive_idx_77fe3ba1\" on \"SchoolBillingRate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolBillingRate_isActive_idx_77fe3ba1",
+        "table": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolBillingRate_isActive_idx_77fe3ba1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate_isActive_idx_77fe3ba1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolBillingRate_isActive_idx_77fe3ba1\"",
+        "sql": "CREATE INDEX \"SchoolBillingRate_isActive_idx_77fe3ba1\" ON \"public\".\"SchoolBillingRate\" (\"isActive\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolBillingRate_isActive_idx_77fe3ba1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolBillingRate_isActive_idx_77fe3ba1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_schoolId_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionInvoice_schoolId_fkey\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionInvoice_schoolId_fkey",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionInvoice_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_schoolId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionInvoice_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\"\nADD CONSTRAINT \"PlatformSubscriptionInvoice_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionInvoice_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_schoolId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_academicSessionId_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionInvoice_academicSessionId_fkey\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionInvoice_academicSessionId_fkey",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionInvoice_academicSessionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_academicSessionId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionInvoice_academicSessionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\"\nADD CONSTRAINT \"PlatformSubscriptionInvoice_academicSessionId_fkey\"\nFOREIGN KEY (\"academicSessionId\")\nREFERENCES \"public\".\"AcademicSession\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionInvoice_academicSessionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_academicSessionId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_termId_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionInvoice_termId_fkey\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionInvoice_termId_fkey",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionInvoice_termId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_termId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionInvoice_termId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\"\nADD CONSTRAINT \"PlatformSubscriptionInvoice_termId_fkey\"\nFOREIGN KEY (\"termId\")\nREFERENCES \"public\".\"Term\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionInvoice_termId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_termId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionInvoice.PlatformSubscriptionInvoice_createdById_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionInvoice_createdById_fkey\" on \"PlatformSubscriptionInvoice\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionInvoice_createdById_fkey",
+        "table": "PlatformSubscriptionInvoice"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionInvoice_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_createdById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionInvoice_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionInvoice\"\nADD CONSTRAINT \"PlatformSubscriptionInvoice_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionInvoice_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionInvoice_createdById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionInvoice\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionPayment.PlatformSubscriptionPayment_invoiceId_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionPayment_invoiceId_fkey\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionPayment_invoiceId_fkey",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionPayment_invoiceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_invoiceId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionPayment_invoiceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\"\nADD CONSTRAINT \"PlatformSubscriptionPayment_invoiceId_fkey\"\nFOREIGN KEY (\"invoiceId\")\nREFERENCES \"public\".\"PlatformSubscriptionInvoice\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionPayment_invoiceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_invoiceId_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionPayment.PlatformSubscriptionPayment_recordedById_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionPayment_recordedById_fkey\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionPayment_recordedById_fkey",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionPayment_recordedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_recordedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionPayment_recordedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\"\nADD CONSTRAINT \"PlatformSubscriptionPayment_recordedById_fkey\"\nFOREIGN KEY (\"recordedById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionPayment_recordedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_recordedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.PlatformSubscriptionPayment.PlatformSubscriptionPayment_confirmedById_fkey",
+    "label": "Add foreign key \"PlatformSubscriptionPayment_confirmedById_fkey\" on \"PlatformSubscriptionPayment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "PlatformSubscriptionPayment_confirmedById_fkey",
+        "table": "PlatformSubscriptionPayment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"PlatformSubscriptionPayment_confirmedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_confirmedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"PlatformSubscriptionPayment_confirmedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"PlatformSubscriptionPayment\"\nADD CONSTRAINT \"PlatformSubscriptionPayment_confirmedById_fkey\"\nFOREIGN KEY (\"confirmedById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"PlatformSubscriptionPayment_confirmedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "PlatformSubscriptionPayment_confirmedById_fkey",
+          "public",
+          "\"public\".\"PlatformSubscriptionPayment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolBillingRate.SchoolBillingRate_schoolId_fkey",
+    "label": "Add foreign key \"SchoolBillingRate_schoolId_fkey\" on \"SchoolBillingRate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolBillingRate_schoolId_fkey",
+        "table": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolBillingRate_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolBillingRate_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolBillingRate\"\nADD CONSTRAINT \"SchoolBillingRate_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolBillingRate_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolBillingRate.SchoolBillingRate_createdById_fkey",
+    "label": "Add foreign key \"SchoolBillingRate_createdById_fkey\" on \"SchoolBillingRate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolBillingRate_createdById_fkey",
+        "table": "SchoolBillingRate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolBillingRate_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_createdById_fkey",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolBillingRate_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolBillingRate\"\nADD CONSTRAINT \"SchoolBillingRate_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolBillingRate_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolBillingRate_createdById_fkey",
+          "public",
+          "\"public\".\"SchoolBillingRate\""
+        ]
+      }
+    ]
+  }
+]

@@ -1,7 +1,12 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
+import PlatformMobileNavigation from "@/app/dashboard/components/platform-mobile-navigation";
 
+async function signOutPlatform() {
+  "use server";
+  await signOut({ redirectTo: "/login" });
+}
 const navigation = [
   {
     label: "Overview",
@@ -9,7 +14,7 @@ const navigation = [
       {
         name: "Dashboard",
         href: "/dashboard",
-        icon: "◫",
+        icon: "â—«",
       },
     ],
   },
@@ -19,12 +24,12 @@ const navigation = [
       {
         name: "Schools",
         href: "/dashboard/schools",
-        icon: "▤",
+        icon: "â–¤",
       },
       {
         name: "Users",
         href: "/dashboard/users",
-        icon: "♙",
+        icon: "â™™",
       },
     ],
   },
@@ -34,17 +39,17 @@ const navigation = [
       {
         name: "Subscription Plans",
         href: "/dashboard/subscriptions",
-        icon: "◇",
+        icon: "â—‡",
       },
       {
         name: "School Subscriptions",
         href: "/dashboard/subscriptions/schools",
-        icon: "▦",
+        icon: "â–¦",
       },
       {
         name: "Payment Records",
         href: "/dashboard/subscriptions/payments",
-        icon: "₦",
+        icon: "â‚¦",
       },
     ],
   },
@@ -54,7 +59,7 @@ const navigation = [
       {
         name: "Settings",
         href: "/dashboard/settings",
-        icon: "⚙",
+        icon: "âš™",
       },
     ],
   },
@@ -126,7 +131,7 @@ export default async function DashboardLayout({
                       <span>{item.name}</span>
 
                       <span className="ml-auto text-slate-600 opacity-0 transition-opacity group-hover:opacity-100">
-                        →
+                        â†’
                       </span>
                     </Link>
                   ))}
@@ -164,7 +169,7 @@ export default async function DashboardLayout({
                 type="submit"
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
               >
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">â†—</span>
                 Sign Out
               </button>
             </form>
@@ -172,31 +177,40 @@ export default async function DashboardLayout({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-10 flex min-h-20 items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur sm:px-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                SchoolMS / Administration
-              </p>
-              <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
-                Platform Dashboard
-              </h2>
-            </div>
+          <header className="sticky top-0 z-[100] flex min-h-20 items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 sm:px-8">
+  <div className="flex min-w-0 items-center gap-3">
+    <PlatformMobileNavigation
+      name={session.user.name ?? "Platform Owner"}
+      email={session.user.email ?? ""}
+      role={session.user.role}
+      signOutAction={signOutPlatform}
+    />
 
-            <div className="flex items-center gap-3">
-              <div className="hidden text-right sm:block">
-                <p className="text-sm font-semibold text-slate-800">
-                  {session.user.name ?? "Platform Owner"}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-500">
-                  {session.user.role.replaceAll("_", " ")}
-                </p>
-              </div>
+    <div className="min-w-0">
+      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
+        SchoolMS / Administration
+      </p>
+      <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+        Platform Dashboard
+      </h2>
+    </div>
+  </div>
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-700 ring-1 ring-slate-200">
-                {(session.user.name ?? "P").charAt(0).toUpperCase()}
-              </div>
-            </div>
-          </header>
+  <div className="flex shrink-0 items-center gap-3">
+    <div className="hidden text-right sm:block">
+      <p className="text-sm font-semibold text-slate-800">
+        {session.user.name ?? "Platform Owner"}
+      </p>
+      <p className="mt-0.5 text-xs text-slate-500">
+        {session.user.role.replaceAll("_", " ")}
+      </p>
+    </div>
+
+    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-700 ring-1 ring-slate-200">
+      {(session.user.name ?? "P").charAt(0).toUpperCase()}
+    </div>
+  </div>
+</header>
 
           <main className="w-full flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
 
@@ -208,3 +222,5 @@ export default async function DashboardLayout({
     </div>
   );
 }
+
+

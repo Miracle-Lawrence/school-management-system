@@ -37,6 +37,26 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum PlatformInvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum PlatformPaymentMethod {
+  BANK_TRANSFER
+  CASH
+}
+
+enum PlatformPaymentStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -142,17 +162,19 @@ enum EmailDeliveryStatus {
 }
 
 model School {
-  id                       Int                        @id @default(autoincrement())
+  id                       Int                           @id @default(autoincrement())
   name                     String
-  slug                     String                     @unique
+  slug                     String                        @unique
   email                    String?
   phone                    String?
   address                  String?
   city                     String?
   state                    String?
-  country                  String                     @default("Nigeria")
-  status                   SchoolStatus               @default(ACTIVE)
+  country                  String                        @default("Nigeria")
+  status                   SchoolStatus                  @default(ACTIVE)
   SubscriptionStatus       SchoolSubscription[]
+  billingRates             SchoolBillingRate[]
+  platformInvoices         PlatformSubscriptionInvoice[]
   users                    User[]
   students                 Student[]
   teachers                 Teacher[]
@@ -197,9 +219,9 @@ model School {
   psychomotorFields        PsychomotorField[]
   psychomotorRatingOptions PsychomotorRatingOption[]
   psychomotorRatings       StudentPsychomotorRating[]
-  createdAt                TimestamptzString          @default(now())
+  createdAt                TimestamptzString             @default(now())
   updatedAt                temporal.updatedAtString()
-  reportPublications ReportPublication[]
+  reportPublications       ReportPublication[]
 }
 
 model SubscriptionPlan {
@@ -574,66 +596,71 @@ model ReportComment {
 }
 
 model User {
-  id                 Int                        @id @default(autoincrement())
-  school             School?                    @relation(fields:[schoolId], references:[id])
-  schoolId           Int?
-  email              String                     @unique
-  passwordHash       String
-  name               String?
-  phone              String?
-  role               UserRole
-  isActive           Boolean                    @default(true)
-  sessionVersion     Int                        @default(0)
-  mustChangePassword Boolean                    @default(false)
-  emailVerifiedAt    DateTime?
-  lastLoginAt        DateTime?
-  student            Student?
-  teacher            Teacher?
-  parent             Parent?
-  emailDeliveries     EmailDelivery[]
-  feePaymentsRecorded FeePayment[]
-  gradedAssignmentSubmissions AssignmentSubmission[] @relation("AssignmentSubmissionGradedBy")
-  createdAssessments Assessment[]               @relation("AssessmentCreatedBy")
-  recordedAttendance Attendance[]               @relation("AttendanceRecordedBy")
-  createdAt          TimestamptzString          @default(now())
-  createdNotifications Notification[] @relation("NotificationCreatedBy")
-  notificationRecipients NotificationRecipient[] @relation("NotificationRecipientUser")
-  updatedAt          temporal.updatedAtString()
-  publishedReportPublications ReportPublication[] @relation("ReportPublicationPublishedBy")
-  unpublishedReportPublications ReportPublication[] @relation("ReportPublicationUnpublishedBy")
+  id                            Int                           @id @default(autoincrement())
+  school                        School?                       @relation(fields:[schoolId], references:[id])
+  schoolId                      Int?
+  email                         String                        @unique
+  passwordHash                  String
+  name                          String?
+  phone                         String?
+  role                          UserRole
+  isActive                      Boolean                       @default(true)
+  sessionVersion                Int                           @default(0)
+  mustChangePassword            Boolean                       @default(false)
+  emailVerifiedAt               DateTime?
+  lastLoginAt                   DateTime?
+  student                       Student?
+  teacher                       Teacher?
+  parent                        Parent?
+  emailDeliveries               EmailDelivery[]
+  feePaymentsRecorded           FeePayment[]
+  createdPlatformInvoices       PlatformSubscriptionInvoice[] @relation("PlatformInvoiceCreatedBy")
+  createdSchoolBillingRates     SchoolBillingRate[]           @relation("SchoolBillingRateCreatedBy")
+  recordedPlatformPayments      PlatformSubscriptionPayment[] @relation("PlatformPaymentRecordedBy")
+  confirmedPlatformPayments     PlatformSubscriptionPayment[] @relation("PlatformPaymentConfirmedBy")
+  gradedAssignmentSubmissions   AssignmentSubmission[]        @relation("AssignmentSubmissionGradedBy")
+  createdAssessments            Assessment[]                  @relation("AssessmentCreatedBy")
+  recordedAttendance            Attendance[]                  @relation("AttendanceRecordedBy")
+  createdAt                     TimestamptzString             @default(now())
+  createdNotifications          Notification[]                @relation("NotificationCreatedBy")
+  notificationRecipients        NotificationRecipient[]       @relation("NotificationRecipientUser")
+  updatedAt                     temporal.updatedAtString()
+  publishedReportPublications   ReportPublication[]           @relation("ReportPublicationPublishedBy")
+  unpublishedReportPublications ReportPublication[]           @relation("ReportPublicationUnpublishedBy")
+  rejectedPlatformPayments      PlatformSubscriptionPayment[] @relation("PlatformPaymentRejectedBy")
 }
 
 model Student {
-  id                 Int                        @id @default(autoincrement())
-  school             School                     @relation(fields:[schoolId], references:[id])
-  schoolId           Int
-  isActive           Boolean                    @default(true)
-  user               User?                      @relation(fields:[userId], references:[id])
-  userId             Int?                       @unique
-  admissionNumber    String
-  firstName          String
-  middleName         String?
-  lastName           String
-  gender             Gender
-  dateOfBirth        DateTime?
-  email              String?
-  phone              String?
-  address            String?
-  photoUrl           String?
-  class              SchoolClass?               @relation(fields:[classId], references:[id])
-  classId            Int?
-  parents            ParentStudent[]
-  attendanceRecords  Attendance[]
-  assessmentScores   AssessmentScore[]
-  subjectResults     SubjectResult[]
-  studentTermResults StudentTermResult[]
-  psychomotorRatings StudentPsychomotorRating[]
-  reportComments     ReportComment[]
-  feeInvoices        StudentInvoice[]
+  id                    Int                        @id @default(autoincrement())
+  school                School                     @relation(fields:[schoolId], references:[id])
+  schoolId              Int
+  isActive              Boolean                    @default(true)
+  user                  User?                      @relation(fields:[userId], references:[id])
+  userId                Int?                       @unique
+  admissionNumber       String
+  firstName             String
+  middleName            String?
+  lastName              String
+  gender                Gender
+  dateOfBirth           DateTime?
+  email                 String?
+  phone                 String?
+  address               String?
+  photoUrl              String?
+  class                 SchoolClass?               @relation(fields:[classId], references:[id])
+  classId               Int?
+  parents               ParentStudent[]
+  attendanceRecords     Attendance[]
+  assessmentScores      AssessmentScore[]
+  subjectResults        SubjectResult[]
+  studentTermResults    StudentTermResult[]
+  psychomotorRatings    StudentPsychomotorRating[]
+  reportComments        ReportComment[]
+  feeInvoices           StudentInvoice[]
   assignmentSubmissions AssignmentSubmission[]
-  contentReads        StudentContentRead[]
-  createdAt          TimestamptzString          @default(now())
-  updatedAt          temporal.updatedAtString()
+  contentReads          StudentContentRead[]
+  createdAt             TimestamptzString          @default(now())
+  updatedAt             temporal.updatedAtString()
 
   @@unique([schoolId, admissionNumber])
   @@index([schoolId])
@@ -775,31 +802,32 @@ model TeacherAssignment {
 }
 
 model AcademicSession {
-  id        Int                        @id @default(autoincrement())
-  school    School                     @relation(fields:[schoolId], references:[id])
-  schoolId  Int
-  name      String
-  startDate DateTime
-  endDate   DateTime
-  isActive  Boolean                    @default(false)
-  terms     Term[]
-  feeStructures FeeStructure[]
-  feeInvoices   StudentInvoice[]
-  createdAt TimestamptzString          @default(now())
-  updatedAt temporal.updatedAtString()
+  id               Int                           @id @default(autoincrement())
+  school           School                        @relation(fields:[schoolId], references:[id])
+  schoolId         Int
+  name             String
+  startDate        DateTime
+  endDate          DateTime
+  isActive         Boolean                       @default(false)
+  terms            Term[]
+  feeStructures    FeeStructure[]
+  feeInvoices      StudentInvoice[]
+  platformInvoices PlatformSubscriptionInvoice[]
+  createdAt        TimestamptzString             @default(now())
+  updatedAt        temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId])
 }
 
 model Term {
-  id                 Int                        @id @default(autoincrement())
-  session            AcademicSession            @relation(fields:[sessionId], references:[id])
+  id                 Int                           @id @default(autoincrement())
+  session            AcademicSession               @relation(fields:[sessionId], references:[id])
   sessionId          Int
   name               String
   startDate          DateTime
   endDate            DateTime
-  isActive           Boolean                    @default(false)
+  isActive           Boolean                       @default(false)
   attendanceRecords  Attendance[]
   assessments        Assessment[]
   subjectResults     SubjectResult[]
@@ -808,7 +836,8 @@ model Term {
   reportComments     ReportComment[]
   feeStructures      FeeStructure[]
   feeInvoices        StudentInvoice[]
-  createdAt          TimestamptzString          @default(now())
+  platformInvoices   PlatformSubscriptionInvoice[]
+  createdAt          TimestamptzString             @default(now())
   updatedAt          temporal.updatedAtString()
 
   @@unique([sessionId, name])
@@ -857,32 +886,32 @@ model Assessment {
 }
 
 model Assignment {
-  id          Int      @id @default(autoincrement())
+  id           Int                        @id @default(autoincrement())
 
-  school      School   @relation(fields: [schoolId], references: [id])
-  schoolId    Int
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
 
-  teacher     Teacher  @relation(fields: [teacherId], references: [id])
-  teacherId   Int
+  teacher      Teacher                    @relation(fields:[teacherId], references:[id])
+  teacherId    Int
 
-  class       SchoolClass @relation(fields: [classId], references: [id])
-  classId     Int
+  class        SchoolClass                @relation(fields:[classId], references:[id])
+  classId      Int
 
-  subject     Subject  @relation(fields: [subjectId], references: [id])
-  subjectId   Int
+  subject      Subject                    @relation(fields:[subjectId], references:[id])
+  subjectId    Int
 
-  title       String
+  title        String
   instructions String
-  dueDate     DateTime?
-  maxScore    Float
+  dueDate      DateTime?
+  maxScore     Float
 
-  isPublished Boolean  @default(false)
-  publishedAt TimestamptzString?
+  isPublished  Boolean                    @default(false)
+  publishedAt  TimestamptzString?
 
-  submissions AssignmentSubmission[]
+  submissions  AssignmentSubmission[]
 
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
 
   @@index([schoolId])
   @@index([teacherId])
@@ -892,26 +921,26 @@ model Assignment {
 }
 
 model AssignmentSubmission {
-  id           Int        @id @default(autoincrement())
+  id             Int                        @id @default(autoincrement())
 
-  assignment   Assignment @relation(fields: [assignmentId], references: [id])
-  assignmentId Int
+  assignment     Assignment                 @relation(fields:[assignmentId], references:[id])
+  assignmentId   Int
 
-  student      Student    @relation(fields: [studentId], references: [id])
-  studentId    Int
+  student        Student                    @relation(fields:[studentId], references:[id])
+  studentId      Int
 
-  answer       String?
-  submittedAt  TimestamptzString?
+  answer         String?
+  submittedAt    TimestamptzString?
 
-  marks        Float?
-  feedback     String?
+  marks          Float?
+  feedback       String?
 
-  gradedBy     User?      @relation("AssignmentSubmissionGradedBy", fields: [gradedByUserId], references: [id])
+  gradedBy       User?                      @relation("AssignmentSubmissionGradedBy", fields:[gradedByUserId], references:[id])
   gradedByUserId Int?
-  gradedAt     TimestamptzString?
+  gradedAt       TimestamptzString?
 
-  createdAt    TimestamptzString @default(now())
-  updatedAt    temporal.updatedAtString()
+  createdAt      TimestamptzString          @default(now())
+  updatedAt      temporal.updatedAtString()
 
   @@unique([assignmentId, studentId])
   @@index([studentId, submittedAt])
@@ -919,27 +948,27 @@ model AssignmentSubmission {
 }
 
 model ClassNote {
-  id          Int        @id @default(autoincrement())
+  id          Int                        @id @default(autoincrement())
 
-  school      School     @relation(fields: [schoolId], references: [id])
+  school      School                     @relation(fields:[schoolId], references:[id])
   schoolId    Int
 
-  teacher     Teacher    @relation(fields: [teacherId], references: [id])
+  teacher     Teacher                    @relation(fields:[teacherId], references:[id])
   teacherId   Int
 
-  class       SchoolClass @relation(fields: [classId], references: [id])
+  class       SchoolClass                @relation(fields:[classId], references:[id])
   classId     Int
 
-  subject     Subject    @relation(fields: [subjectId], references: [id])
+  subject     Subject                    @relation(fields:[subjectId], references:[id])
   subjectId   Int
 
   title       String
   content     String
 
-  isPublished Boolean    @default(false)
+  isPublished Boolean                    @default(false)
   publishedAt TimestamptzString?
 
-  createdAt   TimestamptzString @default(now())
+  createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
 
   @@index([schoolId])
@@ -1022,6 +1051,16 @@ model PlatformSetting {
   platformName        String                     @default("SchoolMS")
   supportEmail        String?
   supportPhone        String?
+
+  // Platform branding for invoices and receipts
+  logoUrl             String?
+  primaryColor        String?
+  secondaryColor      String?
+  accentColor         String?
+  website             String?
+  businessAddress     String?
+  invoiceFooterText   String?
+
   defaultCurrency     String                     @default("NGN")
   defaultTimezone     String                     @default("Africa/Lagos")
   registrationEnabled Boolean                    @default(true)
@@ -1030,82 +1069,175 @@ model PlatformSetting {
   updatedAt           temporal.updatedAtString()
 }
 
+model SchoolBillingRate {
+  id             Int                        @id @default(autoincrement())
+  school         School                     @relation(fields:[schoolId], references:[id])
+  schoolId       Int                        @unique
+  ratePerStudent Decimal
+  currency       String                     @default("NGN")
+  isActive       Boolean                    @default(true)
+  notes          String?
+
+  createdBy      User?                      @relation("SchoolBillingRateCreatedBy", fields:[createdById], references:[id])
+  createdById    Int?
+
+  createdAt      TimestamptzString          @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  @@index([isActive])
+}
+
+model PlatformSubscriptionInvoice {
+  id                    Int                           @id @default(autoincrement())
+
+  school                School                        @relation(fields:[schoolId], references:[id])
+  schoolId              Int
+
+  academicSession       AcademicSession               @relation(fields:[academicSessionId], references:[id])
+  academicSessionId     Int
+
+  term                  Term                          @relation(fields:[termId], references:[id])
+  termId                Int
+
+  invoiceNumber         String                        @unique
+  studentCount          Int
+  ratePerStudent        Decimal
+  totalAmount           Decimal
+  currency              String                        @default("NGN")
+  status                PlatformInvoiceStatus         @default(ISSUED)
+  dueDate               TimestamptzString?
+  notes                 String?
+
+  schoolBrandSnapshot   String
+  platformBrandSnapshot String
+
+  createdBy             User                          @relation("PlatformInvoiceCreatedBy", fields:[createdById], references:[id])
+  createdById           Int
+
+  payments              PlatformSubscriptionPayment[]
+
+  createdAt             TimestamptzString             @default(now())
+  updatedAt             temporal.updatedAtString()
+
+  @@unique([schoolId, academicSessionId, termId])
+  @@index([schoolId, status])
+  @@index([academicSessionId, termId], map: "platform_invoice_session_term_idx")
+  @@index([dueDate])
+}
+
+model PlatformSubscriptionPayment {
+  id                    Int                         @id @default(autoincrement())
+
+  invoice               PlatformSubscriptionInvoice @relation(fields:[invoiceId], references:[id])
+  invoiceId             Int
+
+  amount                Decimal
+  method                PlatformPaymentMethod
+  status                PlatformPaymentStatus       @default(PENDING)
+
+  receiptNumber         String?                     @unique
+  paymentReference      String?                     @unique
+  paidAt                TimestamptzString?
+  confirmedAt           TimestamptzString?
+  notes                 String?
+
+  schoolBrandSnapshot   String
+  platformBrandSnapshot String
+
+  recordedBy            User                        @relation("PlatformPaymentRecordedBy", fields:[recordedById], references:[id])
+  recordedById          Int
+
+  confirmedBy           User?                       @relation("PlatformPaymentConfirmedBy", fields:[confirmedById], references:[id])
+  confirmedById         Int?
+
+  createdAt             TimestamptzString           @default(now())
+  updatedAt             temporal.updatedAtString()
+
+  rejectedAt            TimestamptzString?
+  rejectedBy            User?                       @relation("PlatformPaymentRejectedBy", fields:[rejectedById], references:[id])
+  rejectedById          Int?
+
+  @@index([invoiceId, status])
+  @@index([paidAt])
+  @@index([confirmedById])
+}
+
 model FeeCategory {
-  id          Int            @id @default(autoincrement())
-  school      School         @relation(fields: [schoolId], references: [id])
-  schoolId    Int
-  name        String
-  description String?
-  isActive    Boolean        @default(true)
-  structures  FeeStructure[]
+  id           Int                        @id @default(autoincrement())
+  school       School                     @relation(fields:[schoolId], references:[id])
+  schoolId     Int
+  name         String
+  description  String?
+  isActive     Boolean                    @default(true)
+  structures   FeeStructure[]
   invoiceItems InvoiceItem[]
-  createdAt   TimestamptzString @default(now())
-  updatedAt   temporal.updatedAtString()
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
 
   @@unique([schoolId, name])
   @@index([schoolId, isActive])
 }
 
 model FeeStructure {
-  id              Int             @id @default(autoincrement())
-  school          School          @relation(fields: [schoolId], references: [id])
-  schoolId        Int
-  category        FeeCategory     @relation(fields: [categoryId], references: [id])
-  categoryId      Int
-  schoolClass     SchoolClass     @relation(fields: [classId], references: [id])
-  classId         Int
-  session         AcademicSession @relation(fields: [sessionId], references: [id])
-  sessionId       Int
-  term            Term            @relation(fields: [termId], references: [id])
-  termId          Int
-  amount          Decimal
-  isMandatory     Boolean         @default(true)
-  isActive        Boolean         @default(true)
-  createdAt       TimestamptzString @default(now())
-  updatedAt       temporal.updatedAtString()
+  id          Int                        @id @default(autoincrement())
+  school      School                     @relation(fields:[schoolId], references:[id])
+  schoolId    Int
+  category    FeeCategory                @relation(fields:[categoryId], references:[id])
+  categoryId  Int
+  schoolClass SchoolClass                @relation(fields:[classId], references:[id])
+  classId     Int
+  session     AcademicSession            @relation(fields:[sessionId], references:[id])
+  sessionId   Int
+  term        Term                       @relation(fields:[termId], references:[id])
+  termId      Int
+  amount      Decimal
+  isMandatory Boolean                    @default(true)
+  isActive    Boolean                    @default(true)
+  createdAt   TimestamptzString          @default(now())
+  updatedAt   temporal.updatedAtString()
 
   @@unique([categoryId, classId, termId])
   @@index([schoolId, sessionId, termId, classId])
 }
 
 model StudentInvoice {
-  id                Int               @id @default(autoincrement())
-  school            School            @relation(fields: [schoolId], references: [id])
-  schoolId          Int
-  student           Student           @relation(fields: [studentId], references: [id])
-  studentId         Int
-  session           AcademicSession   @relation(fields: [sessionId], references: [id])
-  sessionId         Int
-  term              Term              @relation(fields: [termId], references: [id])
-  termId            Int
-  invoiceNumber     String
-  type              FeeInvoiceType
-  status            FeeInvoiceStatus  @default(DRAFT)
-  title             String?
-  issuedAt          TimestamptzString?
-  dueDate           DateTime?
-  totalAmount       Decimal           @default(0)
-  termInvoiceKey    String?           @unique
-  items             InvoiceItem[]
-  payments          FeePayment[]
-  
+  id                       Int                        @id @default(autoincrement())
+  school                   School                     @relation(fields:[schoolId], references:[id])
+  schoolId                 Int
+  student                  Student                    @relation(fields:[studentId], references:[id])
+  studentId                Int
+  session                  AcademicSession            @relation(fields:[sessionId], references:[id])
+  sessionId                Int
+  term                     Term                       @relation(fields:[termId], references:[id])
+  termId                   Int
+  invoiceNumber            String
+  type                     FeeInvoiceType
+  status                   FeeInvoiceStatus           @default(DRAFT)
+  title                    String?
+  issuedAt                 TimestamptzString?
+  dueDate                  DateTime?
+  totalAmount              Decimal                    @default(0)
+  termInvoiceKey           String?                    @unique
+  items                    InvoiceItem[]
+  payments                 FeePayment[]
+
   feeReminderNotifications Notification[]
 
-  createdAt         TimestamptzString @default(now())
-  updatedAt         temporal.updatedAtString()
+  createdAt                TimestamptzString          @default(now())
+  updatedAt                temporal.updatedAtString()
 
   @@unique([schoolId, invoiceNumber])
   @@index([schoolId, studentId, termId, status])
 }
 
 model InvoiceItem {
-  id          Int             @id @default(autoincrement())
-  invoice     StudentInvoice  @relation(fields: [invoiceId], references: [id])
+  id          Int               @id @default(autoincrement())
+  invoice     StudentInvoice    @relation(fields:[invoiceId], references:[id])
   invoiceId   Int
-  category    FeeCategory?    @relation(fields: [categoryId], references: [id])
+  category    FeeCategory?      @relation(fields:[categoryId], references:[id])
   categoryId  Int?
   description String
-  quantity    Int             @default(1)
+  quantity    Int               @default(1)
   amount      Decimal
   createdAt   TimestamptzString @default(now())
 
@@ -1113,19 +1245,19 @@ model InvoiceItem {
 }
 
 model FeePayment {
-  id                Int              @id @default(autoincrement())
-  invoice           StudentInvoice   @relation(fields: [invoiceId], references: [id])
+  id                Int                        @id @default(autoincrement())
+  invoice           StudentInvoice             @relation(fields:[invoiceId], references:[id])
   invoiceId         Int
   amount            Decimal
   method            FeePaymentMethod
-  status            FeePaymentStatus @default(PENDING)
-  reference          String           @unique
+  status            FeePaymentStatus           @default(PENDING)
+  reference         String                     @unique
   providerReference String?
   paidAt            TimestamptzString?
-  notes              String?
-  recordedBy        User?            @relation(fields: [recordedByUserId], references: [id])
+  notes             String?
+  recordedBy        User?                      @relation(fields:[recordedByUserId], references:[id])
   recordedByUserId  Int?
-  createdAt         TimestamptzString @default(now())
+  createdAt         TimestamptzString          @default(now())
   updatedAt         temporal.updatedAtString()
 
   @@index([invoiceId, status])
@@ -1133,22 +1265,22 @@ model FeePayment {
 }
 
 model ReportPublication {
-  id                  Int               @id @default(autoincrement())
-  school              School            @relation(fields:[schoolId], references:[id])
+  id                  Int                        @id @default(autoincrement())
+  school              School                     @relation(fields:[schoolId], references:[id])
   schoolId            Int
-  class               SchoolClass       @relation(fields:[classId], references:[id])
+  class               SchoolClass                @relation(fields:[classId], references:[id])
   classId             Int
-  term                Term              @relation(fields:[termId], references:[id])
+  term                Term                       @relation(fields:[termId], references:[id])
   termId              Int
   reportType          ReportType
-  isPublished         Boolean           @default(false)
+  isPublished         Boolean                    @default(false)
   publishedAt         TimestamptzString?
-  publishedBy         User?             @relation("ReportPublicationPublishedBy", fields:[publishedByUserId], references:[id])
+  publishedBy         User?                      @relation("ReportPublicationPublishedBy", fields:[publishedByUserId], references:[id])
   publishedByUserId   Int?
   unpublishedAt       TimestamptzString?
-  unpublishedBy       User?             @relation("ReportPublicationUnpublishedBy", fields:[unpublishedByUserId], references:[id])
+  unpublishedBy       User?                      @relation("ReportPublicationUnpublishedBy", fields:[unpublishedByUserId], references:[id])
   unpublishedByUserId Int?
-  createdAt           TimestamptzString @default(now())
+  createdAt           TimestamptzString          @default(now())
   updatedAt           temporal.updatedAtString()
 
   @@unique([schoolId, classId, termId, reportType])
@@ -1159,25 +1291,25 @@ model ReportPublication {
 }
 
 model Notification {
-  id              Int                  @id @default(autoincrement())
-  school          School               @relation(fields: [schoolId], references: [id])
+  id              Int                        @id @default(autoincrement())
+  school          School                     @relation(fields:[schoolId], references:[id])
   schoolId        Int
-  
-  invoice           StudentInvoice? @relation(fields: [invoiceId], references: [id])
-  invoiceId         Int?
 
-  createdBy       User?                @relation("NotificationCreatedBy", fields: [createdByUserId], references: [id])
+  invoice         StudentInvoice?            @relation(fields:[invoiceId], references:[id])
+  invoiceId       Int?
+
+  createdBy       User?                      @relation("NotificationCreatedBy", fields:[createdByUserId], references:[id])
   createdByUserId Int?
   title           String
   message         String
-  category        NotificationCategory @default(ANNOUNCEMENT)
-  audience        NotificationAudience @default(PARENTS)
-  status          NotificationStatus   @default(DRAFT)
+  category        NotificationCategory       @default(ANNOUNCEMENT)
+  audience        NotificationAudience       @default(PARENTS)
+  status          NotificationStatus         @default(DRAFT)
   scheduledAt     TimestamptzString?
   sentAt          TimestamptzString?
   recipients      NotificationRecipient[]
   emailDeliveries EmailDelivery[]
-  createdAt       TimestamptzString    @default(now())
+  createdAt       TimestamptzString          @default(now())
   updatedAt       temporal.updatedAtString()
 
   @@index([schoolId, status])
@@ -1186,37 +1318,37 @@ model Notification {
 }
 
 model NotificationRecipient {
-  id             Int          @id @default(autoincrement())
-  notification   Notification @relation(fields: [notificationId], references: [id])
+  id             Int                @id @default(autoincrement())
+  notification   Notification       @relation(fields:[notificationId], references:[id])
   notificationId Int
-  user           User         @relation("NotificationRecipientUser", fields: [userId], references: [id])
+  user           User               @relation("NotificationRecipientUser", fields:[userId], references:[id])
   userId         Int
   readAt         TimestamptzString?
-  createdAt      TimestamptzString @default(now())
+  createdAt      TimestamptzString  @default(now())
 
   @@unique([notificationId, userId])
   @@index([userId, readAt])
 }
 
 model EmailDelivery {
-  id                Int                @id @default(autoincrement())
+  id                Int                        @id @default(autoincrement())
 
-  school            School             @relation(fields: [schoolId], references: [id])
+  school            School                     @relation(fields:[schoolId], references:[id])
   schoolId          Int
 
-  notification      Notification?      @relation(fields: [notificationId], references: [id])
+  notification      Notification?              @relation(fields:[notificationId], references:[id])
   notificationId    Int?
 
-  user              User?              @relation(fields: [userId], references: [id])
+  user              User?                      @relation(fields:[userId], references:[id])
   userId            Int?
 
   recipientEmail    String
   subject           String
   textBody          String?
   htmlBody          String?
-  status            EmailDeliveryStatus @default(PENDING)
+  status            EmailDeliveryStatus        @default(PENDING)
 
-  attemptCount      Int                @default(0)
+  attemptCount      Int                        @default(0)
   providerMessageId String?
   lastError         String?
   nextRetryAt       TimestamptzString?
@@ -1224,7 +1356,7 @@ model EmailDelivery {
   sentAt            TimestamptzString?
   deliveredAt       TimestamptzString?
 
-  createdAt         TimestamptzString  @default(now())
+  createdAt         TimestamptzString          @default(now())
   updatedAt         temporal.updatedAtString()
 
   @@index([schoolId, createdAt])
@@ -1235,31 +1367,31 @@ model EmailDelivery {
 }
 
 model StudentContentRead {
-  id        Int               @id @default(autoincrement())
-  student   Student           @relation(fields: [studentId], references: [id])
-  studentId Int
-  contentType StudentContentType
-  contentId Int
+  id            Int                        @id @default(autoincrement())
+  student       Student                    @relation(fields:[studentId], references:[id])
+  studentId     Int
+  contentType   StudentContentType
+  contentId     Int
   viewedVersion String
-  viewedAt  TimestamptzString @default(now())
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  viewedAt      TimestamptzString          @default(now())
+  createdAt     TimestamptzString          @default(now())
+  updatedAt     temporal.updatedAtString()
 
   @@unique([studentId, contentType, contentId])
   @@index([studentId, contentType])
 }
 
 model SchoolPaymentConfig {
-  id                     Int      @id @default(autoincrement())
-  school                 School   @relation(fields: [schoolId], references: [id])
-  schoolId               Int      @unique
-  provider               String   @default("PAYSTACK")
-  publicKey              String?
-  encryptedSecretKey     String?
-  isEnabled              Boolean  @default(false)
-  lastValidatedAt        TimestamptzString?
-  createdAt              TimestamptzString @default(now())
-  updatedAt              temporal.updatedAtString()
+  id                 Int                        @id @default(autoincrement())
+  school             School                     @relation(fields:[schoolId], references:[id])
+  schoolId           Int                        @unique
+  provider           String                     @default("PAYSTACK")
+  publicKey          String?
+  encryptedSecretKey String?
+  isEnabled          Boolean                    @default(false)
+  lastValidatedAt    TimestamptzString?
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
 
   @@index([provider, isEnabled])
 }
