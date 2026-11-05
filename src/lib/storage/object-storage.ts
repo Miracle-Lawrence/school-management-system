@@ -205,3 +205,111 @@ export async function deleteStoredImage(
     }),
   );
 }
+
+/**
+ * Uploads an image owned by the platform rather than an individual school.
+ * Platform branding images are public assets.
+ */
+export async function uploadPlatformImage(
+  file: File,
+  category: string,
+): Promise<string> {
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Please select an image.");
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("Image must not exceed 2 MB.");
+  }
+
+  const extension = ALLOWED_IMAGE_TYPES.get(file.type);
+
+  if (!extension) {
+    throw new Error("Only JPG, PNG, and WEBP images are allowed.");
+  }
+
+  const safeCategory = category.replace(/[^a-zA-Z0-9_-]/g, "");
+
+  if (!safeCategory) {
+    throw new Error("Invalid image category.");
+  }
+
+  const key = [
+    "platform",
+    safeCategory,
+    `${randomUUID()}.${extension}`,
+  ].join("/");
+
+  const body = Buffer.from(await file.arrayBuffer());
+
+  await getS3Client().send(
+    new PutObjectCommand({
+      Bucket: PUBLIC_BUCKET,
+      Key: key,
+      Body: body,
+      ContentType: file.type,
+      ContentLength: body.length,
+      CacheControl: "public, max-age=31536000, immutable",
+    }),
+  );
+
+  return `neon-public://${key}`;
+}
+
+/**
+ * Resolves a public platform branding image.
+ * Only references inside the platform storage namespace are accepted.
+ */
+export async function resolvePlatformImageUrl(
+  reference?: string | null,
+): Promise<string | null> {
+  if (!reference) return null;
+
+  const parsed = parseStorageReference(reference);
+
+  // Preserve compatibility with existing external or local image URLs.
+  if (!parsed) return reference;
+
+  if (
+    parsed.visibility !== "public" ||
+    !parsed.key.startsWith("platform/")
+  ) {
+    throw new Error("Invalid platform image reference.");
+  }
+
+  const endpoint = process.env.NEON_STORAGE_ENDPOINT_URL_S3;
+
+  if (!endpoint) {
+    throw new Error("NEON_STORAGE_ENDPOINT_URL_S3 is not configured.");
+  }
+
+  return `${endpoint.replace(/\/+$/, "")}/${PUBLIC_BUCKET}/${encodeObjectKey(parsed.key)}`;
+}
+
+/**
+ * Deletes an image only when it belongs to the platform namespace.
+ */
+export async function deletePlatformImage(
+  reference?: string | null,
+): Promise<void> {
+  if (!reference) return;
+
+  const parsed = parseStorageReference(reference);
+
+  // Legacy local paths are not objects in Neon Object Storage.
+  if (!parsed) return;
+
+  if (
+    parsed.visibility !== "public" ||
+    !parsed.key.startsWith("platform/")
+  ) {
+    throw new Error("Refusing to delete an image outside platform storage.");
+  }
+
+  await getS3Client().send(
+    new DeleteObjectCommand({
+      Bucket: PUBLIC_BUCKET,
+      Key: parsed.key,
+    }),
+  );
+}

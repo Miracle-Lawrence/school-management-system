@@ -1,8 +1,29 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
+import {
+  uploadPlatformBrandingLogo,
+  savePlatformBranding,
+} from "@/lib/services/platform-branding.service";
+import { resolvePlatformImageUrl } from "@/lib/storage/object-storage";
 
 export const dynamic = "force-dynamic";
+
+async function uploadPlatformLogo(formData: FormData) {
+  "use server";
+
+  await requireRole(["PLATFORM_OWNER", "PLATFORM_ADMIN"]);
+
+  const file = formData.get("logo");
+
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Please select a platform logo.");
+  }
+
+  await uploadPlatformBrandingLogo(file);
+
+  redirect("/dashboard/settings?logoSaved=1");
+}
 
 async function savePlatformSettings(formData: FormData) {
   "use server";
@@ -77,13 +98,23 @@ async function savePlatformSettings(formData: FormData) {
     await db.orm.public.PlatformSetting.create(values);
   }
 
+  await savePlatformBranding({
+    platformName,
+    primaryColor: String(formData.get("primaryColor") ?? "#101b35"),
+    secondaryColor: String(formData.get("secondaryColor") ?? "#334155"),
+    accentColor: String(formData.get("accentColor") ?? "#2563eb"),
+    website: String(formData.get("website") ?? ""),
+    businessAddress: String(formData.get("businessAddress") ?? ""),
+    invoiceFooterText: String(formData.get("invoiceFooterText") ?? ""),
+  });
+
   redirect("/dashboard/settings?saved=1");
 }
 
 export default async function PlatformSettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; logoSaved?: string }>;
 }) {
   await requireRole(["PLATFORM_OWNER", "PLATFORM_ADMIN"]);
 
@@ -99,6 +130,13 @@ export default async function PlatformSettingsPage({
   const registrationEnabled = settings?.registrationEnabled ?? true;
   const maintenanceMode = settings?.maintenanceMode ?? false;
   const maintenanceMessage = settings?.maintenanceMessage ?? "";
+  const primaryColor = settings?.primaryColor ?? "#101b35";
+  const secondaryColor = settings?.secondaryColor ?? "#334155";
+  const accentColor = settings?.accentColor ?? "#2563eb";
+  const website = settings?.website ?? "";
+  const businessAddress = settings?.businessAddress ?? "";
+  const invoiceFooterText = settings?.invoiceFooterText ?? "";
+  const logoUrl = await resolvePlatformImageUrl(settings?.logoUrl);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -124,6 +162,65 @@ export default async function PlatformSettingsPage({
         </div>
       )}
 
+      {params.logoSaved === "1" && (
+        <div
+          role="status"
+          className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-medium text-emerald-800"
+        >
+          Platform logo uploaded successfully.
+        </div>
+      )}
+
+      <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 px-6 py-5 sm:px-8">
+          <h2 className="text-lg font-bold text-slate-900">
+            Platform Logo
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Upload the logo displayed on platform invoices and payment receipts.
+          </p>
+        </div>
+
+        <form
+          action={uploadPlatformLogo}
+          encType="multipart/form-data"
+          className="space-y-5 p-6 sm:p-8"
+        >
+          {logoUrl && (
+            <div className="flex items-center gap-4">
+              <img
+                src={logoUrl}
+                alt="Current platform logo"
+                className="h-20 w-20 rounded-lg border border-slate-200 object-contain p-2"
+              />
+              <p className="text-sm text-slate-500">
+                Current platform logo
+              </p>
+            </div>
+          )}
+
+          <label className="block text-sm font-semibold text-slate-700">
+            Choose logo
+            <input
+              type="file"
+              name="logo"
+              accept="image/png,image/jpeg,image/webp"
+              required
+              className="mt-2 block w-full rounded-lg border border-slate-300 p-3 text-sm"
+            />
+            <span className="mt-2 block text-xs font-normal text-slate-500">
+              PNG, JPG or WEBP. Maximum file size: 2 MB.
+            </span>
+          </label>
+
+          <button
+            type="submit"
+            className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
+          >
+            Upload Logo
+          </button>
+        </form>
+      </section>
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-100 px-6 py-5 sm:px-8">
           <h2 className="text-lg font-bold text-slate-900">
@@ -177,6 +274,56 @@ export default async function PlatformSettingsPage({
 
           <div className="border-t border-slate-100 pt-7">
             <h2 className="text-lg font-bold text-slate-900">
+              Invoice and receipt branding
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Customize the information displayed on platform invoices and receipts.
+            </p>
+
+            <div className="mt-5 grid gap-6 md:grid-cols-2">
+              <label className="block text-sm font-semibold text-slate-700">
+                Primary colour
+                <input type="color" name="primaryColor" defaultValue={primaryColor}
+                  className="mt-2 h-12 w-full cursor-pointer rounded-lg border border-slate-300 p-1" />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700">
+                Secondary colour
+                <input type="color" name="secondaryColor" defaultValue={secondaryColor}
+                  className="mt-2 h-12 w-full cursor-pointer rounded-lg border border-slate-300 p-1" />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700">
+                Accent colour
+                <input type="color" name="accentColor" defaultValue={accentColor}
+                  className="mt-2 h-12 w-full cursor-pointer rounded-lg border border-slate-300 p-1" />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700">
+                Website
+                <input type="url" name="website" maxLength={255}
+                  defaultValue={website} placeholder="https://example.com"
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10" />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700 md:col-span-2">
+                Business address
+                <textarea name="businessAddress" maxLength={500} rows={3}
+                  defaultValue={businessAddress}
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10" />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700 md:col-span-2">
+                Invoice and receipt footer
+                <textarea name="invoiceFooterText" maxLength={1000} rows={3}
+                  defaultValue={invoiceFooterText}
+                  placeholder="Thank you for your business."
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10" />
+              </label>
+            </div>
+          </div>
+          <div className="border-t border-slate-100 pt-7">
+            <h2 className="text-lg font-bold text-slate-900">
               Regional preferences
             </h2>
             <p className="mt-1 text-sm text-slate-500">
@@ -193,11 +340,11 @@ export default async function PlatformSettingsPage({
                   required
                   className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 >
-                  <option value="NGN">NGN — Nigerian Naira</option>
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="GBP">GBP — British Pound</option>
-                  <option value="EUR">EUR — Euro</option>
-                  <option value="CAD">CAD — Canadian Dollar</option>
+                  <option value="NGN">NGN â€” Nigerian Naira</option>
+                  <option value="USD">USD â€” US Dollar</option>
+                  <option value="GBP">GBP â€” British Pound</option>
+                  <option value="EUR">EUR â€” Euro</option>
+                  <option value="CAD">CAD â€” Canadian Dollar</option>
                 </select>
               </label>
 
@@ -210,9 +357,9 @@ export default async function PlatformSettingsPage({
                   className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 >
                   <option value="Africa/Lagos">
-                    Africa/Lagos — West Africa
+                    Africa/Lagos â€” West Africa
                   </option>
-                  <option value="UTC">UTC — Coordinated Universal Time</option>
+                  <option value="UTC">UTC â€” Coordinated Universal Time</option>
                   <option value="Europe/London">Europe/London</option>
                   <option value="America/New_York">America/New_York</option>
                 </select>
@@ -309,3 +456,10 @@ export default async function PlatformSettingsPage({
     </div>
   );
 }
+
+
+
+
+
+
+
