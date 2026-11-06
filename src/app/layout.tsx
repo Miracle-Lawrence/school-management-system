@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "School Management System",
-  description: "School administration and academic management platform.",
+  title: "MLOEXA STUDIO | Website Design, Development & Software Solutions",
+  description: "MLOEXA STUDIO builds modern websites, custom web applications and secure digital solutions for businesses and organisations.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -28,3 +28,4 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
