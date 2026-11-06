@@ -1,7 +1,8 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import PlatformMobileNavigation from "@/app/dashboard/components/platform-mobile-navigation";
+import EnquiryNavLink from "@/app/dashboard/components/enquiry-nav-link";
 
 async function signOutPlatform() {
   "use server";
@@ -14,7 +15,7 @@ const navigation = [
       {
         name: "Dashboard",
         href: "/dashboard",
-        icon: "â—«",
+        icon: "◫",
       },
     ],
   },
@@ -24,12 +25,12 @@ const navigation = [
       {
         name: "Schools",
         href: "/dashboard/schools",
-        icon: "â–¤",
+        icon: "▤",
       },
       {
         name: "Users",
         href: "/dashboard/users",
-        icon: "â™™",
+        icon: "♙",
       },
     ],
   },
@@ -39,32 +40,32 @@ const navigation = [
       {
         name: "Subscription Plans",
         href: "/dashboard/subscriptions",
-        icon: "â—‡",
+        icon: "◇",
       },
       {
         name: "School Subscriptions",
         href: "/dashboard/subscriptions/schools",
-        icon: "â–¦",
+        icon: "▦",
       },
       {
         name: "Payment Records",
         href: "/dashboard/subscriptions/payments",
-        icon: "â‚¦",
+        icon: "₦",
       },
       {
         name: "Billing Rates",
         href: "/dashboard/billing/rates",
-        icon: "₦",
+        icon: "?",
       },
       {
         name: "Invoices",
         href: "/dashboard/billing/invoices",
-        icon: "▤",
+        icon: "?",
       },
       {
         name: "Payments",
         href: "/dashboard/billing/payments",
-        icon: "✓",
+        icon: "?",
       },
     ],
   },
@@ -74,7 +75,7 @@ const navigation = [
       {
         name: "Settings",
         href: "/dashboard/settings",
-        icon: "âš™",
+        icon: "⚙",
       },
     ],
   },
@@ -146,14 +147,19 @@ export default async function DashboardLayout({
                       <span>{item.name}</span>
 
                       <span className="ml-auto text-slate-600 opacity-0 transition-opacity group-hover:opacity-100">
-                        â†’
+                        →
                       </span>
                     </Link>
                   ))}
                 </div>
               </div>
             ))}
-          </nav>
+                      <div>
+              <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                Communications
+              </p>
+              <EnquiryNavLink />
+            </div></nav>
 
           <div className="border-t border-white/10 p-4">
             <div className="mb-4 flex min-w-0 items-center gap-3 rounded-xl bg-white/5 p-3">
@@ -184,7 +190,7 @@ export default async function DashboardLayout({
                 type="submit"
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
               >
-                <span aria-hidden="true">â†—</span>
+                <span aria-hidden="true">↗</span>
                 Sign Out
               </button>
             </form>

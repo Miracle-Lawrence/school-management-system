@@ -50,7 +50,8 @@ const values = [
   },
 ];
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ contact?: string }> }) {
+  const { contact } = await searchParams;
   return (
     <main className="min-h-screen overflow-hidden bg-white text-slate-900">
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
@@ -402,6 +403,18 @@ export default function Home() {
               Share your details and a brief description of what you need.
             </p>
 
+            {contact === "success" && (
+              <div role="status" className="mt-5 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
+                Thank you! Your enquiry has been submitted successfully. We will get back to you soon.
+              </div>
+            )}
+
+            {contact === "error" && (
+              <div role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">
+                We could not submit your enquiry. Please check your details and try again.
+              </div>
+            )}
+
             <div className="mt-7 grid gap-5 sm:grid-cols-2">
               <label className="text-sm font-semibold text-slate-700">
                 Full name
@@ -471,6 +484,7 @@ export default function Home() {
     </main>
   );
 }
+
 
 
 

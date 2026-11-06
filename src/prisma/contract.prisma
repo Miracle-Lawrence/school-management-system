@@ -1395,3 +1395,26 @@ model SchoolPaymentConfig {
 
   @@index([provider, isEnabled])
 }
+
+// MLOEXA Studio public website enquiries
+enum ContactEnquiryStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+model ContactEnquiry {
+  id        Int                  @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  service   String
+  message   String
+  status    ContactEnquiryStatus @default(NEW)
+  createdAt TimestamptzString    @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+}

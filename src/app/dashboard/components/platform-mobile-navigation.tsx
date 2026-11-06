@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import EnquiryNavLink from "@/app/dashboard/components/enquiry-nav-link";
 
 const navigation = [
   {
@@ -139,7 +140,12 @@ export default function PlatformMobileNavigation({
                   </div>
                 </div>
               ))}
-            </nav>
+                          <div>
+                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                  Communications
+                </p>
+                <EnquiryNavLink mobile onNavigate={() => setIsOpen(false)} />
+              </div></nav>
 
             <div className="border-t border-white/10 p-4">
               <div className="mb-4 flex min-w-0 items-center gap-3 rounded-xl bg-white/5 p-3">

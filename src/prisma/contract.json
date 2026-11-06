@@ -40,6 +40,10 @@
       "model": "ClassSubject",
       "namespace": "public"
     },
+    "ContactEnquiry": {
+      "model": "ContactEnquiry",
+      "namespace": "public"
+    },
     "EmailDelivery": {
       "model": "EmailDelivery",
       "namespace": "public"
@@ -286,6 +290,27 @@
               {
                 "name": "YEARLY",
                 "value": "YEARLY"
+              }
+            ]
+          },
+          "ContactEnquiryStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "NEW",
+                "value": "NEW"
+              },
+              {
+                "name": "READ",
+                "value": "READ"
+              },
+              {
+                "name": "REPLIED",
+                "value": "REPLIED"
+              },
+              {
+                "name": "ARCHIVED",
+                "value": "ARCHIVED"
               }
             ]
           },
@@ -2295,6 +2320,113 @@
               },
               "namespaceId": "public",
               "table": "ClassSubject"
+            }
+          },
+          "ContactEnquiry": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "service": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContactEnquiryStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "service": {
+                  "column": "service"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ContactEnquiry"
             }
           },
           "EmailDelivery": {
@@ -12007,6 +12139,106 @@
                 }
               ]
             },
+            "ContactEnquiry": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('NEW', 'READ', 'REPLIED', 'ARCHIVED')",
+                  "name": "ContactEnquiry_status_check_4518e741",
+                  "prefix": "ContactEnquiry_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "service": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NEW"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContactEnquiryStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdAt"
+                  ],
+                  "name": "ContactEnquiry_createdAt_idx_9575dbd7",
+                  "prefix": "ContactEnquiry_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status",
+                    "createdAt"
+                  ],
+                  "name": "ContactEnquiry_status_createdAt_idx_58610442",
+                  "prefix": "ContactEnquiry_status_createdAt_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "EmailDelivery": {
               "checks": [
                 {
@@ -18284,6 +18516,15 @@
                 "YEARLY"
               ]
             },
+            "ContactEnquiryStatus": {
+              "kind": "valueSet",
+              "values": [
+                "NEW",
+                "READ",
+                "REPLIED",
+                "ARCHIVED"
+              ]
+            },
             "EmailDeliveryStatus": {
               "kind": "valueSet",
               "values": [
@@ -18464,10 +18705,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e1c6ae023ccfe582c7b8a58e98623014782dce21563d5e11d5fece9e6a6d0b5c"
+    "storageHash": "b72470b16c3fede5521170532e1bea96a8fc9dfa9accc2960a6c8a5e561297f3"
   },
   "execution": {
-    "executionHash": "a3bfcac1cb96e7d1440df55b5863817dee51e7de94542d5b751ee30cdcde1a9f",
+    "executionHash": "21f8370068414abcd4cda2efea5c46861bbfe128fe34bf1378cd84d0421628d5",
     "mutations": {
       "defaults": [
         {
@@ -18603,6 +18844,21 @@
             "column": "updatedAt",
             "namespace": "public",
             "table": "ClassSubject"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "ContactEnquiry"
           }
         },
         {
