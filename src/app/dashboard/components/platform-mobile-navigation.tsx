@@ -23,6 +23,9 @@ const navigation = [
       { name: "Subscription Plans", href: "/dashboard/subscriptions" },
       { name: "School Subscriptions", href: "/dashboard/subscriptions/schools" },
       { name: "Payment Records", href: "/dashboard/subscriptions/payments" },
+      { name: "Billing Rates", href: "/dashboard/billing/rates" },
+      { name: "Invoices", href: "/dashboard/billing/invoices" },
+      { name: "Payments", href: "/dashboard/billing/payments" },
     ],
   },
   {

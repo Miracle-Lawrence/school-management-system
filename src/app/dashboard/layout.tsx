@@ -51,6 +51,21 @@ const navigation = [
         href: "/dashboard/subscriptions/payments",
         icon: "â‚¦",
       },
+      {
+        name: "Billing Rates",
+        href: "/dashboard/billing/rates",
+        icon: "₦",
+      },
+      {
+        name: "Invoices",
+        href: "/dashboard/billing/invoices",
+        icon: "▤",
+      },
+      {
+        name: "Payments",
+        href: "/dashboard/billing/payments",
+        icon: "✓",
+      },
     ],
   },
   {
