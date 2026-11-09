@@ -36,11 +36,6 @@ const quickLinks = [
     href: "/student/attendance",
   },
   {
-    title: "School Fees",
-    description: "View your school fee invoices.",
-    href: "/student/fees",
-  },
-  {
     title: "Announcements",
     description: "Read important messages from your school.",
     href: "/student/announcements",

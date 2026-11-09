@@ -21,7 +21,6 @@ const navigation = [
   { label: "Class Notes", href: "/student/class-notes", icon: "▤" },
   { label: "My Results", href: "/student/results", icon: "▥" },
   { label: "Attendance", href: "/student/attendance", icon: "✓" },
-  { label: "School Fees", href: "/student/fees", icon: "₦" },
   { label: "Announcements", href: "/student/announcements", icon: "◈" },
   { label: "Notifications", href: "/student/notifications", icon: "♧" },
   { label: "Settings", href: "/student/settings", icon: "⚙" },

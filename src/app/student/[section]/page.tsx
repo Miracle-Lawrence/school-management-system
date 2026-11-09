@@ -26,10 +26,6 @@ const sections: Record<string, { title: string; description: string }> = {
     title: "Attendance",
     description: "Review your attendance records.",
   },
-  fees: {
-    title: "School Fees",
-    description: "View your school fee invoices and payment information.",
-  },
   announcements: {
     title: "Announcements",
     description: "Read announcements published by your school.",

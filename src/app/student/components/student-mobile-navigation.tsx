@@ -14,7 +14,6 @@ const navigation = [
   ["Class Notes", "/student/class-notes"],
   ["My Results", "/student/results"],
   ["Attendance", "/student/attendance"],
-  ["School Fees", "/student/fees"],
   ["Announcements", "/student/announcements"],
   ["Notifications", "/student/notifications"],
   ["Settings", "/student/settings"],
