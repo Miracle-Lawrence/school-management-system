@@ -13,6 +13,7 @@ import { db } from "@/prisma/db";
 
 const createSchema = z.object({
   name: z.string().trim().min(2, "Enter at least 2 characters.").max(100),
+  maxScore: z.coerce.number().finite().positive("Maximum score must be greater than zero."),
 });
 
 const updateSchema = z.object({
@@ -54,6 +55,7 @@ export default async function GradingSetsPage() {
 
     const result = createSchema.safeParse({
       name: formData.get("name"),
+      maxScore: formData.get("maxScore"),
     });
 
     if (!result.success) {
@@ -63,6 +65,7 @@ export default async function GradingSetsPage() {
     await createGradeScaleSet({
       schoolId,
       name: result.data.name,
+      maxScore: result.data.maxScore,
     });
 
     redirect("/school/settings/grading-sets");
@@ -128,7 +131,7 @@ export default async function GradingSetsPage() {
           href="/school/settings"
           className="text-sm font-medium text-blue-600 hover:text-blue-700"
         >
-          ← School Settings
+          â† School Settings
         </Link>
 
         <p className="mt-4 text-sm font-semibold text-blue-600">
@@ -170,6 +173,25 @@ export default async function GradingSetsPage() {
               minLength={2}
               maxLength={100}
               placeholder="e.g. Primary School Grading"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          <div className="w-full sm:w-36">
+            <label
+              htmlFor="newSetMaxScore"
+              className="mb-1 block text-sm font-medium text-slate-700"
+            >
+              Maximum score
+            </label>
+            <input
+              id="newSetMaxScore"
+              name="maxScore"
+              type="number"
+              min="0.01"
+              step="any"
+              defaultValue="100"
+              required
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
@@ -229,7 +251,10 @@ export default async function GradingSetsPage() {
                       <h3 className="text-base font-semibold text-slate-900">
                         {set.name}
                       </h3>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm font-medium text-blue-700">
+  Maximum score: {set.maxScore}
+</p>
+<p className="mt-1 text-sm text-slate-500">
                         {bandCount} grade band{bandCount === 1 ? "" : "s"}
                       </p>
                     </div>

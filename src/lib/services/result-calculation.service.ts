@@ -1,4 +1,4 @@
-﻿import { db } from "@/prisma/db";
+import { db } from "@/prisma/db";
 
 type DatabaseClient = Pick<typeof db, "orm">;
 
@@ -38,22 +38,9 @@ interface SubjectCalculation {
   remark: string | null;
 }
 
-interface StudentTermCalculation {
-  totalScore: number;
-  averageScore: number;
-  grade: string | null;
-  remark: string | null;
-}
-
 function roundScore(value: number, decimalPlaces = 2) {
   const factor = 10 ** decimalPlaces;
   return Math.round((value + Number.EPSILON) * factor) / factor;
-}
-
-function validateFiniteNumber(value: number, fieldName: string) {
-  if (!Number.isFinite(value)) {
-    throw new Error(`${fieldName} must be a valid number.`);
-  }
 }
 
 async function getSchoolTerm(
@@ -186,9 +173,8 @@ async function getReportComponents(
   return components.sort((a, b) => a.displayOrder - b.displayOrder);
 }
 
-async function getGradeForScore(
+async function getGradeScaleSetMaxScore(
   gradeScaleSetId: number | null,
-  score: number,
   client: DatabaseClient = db,
 ) {
   if (gradeScaleSetId === null) {
@@ -197,8 +183,34 @@ async function getGradeForScore(
     );
   }
 
+  const gradingSet = await client.orm.public.GradeScaleSet.where((item) =>
+    item.id.eq(gradeScaleSetId),
+  ).first();
+
+  if (!gradingSet || !gradingSet.isActive) {
+    throw new Error("The selected grading set is missing or inactive.");
+  }
+
+  return gradingSet.maxScore;
+}
+async function getGradeForScore(
+  gradeScaleSetId: number | null,
+  score: number,
+  client: DatabaseClient = db,
+) {
+  const maximumScore = await getGradeScaleSetMaxScore(
+    gradeScaleSetId,
+    client,
+  );
+
+  if (!Number.isFinite(score) || score < 0 || score > maximumScore) {
+    throw new Error(
+      `Score must be between 0 and ${maximumScore}.`,
+    );
+  }
+
   const gradeScales = await client.orm.public.GradeScale.where((item) =>
-    item.gradeScaleSetId.eq(gradeScaleSetId),
+    item.gradeScaleSetId.eq(gradeScaleSetId!),
   ).all();
 
   const activeScales = gradeScales
@@ -623,11 +635,22 @@ async function calculateSubject(
     throw new Error("The report configuration has no valid maximum score.");
   }
 
+  const gradingSetMaxScore = await getGradeScaleSetMaxScore(
+    configuration.gradeScaleSetId,
+    client,
+  );
+
+  if (Math.abs(totalMaxScore - gradingSetMaxScore) > 0.000001) {
+    throw new Error(
+      `The report components total ${totalMaxScore}, but the selected grading set maximum is ${gradingSetMaxScore}. Please adjust the component maximum scores or select the correct grading set.`,
+    );
+  }
+
   const normalizedScore = roundScore((totalScore / totalMaxScore) * 100);
 
   const gradeResult = await getGradeForScore(
     configuration.gradeScaleSetId,
-    normalizedScore,
+    totalScore,
     client,
   );
 
@@ -873,9 +896,17 @@ export async function calculateAndSaveStudentTermResult(
     input.reportType,
   );
 
+  const gradingSetMaxScore = await getGradeScaleSetMaxScore(
+    configuration.gradeScaleSetId,
+  );
+
+  const overallRawScore = roundScore(
+    (averageScore / 100) * gradingSetMaxScore,
+  );
+
   const gradeResult = await getGradeForScore(
     configuration.gradeScaleSetId,
-    averageScore,
+    overallRawScore,
   );
 
   const allStudentTermResults = await db.orm.public.StudentTermResult.where(

@@ -16,12 +16,12 @@ export const gradeScaleSchema = z.object({
   minScore: z.coerce
     .number()
     .min(0, "Minimum score cannot be below 0.")
-    .max(100, "Minimum score cannot exceed 100."),
+    .finite("Minimum score must be a finite number."),
 
   maxScore: z.coerce
     .number()
     .min(0, "Maximum score cannot be below 0.")
-    .max(100, "Maximum score cannot exceed 100."),
+    .finite("Maximum score must be a finite number."),
 
   remark: z
     .string()

@@ -1,7 +1,8 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
+import { getGradeScaleSets } from "@/lib/services/report-configuration.service";
 import {
   getGradeScale,
   updateGradeScale,
@@ -44,6 +45,12 @@ export default async function EditGradeScalePage({
   }
 
   const gradeScaleSetId = gradeScale.gradeScaleSetId;
+  const gradeScaleSets = await getGradeScaleSets(schoolId);
+  const gradingSet = gradeScaleSets.find((set) => set.id === gradeScaleSetId);
+
+  if (!gradingSet) {
+    notFound();
+  }
   const gradingPageUrl = `/school/settings/grading?gradeScaleSetId=${gradeScaleSetId}`;
 
   async function updateGradeScaleAction(formData: FormData) {
@@ -97,7 +104,7 @@ export default async function EditGradeScalePage({
           href={gradingPageUrl}
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          ← Back to Grading Scales
+          â† Back to Grading Scales
         </Link>
 
         <h1 className="mt-3 text-2xl font-bold text-gray-900">Edit Grade</h1>
@@ -166,7 +173,7 @@ export default async function EditGradeScalePage({
               name="minScore"
               type="number"
               min="0"
-              max="100"
+              max={gradingSet.maxScore}
               step="0.01"
               defaultValue={gradeScale.minScore}
               required
@@ -187,7 +194,7 @@ export default async function EditGradeScalePage({
               name="maxScore"
               type="number"
               min="0"
-              max="100"
+              max={gradingSet.maxScore}
               step="0.01"
               defaultValue={gradeScale.maxScore}
               required
@@ -244,7 +251,7 @@ export default async function EditGradeScalePage({
           <span>
             <span className="font-medium">Active</span>
             <span className="ml-1 text-gray-500">
-              — use this grade when calculating results
+              â€” use this grade when calculating results
             </span>
           </span>
         </label>

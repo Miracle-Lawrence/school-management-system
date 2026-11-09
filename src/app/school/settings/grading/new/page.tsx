@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -108,7 +108,7 @@ export default async function NewGradeScalePage({
           }
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          ← Back to Grading Scales
+          â† Back to Grading Scales
         </Link>
 
         <h1 className="mt-3 text-2xl font-bold text-gray-900">Add Grade</h1>
@@ -215,7 +215,7 @@ export default async function NewGradeScalePage({
                 name="minScore"
                 type="number"
                 min="0"
-                max="100"
+                max={selectedSet.maxScore}
                 step="0.01"
                 placeholder="80"
                 required
@@ -236,7 +236,7 @@ export default async function NewGradeScalePage({
                 name="maxScore"
                 type="number"
                 min="0"
-                max="100"
+                max={selectedSet.maxScore}
                 step="0.01"
                 placeholder="100"
                 required
@@ -292,7 +292,7 @@ export default async function NewGradeScalePage({
             <span>
               <span className="font-medium">Active</span>
               <span className="ml-1 text-gray-500">
-                — use this grade when calculating results
+                â€” use this grade when calculating results
               </span>
             </span>
           </label>

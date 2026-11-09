@@ -37,20 +37,25 @@ async function validateGradeScaleSetOwnership(
   return gradeScaleSet;
 }
 
-function validateScoreRange(minScore: number, maxScore: number) {
+function validateScoreRange(
+  minScore: number,
+  maxScore: number,
+  maximumAllowedScore: number,
+) {
   if (!Number.isFinite(minScore) || !Number.isFinite(maxScore)) {
     throw new Error("Grade scores must be valid numbers.");
   }
 
-  if (minScore < 0 || maxScore > 100) {
-    throw new Error("Grade scores must be between 0 and 100.");
+  if (minScore < 0 || maxScore > maximumAllowedScore) {
+    throw new Error(
+      `Grade scores must be between 0 and ${maximumAllowedScore}.`,
+    );
   }
 
   if (minScore >= maxScore) {
     throw new Error("Minimum score must be less than maximum score.");
   }
 }
-
 function validateDisplayOrder(displayOrder: number) {
   if (!Number.isInteger(displayOrder) || displayOrder < 1) {
     throw new Error("Display order must be a positive integer.");
@@ -127,9 +132,12 @@ export async function createGradeScale(input: CreateGradeScaleInput) {
     throw new Error("Grade code is required.");
   }
 
-  await validateGradeScaleSetOwnership(input.schoolId, input.gradeScaleSetId);
+  const gradingSet = await validateGradeScaleSetOwnership(
+    input.schoolId,
+    input.gradeScaleSetId,
+  );
 
-  validateScoreRange(input.minScore, input.maxScore);
+  validateScoreRange(input.minScore, input.maxScore, gradingSet.maxScore);
   validateDisplayOrder(input.displayOrder);
 
   const existingGradeScales = await db.orm.public.GradeScale.where(
@@ -214,6 +222,15 @@ export async function updateGradeScale(
 ) {
   const gradeScale = await validateGradeScaleOwnership(gradeScaleId, schoolId);
 
+  if (gradeScale.gradeScaleSetId === null) {
+    throw new Error("This grade has not been assigned to a grading set.");
+  }
+
+  const gradingSet = await validateGradeScaleSetOwnership(
+    schoolId,
+    gradeScale.gradeScaleSetId,
+  );
+
   const name = input.name !== undefined ? input.name.trim() : gradeScale.name;
 
   const code =
@@ -248,7 +265,7 @@ export async function updateGradeScale(
     throw new Error("Grade code is required.");
   }
 
-  validateScoreRange(minScore, maxScore);
+  validateScoreRange(minScore, maxScore, gradingSet.maxScore);
   validateDisplayOrder(displayOrder);
 
   const existingGradeScales = await db.orm.public.GradeScale.where((item) =>
@@ -295,6 +312,11 @@ export async function updateGradeScale(
 export async function deleteGradeScale(schoolId: number, gradeScaleId: number) {
   const gradeScale = await validateGradeScaleOwnership(gradeScaleId, schoolId);
 
+  if (gradeScale.gradeScaleSetId === null) {
+    throw new Error("This grade has not been assigned to a grading set.");
+  }
+
+
   return db.orm.public.GradeScale.where((item) =>
     item.id.eq(gradeScale.id),
   ).delete();
@@ -312,8 +334,15 @@ export async function getGradeForScore(
     throw new Error("Score must be a valid number.");
   }
 
-  if (score < 0 || score > 100) {
-    throw new Error("Score must be between 0 and 100.");
+  const gradingSet = await validateGradeScaleSetOwnership(
+    schoolId,
+    gradeScaleSetId,
+  );
+
+  if (score < 0 || score > gradingSet.maxScore) {
+    throw new Error(
+      `Score must be between 0 and ${gradingSet.maxScore}.`,
+    );
   }
 
   const gradeScales = await getActiveGradeScales(schoolId, gradeScaleSetId);
@@ -333,12 +362,17 @@ export async function getGradeForScore(
 }
 
 /**
- * Check that a grading set's active grades cover scores from 0 to 100.
+ * Check that a grading set's active grades cover its full score range.
  */
 export async function validateGradeScaleCoverage(
   schoolId: number,
   gradeScaleSetId: number,
 ) {
+  const gradingSet = await validateGradeScaleSetOwnership(
+    schoolId,
+    gradeScaleSetId,
+  );
+
   const gradeScales = await getActiveGradeScales(schoolId, gradeScaleSetId);
 
   if (gradeScales.length === 0) {
@@ -364,8 +398,10 @@ export async function validateGradeScaleCoverage(
 
   const lastScale = sortedScales[sortedScales.length - 1];
 
-  if (lastScale.maxScore < 100) {
-    throw new Error("Grade scale coverage must extend to 100.");
+  if (lastScale.maxScore < gradingSet.maxScore) {
+    throw new Error(
+      `Grade scale coverage must extend to ${gradingSet.maxScore}.`,
+    );
   }
 
   return true;

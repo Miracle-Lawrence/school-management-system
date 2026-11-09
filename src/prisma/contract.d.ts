@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'479843e3557a0962a649a77e63bd109f047e093a600cc548f502cbe4dc57c8b1'>;
+  StorageHashBase<'6ec270b461e4fec571c0aa71a8bbabfee2d7132119e5c524f988af3588f33efc'>;
 export type ExecutionHash =
   ExecutionHashBase<'de6e9a5535a5f7eaf01a983bdba00ce584b4815e33c7272fad294c7513c0e90d'>;
 export type ProfileHash =
@@ -595,6 +595,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1400,6 +1401,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -2205,6 +2207,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly schoolId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -3010,6 +3013,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly schoolId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -3946,6 +3950,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     isActive: CodecTypes['pg/bool@1']['output'];
+    maxScore: CodecTypes['pg/float8@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     schoolId: CodecTypes['pg/int4@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -8158,6 +8163,15 @@ type ContractBase = Omit<
                   readonly default: {
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly maxScore: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/float8@1', 100>;
                   };
                 };
                 readonly name: {
@@ -15705,6 +15719,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly maxScore: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
               readonly name: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -15764,6 +15782,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly isActive: { readonly column: 'isActive' };
+                readonly maxScore: { readonly column: 'maxScore' };
                 readonly name: { readonly column: 'name' };
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
