@@ -3,6 +3,7 @@ import { db } from "@/prisma/db";
 export interface CreateGradeScaleSetInput {
   schoolId: number;
   name: string;
+  maxScore: number;
 }
 
 export interface UpdateGradeScaleSetInput {
@@ -44,6 +45,11 @@ export async function createGradeScaleSet(input: CreateGradeScaleSetInput) {
     throw new Error("Grading set name is required.");
   }
 
+  if (!Number.isFinite(input.maxScore) || input.maxScore <= 0) {
+    throw new Error("Maximum score must be a positive number.");
+  }
+
+
   const existingSets = await getGradeScaleSetsForSchool(input.schoolId);
 
   if (
@@ -55,6 +61,7 @@ export async function createGradeScaleSet(input: CreateGradeScaleSetInput) {
   return db.orm.public.GradeScaleSet.create({
     schoolId: input.schoolId,
     name,
+    maxScore: input.maxScore,
     isActive: true,
   });
 }

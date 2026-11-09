@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/auth/authorization";
 import PlatformMobileNavigation from "@/app/dashboard/components/platform-mobile-navigation";
 import EnquiryNavLink from "@/app/dashboard/components/enquiry-nav-link";
 
+export const dynamic = 'force-dynamic';
+
 async function signOutPlatform() {
   "use server";
   await signOut({ redirectTo: "/login" });

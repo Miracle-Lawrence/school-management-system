@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.GradeScaleSet.maxScore",
+    "label": "Add column \"maxScore\" to \"GradeScaleSet\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "maxScore",
+        "table": "GradeScaleSet"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"maxScore\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "GradeScaleSet",
+          "maxScore"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"maxScore\"",
+        "sql": "ALTER TABLE \"public\".\"GradeScaleSet\" ADD COLUMN \"maxScore\" float8 DEFAULT 100 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"maxScore\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "GradeScaleSet",
+          "maxScore"
+        ]
+      }
+    ]
+  }
+]

@@ -393,6 +393,7 @@ model GradeScaleSet {
   schoolId             Int
 
   name                 String
+  maxScore             Float                      @default(100)
   isActive             Boolean                    @default(true)
 
   gradeScales          GradeScale[]

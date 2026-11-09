@@ -55,7 +55,7 @@ export default async function GradingSettingsPage({
     try {
       await validateGradeScaleCoverage(schoolId, selectedSet.id);
       coverageValid = true;
-      coverageMessage = "Grading set covers 0–100.";
+      coverageMessage = `Grading set covers 0–${selectedSet.maxScore}.`;
     } catch (error) {
       coverageMessage =
         error instanceof Error

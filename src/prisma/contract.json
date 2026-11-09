@@ -3358,6 +3358,13 @@
                   "kind": "scalar"
                 }
               },
+              "maxScore": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
               "name": {
                 "nullable": false,
                 "type": {
@@ -3438,6 +3445,9 @@
                 },
                 "isActive": {
                   "column": "isActive"
+                },
+                "maxScore": {
+                  "column": "maxScore"
                 },
                 "name": {
                   "column": "name"
@@ -13141,6 +13151,15 @@
                   "nativeType": "bool",
                   "nullable": false
                 },
+                "maxScore": {
+                  "codecId": "pg/float8@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 100
+                  },
+                  "nativeType": "float8",
+                  "nullable": false
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -18705,7 +18724,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b72470b16c3fede5521170532e1bea96a8fc9dfa9accc2960a6c8a5e561297f3"
+    "storageHash": "9d1e5940b99e6c366cff9e1a56f368239b59f3f714599eafd31c6b4e4d0f090c"
   },
   "execution": {
     "executionHash": "21f8370068414abcd4cda2efea5c46861bbfe128fe34bf1378cd84d0421628d5",
