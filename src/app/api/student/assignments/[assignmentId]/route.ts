@@ -27,9 +27,13 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const userId = Number(session.user.id);
-    const schoolId = session.user.schoolId;
+    const schoolId = Number(session.user.schoolId);
 
-    if (!isPositiveInteger(userId) || !schoolId) {
+    if (
+      !isPositiveInteger(userId) ||
+      !Number.isSafeInteger(schoolId) ||
+      schoolId <= 0
+    ) {
       return NextResponse.json(
         { error: "Valid student and school context are required." },
         { status: 400 },

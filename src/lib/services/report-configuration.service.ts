@@ -553,6 +553,16 @@ if (input.type === "ASSESSMENT") {
 }
 
 if (input.type === "CALCULATED") {
+  if (
+    input.maxScore == null ||
+    !Number.isFinite(input.maxScore) ||
+    input.maxScore <= 0
+  ) {
+    throw new Error(
+      "Maximum score must be greater than zero for calculated components.",
+    );
+  }
+
   if (input.assessmentType) {
     throw new Error("Assessment type cannot be set on a calculated component.");
   }
@@ -697,6 +707,16 @@ if (component.type === "ASSESSMENT") {
 }
 
 if (component.type === "CALCULATED") {
+  if (
+    nextMaxScore == null ||
+    !Number.isFinite(nextMaxScore) ||
+    nextMaxScore <= 0
+  ) {
+    throw new Error(
+      "Maximum score must be greater than zero for calculated components.",
+    );
+  }
+
   if (input.assessmentType !== undefined && input.assessmentType !== null) {
     throw new Error("Assessment type cannot be set on a calculated component.");
   }

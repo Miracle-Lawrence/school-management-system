@@ -15,9 +15,14 @@ export async function GET() {
     }
 
     const userId = Number(session.user.id);
-    const schoolId = session.user.schoolId;
+    const schoolId = Number(session.user.schoolId);
 
-    if (!Number.isSafeInteger(userId) || userId <= 0 || !schoolId) {
+    if (
+      !Number.isSafeInteger(userId) ||
+      userId <= 0 ||
+      !Number.isSafeInteger(schoolId) ||
+      schoolId <= 0
+    ) {
       return NextResponse.json(
         { error: "Valid student and school context are required." },
         { status: 400 },

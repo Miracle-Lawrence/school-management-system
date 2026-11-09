@@ -218,30 +218,56 @@ export default function NewReportComponentForm({
             </div>
           </>
         ) : (
-          <div className="space-y-2">
-            <label
-              htmlFor="aggregationType"
-              className="block text-sm font-medium text-slate-700"
-            >
-              Calculation Method
-            </label>
+          <>
+            <div className="space-y-2">
+              <label
+                htmlFor="maxScore"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Maximum Score
+              </label>
 
-            <select
-              id="aggregationType"
-              name="aggregationType"
-              required
-              defaultValue="SUM"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            >
-              <option value="SUM">Sum of source components</option>
-              <option value="AVERAGE">Average of source components</option>
-            </select>
+              <input
+                id="maxScore"
+                name="maxScore"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+                defaultValue="100"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              />
 
-            <p className="text-xs text-slate-500">
-              You will configure the source components and their weights after
-              creating this component.
-            </p>
-          </div>
+              <p className="text-xs text-slate-500">
+                Enter the maximum possible score for this calculated component.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="aggregationType"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Calculation Method
+              </label>
+
+              <select
+                id="aggregationType"
+                name="aggregationType"
+                required
+                defaultValue="SUM"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              >
+                <option value="SUM">Sum of source components</option>
+                <option value="AVERAGE">Average of source components</option>
+              </select>
+
+              <p className="text-xs text-slate-500">
+                You will configure the source components and their weights after
+                creating this component.
+              </p>
+            </div>
+          </>
         )}
 
         <div className="space-y-2">

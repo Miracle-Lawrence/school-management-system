@@ -12,6 +12,7 @@ interface CalculatedEditFormProps {
   component: {
     id: number;
     name: string;
+    maxScore: number | null;
     displayOrder: number;
     isRequired: boolean;
     isVisible: boolean;
@@ -76,6 +77,26 @@ export default function CalculatedEditForm({
             required
             maxLength={100}
             defaultValue={component.name}
+            className="w-full rounded-md border border-slate-300 px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="maxScore"
+            className="mb-1 block text-sm font-medium"
+          >
+            Maximum Score
+          </label>
+
+          <input
+            id="maxScore"
+            name="maxScore"
+            type="number"
+            min="0.01"
+            step="0.01"
+            required
+            defaultValue={component.maxScore ?? ""}
             className="w-full rounded-md border border-slate-300 px-3 py-2"
           />
         </div>

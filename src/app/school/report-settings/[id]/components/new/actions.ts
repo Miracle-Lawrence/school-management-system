@@ -118,12 +118,21 @@ export async function createReportComponentAction(
         isVisible,
       });
     } else {
+      const maxScore = Number(formData.get("maxScore"));
+
+      if (!Number.isFinite(maxScore) || maxScore <= 0) {
+        return {
+          error: "Maximum score must be greater than zero.",
+        };
+      }
+
       await createReportComponent(schoolId, {
         configurationId,
         name,
         type: "CALCULATED",
         aggregationType:
           aggregationType as (typeof allowedAggregationTypes)[number],
+        maxScore,
         displayOrder,
         isRequired,
         isVisible,

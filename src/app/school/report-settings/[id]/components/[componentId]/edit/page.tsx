@@ -49,6 +49,7 @@ export default async function EditReportComponentPage({ params }: PageProps) {
         component={{
           id: component.id,
           name: component.name,
+          maxScore: component.maxScore,
           displayOrder: component.displayOrder,
           isRequired: component.isRequired,
           isVisible: component.isVisible,

@@ -65,8 +65,17 @@ export async function updateReportComponentAction(
     }
 
     if (component.type === "CALCULATED") {
+      const maxScore = Number(formData.get("maxScore"));
+
+      if (!Number.isFinite(maxScore) || maxScore <= 0) {
+        return {
+          error: "Maximum score must be greater than zero.",
+        };
+      }
+
       await updateReportComponent(schoolId, componentId, {
         name,
+        maxScore,
         displayOrder,
         isRequired,
         isVisible,
