@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
 import { getAssessmentById } from "@/lib/services/assessment.service";
+import { getAssessmentCategories } from "@/lib/services/report-configuration.service";
 import CBTManagementClient from "./cbt-management-client";
 
 type TeacherCBTPageProps = {
@@ -60,7 +61,7 @@ export default async function TeacherCBTPage({
     notFound();
   }
 
-  const [schoolClass, subject, settings] = await Promise.all([
+  const [schoolClass, subject, settings, categories] = await Promise.all([
     db.orm.public.SchoolClass.where((item) =>
       item.id.eq(assessment.classId),
     ).first(),
@@ -72,7 +73,19 @@ export default async function TeacherCBTPage({
     db.orm.public.CBTExamSettings.where((item) =>
       item.assessmentId.eq(assessmentId),
     ).first(),
+
+    getAssessmentCategories(schoolId),
   ]);
+
+  const assessmentCategory = categories.find(
+    (category) => category.id === assessment.assessmentCategoryId,
+  );
+
+  const automaticReportingReady = Boolean(
+    assessmentCategory &&
+    assessmentCategory.isActive &&
+    assessmentCategory.type === assessment.type,
+  );
 
   if (
     !schoolClass ||
@@ -117,6 +130,14 @@ export default async function TeacherCBTPage({
           <span className="rounded-lg bg-white/10 px-3 py-2">
             CBT status: {settings?.status ?? "Not configured"}
           </span>
+
+          <span className="rounded-lg bg-white/10 px-3 py-2">
+            Assessment category: {assessmentCategory?.name ?? "Not assigned"}
+          </span>
+
+          <span className="rounded-lg bg-white/10 px-3 py-2">
+            Automatic reporting category: {automaticReportingReady ? "Ready" : "Needs attention"}
+          </span>
         </div>
       </section>
 
@@ -131,4 +152,7 @@ export default async function TeacherCBTPage({
     </main>
   );
 }
+
+
+
 
