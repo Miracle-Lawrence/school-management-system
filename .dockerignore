@@ -1,0 +1,17 @@
+﻿node_modules
+.next
+.git
+.github
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+coverage
+.nyc_output
+.vercel
+.turbo
+.DS_Store
+Thumbs.db
+*.bak
+*.bak-*

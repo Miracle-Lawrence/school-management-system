@@ -1,0 +1,17 @@
+﻿services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: school-management-system:latest
+    container_name: school-management-app
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "127.0.0.1:3000:3000"
