@@ -152,9 +152,10 @@ export default function StudentPortalShell({
         <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-6">
           <div className="flex items-center gap-3">
             <StudentMobileNavigation
-              schoolName={schoolName}
-              logoUrl={logoUrl}
-            />
+            schoolName={schoolName}
+            logoUrl={logoUrl}
+            onSignOut={() => void handleSignOut()}
+          />
 
             <div className="min-w-0 md:hidden">
               <p className="max-w-[200px] truncate text-sm font-semibold text-slate-900">

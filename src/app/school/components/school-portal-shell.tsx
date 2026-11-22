@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { signOut } from "next-auth/react";
 
@@ -227,7 +227,7 @@ export default function SchoolPortalShell({
         {/* Top Header */}
         <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-6">
           <div className="flex items-center gap-3">
-            <SchoolMobileNavigation schoolName={schoolName} logoUrl={logoUrl} />
+            <SchoolMobileNavigation schoolName={schoolName} logoUrl={logoUrl} onSignOut={() => void handleSignOut()} />
           </div>
 
           {/* Logged-in User */}

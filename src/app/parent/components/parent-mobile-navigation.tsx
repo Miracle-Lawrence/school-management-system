@@ -18,11 +18,13 @@ const navigation = [
 type ParentMobileNavigationProps = {
   schoolName: string;
   logoUrl: string;
+  onSignOut: () => void;
 };
 
 export default function ParentMobileNavigation({
   schoolName,
   logoUrl,
+  onSignOut,
 }: ParentMobileNavigationProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -115,6 +117,16 @@ export default function ParentMobileNavigation({
                 );
               })}
             </nav>
+
+            <div className="shrink-0 border-t border-slate-800 p-4">
+              <button
+                type="button"
+                onClick={onSignOut}
+                className="w-full rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+              >
+                Sign Out
+              </button>
+            </div>
           </aside>
         </div>
       )}

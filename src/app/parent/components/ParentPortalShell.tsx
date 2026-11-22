@@ -134,7 +134,7 @@ export default function ParentPortalShell({
         {/* Top Header */}
         <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-6">
           <div className="flex items-center gap-3">
-            <ParentMobileNavigation schoolName={schoolName} logoUrl={logoUrl} />
+            <ParentMobileNavigation schoolName={schoolName} logoUrl={logoUrl} onSignOut={() => void handleSignOut()} />
 
             <div className="md:hidden">
               <p className="max-w-[180px] truncate text-sm font-semibold text-slate-900">
