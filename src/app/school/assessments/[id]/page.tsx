@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -40,7 +40,7 @@ export default async function AssessmentDetailsPage({
     notFound();
   }
 
-  const [schoolClass, subject, term, students, scores, categories] =
+  const [schoolClass, subject, term, students, scores, categories, cbtSettings] =
     await Promise.all([
       db.orm.public.SchoolClass.where((item) =>
         item.id.eq(assessment.classId),
@@ -63,6 +63,10 @@ export default async function AssessmentDetailsPage({
       getAssessmentScores(schoolId, assessmentId),
 
       getAssessmentCategories(schoolId),
+
+      db.orm.public.CBTExamSettings.where((item) =>
+        item.assessmentId.eq(assessmentId),
+      ).first(),
     ]);
 
   const assessmentCategory = categories.find(
@@ -129,6 +133,12 @@ export default async function AssessmentDetailsPage({
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
           >
             Edit Assessment
+          </Link>
+          <Link
+            href={`/school/assessments/${assessment.id}/cbt`}
+            className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+          >
+            {cbtSettings ? "Manage CBT" : "Configure CBT"}
           </Link>
         </div>
       </div>
@@ -255,7 +265,8 @@ export default async function AssessmentDetailsPage({
         </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-5">
+      {!cbtSettings && (
+<div className="rounded-lg border border-gray-200 bg-white p-5">
         <AssessmentScoreEntry
           assessmentId={assessment.id}
           maxScore={assessment.maxScore}
@@ -273,6 +284,8 @@ export default async function AssessmentDetailsPage({
           }))}
         />
       </div>
+      )}
     </div>
   );
 }
+

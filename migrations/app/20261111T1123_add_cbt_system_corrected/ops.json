@@ -1,0 +1,2939 @@
+[
+  {
+    "id": "table.CBTActivityType",
+    "label": "Create table \"CBTActivityType\"",
+    "summary": "Creates table \"CBTActivityType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTActivityType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTActivityType\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTActivityType\"",
+        "sql": "CREATE TABLE \"public\".\"CBTActivityType\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTActivityType\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamAttempt",
+    "label": "Create table \"CBTExamAttempt\"",
+    "summary": "Creates table \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamAttempt\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamAttempt\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamAttempt\" (\n  \"assessmentId\" int4 NOT NULL,\n  \"attemptNumber\" int4 NOT NULL,\n  \"autoSubmitted\" bool DEFAULT false NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deadlineAt\" timestamptz NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"maxScore\" float8,\n  \"score\" float8,\n  \"startedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"status\" text DEFAULT 'IN_PROGRESS' NOT NULL,\n  \"studentId\" int4 NOT NULL,\n  \"submittedAt\" timestamptz,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"CBTExamAttempt_status_check_e644e144\" CHECK (\"status\" IN ('IN_PROGRESS', 'SUBMITTED', 'AUTO_SUBMITTED', 'MARKING', 'GRADED', 'VOIDED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamAttempt\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamOption",
+    "label": "Create table \"CBTExamOption\"",
+    "summary": "Creates table \"CBTExamOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamOption\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamOption\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamOption\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 NOT NULL,\n  \"examQuestionId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isCorrect\" bool DEFAULT false NOT NULL,\n  \"sourceOptionId\" int4,\n  \"text\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamOption\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamOptionImage",
+    "label": "Create table \"CBTExamOptionImage\"",
+    "summary": "Creates table \"CBTExamOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamOptionImage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOptionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamOptionImage\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamOptionImage\" (\n  \"altText\" text,\n  \"caption\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 DEFAULT 1 NOT NULL,\n  \"examOptionId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"storageReference\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamOptionImage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOptionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamQuestion",
+    "label": "Create table \"CBTExamQuestion\"",
+    "summary": "Creates table \"CBTExamQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamQuestion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamQuestion\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamQuestion\" (\n  \"allowMultipleAnswers\" bool DEFAULT false NOT NULL,\n  \"assessmentId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 NOT NULL,\n  \"explanation\" text,\n  \"id\" SERIAL NOT NULL,\n  \"marks\" float8 NOT NULL,\n  \"prompt\" text NOT NULL,\n  \"sourceQuestionId\" int4,\n  \"type\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"CBTExamQuestion_type_check_e6584e0b\" CHECK (\"type\" IN ('MULTIPLE_CHOICE', 'TRUE_FALSE', 'THEORY'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamQuestion\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamQuestionImage",
+    "label": "Create table \"CBTExamQuestionImage\"",
+    "summary": "Creates table \"CBTExamQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamQuestionImage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamQuestionImage\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamQuestionImage\" (\n  \"altText\" text,\n  \"caption\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 DEFAULT 1 NOT NULL,\n  \"examQuestionId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"storageReference\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamQuestionImage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamResponse",
+    "label": "Create table \"CBTExamResponse\"",
+    "summary": "Creates table \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamResponse\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamResponse\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamResponse\" (\n  \"answerText\" text,\n  \"attemptId\" int4 NOT NULL,\n  \"awardedMarks\" float8,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"examQuestionId\" int4 NOT NULL,\n  \"feedback\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isCorrect\" bool,\n  \"markedAt\" timestamptz,\n  \"markedByUserId\" int4,\n  \"markingStatus\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"CBTExamResponse_markingStatus_check_b60cce81\" CHECK (\"markingStatus\" IN ('PENDING', 'AUTO_MARKED', 'MANUALLY_MARKED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamResponse\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamResponseOption",
+    "label": "Create table \"CBTExamResponseOption\"",
+    "summary": "Creates table \"CBTExamResponseOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamResponseOption\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamResponseOption\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamResponseOption\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"examOptionId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"responseId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamResponseOption\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTExamSettings",
+    "label": "Create table \"CBTExamSettings\"",
+    "summary": "Creates table \"CBTExamSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTExamSettings\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTExamSettings\"",
+        "sql": "CREATE TABLE \"public\".\"CBTExamSettings\" (\n  \"activityTypeId\" int4,\n  \"allowBackNavigation\" bool DEFAULT true NOT NULL,\n  \"assessmentId\" int4 NOT NULL,\n  \"closesAt\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"durationMinutes\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"instructions\" text,\n  \"maxAttempts\" int4 DEFAULT 1 NOT NULL,\n  \"opensAt\" timestamptz,\n  \"reportMode\" text DEFAULT 'EXCLUDED' NOT NULL,\n  \"resultsReleasedAt\" timestamptz,\n  \"shuffleOptions\" bool DEFAULT false NOT NULL,\n  \"shuffleQuestions\" bool DEFAULT false NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"CBTExamSettings_reportMode_check_3cd9e095\" CHECK (\"reportMode\" IN ('AUTOMATIC', 'MANUAL', 'EXCLUDED')),\n  CONSTRAINT \"CBTExamSettings_status_check_9c46e2c1\" CHECK (\"status\" IN ('DRAFT', 'SCHEDULED', 'PUBLISHED', 'CLOSED', 'ARCHIVED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTExamSettings\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTOption",
+    "label": "Create table \"CBTOption\"",
+    "summary": "Creates table \"CBTOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTOption\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTOption\"",
+        "sql": "CREATE TABLE \"public\".\"CBTOption\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 DEFAULT 1 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isCorrect\" bool DEFAULT false NOT NULL,\n  \"questionId\" int4 NOT NULL,\n  \"text\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTOption\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTOptionImage",
+    "label": "Create table \"CBTOptionImage\"",
+    "summary": "Creates table \"CBTOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTOptionImage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOptionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTOptionImage\"",
+        "sql": "CREATE TABLE \"public\".\"CBTOptionImage\" (\n  \"altText\" text,\n  \"caption\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 DEFAULT 1 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"optionId\" int4 NOT NULL,\n  \"storageReference\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTOptionImage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOptionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTQuestion",
+    "label": "Create table \"CBTQuestion\"",
+    "summary": "Creates table \"CBTQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTQuestion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTQuestion\"",
+        "sql": "CREATE TABLE \"public\".\"CBTQuestion\" (\n  \"allowMultipleAnswers\" bool DEFAULT false NOT NULL,\n  \"bankId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"difficulty\" text DEFAULT 'MEDIUM' NOT NULL,\n  \"explanation\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"marks\" float8 NOT NULL,\n  \"prompt\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"CBTQuestion_difficulty_check_244bf003\" CHECK (\"difficulty\" IN ('EASY', 'MEDIUM', 'HARD')),\n  CONSTRAINT \"CBTQuestion_type_check_e6584e0b\" CHECK (\"type\" IN ('MULTIPLE_CHOICE', 'TRUE_FALSE', 'THEORY'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTQuestion\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTQuestionBank",
+    "label": "Create table \"CBTQuestionBank\"",
+    "summary": "Creates table \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTQuestionBank\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTQuestionBank\"",
+        "sql": "CREATE TABLE \"public\".\"CBTQuestionBank\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"subjectId\" int4 NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTQuestionBank\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.CBTQuestionImage",
+    "label": "Create table \"CBTQuestionImage\"",
+    "summary": "Creates table \"CBTQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "CBTQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"CBTQuestionImage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"CBTQuestionImage\"",
+        "sql": "CREATE TABLE \"public\".\"CBTQuestionImage\" (\n  \"altText\" text,\n  \"caption\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"displayOrder\" int4 DEFAULT 1 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"questionId\" int4 NOT NULL,\n  \"storageReference\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"CBTQuestionImage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTActivityType.CBTActivityType_schoolId_name_key",
+    "label": "Add unique constraint on \"CBTActivityType\" (schoolId, name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTActivityType_schoolId_name_key",
+        "table": "CBTActivityType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTActivityType_schoolId_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTActivityType_schoolId_name_key",
+          "public",
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTActivityType_schoolId_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTActivityType\" ADD CONSTRAINT \"CBTActivityType_schoolId_name_key\" UNIQUE (\"schoolId\", \"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTActivityType_schoolId_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTActivityType_schoolId_name_key",
+          "public",
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamAttempt.CBTExamAttempt_assessmentId_studentId_attemptNumber_key",
+    "label": "Add unique constraint on \"CBTExamAttempt\" (assessmentId, studentId, attemptNumber)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamAttempt_assessmentId_studentId_attemptNumber_key",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamAttempt_assessmentId_studentId_attemptNumber_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_assessmentId_studentId_attemptNumber_key",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamAttempt_assessmentId_studentId_attemptNumber_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamAttempt\" ADD CONSTRAINT \"CBTExamAttempt_assessmentId_studentId_attemptNumber_key\" UNIQUE (\"assessmentId\", \"studentId\", \"attemptNumber\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamAttempt_assessmentId_studentId_attemptNumber_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_assessmentId_studentId_attemptNumber_key",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamOption.CBTExamOption_examQuestionId_displayOrder_key",
+    "label": "Add unique constraint on \"CBTExamOption\" (examQuestionId, displayOrder)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamOption_examQuestionId_displayOrder_key",
+        "table": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamOption_examQuestionId_displayOrder_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_examQuestionId_displayOrder_key",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamOption_examQuestionId_displayOrder_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamOption\" ADD CONSTRAINT \"CBTExamOption_examQuestionId_displayOrder_key\" UNIQUE (\"examQuestionId\", \"displayOrder\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamOption_examQuestionId_displayOrder_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_examQuestionId_displayOrder_key",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamQuestion.CBTExamQuestion_assessmentId_displayOrder_key",
+    "label": "Add unique constraint on \"CBTExamQuestion\" (assessmentId, displayOrder)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamQuestion_assessmentId_displayOrder_key",
+        "table": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamQuestion_assessmentId_displayOrder_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_assessmentId_displayOrder_key",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamQuestion_assessmentId_displayOrder_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamQuestion\" ADD CONSTRAINT \"CBTExamQuestion_assessmentId_displayOrder_key\" UNIQUE (\"assessmentId\", \"displayOrder\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamQuestion_assessmentId_displayOrder_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_assessmentId_displayOrder_key",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamResponse.CBTExamResponse_attemptId_examQuestionId_key",
+    "label": "Add unique constraint on \"CBTExamResponse\" (attemptId, examQuestionId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamResponse_attemptId_examQuestionId_key",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamResponse_attemptId_examQuestionId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_attemptId_examQuestionId_key",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamResponse_attemptId_examQuestionId_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponse\" ADD CONSTRAINT \"CBTExamResponse_attemptId_examQuestionId_key\" UNIQUE (\"attemptId\", \"examQuestionId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamResponse_attemptId_examQuestionId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_attemptId_examQuestionId_key",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamResponseOption.CBTExamResponseOption_responseId_examOptionId_key",
+    "label": "Add unique constraint on \"CBTExamResponseOption\" (responseId, examOptionId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamResponseOption_responseId_examOptionId_key",
+        "table": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamResponseOption_responseId_examOptionId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_responseId_examOptionId_key",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamResponseOption_responseId_examOptionId_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponseOption\" ADD CONSTRAINT \"CBTExamResponseOption_responseId_examOptionId_key\" UNIQUE (\"responseId\", \"examOptionId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamResponseOption_responseId_examOptionId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_responseId_examOptionId_key",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.CBTExamSettings.CBTExamSettings_assessmentId_key",
+    "label": "Add unique constraint on \"CBTExamSettings\" (assessmentId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "CBTExamSettings_assessmentId_key",
+        "table": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"CBTExamSettings_assessmentId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_assessmentId_key",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"CBTExamSettings_assessmentId_key\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamSettings\" ADD CONSTRAINT \"CBTExamSettings_assessmentId_key\" UNIQUE (\"assessmentId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"CBTExamSettings_assessmentId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_assessmentId_key",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTActivityType.CBTActivityType_schoolId_idx_82b454d7",
+    "label": "Create index \"CBTActivityType_schoolId_idx_82b454d7\" on \"CBTActivityType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTActivityType_schoolId_idx_82b454d7",
+        "table": "CBTActivityType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTActivityType_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTActivityType_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"CBTActivityType_schoolId_idx_82b454d7\" ON \"public\".\"CBTActivityType\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTActivityType_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTActivityType.CBTActivityType_schoolId_isActive_idx_567af6bb",
+    "label": "Create index \"CBTActivityType_schoolId_isActive_idx_567af6bb\" on \"CBTActivityType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTActivityType_schoolId_isActive_idx_567af6bb",
+        "table": "CBTActivityType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTActivityType_schoolId_isActive_idx_567af6bb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType_schoolId_isActive_idx_567af6bb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTActivityType_schoolId_isActive_idx_567af6bb\"",
+        "sql": "CREATE INDEX \"CBTActivityType_schoolId_isActive_idx_567af6bb\" ON \"public\".\"CBTActivityType\" (\"schoolId\", \"isActive\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTActivityType_schoolId_isActive_idx_567af6bb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTActivityType_schoolId_isActive_idx_567af6bb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamAttempt.CBTExamAttempt_assessmentId_idx_1fe05216",
+    "label": "Create index \"CBTExamAttempt_assessmentId_idx_1fe05216\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamAttempt_assessmentId_idx_1fe05216",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamAttempt_assessmentId_idx_1fe05216\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_assessmentId_idx_1fe05216\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamAttempt_assessmentId_idx_1fe05216\"",
+        "sql": "CREATE INDEX \"CBTExamAttempt_assessmentId_idx_1fe05216\" ON \"public\".\"CBTExamAttempt\" (\"assessmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamAttempt_assessmentId_idx_1fe05216\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_assessmentId_idx_1fe05216\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamAttempt.CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056",
+    "label": "Create index \"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\"",
+        "sql": "CREATE INDEX \"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\" ON \"public\".\"CBTExamAttempt\" (\"assessmentId\", \"studentId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamAttempt.CBTExamAttempt_studentId_idx_bf255322",
+    "label": "Create index \"CBTExamAttempt_studentId_idx_bf255322\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamAttempt_studentId_idx_bf255322",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamAttempt_studentId_idx_bf255322\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_studentId_idx_bf255322\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamAttempt_studentId_idx_bf255322\"",
+        "sql": "CREATE INDEX \"CBTExamAttempt_studentId_idx_bf255322\" ON \"public\".\"CBTExamAttempt\" (\"studentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamAttempt_studentId_idx_bf255322\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_studentId_idx_bf255322\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamAttempt.CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4",
+    "label": "Create index \"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\"",
+        "sql": "CREATE INDEX \"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\" ON \"public\".\"CBTExamAttempt\" (\"studentId\", \"submittedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamOption.CBTExamOption_examQuestionId_idx_bed55f9b",
+    "label": "Create index \"CBTExamOption_examQuestionId_idx_bed55f9b\" on \"CBTExamOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamOption_examQuestionId_idx_bed55f9b",
+        "table": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamOption_examQuestionId_idx_bed55f9b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamOption_examQuestionId_idx_bed55f9b\"",
+        "sql": "CREATE INDEX \"CBTExamOption_examQuestionId_idx_bed55f9b\" ON \"public\".\"CBTExamOption\" (\"examQuestionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamOption_examQuestionId_idx_bed55f9b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamOption.CBTExamOption_sourceOptionId_idx_8e5a7335",
+    "label": "Create index \"CBTExamOption_sourceOptionId_idx_8e5a7335\" on \"CBTExamOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamOption_sourceOptionId_idx_8e5a7335",
+        "table": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamOption_sourceOptionId_idx_8e5a7335\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption_sourceOptionId_idx_8e5a7335\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamOption_sourceOptionId_idx_8e5a7335\"",
+        "sql": "CREATE INDEX \"CBTExamOption_sourceOptionId_idx_8e5a7335\" ON \"public\".\"CBTExamOption\" (\"sourceOptionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamOption_sourceOptionId_idx_8e5a7335\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOption_sourceOptionId_idx_8e5a7335\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamOptionImage.CBTExamOptionImage_examOptionId_idx_9d3b9c8b",
+    "label": "Create index \"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\" on \"CBTExamOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamOptionImage_examOptionId_idx_9d3b9c8b",
+        "table": "CBTExamOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\"",
+        "sql": "CREATE INDEX \"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\" ON \"public\".\"CBTExamOptionImage\" (\"examOptionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamOptionImage_examOptionId_idx_9d3b9c8b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamQuestion.CBTExamQuestion_assessmentId_idx_1fe05216",
+    "label": "Create index \"CBTExamQuestion_assessmentId_idx_1fe05216\" on \"CBTExamQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamQuestion_assessmentId_idx_1fe05216",
+        "table": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamQuestion_assessmentId_idx_1fe05216\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion_assessmentId_idx_1fe05216\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamQuestion_assessmentId_idx_1fe05216\"",
+        "sql": "CREATE INDEX \"CBTExamQuestion_assessmentId_idx_1fe05216\" ON \"public\".\"CBTExamQuestion\" (\"assessmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamQuestion_assessmentId_idx_1fe05216\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion_assessmentId_idx_1fe05216\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamQuestion.CBTExamQuestion_sourceQuestionId_idx_cdb26c3f",
+    "label": "Create index \"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\" on \"CBTExamQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamQuestion_sourceQuestionId_idx_cdb26c3f",
+        "table": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\"",
+        "sql": "CREATE INDEX \"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\" ON \"public\".\"CBTExamQuestion\" (\"sourceQuestionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestion_sourceQuestionId_idx_cdb26c3f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamQuestionImage.CBTExamQuestionImage_examQuestionId_idx_bed55f9b",
+    "label": "Create index \"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\" on \"CBTExamQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamQuestionImage_examQuestionId_idx_bed55f9b",
+        "table": "CBTExamQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\"",
+        "sql": "CREATE INDEX \"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\" ON \"public\".\"CBTExamQuestionImage\" (\"examQuestionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamQuestionImage_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponse.CBTExamResponse_attemptId_idx_94f50eb9",
+    "label": "Create index \"CBTExamResponse_attemptId_idx_94f50eb9\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponse_attemptId_idx_94f50eb9",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponse_attemptId_idx_94f50eb9\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_attemptId_idx_94f50eb9\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponse_attemptId_idx_94f50eb9\"",
+        "sql": "CREATE INDEX \"CBTExamResponse_attemptId_idx_94f50eb9\" ON \"public\".\"CBTExamResponse\" (\"attemptId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponse_attemptId_idx_94f50eb9\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_attemptId_idx_94f50eb9\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponse.CBTExamResponse_examQuestionId_idx_bed55f9b",
+    "label": "Create index \"CBTExamResponse_examQuestionId_idx_bed55f9b\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponse_examQuestionId_idx_bed55f9b",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponse_examQuestionId_idx_bed55f9b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponse_examQuestionId_idx_bed55f9b\"",
+        "sql": "CREATE INDEX \"CBTExamResponse_examQuestionId_idx_bed55f9b\" ON \"public\".\"CBTExamResponse\" (\"examQuestionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponse_examQuestionId_idx_bed55f9b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_examQuestionId_idx_bed55f9b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponse.CBTExamResponse_markedByUserId_idx_dde7e2cd",
+    "label": "Create index \"CBTExamResponse_markedByUserId_idx_dde7e2cd\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponse_markedByUserId_idx_dde7e2cd",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponse_markedByUserId_idx_dde7e2cd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_markedByUserId_idx_dde7e2cd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponse_markedByUserId_idx_dde7e2cd\"",
+        "sql": "CREATE INDEX \"CBTExamResponse_markedByUserId_idx_dde7e2cd\" ON \"public\".\"CBTExamResponse\" (\"markedByUserId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponse_markedByUserId_idx_dde7e2cd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_markedByUserId_idx_dde7e2cd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponse.CBTExamResponse_markingStatus_idx_c46904b7",
+    "label": "Create index \"CBTExamResponse_markingStatus_idx_c46904b7\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponse_markingStatus_idx_c46904b7",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponse_markingStatus_idx_c46904b7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_markingStatus_idx_c46904b7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponse_markingStatus_idx_c46904b7\"",
+        "sql": "CREATE INDEX \"CBTExamResponse_markingStatus_idx_c46904b7\" ON \"public\".\"CBTExamResponse\" (\"markingStatus\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponse_markingStatus_idx_c46904b7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponse_markingStatus_idx_c46904b7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponseOption.CBTExamResponseOption_examOptionId_idx_9d3b9c8b",
+    "label": "Create index \"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\" on \"CBTExamResponseOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponseOption_examOptionId_idx_9d3b9c8b",
+        "table": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\"",
+        "sql": "CREATE INDEX \"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\" ON \"public\".\"CBTExamResponseOption\" (\"examOptionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption_examOptionId_idx_9d3b9c8b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamResponseOption.CBTExamResponseOption_responseId_idx_a001d7b5",
+    "label": "Create index \"CBTExamResponseOption_responseId_idx_a001d7b5\" on \"CBTExamResponseOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamResponseOption_responseId_idx_a001d7b5",
+        "table": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamResponseOption_responseId_idx_a001d7b5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption_responseId_idx_a001d7b5\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamResponseOption_responseId_idx_a001d7b5\"",
+        "sql": "CREATE INDEX \"CBTExamResponseOption_responseId_idx_a001d7b5\" ON \"public\".\"CBTExamResponseOption\" (\"responseId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamResponseOption_responseId_idx_a001d7b5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamResponseOption_responseId_idx_a001d7b5\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamSettings.CBTExamSettings_activityTypeId_idx_04380ebf",
+    "label": "Create index \"CBTExamSettings_activityTypeId_idx_04380ebf\" on \"CBTExamSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamSettings_activityTypeId_idx_04380ebf",
+        "table": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamSettings_activityTypeId_idx_04380ebf\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings_activityTypeId_idx_04380ebf\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamSettings_activityTypeId_idx_04380ebf\"",
+        "sql": "CREATE INDEX \"CBTExamSettings_activityTypeId_idx_04380ebf\" ON \"public\".\"CBTExamSettings\" (\"activityTypeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamSettings_activityTypeId_idx_04380ebf\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings_activityTypeId_idx_04380ebf\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTExamSettings.CBTExamSettings_status_opensAt_closesAt_idx_b83873f9",
+    "label": "Create index \"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\" on \"CBTExamSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTExamSettings_status_opensAt_closesAt_idx_b83873f9",
+        "table": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\"",
+        "sql": "CREATE INDEX \"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\" ON \"public\".\"CBTExamSettings\" (\"status\", \"opensAt\", \"closesAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTExamSettings_status_opensAt_closesAt_idx_b83873f9\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTOption.CBTOption_questionId_idx_fdb42076",
+    "label": "Create index \"CBTOption_questionId_idx_fdb42076\" on \"CBTOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTOption_questionId_idx_fdb42076",
+        "table": "CBTOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTOption_questionId_idx_fdb42076\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOption_questionId_idx_fdb42076\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTOption_questionId_idx_fdb42076\"",
+        "sql": "CREATE INDEX \"CBTOption_questionId_idx_fdb42076\" ON \"public\".\"CBTOption\" (\"questionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTOption_questionId_idx_fdb42076\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOption_questionId_idx_fdb42076\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTOptionImage.CBTOptionImage_optionId_idx_b1d5fce5",
+    "label": "Create index \"CBTOptionImage_optionId_idx_b1d5fce5\" on \"CBTOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTOptionImage_optionId_idx_b1d5fce5",
+        "table": "CBTOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTOptionImage_optionId_idx_b1d5fce5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOptionImage_optionId_idx_b1d5fce5\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTOptionImage_optionId_idx_b1d5fce5\"",
+        "sql": "CREATE INDEX \"CBTOptionImage_optionId_idx_b1d5fce5\" ON \"public\".\"CBTOptionImage\" (\"optionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTOptionImage_optionId_idx_b1d5fce5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTOptionImage_optionId_idx_b1d5fce5\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestion.CBTQuestion_bankId_idx_7f042723",
+    "label": "Create index \"CBTQuestion_bankId_idx_7f042723\" on \"CBTQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestion_bankId_idx_7f042723",
+        "table": "CBTQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestion_bankId_idx_7f042723\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_bankId_idx_7f042723\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestion_bankId_idx_7f042723\"",
+        "sql": "CREATE INDEX \"CBTQuestion_bankId_idx_7f042723\" ON \"public\".\"CBTQuestion\" (\"bankId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestion_bankId_idx_7f042723\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_bankId_idx_7f042723\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestion.CBTQuestion_difficulty_idx_ab7b4a75",
+    "label": "Create index \"CBTQuestion_difficulty_idx_ab7b4a75\" on \"CBTQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestion_difficulty_idx_ab7b4a75",
+        "table": "CBTQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestion_difficulty_idx_ab7b4a75\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_difficulty_idx_ab7b4a75\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestion_difficulty_idx_ab7b4a75\"",
+        "sql": "CREATE INDEX \"CBTQuestion_difficulty_idx_ab7b4a75\" ON \"public\".\"CBTQuestion\" (\"difficulty\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestion_difficulty_idx_ab7b4a75\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_difficulty_idx_ab7b4a75\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestion.CBTQuestion_type_idx_b6b604ea",
+    "label": "Create index \"CBTQuestion_type_idx_b6b604ea\" on \"CBTQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestion_type_idx_b6b604ea",
+        "table": "CBTQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestion_type_idx_b6b604ea\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_type_idx_b6b604ea\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestion_type_idx_b6b604ea\"",
+        "sql": "CREATE INDEX \"CBTQuestion_type_idx_b6b604ea\" ON \"public\".\"CBTQuestion\" (\"type\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestion_type_idx_b6b604ea\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestion_type_idx_b6b604ea\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestionBank.CBTQuestionBank_createdById_idx_8bf640ed",
+    "label": "Create index \"CBTQuestionBank_createdById_idx_8bf640ed\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestionBank_createdById_idx_8bf640ed",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestionBank_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestionBank_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"CBTQuestionBank_createdById_idx_8bf640ed\" ON \"public\".\"CBTQuestionBank\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestionBank_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestionBank.CBTQuestionBank_schoolId_idx_82b454d7",
+    "label": "Create index \"CBTQuestionBank_schoolId_idx_82b454d7\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestionBank_schoolId_idx_82b454d7",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestionBank_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestionBank_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"CBTQuestionBank_schoolId_idx_82b454d7\" ON \"public\".\"CBTQuestionBank\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestionBank_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestionBank.CBTQuestionBank_subjectId_idx_84df2a1d",
+    "label": "Create index \"CBTQuestionBank_subjectId_idx_84df2a1d\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestionBank_subjectId_idx_84df2a1d",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestionBank_subjectId_idx_84df2a1d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestionBank_subjectId_idx_84df2a1d\"",
+        "sql": "CREATE INDEX \"CBTQuestionBank_subjectId_idx_84df2a1d\" ON \"public\".\"CBTQuestionBank\" (\"subjectId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestionBank_subjectId_idx_84df2a1d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionBank_subjectId_idx_84df2a1d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.CBTQuestionImage.CBTQuestionImage_questionId_idx_fdb42076",
+    "label": "Create index \"CBTQuestionImage_questionId_idx_fdb42076\" on \"CBTQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "CBTQuestionImage_questionId_idx_fdb42076",
+        "table": "CBTQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"CBTQuestionImage_questionId_idx_fdb42076\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionImage_questionId_idx_fdb42076\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"CBTQuestionImage_questionId_idx_fdb42076\"",
+        "sql": "CREATE INDEX \"CBTQuestionImage_questionId_idx_fdb42076\" ON \"public\".\"CBTQuestionImage\" (\"questionId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"CBTQuestionImage_questionId_idx_fdb42076\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"CBTQuestionImage_questionId_idx_fdb42076\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTActivityType.CBTActivityType_schoolId_fkey",
+    "label": "Add foreign key \"CBTActivityType_schoolId_fkey\" on \"CBTActivityType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTActivityType_schoolId_fkey",
+        "table": "CBTActivityType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTActivityType_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTActivityType_schoolId_fkey",
+          "public",
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTActivityType_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTActivityType\"\nADD CONSTRAINT \"CBTActivityType_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTActivityType_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTActivityType_schoolId_fkey",
+          "public",
+          "\"public\".\"CBTActivityType\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamAttempt.CBTExamAttempt_assessmentId_fkey",
+    "label": "Add foreign key \"CBTExamAttempt_assessmentId_fkey\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamAttempt_assessmentId_fkey",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamAttempt_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamAttempt_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamAttempt\"\nADD CONSTRAINT \"CBTExamAttempt_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamAttempt_assessmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamAttempt.CBTExamAttempt_studentId_fkey",
+    "label": "Add foreign key \"CBTExamAttempt_studentId_fkey\" on \"CBTExamAttempt\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamAttempt_studentId_fkey",
+        "table": "CBTExamAttempt"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamAttempt_studentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_studentId_fkey",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamAttempt_studentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamAttempt\"\nADD CONSTRAINT \"CBTExamAttempt_studentId_fkey\"\nFOREIGN KEY (\"studentId\")\nREFERENCES \"public\".\"Student\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamAttempt_studentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamAttempt_studentId_fkey",
+          "public",
+          "\"public\".\"CBTExamAttempt\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamOption.CBTExamOption_examQuestionId_fkey",
+    "label": "Add foreign key \"CBTExamOption_examQuestionId_fkey\" on \"CBTExamOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamOption_examQuestionId_fkey",
+        "table": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamOption_examQuestionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamOption_examQuestionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamOption\"\nADD CONSTRAINT \"CBTExamOption_examQuestionId_fkey\"\nFOREIGN KEY (\"examQuestionId\")\nREFERENCES \"public\".\"CBTExamQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamOption_examQuestionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamOption.CBTExamOption_sourceOptionId_fkey",
+    "label": "Add foreign key \"CBTExamOption_sourceOptionId_fkey\" on \"CBTExamOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamOption_sourceOptionId_fkey",
+        "table": "CBTExamOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamOption_sourceOptionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_sourceOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamOption_sourceOptionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamOption\"\nADD CONSTRAINT \"CBTExamOption_sourceOptionId_fkey\"\nFOREIGN KEY (\"sourceOptionId\")\nREFERENCES \"public\".\"CBTOption\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamOption_sourceOptionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOption_sourceOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamOptionImage.CBTExamOptionImage_examOptionId_fkey",
+    "label": "Add foreign key \"CBTExamOptionImage_examOptionId_fkey\" on \"CBTExamOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamOptionImage_examOptionId_fkey",
+        "table": "CBTExamOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamOptionImage_examOptionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOptionImage_examOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOptionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamOptionImage_examOptionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamOptionImage\"\nADD CONSTRAINT \"CBTExamOptionImage_examOptionId_fkey\"\nFOREIGN KEY (\"examOptionId\")\nREFERENCES \"public\".\"CBTExamOption\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamOptionImage_examOptionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamOptionImage_examOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamOptionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamQuestion.CBTExamQuestion_assessmentId_fkey",
+    "label": "Add foreign key \"CBTExamQuestion_assessmentId_fkey\" on \"CBTExamQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamQuestion_assessmentId_fkey",
+        "table": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamQuestion_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamQuestion_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamQuestion\"\nADD CONSTRAINT \"CBTExamQuestion_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamQuestion_assessmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamQuestion.CBTExamQuestion_sourceQuestionId_fkey",
+    "label": "Add foreign key \"CBTExamQuestion_sourceQuestionId_fkey\" on \"CBTExamQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamQuestion_sourceQuestionId_fkey",
+        "table": "CBTExamQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamQuestion_sourceQuestionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_sourceQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamQuestion_sourceQuestionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamQuestion\"\nADD CONSTRAINT \"CBTExamQuestion_sourceQuestionId_fkey\"\nFOREIGN KEY (\"sourceQuestionId\")\nREFERENCES \"public\".\"CBTQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamQuestion_sourceQuestionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestion_sourceQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamQuestionImage.CBTExamQuestionImage_examQuestionId_fkey",
+    "label": "Add foreign key \"CBTExamQuestionImage_examQuestionId_fkey\" on \"CBTExamQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamQuestionImage_examQuestionId_fkey",
+        "table": "CBTExamQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamQuestionImage_examQuestionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestionImage_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamQuestionImage_examQuestionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamQuestionImage\"\nADD CONSTRAINT \"CBTExamQuestionImage_examQuestionId_fkey\"\nFOREIGN KEY (\"examQuestionId\")\nREFERENCES \"public\".\"CBTExamQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamQuestionImage_examQuestionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamQuestionImage_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamQuestionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamResponse.CBTExamResponse_attemptId_fkey",
+    "label": "Add foreign key \"CBTExamResponse_attemptId_fkey\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamResponse_attemptId_fkey",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamResponse_attemptId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_attemptId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamResponse_attemptId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponse\"\nADD CONSTRAINT \"CBTExamResponse_attemptId_fkey\"\nFOREIGN KEY (\"attemptId\")\nREFERENCES \"public\".\"CBTExamAttempt\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamResponse_attemptId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_attemptId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamResponse.CBTExamResponse_examQuestionId_fkey",
+    "label": "Add foreign key \"CBTExamResponse_examQuestionId_fkey\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamResponse_examQuestionId_fkey",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamResponse_examQuestionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamResponse_examQuestionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponse\"\nADD CONSTRAINT \"CBTExamResponse_examQuestionId_fkey\"\nFOREIGN KEY (\"examQuestionId\")\nREFERENCES \"public\".\"CBTExamQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamResponse_examQuestionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_examQuestionId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamResponse.CBTExamResponse_markedByUserId_fkey",
+    "label": "Add foreign key \"CBTExamResponse_markedByUserId_fkey\" on \"CBTExamResponse\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamResponse_markedByUserId_fkey",
+        "table": "CBTExamResponse"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamResponse_markedByUserId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_markedByUserId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamResponse_markedByUserId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponse\"\nADD CONSTRAINT \"CBTExamResponse_markedByUserId_fkey\"\nFOREIGN KEY (\"markedByUserId\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamResponse_markedByUserId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponse_markedByUserId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponse\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamResponseOption.CBTExamResponseOption_responseId_fkey",
+    "label": "Add foreign key \"CBTExamResponseOption_responseId_fkey\" on \"CBTExamResponseOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamResponseOption_responseId_fkey",
+        "table": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamResponseOption_responseId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_responseId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamResponseOption_responseId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponseOption\"\nADD CONSTRAINT \"CBTExamResponseOption_responseId_fkey\"\nFOREIGN KEY (\"responseId\")\nREFERENCES \"public\".\"CBTExamResponse\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamResponseOption_responseId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_responseId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamResponseOption.CBTExamResponseOption_examOptionId_fkey",
+    "label": "Add foreign key \"CBTExamResponseOption_examOptionId_fkey\" on \"CBTExamResponseOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamResponseOption_examOptionId_fkey",
+        "table": "CBTExamResponseOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamResponseOption_examOptionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_examOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamResponseOption_examOptionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamResponseOption\"\nADD CONSTRAINT \"CBTExamResponseOption_examOptionId_fkey\"\nFOREIGN KEY (\"examOptionId\")\nREFERENCES \"public\".\"CBTExamOption\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamResponseOption_examOptionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamResponseOption_examOptionId_fkey",
+          "public",
+          "\"public\".\"CBTExamResponseOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamSettings.CBTExamSettings_activityTypeId_fkey",
+    "label": "Add foreign key \"CBTExamSettings_activityTypeId_fkey\" on \"CBTExamSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamSettings_activityTypeId_fkey",
+        "table": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamSettings_activityTypeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_activityTypeId_fkey",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamSettings_activityTypeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamSettings\"\nADD CONSTRAINT \"CBTExamSettings_activityTypeId_fkey\"\nFOREIGN KEY (\"activityTypeId\")\nREFERENCES \"public\".\"CBTActivityType\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamSettings_activityTypeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_activityTypeId_fkey",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTExamSettings.CBTExamSettings_assessmentId_fkey",
+    "label": "Add foreign key \"CBTExamSettings_assessmentId_fkey\" on \"CBTExamSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTExamSettings_assessmentId_fkey",
+        "table": "CBTExamSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTExamSettings_assessmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTExamSettings_assessmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTExamSettings\"\nADD CONSTRAINT \"CBTExamSettings_assessmentId_fkey\"\nFOREIGN KEY (\"assessmentId\")\nREFERENCES \"public\".\"Assessment\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTExamSettings_assessmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTExamSettings_assessmentId_fkey",
+          "public",
+          "\"public\".\"CBTExamSettings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTOption.CBTOption_questionId_fkey",
+    "label": "Add foreign key \"CBTOption_questionId_fkey\" on \"CBTOption\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTOption_questionId_fkey",
+        "table": "CBTOption"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTOption_questionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTOption_questionId_fkey",
+          "public",
+          "\"public\".\"CBTOption\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTOption_questionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTOption\"\nADD CONSTRAINT \"CBTOption_questionId_fkey\"\nFOREIGN KEY (\"questionId\")\nREFERENCES \"public\".\"CBTQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTOption_questionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTOption_questionId_fkey",
+          "public",
+          "\"public\".\"CBTOption\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTOptionImage.CBTOptionImage_optionId_fkey",
+    "label": "Add foreign key \"CBTOptionImage_optionId_fkey\" on \"CBTOptionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTOptionImage_optionId_fkey",
+        "table": "CBTOptionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTOptionImage_optionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTOptionImage_optionId_fkey",
+          "public",
+          "\"public\".\"CBTOptionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTOptionImage_optionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTOptionImage\"\nADD CONSTRAINT \"CBTOptionImage_optionId_fkey\"\nFOREIGN KEY (\"optionId\")\nREFERENCES \"public\".\"CBTOption\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTOptionImage_optionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTOptionImage_optionId_fkey",
+          "public",
+          "\"public\".\"CBTOptionImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTQuestion.CBTQuestion_bankId_fkey",
+    "label": "Add foreign key \"CBTQuestion_bankId_fkey\" on \"CBTQuestion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTQuestion_bankId_fkey",
+        "table": "CBTQuestion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTQuestion_bankId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestion_bankId_fkey",
+          "public",
+          "\"public\".\"CBTQuestion\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTQuestion_bankId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTQuestion\"\nADD CONSTRAINT \"CBTQuestion_bankId_fkey\"\nFOREIGN KEY (\"bankId\")\nREFERENCES \"public\".\"CBTQuestionBank\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTQuestion_bankId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestion_bankId_fkey",
+          "public",
+          "\"public\".\"CBTQuestion\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTQuestionBank.CBTQuestionBank_schoolId_fkey",
+    "label": "Add foreign key \"CBTQuestionBank_schoolId_fkey\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTQuestionBank_schoolId_fkey",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTQuestionBank_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_schoolId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTQuestionBank_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTQuestionBank\"\nADD CONSTRAINT \"CBTQuestionBank_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTQuestionBank_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_schoolId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTQuestionBank.CBTQuestionBank_subjectId_fkey",
+    "label": "Add foreign key \"CBTQuestionBank_subjectId_fkey\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTQuestionBank_subjectId_fkey",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTQuestionBank_subjectId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_subjectId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTQuestionBank_subjectId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTQuestionBank\"\nADD CONSTRAINT \"CBTQuestionBank_subjectId_fkey\"\nFOREIGN KEY (\"subjectId\")\nREFERENCES \"public\".\"Subject\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTQuestionBank_subjectId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_subjectId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTQuestionBank.CBTQuestionBank_createdById_fkey",
+    "label": "Add foreign key \"CBTQuestionBank_createdById_fkey\" on \"CBTQuestionBank\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTQuestionBank_createdById_fkey",
+        "table": "CBTQuestionBank"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTQuestionBank_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_createdById_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTQuestionBank_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTQuestionBank\"\nADD CONSTRAINT \"CBTQuestionBank_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"User\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTQuestionBank_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionBank_createdById_fkey",
+          "public",
+          "\"public\".\"CBTQuestionBank\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.CBTQuestionImage.CBTQuestionImage_questionId_fkey",
+    "label": "Add foreign key \"CBTQuestionImage_questionId_fkey\" on \"CBTQuestionImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "CBTQuestionImage_questionId_fkey",
+        "table": "CBTQuestionImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"CBTQuestionImage_questionId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionImage_questionId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"CBTQuestionImage_questionId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"CBTQuestionImage\"\nADD CONSTRAINT \"CBTQuestionImage_questionId_fkey\"\nFOREIGN KEY (\"questionId\")\nREFERENCES \"public\".\"CBTQuestion\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"CBTQuestionImage_questionId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "CBTQuestionImage_questionId_fkey",
+          "public",
+          "\"public\".\"CBTQuestionImage\""
+        ]
+      }
+    ]
+  }
+]

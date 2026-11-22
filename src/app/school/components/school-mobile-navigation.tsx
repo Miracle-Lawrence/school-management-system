@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -11,6 +11,7 @@ const navigation = [
   ["Classes", "/school/classes"],
   ["Subjects", "/school/subjects"],
   ["Assessments", "/school/assessments"],
+  ["Question Banks", "/school/cbt/question-banks"],
   ["Academic Sessions", "/school/academic-sessions"],
   ["Fee Categories", "/school/fee-categories"],
 

@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b72470b16c3fede5521170532e1bea96a8fc9dfa9accc2960a6c8a5e561297f3'>;
+  StorageHashBase<'479843e3557a0962a649a77e63bd109f047e093a600cc548f502cbe4dc57c8b1'>;
 export type ExecutionHash =
-  ExecutionHashBase<'21f8370068414abcd4cda2efea5c46861bbfe128fe34bf1378cd84d0421628d5'>;
+  ExecutionHashBase<'de6e9a5535a5f7eaf01a983bdba00ce584b4815e33c7272fad294c7513c0e90d'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -336,6 +336,159 @@ export type FieldOutputTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTActivityType: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamAttempt: {
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly attemptNumber: CodecTypes['pg/int4@1']['output'];
+      readonly autoSubmitted: CodecTypes['pg/bool@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deadlineAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
+      readonly score: CodecTypes['pg/float8@1']['output'] | null;
+      readonly startedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly status:
+        'IN_PROGRESS' | 'SUBMITTED' | 'AUTO_SUBMITTED' | 'MARKING' | 'GRADED' | 'VOIDED';
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'];
+      readonly sourceOptionId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly text: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly explanation: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'];
+      readonly prompt: CodecTypes['pg/text@1']['output'];
+      readonly sourceQuestionId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    };
+    readonly CBTExamQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamResponse: {
+      readonly answerText: CodecTypes['pg/text@1']['output'] | null;
+      readonly attemptId: CodecTypes['pg/int4@1']['output'];
+      readonly awardedMarks: CodecTypes['pg/float8@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly feedback: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'] | null;
+      readonly markedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly markedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly markingStatus: 'PENDING' | 'AUTO_MARKED' | 'MANUALLY_MARKED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamResponseOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly responseId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly CBTExamSettings: {
+      readonly activityTypeId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly allowBackNavigation: CodecTypes['pg/bool@1']['output'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly closesAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly durationMinutes: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly instructions: CodecTypes['pg/text@1']['output'] | null;
+      readonly maxAttempts: CodecTypes['pg/int4@1']['output'];
+      readonly opensAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly reportMode: 'AUTOMATIC' | 'MANUAL' | 'EXCLUDED';
+      readonly resultsReleasedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly shuffleOptions: CodecTypes['pg/bool@1']['output'];
+      readonly shuffleQuestions: CodecTypes['pg/bool@1']['output'];
+      readonly status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly text: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly optionId: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+      readonly bankId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+      readonly explanation: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'];
+      readonly prompt: CodecTypes['pg/text@1']['output'];
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTQuestionBank: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
     };
     readonly ClassNote: {
       readonly classId: CodecTypes['pg/int4@1']['output'];
@@ -989,6 +1142,159 @@ export type FieldInputTypes = {
       readonly termId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly CBTActivityType: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamAttempt: {
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly attemptNumber: CodecTypes['pg/int4@1']['input'];
+      readonly autoSubmitted: CodecTypes['pg/bool@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deadlineAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
+      readonly score: CodecTypes['pg/float8@1']['input'] | null;
+      readonly startedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly status:
+        'IN_PROGRESS' | 'SUBMITTED' | 'AUTO_SUBMITTED' | 'MARKING' | 'GRADED' | 'VOIDED';
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'];
+      readonly sourceOptionId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly text: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['input'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly explanation: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'];
+      readonly prompt: CodecTypes['pg/text@1']['input'];
+      readonly sourceQuestionId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    };
+    readonly CBTExamQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamResponse: {
+      readonly answerText: CodecTypes['pg/text@1']['input'] | null;
+      readonly attemptId: CodecTypes['pg/int4@1']['input'];
+      readonly awardedMarks: CodecTypes['pg/float8@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly feedback: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'] | null;
+      readonly markedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly markedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly markingStatus: 'PENDING' | 'AUTO_MARKED' | 'MANUALLY_MARKED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamResponseOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly responseId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly CBTExamSettings: {
+      readonly activityTypeId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly allowBackNavigation: CodecTypes['pg/bool@1']['input'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly closesAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly durationMinutes: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly instructions: CodecTypes['pg/text@1']['input'] | null;
+      readonly maxAttempts: CodecTypes['pg/int4@1']['input'];
+      readonly opensAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly reportMode: 'AUTOMATIC' | 'MANUAL' | 'EXCLUDED';
+      readonly resultsReleasedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly shuffleOptions: CodecTypes['pg/bool@1']['input'];
+      readonly shuffleQuestions: CodecTypes['pg/bool@1']['input'];
+      readonly status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly text: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly optionId: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['input'];
+      readonly bankId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+      readonly explanation: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'];
+      readonly prompt: CodecTypes['pg/text@1']['input'];
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTQuestionBank: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
     readonly ClassNote: {
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly content: CodecTypes['pg/text@1']['input'];
@@ -1640,6 +1946,159 @@ export type StorageColumnTypes = {
       readonly studentId: CodecTypes['pg/int4@1']['output'];
       readonly termId: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTActivityType: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamAttempt: {
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly attemptNumber: CodecTypes['pg/int4@1']['output'];
+      readonly autoSubmitted: CodecTypes['pg/bool@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deadlineAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly maxScore: CodecTypes['pg/float8@1']['output'] | null;
+      readonly score: CodecTypes['pg/float8@1']['output'] | null;
+      readonly startedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly status:
+        'IN_PROGRESS' | 'SUBMITTED' | 'AUTO_SUBMITTED' | 'MARKING' | 'GRADED' | 'VOIDED';
+      readonly studentId: CodecTypes['pg/int4@1']['output'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'];
+      readonly sourceOptionId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly text: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly explanation: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'];
+      readonly prompt: CodecTypes['pg/text@1']['output'];
+      readonly sourceQuestionId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    };
+    readonly CBTExamQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTExamResponse: {
+      readonly answerText: CodecTypes['pg/text@1']['output'] | null;
+      readonly attemptId: CodecTypes['pg/int4@1']['output'];
+      readonly awardedMarks: CodecTypes['pg/float8@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['output'];
+      readonly feedback: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'] | null;
+      readonly markedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly markedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly markingStatus: 'PENDING' | 'AUTO_MARKED' | 'MANUALLY_MARKED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTExamResponseOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly responseId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly CBTExamSettings: {
+      readonly activityTypeId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly allowBackNavigation: CodecTypes['pg/bool@1']['output'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['output'];
+      readonly closesAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly durationMinutes: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly instructions: CodecTypes['pg/text@1']['output'] | null;
+      readonly maxAttempts: CodecTypes['pg/int4@1']['output'];
+      readonly opensAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly reportMode: 'AUTOMATIC' | 'MANUAL' | 'EXCLUDED';
+      readonly resultsReleasedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly shuffleOptions: CodecTypes['pg/bool@1']['output'];
+      readonly shuffleQuestions: CodecTypes['pg/bool@1']['output'];
+      readonly status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly text: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly optionId: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
+    };
+    readonly CBTQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+      readonly bankId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+      readonly explanation: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly marks: CodecTypes['pg/float8@1']['output'];
+      readonly prompt: CodecTypes['pg/text@1']['output'];
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTQuestionBank: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly subjectId: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly CBTQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['output'] | null;
+      readonly caption: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly storageReference: CodecTypes['pg/text@1']['output'];
     };
     readonly ClassNote: {
       readonly classId: CodecTypes['pg/int4@1']['output'];
@@ -2293,6 +2752,159 @@ export type StorageColumnInputTypes = {
       readonly termId: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly CBTActivityType: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamAttempt: {
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly attemptNumber: CodecTypes['pg/int4@1']['input'];
+      readonly autoSubmitted: CodecTypes['pg/bool@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deadlineAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly maxScore: CodecTypes['pg/float8@1']['input'] | null;
+      readonly score: CodecTypes['pg/float8@1']['input'] | null;
+      readonly startedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly status:
+        'IN_PROGRESS' | 'SUBMITTED' | 'AUTO_SUBMITTED' | 'MARKING' | 'GRADED' | 'VOIDED';
+      readonly studentId: CodecTypes['pg/int4@1']['input'];
+      readonly submittedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'];
+      readonly sourceOptionId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly text: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['input'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly explanation: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'];
+      readonly prompt: CodecTypes['pg/text@1']['input'];
+      readonly sourceQuestionId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    };
+    readonly CBTExamQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTExamResponse: {
+      readonly answerText: CodecTypes['pg/text@1']['input'] | null;
+      readonly attemptId: CodecTypes['pg/int4@1']['input'];
+      readonly awardedMarks: CodecTypes['pg/float8@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly examQuestionId: CodecTypes['pg/int4@1']['input'];
+      readonly feedback: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'] | null;
+      readonly markedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly markedByUserId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly markingStatus: 'PENDING' | 'AUTO_MARKED' | 'MANUALLY_MARKED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTExamResponseOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly examOptionId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly responseId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly CBTExamSettings: {
+      readonly activityTypeId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly allowBackNavigation: CodecTypes['pg/bool@1']['input'];
+      readonly assessmentId: CodecTypes['pg/int4@1']['input'];
+      readonly closesAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly durationMinutes: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly instructions: CodecTypes['pg/text@1']['input'] | null;
+      readonly maxAttempts: CodecTypes['pg/int4@1']['input'];
+      readonly opensAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly reportMode: 'AUTOMATIC' | 'MANUAL' | 'EXCLUDED';
+      readonly resultsReleasedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly shuffleOptions: CodecTypes['pg/bool@1']['input'];
+      readonly shuffleQuestions: CodecTypes['pg/bool@1']['input'];
+      readonly status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTOption: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isCorrect: CodecTypes['pg/bool@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly text: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTOptionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly optionId: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
+    readonly CBTQuestion: {
+      readonly allowMultipleAnswers: CodecTypes['pg/bool@1']['input'];
+      readonly bankId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+      readonly explanation: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly marks: CodecTypes['pg/float8@1']['input'];
+      readonly prompt: CodecTypes['pg/text@1']['input'];
+      readonly type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTQuestionBank: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly subjectId: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly CBTQuestionImage: {
+      readonly altText: CodecTypes['pg/text@1']['input'] | null;
+      readonly caption: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly displayOrder: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly storageReference: CodecTypes['pg/text@1']['input'];
+    };
     readonly ClassNote: {
       readonly classId: CodecTypes['pg/int4@1']['input'];
       readonly content: CodecTypes['pg/text@1']['input'];
@@ -2892,6 +3504,9 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     weight: CodecTypes['pg/float8@1']['output'];
     category: public_AssessmentCategory | null;
+    cbtAttempts: public_CBTExamAttempt[];
+    cbtQuestions: public_CBTExamQuestion[];
+    cbtSettings: public_CBTExamSettings | null;
     class: public_SchoolClass;
     createdBy: public_User;
     school: public_School;
@@ -2899,7 +3514,16 @@ export namespace Models {
     subject: public_Subject;
     term: public_Term;
     readonly [RelationKeys]?:
-      'category' | 'class' | 'createdBy' | 'school' | 'scores' | 'subject' | 'term';
+      | 'category'
+      | 'cbtAttempts'
+      | 'cbtQuestions'
+      | 'cbtSettings'
+      | 'class'
+      | 'createdBy'
+      | 'school'
+      | 'scores'
+      | 'subject'
+      | 'term';
   };
   export type public_AssessmentCategory = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -2983,6 +3607,209 @@ export namespace Models {
     student: public_Student;
     term: public_Term;
     readonly [RelationKeys]?: 'class' | 'recordedBy' | 'school' | 'student' | 'term';
+  };
+  export type public_CBTActivityType = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    activities: public_CBTExamSettings[];
+    school: public_School;
+    readonly [RelationKeys]?: 'activities' | 'school';
+  };
+  export type public_CBTExamAttempt = {
+    assessmentId: CodecTypes['pg/int4@1']['output'];
+    attemptNumber: CodecTypes['pg/int4@1']['output'];
+    autoSubmitted: CodecTypes['pg/bool@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    deadlineAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    maxScore: CodecTypes['pg/float8@1']['output'] | null;
+    score: CodecTypes['pg/float8@1']['output'] | null;
+    startedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    status: 'IN_PROGRESS' | 'SUBMITTED' | 'AUTO_SUBMITTED' | 'MARKING' | 'GRADED' | 'VOIDED';
+    studentId: CodecTypes['pg/int4@1']['output'];
+    submittedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    assessment: public_Assessment;
+    responses: public_CBTExamResponse[];
+    student: public_Student;
+    readonly [RelationKeys]?: 'assessment' | 'responses' | 'student';
+  };
+  export type public_CBTExamOption = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    examQuestionId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isCorrect: CodecTypes['pg/bool@1']['output'];
+    sourceOptionId: CodecTypes['pg/int4@1']['output'] | null;
+    text: CodecTypes['pg/text@1']['output'];
+    examQuestion: public_CBTExamQuestion;
+    images: public_CBTExamOptionImage[];
+    selectedBy: public_CBTExamResponseOption[];
+    sourceOption: public_CBTOption | null;
+    readonly [RelationKeys]?: 'examQuestion' | 'images' | 'selectedBy' | 'sourceOption';
+  };
+  export type public_CBTExamOptionImage = {
+    altText: CodecTypes['pg/text@1']['output'] | null;
+    caption: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    examOptionId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    storageReference: CodecTypes['pg/text@1']['output'];
+    examOption: public_CBTExamOption;
+    readonly [RelationKeys]?: 'examOption';
+  };
+  export type public_CBTExamQuestion = {
+    allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+    assessmentId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    explanation: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    marks: CodecTypes['pg/float8@1']['output'];
+    prompt: CodecTypes['pg/text@1']['output'];
+    sourceQuestionId: CodecTypes['pg/int4@1']['output'] | null;
+    type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    assessment: public_Assessment;
+    images: public_CBTExamQuestionImage[];
+    options: public_CBTExamOption[];
+    responses: public_CBTExamResponse[];
+    sourceQuestion: public_CBTQuestion | null;
+    readonly [RelationKeys]?: 'assessment' | 'images' | 'options' | 'responses' | 'sourceQuestion';
+  };
+  export type public_CBTExamQuestionImage = {
+    altText: CodecTypes['pg/text@1']['output'] | null;
+    caption: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    examQuestionId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    storageReference: CodecTypes['pg/text@1']['output'];
+    examQuestion: public_CBTExamQuestion;
+    readonly [RelationKeys]?: 'examQuestion';
+  };
+  export type public_CBTExamResponse = {
+    answerText: CodecTypes['pg/text@1']['output'] | null;
+    attemptId: CodecTypes['pg/int4@1']['output'];
+    awardedMarks: CodecTypes['pg/float8@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    examQuestionId: CodecTypes['pg/int4@1']['output'];
+    feedback: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isCorrect: CodecTypes['pg/bool@1']['output'] | null;
+    markedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    markedByUserId: CodecTypes['pg/int4@1']['output'] | null;
+    markingStatus: 'PENDING' | 'AUTO_MARKED' | 'MANUALLY_MARKED';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    attempt: public_CBTExamAttempt;
+    examQuestion: public_CBTExamQuestion;
+    markedBy: public_User | null;
+    selectedOptions: public_CBTExamResponseOption[];
+    readonly [RelationKeys]?: 'attempt' | 'examQuestion' | 'markedBy' | 'selectedOptions';
+  };
+  export type public_CBTExamResponseOption = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    examOptionId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    responseId: CodecTypes['pg/int4@1']['output'];
+    examOption: public_CBTExamOption;
+    response: public_CBTExamResponse;
+    readonly [RelationKeys]?: 'examOption' | 'response';
+  };
+  export type public_CBTExamSettings = {
+    activityTypeId: CodecTypes['pg/int4@1']['output'] | null;
+    allowBackNavigation: CodecTypes['pg/bool@1']['output'];
+    assessmentId: CodecTypes['pg/int4@1']['output'];
+    closesAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    durationMinutes: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    instructions: CodecTypes['pg/text@1']['output'] | null;
+    maxAttempts: CodecTypes['pg/int4@1']['output'];
+    opensAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    reportMode: 'AUTOMATIC' | 'MANUAL' | 'EXCLUDED';
+    resultsReleasedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    shuffleOptions: CodecTypes['pg/bool@1']['output'];
+    shuffleQuestions: CodecTypes['pg/bool@1']['output'];
+    status: 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    activityType: public_CBTActivityType | null;
+    assessment: public_Assessment;
+    readonly [RelationKeys]?: 'activityType' | 'assessment';
+  };
+  export type public_CBTOption = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    isCorrect: CodecTypes['pg/bool@1']['output'];
+    questionId: CodecTypes['pg/int4@1']['output'];
+    text: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    examCopies: public_CBTExamOption[];
+    images: public_CBTOptionImage[];
+    question: public_CBTQuestion;
+    readonly [RelationKeys]?: 'examCopies' | 'images' | 'question';
+  };
+  export type public_CBTOptionImage = {
+    altText: CodecTypes['pg/text@1']['output'] | null;
+    caption: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    optionId: CodecTypes['pg/int4@1']['output'];
+    storageReference: CodecTypes['pg/text@1']['output'];
+    option: public_CBTOption;
+    readonly [RelationKeys]?: 'option';
+  };
+  export type public_CBTQuestion = {
+    allowMultipleAnswers: CodecTypes['pg/bool@1']['output'];
+    bankId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+    explanation: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    marks: CodecTypes['pg/float8@1']['output'];
+    prompt: CodecTypes['pg/text@1']['output'];
+    type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'THEORY';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    bank: public_CBTQuestionBank;
+    examCopies: public_CBTExamQuestion[];
+    images: public_CBTQuestionImage[];
+    options: public_CBTOption[];
+    readonly [RelationKeys]?: 'bank' | 'examCopies' | 'images' | 'options';
+  };
+  export type public_CBTQuestionBank = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdById: CodecTypes['pg/int4@1']['output'];
+    description: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    isActive: CodecTypes['pg/bool@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    subjectId: CodecTypes['pg/int4@1']['output'];
+    title: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdBy: public_User;
+    questions: public_CBTQuestion[];
+    school: public_School;
+    subject: public_Subject;
+    readonly [RelationKeys]?: 'createdBy' | 'questions' | 'school' | 'subject';
+  };
+  export type public_CBTQuestionImage = {
+    altText: CodecTypes['pg/text@1']['output'] | null;
+    caption: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    displayOrder: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    questionId: CodecTypes['pg/int4@1']['output'];
+    storageReference: CodecTypes['pg/text@1']['output'];
+    question: public_CBTQuestion;
+    readonly [RelationKeys]?: 'question';
   };
   export type public_ClassNote = {
     classId: CodecTypes['pg/int4@1']['output'];
@@ -3423,6 +4250,8 @@ export namespace Models {
     assignments: public_Assignment[];
     attendanceRecords: public_Attendance[];
     billingRates: public_SchoolBillingRate[];
+    cbtActivityTypes: public_CBTActivityType[];
+    cbtQuestionBanks: public_CBTQuestionBank[];
     classNotes: public_ClassNote[];
     classSubjects: public_ClassSubject[];
     classes: public_SchoolClass[];
@@ -3457,6 +4286,8 @@ export namespace Models {
       | 'assignments'
       | 'attendanceRecords'
       | 'billingRates'
+      | 'cbtActivityTypes'
+      | 'cbtQuestionBanks'
       | 'classNotes'
       | 'classSubjects'
       | 'classes'
@@ -3588,6 +4419,7 @@ export namespace Models {
     assessmentScores: public_AssessmentScore[];
     assignmentSubmissions: public_AssignmentSubmission[];
     attendanceRecords: public_Attendance[];
+    cbtAttempts: public_CBTExamAttempt[];
     class: public_SchoolClass | null;
     contentReads: public_StudentContentRead[];
     feeInvoices: public_StudentInvoice[];
@@ -3602,6 +4434,7 @@ export namespace Models {
       | 'assessmentScores'
       | 'assignmentSubmissions'
       | 'attendanceRecords'
+      | 'cbtAttempts'
       | 'class'
       | 'contentReads'
       | 'feeInvoices'
@@ -3700,6 +4533,7 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     assessments: public_Assessment[];
     assignments: public_Assignment[];
+    cbtQuestionBanks: public_CBTQuestionBank[];
     classNotes: public_ClassNote[];
     classSubjects: public_ClassSubject[];
     school: public_School;
@@ -3708,6 +4542,7 @@ export namespace Models {
     readonly [RelationKeys]?:
       | 'assessments'
       | 'assignments'
+      | 'cbtQuestionBanks'
       | 'classNotes'
       | 'classSubjects'
       | 'school'
@@ -3867,12 +4702,14 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     confirmedPlatformPayments: public_PlatformSubscriptionPayment[];
     createdAssessments: public_Assessment[];
+    createdCBTQuestionBanks: public_CBTQuestionBank[];
     createdNotifications: public_Notification[];
     createdPlatformInvoices: public_PlatformSubscriptionInvoice[];
     createdSchoolBillingRates: public_SchoolBillingRate[];
     emailDeliveries: public_EmailDelivery[];
     feePaymentsRecorded: public_FeePayment[];
     gradedAssignmentSubmissions: public_AssignmentSubmission[];
+    markedCBTResponses: public_CBTExamResponse[];
     notificationRecipients: public_NotificationRecipient[];
     parent: public_Parent | null;
     publishedReportPublications: public_ReportPublication[];
@@ -3886,12 +4723,14 @@ export namespace Models {
     readonly [RelationKeys]?:
       | 'confirmedPlatformPayments'
       | 'createdAssessments'
+      | 'createdCBTQuestionBanks'
       | 'createdNotifications'
       | 'createdPlatformInvoices'
       | 'createdSchoolBillingRates'
       | 'emailDeliveries'
       | 'feePaymentsRecorded'
       | 'gradedAssignmentSubmissions'
+      | 'markedCBTResponses'
       | 'notificationRecipients'
       | 'parent'
       | 'publishedReportPublications'
@@ -3914,6 +4753,20 @@ export declare const models: {
     Assignment: Models.public_Assignment;
     AssignmentSubmission: Models.public_AssignmentSubmission;
     Attendance: Models.public_Attendance;
+    CBTActivityType: Models.public_CBTActivityType;
+    CBTExamAttempt: Models.public_CBTExamAttempt;
+    CBTExamOption: Models.public_CBTExamOption;
+    CBTExamOptionImage: Models.public_CBTExamOptionImage;
+    CBTExamQuestion: Models.public_CBTExamQuestion;
+    CBTExamQuestionImage: Models.public_CBTExamQuestionImage;
+    CBTExamResponse: Models.public_CBTExamResponse;
+    CBTExamResponseOption: Models.public_CBTExamResponseOption;
+    CBTExamSettings: Models.public_CBTExamSettings;
+    CBTOption: Models.public_CBTOption;
+    CBTOptionImage: Models.public_CBTOptionImage;
+    CBTQuestion: Models.public_CBTQuestion;
+    CBTQuestionBank: Models.public_CBTQuestionBank;
+    CBTQuestionImage: Models.public_CBTQuestionImage;
     ClassNote: Models.public_ClassNote;
     ClassSubject: Models.public_ClassSubject;
     ContactEnquiry: Models.public_ContactEnquiry;
@@ -4897,6 +5750,1377 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTActivityType: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['schoolId', 'name'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTActivityType_schoolId_idx_82b454d7';
+                  readonly prefix: 'CBTActivityType_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTActivityType_schoolId_isActive_idx_567af6bb';
+                  readonly prefix: 'CBTActivityType_schoolId_isActive_idx';
+                  readonly columns: readonly ['schoolId', 'isActive'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTActivityType';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamAttempt: {
+              columns: {
+                readonly assessmentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly attemptNumber: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly autoSubmitted: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly deadlineAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly maxScore: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly score: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly startedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'IN_PROGRESS'>;
+                  };
+                };
+                readonly studentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly submittedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [
+                { readonly columns: readonly ['assessmentId', 'studentId', 'attemptNumber'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamAttempt_assessmentId_idx_1fe05216';
+                  readonly prefix: 'CBTExamAttempt_assessmentId_idx';
+                  readonly columns: readonly ['assessmentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamAttempt_assessmentId_studentId_status_idx_7d2c0056';
+                  readonly prefix: 'CBTExamAttempt_assessmentId_studentId_status_idx';
+                  readonly columns: readonly ['assessmentId', 'studentId', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamAttempt_studentId_idx_bf255322';
+                  readonly prefix: 'CBTExamAttempt_studentId_idx';
+                  readonly columns: readonly ['studentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamAttempt_studentId_submittedAt_idx_39a4bfc4';
+                  readonly prefix: 'CBTExamAttempt_studentId_submittedAt_idx';
+                  readonly columns: readonly ['studentId', 'submittedAt'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamAttempt';
+                    readonly columns: readonly ['assessmentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assessment';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamAttempt';
+                    readonly columns: readonly ['studentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Student';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamOption: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly examQuestionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isCorrect: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly sourceOptionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly text: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['examQuestionId', 'displayOrder'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamOption_examQuestionId_idx_bed55f9b';
+                  readonly prefix: 'CBTExamOption_examQuestionId_idx';
+                  readonly columns: readonly ['examQuestionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamOption_sourceOptionId_idx_8e5a7335';
+                  readonly prefix: 'CBTExamOption_sourceOptionId_idx';
+                  readonly columns: readonly ['sourceOptionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamOption';
+                    readonly columns: readonly ['examQuestionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamOption';
+                    readonly columns: readonly ['sourceOptionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTOption';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamOptionImage: {
+              columns: {
+                readonly altText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly caption: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly examOptionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly storageReference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamOptionImage_examOptionId_idx_9d3b9c8b';
+                  readonly prefix: 'CBTExamOptionImage_examOptionId_idx';
+                  readonly columns: readonly ['examOptionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamOptionImage';
+                    readonly columns: readonly ['examOptionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamOption';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamQuestion: {
+              columns: {
+                readonly allowMultipleAnswers: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly assessmentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly explanation: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly marks: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                };
+                readonly prompt: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly sourceQuestionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['assessmentId', 'displayOrder'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamQuestion_assessmentId_idx_1fe05216';
+                  readonly prefix: 'CBTExamQuestion_assessmentId_idx';
+                  readonly columns: readonly ['assessmentId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamQuestion_sourceQuestionId_idx_cdb26c3f';
+                  readonly prefix: 'CBTExamQuestion_sourceQuestionId_idx';
+                  readonly columns: readonly ['sourceQuestionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestion';
+                    readonly columns: readonly ['assessmentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assessment';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestion';
+                    readonly columns: readonly ['sourceQuestionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamQuestionImage: {
+              columns: {
+                readonly altText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly caption: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly examQuestionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly storageReference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamQuestionImage_examQuestionId_idx_bed55f9b';
+                  readonly prefix: 'CBTExamQuestionImage_examQuestionId_idx';
+                  readonly columns: readonly ['examQuestionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestionImage';
+                    readonly columns: readonly ['examQuestionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamResponse: {
+              columns: {
+                readonly answerText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly attemptId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly awardedMarks: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly examQuestionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly feedback: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isCorrect: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: true;
+                };
+                readonly markedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly markedByUserId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly markingStatus: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['attemptId', 'examQuestionId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamResponse_attemptId_idx_94f50eb9';
+                  readonly prefix: 'CBTExamResponse_attemptId_idx';
+                  readonly columns: readonly ['attemptId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamResponse_examQuestionId_idx_bed55f9b';
+                  readonly prefix: 'CBTExamResponse_examQuestionId_idx';
+                  readonly columns: readonly ['examQuestionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamResponse_markedByUserId_idx_dde7e2cd';
+                  readonly prefix: 'CBTExamResponse_markedByUserId_idx';
+                  readonly columns: readonly ['markedByUserId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamResponse_markingStatus_idx_c46904b7';
+                  readonly prefix: 'CBTExamResponse_markingStatus_idx';
+                  readonly columns: readonly ['markingStatus'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponse';
+                    readonly columns: readonly ['attemptId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamAttempt';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponse';
+                    readonly columns: readonly ['examQuestionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamQuestion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponse';
+                    readonly columns: readonly ['markedByUserId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamResponseOption: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly examOptionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly responseId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['responseId', 'examOptionId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamResponseOption_examOptionId_idx_9d3b9c8b';
+                  readonly prefix: 'CBTExamResponseOption_examOptionId_idx';
+                  readonly columns: readonly ['examOptionId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamResponseOption_responseId_idx_a001d7b5';
+                  readonly prefix: 'CBTExamResponseOption_responseId_idx';
+                  readonly columns: readonly ['responseId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponseOption';
+                    readonly columns: readonly ['responseId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponse';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamResponseOption';
+                    readonly columns: readonly ['examOptionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamOption';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTExamSettings: {
+              columns: {
+                readonly activityTypeId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly allowBackNavigation: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly assessmentId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly closesAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly durationMinutes: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly instructions: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly maxAttempts: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly opensAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly reportMode: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'EXCLUDED'>;
+                  };
+                };
+                readonly resultsReleasedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly shuffleOptions: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly shuffleQuestions: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'DRAFT'>;
+                  };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['assessmentId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTExamSettings_activityTypeId_idx_04380ebf';
+                  readonly prefix: 'CBTExamSettings_activityTypeId_idx';
+                  readonly columns: readonly ['activityTypeId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTExamSettings_status_opensAt_closesAt_idx_b83873f9';
+                  readonly prefix: 'CBTExamSettings_status_opensAt_closesAt_idx';
+                  readonly columns: readonly ['status', 'opensAt', 'closesAt'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamSettings';
+                    readonly columns: readonly ['activityTypeId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTActivityType';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTExamSettings';
+                    readonly columns: readonly ['assessmentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Assessment';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTOption: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isCorrect: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly questionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly text: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTOption_questionId_idx_fdb42076';
+                  readonly prefix: 'CBTOption_questionId_idx';
+                  readonly columns: readonly ['questionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTOption';
+                    readonly columns: readonly ['questionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestion';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTOptionImage: {
+              columns: {
+                readonly altText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly caption: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly optionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly storageReference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTOptionImage_optionId_idx_b1d5fce5';
+                  readonly prefix: 'CBTOptionImage_optionId_idx';
+                  readonly columns: readonly ['optionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTOptionImage';
+                    readonly columns: readonly ['optionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTOption';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTQuestion: {
+              columns: {
+                readonly allowMultipleAnswers: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly bankId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly difficulty: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'MEDIUM'>;
+                  };
+                };
+                readonly explanation: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly marks: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                };
+                readonly prompt: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly type: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTQuestion_bankId_idx_7f042723';
+                  readonly prefix: 'CBTQuestion_bankId_idx';
+                  readonly columns: readonly ['bankId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTQuestion_difficulty_idx_ab7b4a75';
+                  readonly prefix: 'CBTQuestion_difficulty_idx';
+                  readonly columns: readonly ['difficulty'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTQuestion_type_idx_b6b604ea';
+                  readonly prefix: 'CBTQuestion_type_idx';
+                  readonly columns: readonly ['type'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestion';
+                    readonly columns: readonly ['bankId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestionBank';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTQuestionBank: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly createdById: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly description: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly isActive: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly schoolId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly subjectId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTQuestionBank_createdById_idx_8bf640ed';
+                  readonly prefix: 'CBTQuestionBank_createdById_idx';
+                  readonly columns: readonly ['createdById'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTQuestionBank_schoolId_idx_82b454d7';
+                  readonly prefix: 'CBTQuestionBank_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'CBTQuestionBank_subjectId_idx_84df2a1d';
+                  readonly prefix: 'CBTQuestionBank_subjectId_idx';
+                  readonly columns: readonly ['subjectId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestionBank';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestionBank';
+                    readonly columns: readonly ['subjectId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Subject';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestionBank';
+                    readonly columns: readonly ['createdById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly CBTQuestionImage: {
+              columns: {
+                readonly altText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly caption: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly displayOrder: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly questionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly storageReference: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'CBTQuestionImage_questionId_idx_fdb42076';
+                  readonly prefix: 'CBTQuestionImage_questionId_idx';
+                  readonly columns: readonly ['questionId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestionImage';
+                    readonly columns: readonly ['questionId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'CBTQuestion';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -10060,6 +12284,37 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['MONTHLY', 'QUARTERLY', 'YEARLY'];
             };
+            readonly CBTAttemptStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'IN_PROGRESS',
+                'SUBMITTED',
+                'AUTO_SUBMITTED',
+                'MARKING',
+                'GRADED',
+                'VOIDED',
+              ];
+            };
+            readonly CBTExamStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['DRAFT', 'SCHEDULED', 'PUBLISHED', 'CLOSED', 'ARCHIVED'];
+            };
+            readonly CBTMarkingStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'AUTO_MARKED', 'MANUALLY_MARKED'];
+            };
+            readonly CBTQuestionDifficulty: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['EASY', 'MEDIUM', 'HARD'];
+            };
+            readonly CBTQuestionType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['MULTIPLE_CHOICE', 'TRUE_FALSE', 'THEORY'];
+            };
+            readonly CBTReportMode: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['AUTOMATIC', 'MANUAL', 'EXCLUDED'];
+            };
             readonly ContactEnquiryStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['NEW', 'READ', 'REPLIED', 'ARCHIVED'];
@@ -10211,6 +12466,59 @@ type ContractBase = Omit<
     readonly Attendance: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Attendance';
+    };
+    readonly CBTActivityType: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTActivityType';
+    };
+    readonly CBTExamAttempt: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamAttempt';
+    };
+    readonly CBTExamOption: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamOption';
+    };
+    readonly CBTExamOptionImage: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamOptionImage';
+    };
+    readonly CBTExamQuestion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamQuestion';
+    };
+    readonly CBTExamQuestionImage: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamQuestionImage';
+    };
+    readonly CBTExamResponse: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamResponse';
+    };
+    readonly CBTExamResponseOption: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamResponseOption';
+    };
+    readonly CBTExamSettings: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTExamSettings';
+    };
+    readonly CBTOption: { readonly namespace: 'public' & NamespaceId; readonly model: 'CBTOption' };
+    readonly CBTOptionImage: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTOptionImage';
+    };
+    readonly CBTQuestion: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTQuestion';
+    };
+    readonly CBTQuestionBank: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTQuestionBank';
+    };
+    readonly CBTQuestionImage: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CBTQuestionImage';
     };
     readonly ClassNote: { readonly namespace: 'public' & NamespaceId; readonly model: 'ClassNote' };
     readonly ClassSubject: {
@@ -10565,6 +12873,40 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['assessmentCategoryId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly cbtAttempts: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamAttempt';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assessmentId'];
+                };
+              };
+              readonly cbtQuestions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assessmentId'];
+                };
+              };
+              readonly cbtSettings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamSettings';
+                };
+                readonly cardinality: '1:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['assessmentId'];
                 };
               };
               readonly class: {
@@ -11211,6 +13553,1302 @@ type ContractBase = Omit<
                 readonly studentId: { readonly column: 'studentId' };
                 readonly termId: { readonly column: 'termId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTActivityType: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly activities: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamSettings';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['activityTypeId'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTActivityType';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly name: { readonly column: 'name' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTExamAttempt: {
+            readonly fields: {
+              readonly assessmentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly attemptNumber: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly autoSubmitted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deadlineAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly maxScore: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly score: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly startedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly studentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly submittedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly assessment: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assessment';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['assessmentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly responses: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponse';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['attemptId'];
+                };
+              };
+              readonly student: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Student';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['studentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamAttempt';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly assessmentId: { readonly column: 'assessmentId' };
+                readonly attemptNumber: { readonly column: 'attemptNumber' };
+                readonly autoSubmitted: { readonly column: 'autoSubmitted' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly deadlineAt: { readonly column: 'deadlineAt' };
+                readonly id: { readonly column: 'id' };
+                readonly maxScore: { readonly column: 'maxScore' };
+                readonly score: { readonly column: 'score' };
+                readonly startedAt: { readonly column: 'startedAt' };
+                readonly status: { readonly column: 'status' };
+                readonly studentId: { readonly column: 'studentId' };
+                readonly submittedAt: { readonly column: 'submittedAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTExamOption: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly examQuestionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isCorrect: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly sourceOptionId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly text: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly examQuestion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['examQuestionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly images: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamOptionImage';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['examOptionId'];
+                };
+              };
+              readonly selectedBy: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponseOption';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['examOptionId'];
+                };
+              };
+              readonly sourceOption: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTOption';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['sourceOptionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamOption';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly examQuestionId: { readonly column: 'examQuestionId' };
+                readonly id: { readonly column: 'id' };
+                readonly isCorrect: { readonly column: 'isCorrect' };
+                readonly sourceOptionId: { readonly column: 'sourceOptionId' };
+                readonly text: { readonly column: 'text' };
+              };
+            };
+          };
+          readonly CBTExamOptionImage: {
+            readonly fields: {
+              readonly altText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly caption: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly examOptionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly storageReference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly examOption: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamOption';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['examOptionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamOptionImage';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly altText: { readonly column: 'altText' };
+                readonly caption: { readonly column: 'caption' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly examOptionId: { readonly column: 'examOptionId' };
+                readonly id: { readonly column: 'id' };
+                readonly storageReference: { readonly column: 'storageReference' };
+              };
+            };
+          };
+          readonly CBTExamQuestion: {
+            readonly fields: {
+              readonly allowMultipleAnswers: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly assessmentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly explanation: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly marks: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly prompt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly sourceQuestionId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly assessment: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assessment';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['assessmentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly images: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestionImage';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['examQuestionId'];
+                };
+              };
+              readonly options: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamOption';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['examQuestionId'];
+                };
+              };
+              readonly responses: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponse';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['examQuestionId'];
+                };
+              };
+              readonly sourceQuestion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['sourceQuestionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamQuestion';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly allowMultipleAnswers: { readonly column: 'allowMultipleAnswers' };
+                readonly assessmentId: { readonly column: 'assessmentId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly explanation: { readonly column: 'explanation' };
+                readonly id: { readonly column: 'id' };
+                readonly marks: { readonly column: 'marks' };
+                readonly prompt: { readonly column: 'prompt' };
+                readonly sourceQuestionId: { readonly column: 'sourceQuestionId' };
+                readonly type: { readonly column: 'type' };
+              };
+            };
+          };
+          readonly CBTExamQuestionImage: {
+            readonly fields: {
+              readonly altText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly caption: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly examQuestionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly storageReference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly examQuestion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['examQuestionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamQuestionImage';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly altText: { readonly column: 'altText' };
+                readonly caption: { readonly column: 'caption' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly examQuestionId: { readonly column: 'examQuestionId' };
+                readonly id: { readonly column: 'id' };
+                readonly storageReference: { readonly column: 'storageReference' };
+              };
+            };
+          };
+          readonly CBTExamResponse: {
+            readonly fields: {
+              readonly answerText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly attemptId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly awardedMarks: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly examQuestionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly feedback: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isCorrect: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly markedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly markedByUserId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly markingStatus: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly attempt: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamAttempt';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['attemptId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly examQuestion: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['examQuestionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly markedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['markedByUserId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly selectedOptions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponseOption';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['responseId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamResponse';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly answerText: { readonly column: 'answerText' };
+                readonly attemptId: { readonly column: 'attemptId' };
+                readonly awardedMarks: { readonly column: 'awardedMarks' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly examQuestionId: { readonly column: 'examQuestionId' };
+                readonly feedback: { readonly column: 'feedback' };
+                readonly id: { readonly column: 'id' };
+                readonly isCorrect: { readonly column: 'isCorrect' };
+                readonly markedAt: { readonly column: 'markedAt' };
+                readonly markedByUserId: { readonly column: 'markedByUserId' };
+                readonly markingStatus: { readonly column: 'markingStatus' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTExamResponseOption: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly examOptionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly responseId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly examOption: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamOption';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['examOptionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly response: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponse';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['responseId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamResponseOption';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly examOptionId: { readonly column: 'examOptionId' };
+                readonly id: { readonly column: 'id' };
+                readonly responseId: { readonly column: 'responseId' };
+              };
+            };
+          };
+          readonly CBTExamSettings: {
+            readonly fields: {
+              readonly activityTypeId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly allowBackNavigation: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly assessmentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly closesAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly durationMinutes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly instructions: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly maxAttempts: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly opensAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly reportMode: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly resultsReleasedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly shuffleOptions: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly shuffleQuestions: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly activityType: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTActivityType';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['activityTypeId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly assessment: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Assessment';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['assessmentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTExamSettings';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly activityTypeId: { readonly column: 'activityTypeId' };
+                readonly allowBackNavigation: { readonly column: 'allowBackNavigation' };
+                readonly assessmentId: { readonly column: 'assessmentId' };
+                readonly closesAt: { readonly column: 'closesAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly durationMinutes: { readonly column: 'durationMinutes' };
+                readonly id: { readonly column: 'id' };
+                readonly instructions: { readonly column: 'instructions' };
+                readonly maxAttempts: { readonly column: 'maxAttempts' };
+                readonly opensAt: { readonly column: 'opensAt' };
+                readonly reportMode: { readonly column: 'reportMode' };
+                readonly resultsReleasedAt: { readonly column: 'resultsReleasedAt' };
+                readonly shuffleOptions: { readonly column: 'shuffleOptions' };
+                readonly shuffleQuestions: { readonly column: 'shuffleQuestions' };
+                readonly status: { readonly column: 'status' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTOption: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isCorrect: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly questionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly text: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly examCopies: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamOption';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sourceOptionId'];
+                };
+              };
+              readonly images: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTOptionImage';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['optionId'];
+                };
+              };
+              readonly question: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['questionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTOption';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly id: { readonly column: 'id' };
+                readonly isCorrect: { readonly column: 'isCorrect' };
+                readonly questionId: { readonly column: 'questionId' };
+                readonly text: { readonly column: 'text' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTOptionImage: {
+            readonly fields: {
+              readonly altText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly caption: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly optionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly storageReference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly option: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTOption';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['optionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTOptionImage';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly altText: { readonly column: 'altText' };
+                readonly caption: { readonly column: 'caption' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly id: { readonly column: 'id' };
+                readonly optionId: { readonly column: 'optionId' };
+                readonly storageReference: { readonly column: 'storageReference' };
+              };
+            };
+          };
+          readonly CBTQuestion: {
+            readonly fields: {
+              readonly allowMultipleAnswers: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly bankId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly difficulty: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly explanation: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly marks: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly prompt: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly bank: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestionBank';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['bankId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly examCopies: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamQuestion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['sourceQuestionId'];
+                };
+              };
+              readonly images: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestionImage';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['questionId'];
+                };
+              };
+              readonly options: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTOption';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['questionId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTQuestion';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly allowMultipleAnswers: { readonly column: 'allowMultipleAnswers' };
+                readonly bankId: { readonly column: 'bankId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly difficulty: { readonly column: 'difficulty' };
+                readonly explanation: { readonly column: 'explanation' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly marks: { readonly column: 'marks' };
+                readonly prompt: { readonly column: 'prompt' };
+                readonly type: { readonly column: 'type' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTQuestionBank: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly description: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly isActive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly subjectId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly createdBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['createdById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly questions: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestion';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['bankId'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly subject: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Subject';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['subjectId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTQuestionBank';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly createdById: { readonly column: 'createdById' };
+                readonly description: { readonly column: 'description' };
+                readonly id: { readonly column: 'id' };
+                readonly isActive: { readonly column: 'isActive' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly subjectId: { readonly column: 'subjectId' };
+                readonly title: { readonly column: 'title' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly CBTQuestionImage: {
+            readonly fields: {
+              readonly altText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly caption: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly displayOrder: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly questionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly storageReference: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly question: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestion';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['questionId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'CBTQuestionImage';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly altText: { readonly column: 'altText' };
+                readonly caption: { readonly column: 'caption' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly displayOrder: { readonly column: 'displayOrder' };
+                readonly id: { readonly column: 'id' };
+                readonly questionId: { readonly column: 'questionId' };
+                readonly storageReference: { readonly column: 'storageReference' };
               };
             };
           };
@@ -13956,6 +17594,28 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['schoolId'];
                 };
               };
+              readonly cbtActivityTypes: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTActivityType';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
+              readonly cbtQuestionBanks: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestionBank';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
+                };
+              };
               readonly classNotes: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -14890,6 +18550,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['studentId'];
                 };
               };
+              readonly cbtAttempts: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamAttempt';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['studentId'];
+                };
+              };
               readonly class: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -15593,6 +19264,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Assignment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['subjectId'];
+                };
+              };
+              readonly cbtQuestionBanks: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestionBank';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -16530,6 +20212,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['createdById'];
                 };
               };
+              readonly createdCBTQuestionBanks: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTQuestionBank';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['createdById'];
+                };
+              };
               readonly createdNotifications: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -16594,6 +20287,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['gradedByUserId'];
+                };
+              };
+              readonly markedCBTResponses: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'CBTExamResponse';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['markedByUserId'];
                 };
               };
               readonly notificationRecipients: {
@@ -16768,6 +20472,59 @@ type ContractBase = Omit<
               { readonly name: 'MONTHLY'; readonly value: 'MONTHLY' },
               { readonly name: 'QUARTERLY'; readonly value: 'QUARTERLY' },
               { readonly name: 'YEARLY'; readonly value: 'YEARLY' },
+            ];
+          };
+          readonly CBTAttemptStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'IN_PROGRESS'; readonly value: 'IN_PROGRESS' },
+              { readonly name: 'SUBMITTED'; readonly value: 'SUBMITTED' },
+              { readonly name: 'AUTO_SUBMITTED'; readonly value: 'AUTO_SUBMITTED' },
+              { readonly name: 'MARKING'; readonly value: 'MARKING' },
+              { readonly name: 'GRADED'; readonly value: 'GRADED' },
+              { readonly name: 'VOIDED'; readonly value: 'VOIDED' },
+            ];
+          };
+          readonly CBTExamStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'DRAFT'; readonly value: 'DRAFT' },
+              { readonly name: 'SCHEDULED'; readonly value: 'SCHEDULED' },
+              { readonly name: 'PUBLISHED'; readonly value: 'PUBLISHED' },
+              { readonly name: 'CLOSED'; readonly value: 'CLOSED' },
+              { readonly name: 'ARCHIVED'; readonly value: 'ARCHIVED' },
+            ];
+          };
+          readonly CBTMarkingStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'AUTO_MARKED'; readonly value: 'AUTO_MARKED' },
+              { readonly name: 'MANUALLY_MARKED'; readonly value: 'MANUALLY_MARKED' },
+            ];
+          };
+          readonly CBTQuestionDifficulty: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'EASY'; readonly value: 'EASY' },
+              { readonly name: 'MEDIUM'; readonly value: 'MEDIUM' },
+              { readonly name: 'HARD'; readonly value: 'HARD' },
+            ];
+          };
+          readonly CBTQuestionType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'MULTIPLE_CHOICE'; readonly value: 'MULTIPLE_CHOICE' },
+              { readonly name: 'TRUE_FALSE'; readonly value: 'TRUE_FALSE' },
+              { readonly name: 'THEORY'; readonly value: 'THEORY' },
+            ];
+          };
+          readonly CBTReportMode: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'AUTOMATIC'; readonly value: 'AUTOMATIC' },
+              { readonly name: 'MANUAL'; readonly value: 'MANUAL' },
+              { readonly name: 'EXCLUDED'; readonly value: 'EXCLUDED' },
             ];
           };
           readonly ContactEnquiryStatus: {
@@ -17043,6 +20800,69 @@ type ContractBase = Omit<
             readonly column: 'updatedAt';
             readonly namespace: 'public';
             readonly table: 'Attendance';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTActivityType';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTExamAttempt';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTExamResponse';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTExamSettings';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTOption';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTQuestion';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'CBTQuestionBank';
           };
         },
         {

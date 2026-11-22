@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { signOut } from "next-auth/react";
 
@@ -22,6 +22,8 @@ const navigation = [
   { label: "My Classes", href: "/teacher/classes" },
   { label: "Attendance", href: "/teacher/attendance" },
   { label: "Assessments", href: "/teacher/assessments" },
+  { label: "Question Banks", href: "/teacher/cbt/question-banks" },
+
   { label: "My Profile", href: "/teacher/profile" },
   { label: "Assignments", href: "/teacher/assignments" },
   { label: "Assignment Grading", href: "/teacher/assignments/grading" },
@@ -147,9 +149,9 @@ export default function TeacherPortalShell({
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm md:hidden"
             >
               {mobileMenuOpen ? (
-                <span className="text-xl">Ã—</span>
+                <span className="text-xl">Ãƒâ€”</span>
               ) : (
-                <span className="text-xl">â˜°</span>
+                <span className="text-xl">Ã¢ËœÂ°</span>
               )}
             </button>
 
@@ -241,6 +243,8 @@ export default function TeacherPortalShell({
     </div>
   );
 }
+
+
 
 
 

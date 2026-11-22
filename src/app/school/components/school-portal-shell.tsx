@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { signOut } from "next-auth/react";
 
@@ -123,6 +123,13 @@ export default function SchoolPortalShell({
           >
             Assessments
           </Link>
+
+            <Link
+              href="/school/cbt/question-banks"
+              className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
+            >
+              Question Banks
+            </Link>
 
           <Link
             href="/school/academic-sessions"

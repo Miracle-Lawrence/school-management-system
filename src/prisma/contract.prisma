@@ -162,6 +162,7 @@ enum EmailDeliveryStatus {
 }
 
 model School {
+  cbtActivityTypes CBTActivityType[]
   id                       Int                           @id @default(autoincrement())
   name                     String
   slug                     String                        @unique
@@ -222,6 +223,7 @@ model School {
   createdAt                TimestamptzString             @default(now())
   updatedAt                temporal.updatedAtString()
   reportPublications       ReportPublication[]
+  cbtQuestionBanks         CBTQuestionBank[]
 }
 
 model SubscriptionPlan {
@@ -628,6 +630,8 @@ model User {
   publishedReportPublications   ReportPublication[]           @relation("ReportPublicationPublishedBy")
   unpublishedReportPublications ReportPublication[]           @relation("ReportPublicationUnpublishedBy")
   rejectedPlatformPayments      PlatformSubscriptionPayment[] @relation("PlatformPaymentRejectedBy")
+  createdCBTQuestionBanks       CBTQuestionBank[] @relation("CBTQuestionBankCreatedBy")
+  markedCBTResponses             CBTExamResponse[] @relation("CBTResponseMarkedBy")
 }
 
 model Student {
@@ -652,6 +656,7 @@ model Student {
   parents               ParentStudent[]
   attendanceRecords     Attendance[]
   assessmentScores      AssessmentScore[]
+  cbtAttempts           CBTExamAttempt[]
   subjectResults        SubjectResult[]
   studentTermResults    StudentTermResult[]
   psychomotorRatings    StudentPsychomotorRating[]
@@ -757,6 +762,7 @@ model Subject {
   subjectResults     SubjectResult[]
   assignments        Assignment[]
   classNotes         ClassNote[]
+  cbtQuestionBanks  CBTQuestionBank[]
   createdAt          TimestamptzString          @default(now())
   updatedAt          temporal.updatedAtString()
 
@@ -873,6 +879,9 @@ model Assessment {
   description          String?
 
   scores               AssessmentScore[]
+  cbtSettings          CBTExamSettings?
+  cbtQuestions         CBTExamQuestion[]
+  cbtAttempts          CBTExamAttempt[]
 
   createdAt            TimestamptzString          @default(now())
   updatedAt            temporal.updatedAtString()
@@ -1417,4 +1426,303 @@ model ContactEnquiry {
 
   @@index([status, createdAt])
   @@index([createdAt])
+}
+
+// CBT question and examination enums
+enum CBTQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  THEORY
+}
+
+enum CBTQuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum CBTExamStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  CLOSED
+  ARCHIVED
+}
+
+enum CBTAttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  AUTO_SUBMITTED
+  MARKING
+  GRADED
+  VOIDED
+}
+
+enum CBTMarkingStatus {
+  PENDING
+  AUTO_MARKED
+  MANUALLY_MARKED
+}
+enum CBTReportMode {
+  AUTOMATIC
+  MANUAL
+  EXCLUDED
+}
+
+
+// ======================================================
+// CBT QUESTION BANK
+// ======================================================
+
+model CBTQuestionBank {
+  id          Int       @id @default(autoincrement())
+  school      School    @relation(fields:[schoolId], references:[id])
+  schoolId    Int
+  subject     Subject   @relation(fields:[subjectId], references:[id])
+  subjectId   Int
+  createdBy   User      @relation("CBTQuestionBankCreatedBy", fields:[createdById], references:[id])
+  createdById Int
+  title       String
+  description String?
+  isActive    Boolean   @default(true)
+  questions   CBTQuestion[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([schoolId])
+  @@index([subjectId])
+  @@index([createdById])
+}
+
+model CBTQuestion {
+  id          Int                    @id @default(autoincrement())
+  bank        CBTQuestionBank        @relation(fields:[bankId], references:[id])
+  bankId      Int
+  type        CBTQuestionType
+  allowMultipleAnswers Boolean @default(false)
+  prompt      String
+  marks       Float
+  difficulty  CBTQuestionDifficulty @default(MEDIUM)
+  explanation String?
+  isActive    Boolean                @default(true)
+  options     CBTOption[]
+  images      CBTQuestionImage[]
+  examCopies  CBTExamQuestion[]
+  createdAt   TimestamptzString      @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([bankId])
+  @@index([type])
+  @@index([difficulty])
+}
+
+model CBTOption {
+  id          Int              @id @default(autoincrement())
+  question    CBTQuestion      @relation(fields:[questionId], references:[id])
+  questionId  Int
+  text        String
+  isCorrect   Boolean          @default(false)
+  displayOrder Int             @default(1)
+  images      CBTOptionImage[]
+  examCopies  CBTExamOption[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([questionId])
+}
+
+model CBTQuestionImage {
+  id               Int          @id @default(autoincrement())
+  question         CBTQuestion  @relation(fields:[questionId], references:[id])
+  questionId       Int
+  storageReference String
+  altText          String?
+  caption          String?
+  displayOrder     Int          @default(1)
+  createdAt        TimestamptzString @default(now())
+
+  @@index([questionId])
+}
+
+model CBTOptionImage {
+  id               Int       @id @default(autoincrement())
+  option           CBTOption @relation(fields:[optionId], references:[id])
+  optionId         Int
+  storageReference String
+  altText          String?
+  caption          String?
+  displayOrder     Int       @default(1)
+  createdAt        TimestamptzString @default(now())
+
+  @@index([optionId])
+}
+
+// ======================================================
+// CBT EXAM CONFIGURATION AND PUBLISHED SNAPSHOTS
+// ======================================================
+
+model CBTExamSettings {
+  activityType   CBTActivityType? @relation(fields: [activityTypeId], references: [id])
+  activityTypeId Int?
+  reportMode     CBTReportMode @default(EXCLUDED)
+  id                    Int           @id @default(autoincrement())
+  assessment            Assessment    @relation(fields:[assessmentId], references:[id])
+  assessmentId          Int           @unique
+  status                CBTExamStatus @default(DRAFT)
+  durationMinutes       Int
+  opensAt               TimestamptzString?
+  closesAt              TimestamptzString?
+  maxAttempts           Int           @default(1)
+  shuffleQuestions      Boolean       @default(false)
+  shuffleOptions        Boolean       @default(false)
+  allowBackNavigation   Boolean       @default(true)
+  instructions          String?
+  resultsReleasedAt     TimestamptzString?
+  createdAt             TimestamptzString @default(now())
+  updatedAt             temporal.updatedAtString()
+
+  @@index([status, opensAt, closesAt])
+}
+
+model CBTExamQuestion {
+  id              Int                 @id @default(autoincrement())
+  assessment      Assessment          @relation(fields:[assessmentId], references:[id])
+  assessmentId    Int
+  sourceQuestion  CBTQuestion?        @relation(fields:[sourceQuestionId], references:[id])
+  sourceQuestionId Int?
+  type            CBTQuestionType
+  allowMultipleAnswers Boolean @default(false)
+  prompt          String
+  explanation     String?
+  marks           Float
+  displayOrder    Int
+  options         CBTExamOption[]
+  images          CBTExamQuestionImage[]
+  responses       CBTExamResponse[]
+  createdAt       TimestamptzString   @default(now())
+
+  @@unique([assessmentId, displayOrder])
+  @@index([sourceQuestionId])
+  @@index([assessmentId])
+}
+
+model CBTExamOption {
+  id              Int                 @id @default(autoincrement())
+  examQuestion    CBTExamQuestion     @relation(fields:[examQuestionId], references:[id])
+  examQuestionId  Int
+  sourceOption    CBTOption?          @relation(fields:[sourceOptionId], references:[id])
+  sourceOptionId  Int?
+  text            String
+  isCorrect       Boolean             @default(false)
+  displayOrder    Int
+  images          CBTExamOptionImage[]
+  selectedBy       CBTExamResponseOption[]
+  createdAt       TimestamptzString   @default(now())
+
+  @@unique([examQuestionId, displayOrder])
+  @@index([sourceOptionId])
+}
+
+model CBTExamQuestionImage {
+  id               Int             @id @default(autoincrement())
+  examQuestion     CBTExamQuestion @relation(fields:[examQuestionId], references:[id])
+  examQuestionId   Int
+  storageReference String
+  altText          String?
+  caption          String?
+  displayOrder     Int             @default(1)
+  createdAt        TimestamptzString @default(now())
+
+  @@index([examQuestionId])
+}
+
+model CBTExamOptionImage {
+  id               Int           @id @default(autoincrement())
+  examOption       CBTExamOption @relation(fields:[examOptionId], references:[id])
+  examOptionId     Int
+  storageReference String
+  altText          String?
+  caption          String?
+  displayOrder     Int           @default(1)
+  createdAt        TimestamptzString @default(now())
+
+  @@index([examOptionId])
+}
+
+// ======================================================
+// STUDENT CBT ATTEMPTS AND RESPONSES
+// ======================================================
+
+model CBTExamAttempt {
+  id              Int              @id @default(autoincrement())
+  assessment      Assessment       @relation(fields:[assessmentId], references:[id])
+  assessmentId    Int
+  student         Student          @relation(fields:[studentId], references:[id])
+  studentId       Int
+  attemptNumber   Int
+  status          CBTAttemptStatus @default(IN_PROGRESS)
+  startedAt       TimestamptzString @default(now())
+  deadlineAt      TimestamptzString
+  submittedAt     TimestamptzString?
+  score           Float?
+  maxScore        Float?
+  autoSubmitted   Boolean          @default(false)
+  responses       CBTExamResponse[]
+  createdAt       TimestamptzString @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  @@unique([assessmentId, studentId, attemptNumber])
+  @@index([assessmentId, studentId, status])
+  @@index([studentId, submittedAt])
+}
+
+model CBTExamResponse {
+  id               Int                 @id @default(autoincrement())
+  attempt          CBTExamAttempt      @relation(fields:[attemptId], references:[id])
+  attemptId        Int
+  examQuestion     CBTExamQuestion    @relation(fields:[examQuestionId], references:[id])
+  examQuestionId   Int
+  answerText       String?
+  awardedMarks     Float?
+  isCorrect        Boolean?
+  markingStatus    CBTMarkingStatus   @default(PENDING)
+  feedback         String?
+  markedBy         User?              @relation("CBTResponseMarkedBy", fields:[markedByUserId], references:[id])
+  markedByUserId   Int?
+  markedAt         TimestamptzString?
+  selectedOptions  CBTExamResponseOption[]
+  createdAt        TimestamptzString @default(now())
+  updatedAt        temporal.updatedAtString()
+
+  @@unique([attemptId, examQuestionId])
+  @@index([examQuestionId])
+  @@index([markingStatus])
+  @@index([markedByUserId])
+}
+
+model CBTExamResponseOption {
+  id             Int             @id @default(autoincrement())
+  response       CBTExamResponse @relation(fields:[responseId], references:[id])
+  responseId     Int
+  examOption     CBTExamOption   @relation(fields:[examOptionId], references:[id])
+  examOptionId   Int
+  createdAt      TimestamptzString @default(now())
+
+  @@unique([responseId, examOptionId])
+  @@index([examOptionId])
+}
+
+model CBTActivityType {
+  id          Int              @id @default(autoincrement())
+  school      School           @relation(fields: [schoolId], references: [id])
+  schoolId    Int
+  name        String
+  description String?
+  isActive    Boolean          @default(true)
+  activities  CBTExamSettings[]
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@unique([schoolId, name])
+  @@index([schoolId, isActive])
 }

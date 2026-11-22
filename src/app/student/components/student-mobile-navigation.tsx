@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,7 @@ const navigation = [
   ["My Profile", "/student/profile"],
   ["My Class & Subjects", "/student/subjects"],
   ["Assignments", "/student/assignments"],
+  ["Online Exams", "/student/cbt"],
   ["Class Notes", "/student/class-notes"],
   ["My Results", "/student/results"],
   ["Attendance", "/student/attendance"],

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireRole } from "@/lib/auth/authorization";
@@ -63,6 +63,9 @@ export default async function TeacherAssessmentDetailsPage({
     notFound();
   }
 
+  const cbtSettings = await db.orm.public.CBTExamSettings.where((item) =>
+    item.assessmentId.eq(assessmentId),
+  ).first();
   const [schoolClass, subject, term, allStudents, scores] = await Promise.all([
     db.orm.public.SchoolClass.where((item) =>
       item.id.eq(assessment.classId),
@@ -91,6 +94,61 @@ export default async function TeacherAssessmentDetailsPage({
     notFound();
   }
 
+
+  if (cbtSettings) {
+    return (
+      <main className="space-y-6">
+        <Link
+          href="/teacher/assessments"
+          className="inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-900"
+        >
+          ← Back to assessments
+        </Link>
+
+        <section className="rounded-2xl bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 p-6 text-white sm:p-8">
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-200">
+            Computer-Based Test
+          </p>
+
+          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">
+            {assessment.title}
+          </h1>
+
+          <p className="mt-2 text-blue-100">
+            {schoolClass.name} · {subject.name}
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-3 text-sm">
+            <span className="rounded-lg bg-white/10 px-3 py-2">
+              Maximum score: {assessment.maxScore}
+            </span>
+
+            <span className="rounded-lg bg-white/10 px-3 py-2">
+              Status: {cbtSettings.status}
+            </span>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-bold text-slate-900">
+            Manage this CBT assessment
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Configure examination settings, select questions, publish the
+            examination, and manage student results.
+          </p>
+
+          <Link
+            href={`/teacher/assessments/${assessment.id}/cbt`}
+            className="mt-5 inline-flex items-center rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800"
+          >
+            Manage CBT →
+          </Link>
+        </section>
+      </main>
+    );
+  }
   const students = allStudents
     .filter(
       (student) =>
@@ -122,7 +180,7 @@ export default async function TeacherAssessmentDetailsPage({
         href="/teacher/assessments"
         className="inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-900"
       >
-        ← Back to assessments
+        â† Back to assessments
       </Link>
 
       <section className="rounded-2xl bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 p-6 text-white sm:p-8">
@@ -135,7 +193,7 @@ export default async function TeacherAssessmentDetailsPage({
         </h1>
 
         <p className="mt-2 text-blue-100">
-          {schoolClass.name} · {subject.name}
+          {schoolClass.name} Â· {subject.name}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3 text-sm">
@@ -153,6 +211,23 @@ export default async function TeacherAssessmentDetailsPage({
         </div>
       </section>
 
+      <section className="flex flex-col gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-bold text-slate-900">
+            Want to conduct this assessment online?
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Configure a Computer-Based Test, select questions, and manage student attempts.
+          </p>
+        </div>
+
+        <Link
+          href={`/teacher/assessments/${assessment.id}/cbt`}
+          className="inline-flex shrink-0 items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800"
+        >
+          Configure CBT →
+        </Link>
+      </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="mb-2 text-lg font-bold text-slate-900">
           Enter student scores
@@ -179,3 +254,5 @@ export default async function TeacherAssessmentDetailsPage({
     </main>
   );
 }
+
+

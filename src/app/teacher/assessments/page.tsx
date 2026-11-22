@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { requireRole } from "@/lib/auth/authorization";
 import { db } from "@/prisma/db";
@@ -39,7 +39,7 @@ export default async function TeacherAssessmentsPage() {
     ),
   );
 
-  const [allAssessments, classes, subjects, terms, sessions] =
+  const [allAssessments, classes, subjects, terms, sessions, cbtSettings] =
     await Promise.all([
       db.orm.public.Assessment.where((item) =>
         item.schoolId.eq(schoolId),
@@ -52,7 +52,20 @@ export default async function TeacherAssessmentsPage() {
       db.orm.public.AcademicSession.where((item) =>
         item.schoolId.eq(schoolId),
       ).all(),
+      db.orm.public.CBTExamSettings.all(),
     ]);
+  const cbtAssessmentIds = new Set(
+    cbtSettings
+      .filter((setting) =>
+        allAssessments.some(
+          (assessment) =>
+            assessment.id === setting.assessmentId &&
+            assessment.schoolId === schoolId,
+        ),
+      )
+      .map((setting) => setting.assessmentId),
+  );
+
 
   const validTermIds = new Set(
     terms
@@ -178,7 +191,7 @@ export default async function TeacherAssessmentsPage() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-slate-700">
-                        <p>{term.name}</p>
+{cbtAssessmentIds.has(assessment.id) ? "Manage CBT" : "Enter scores"}
                         <p className="mt-1 text-xs text-slate-500">
                           {academicSession.name}
                         </p>

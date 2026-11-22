@@ -18,6 +18,7 @@ const navigation = [
   { label: "My Profile", href: "/student/profile", icon: "◉" },
   { label: "My Class & Subjects", href: "/student/subjects", icon: "▤" },
   { label: "Assignments", href: "/student/assignments", icon: "✎" },
+  { label: "Online Exams", href: "/student/cbt", icon: "CBT" },
   { label: "Class Notes", href: "/student/class-notes", icon: "▤" },
   { label: "My Results", href: "/student/results", icon: "▥" },
   { label: "Attendance", href: "/student/attendance", icon: "✓" },
@@ -179,6 +180,7 @@ export default function StudentPortalShell({
       </StudentContentUnreadProvider>
   );
 }
+
 
 
 

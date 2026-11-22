@@ -26,6 +26,11 @@ const quickLinks = [
     href: "/student/assignments",
   },
   {
+    title: "Online Exams",
+    description: "Take your published computer-based tests and exams.",
+    href: "/student/cbt",
+  },
+  {
     title: "My Results",
     description: "Review your published academic results.",
     href: "/student/results",
@@ -204,4 +209,5 @@ export default async function StudentDashboardPage() {
     </div>
   );
 }
+
 
