@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requireRole } from "@/lib/auth/authorization";
+import { requireApiRole } from "@/lib/auth/authorization";
 import { recordAssessmentScore } from "@/lib/services/assessment.service";
 import { db } from "@/prisma/db";
 
@@ -24,7 +24,11 @@ function isPositiveInteger(value: unknown): value is number {
 
 export async function POST(request: Request) {
   try {
-    const session = await requireRole(["TEACHER"]);
+    const session = await requireApiRole(["TEACHER"]);
+
+    if (session instanceof NextResponse) {
+      return session;
+    }
     const schoolId = session.user.schoolId;
     const userId = Number(session.user.id);
 
