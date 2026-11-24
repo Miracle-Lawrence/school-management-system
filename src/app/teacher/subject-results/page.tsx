@@ -423,6 +423,9 @@ export default async function TeacherSubjectResultsPage({
                             className="px-4 py-3 text-center font-semibold text-slate-700"
                           >
                             {component.name}
+                            {component.maxScore != null && (
+                              <span className="ml-1 text-slate-500">({formatScore(component.maxScore)})</span>
+                            )}
                           </th>
                         ))}
                       <th className="px-4 py-3 text-right font-semibold text-slate-700">
@@ -472,11 +475,6 @@ export default async function TeacherSubjectResultsPage({
                                   className="px-4 py-3 text-center tabular-nums"
                                 >
                                   {score ? formatScore(score.score) : "—"}
-                                  {score?.maxScore != null && (
-                                    <span className="text-slate-400">
-                                      {" "}/ {formatScore(score.maxScore)}
-                                    </span>
-                                  )}
                                 </td>
                               );
                             })}

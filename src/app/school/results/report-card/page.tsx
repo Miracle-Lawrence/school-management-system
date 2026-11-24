@@ -270,7 +270,7 @@ const classStudents = students
               </Link>
 
               <Link
-                href="/school/results/report-card/comments"
+                href={`/school/results/report-card/comments?${new URLSearchParams({ ...(selectedSessionId ? { sessionId: String(selectedSessionId) } : {}), ...(selectedTermId ? { termId: String(selectedTermId) } : {}), ...(selectedClassId ? { classId: String(selectedClassId) } : {}), reportType: selectedConfiguration?.reportType ?? "TERMINAL" }).toString()}`}
                 className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 Report Comments
