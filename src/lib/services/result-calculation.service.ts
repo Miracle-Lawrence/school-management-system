@@ -972,7 +972,7 @@ export async function calculateClassTermResults(
   ).all();
 
   const classStudents = students.filter(
-    (student) => student.classId === input.classId,
+    (student) => student.classId === input.classId && student.isActive,
   );
 
   const classSubjects = await db.orm.public.ClassSubject.where((item) =>

@@ -110,14 +110,16 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
     savedResults.map((result) => [result.studentId, result]),
   );
 
-  const completedCount = sortedStudents.filter((student) =>
+  const activeStudents = sortedStudents.filter((student) => student.isActive);
+
+  const completedCount = activeStudents.filter((student) =>
     resultByStudentId.has(student.id),
   ).length;
 
-  const pendingCount = sortedStudents.length - completedCount;
+  const pendingCount = activeStudents.length - completedCount;
 
   const isPublished = publication?.isPublished ?? false;
-  const canPublish = sortedStudents.length > 0 && pendingCount === 0;
+  const canPublish = activeStudents.length > 0 && pendingCount === 0;
 
   const reportLabel =
     selectedReportType === "MID_TERM" ? "Mid-Term" : "Terminal";
@@ -258,8 +260,8 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
 
       <section className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border bg-white p-5">
-          <p className="text-sm text-gray-500">Total Students</p>
-          <p className="mt-2 text-3xl font-bold">{sortedStudents.length}</p>
+          <p className="text-sm text-gray-500">Active Students</p>
+          <p className="mt-2 text-3xl font-bold">{activeStudents.length}</p>
         </div>
 
         <div className="rounded-xl border bg-white p-5">
@@ -343,7 +345,11 @@ export default async function ResultsViewPage({ searchParams }: PageProps) {
                       <td className="px-4 py-3">{result?.position ?? "—"}</td>
 
                       <td className="px-4 py-3">
-                        {result ? (
+                        {!student.isActive ? (
+                          <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                            Inactive
+                          </span>
+                        ) : result ? (
                           <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
                             Generated
                           </span>

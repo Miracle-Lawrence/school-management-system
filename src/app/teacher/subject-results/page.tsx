@@ -181,6 +181,26 @@ export default async function TeacherSubjectResultsPage({
       ),
     );
 
+  // Load the active report configuration and its visible result components.
+  const allConfigurations = selectedAssignment && selectedTermId
+    ? await db.orm.public.ReportConfiguration.where((item) =>
+        item.schoolId.eq(schoolId),
+      ).all()
+    : [];
+
+  const configuration =
+    allConfigurations.find(
+      (item) => item.reportType === reportType && item.isActive,
+    ) ?? null;
+
+  const components = configuration
+    ? await db.orm.public.ReportComponent.where((item) =>
+        item.configurationId.eq(configuration.id),
+      ).all()
+    : [];
+
+  components.sort((a, b) => a.displayOrder - b.displayOrder);
+
   // Read saved results only. This page does not calculate or save results.
   const allSchoolResults =
     selectedAssignment && selectedTermId
@@ -200,6 +220,21 @@ export default async function TeacherSubjectResultsPage({
   const resultByStudent = new Map(
     savedResults.map((result) => [result.studentId, result]),
   );
+
+  const componentScores =
+    savedResults.length > 0
+      ? await db.orm.public.ResultComponentScore.where((item) =>
+          item.subjectResultId.in(savedResults.map((result) => result.id)),
+        ).all()
+      : [];
+
+  const scoresByResult = new Map<number, typeof componentScores>();
+
+  for (const score of componentScores) {
+    const current = scoresByResult.get(score.subjectResultId) ?? [];
+    current.push(score);
+    scoresByResult.set(score.subjectResultId, current);
+  }
 
   const compiledCount = students.filter((student) =>
     resultByStudent.has(student.id),
@@ -371,7 +406,7 @@ export default async function TeacherSubjectResultsPage({
               </p>
             ) : (
               <div className="max-h-[70vh] overflow-auto">
-                <table className="w-full min-w-[850px] text-left text-sm">
+                <table className="w-full min-w-max text-left text-sm">
                   <thead className="sticky top-0 z-20 border-b border-slate-200 bg-slate-100">
                     <tr>
                       <th className="px-4 py-3 font-semibold text-slate-700">
@@ -380,6 +415,16 @@ export default async function TeacherSubjectResultsPage({
                       <th className="px-4 py-3 font-semibold text-slate-700">
                         Student
                       </th>
+                      {components
+                        .filter((component) => component.isVisible)
+                        .map((component) => (
+                          <th
+                            key={component.id}
+                            className="px-4 py-3 text-center font-semibold text-slate-700"
+                          >
+                            {component.name}
+                          </th>
+                        ))}
                       <th className="px-4 py-3 text-right font-semibold text-slate-700">
                         Total Score
                       </th>
@@ -401,6 +446,9 @@ export default async function TeacherSubjectResultsPage({
                   <tbody className="divide-y divide-slate-100">
                     {students.map((student, index) => {
                       const result = resultByStudent.get(student.id);
+                      const studentScores = result
+                        ? (scoresByResult.get(result.id) ?? [])
+                        : [];
 
                       return (
                         <tr key={student.id} className="hover:bg-slate-50">
@@ -411,6 +459,27 @@ export default async function TeacherSubjectResultsPage({
                           <td className="px-4 py-3 font-medium text-slate-900">
                             {student.lastName} {student.firstName}
                           </td>
+                          {components
+                            .filter((component) => component.isVisible)
+                            .map((component) => {
+                              const score = studentScores.find(
+                                (item) => item.componentId === component.id,
+                              );
+
+                              return (
+                                <td
+                                  key={component.id}
+                                  className="px-4 py-3 text-center tabular-nums"
+                                >
+                                  {score ? formatScore(score.score) : "—"}
+                                  {score?.maxScore != null && (
+                                    <span className="text-slate-400">
+                                      {" "}/ {formatScore(score.maxScore)}
+                                    </span>
+                                  )}
+                                </td>
+                              );
+                            })}
 
                           <td className="px-4 py-3 text-right tabular-nums">
                             {result ? formatScore(result.totalScore) : "—"}

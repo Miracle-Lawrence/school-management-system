@@ -168,6 +168,40 @@ async function validatePublicationRequest(formData: FormData) {
   };
 }
 
+async function getPublicationReadiness(data: {
+  schoolId: number;
+  classId: number;
+  termId: number;
+  reportType: PublicationReportType;
+}) {
+  const [students, results] = await Promise.all([
+    db.orm.public.Student.where({
+      schoolId: data.schoolId,
+      classId: data.classId,
+    }).all(),
+    db.orm.public.StudentTermResult.where({
+      schoolId: data.schoolId,
+      classId: data.classId,
+      termId: data.termId,
+      reportType: data.reportType,
+    }).all(),
+  ]);
+
+  const activeStudents = students.filter((student) => student.isActive);
+  const studentsWithResults = new Set(
+    results.map((result) => result.studentId),
+  );
+
+  const pendingCount = activeStudents.filter(
+    (student) => !studentsWithResults.has(student.id),
+  ).length;
+
+  return {
+    activeStudentCount: activeStudents.length,
+    pendingCount,
+  };
+}
+
 export async function publishReportsAction(formData: FormData) {
   const data = await validatePublicationRequest(formData);
 
@@ -182,6 +216,29 @@ export async function publishReportsAction(formData: FormData) {
     });
   }
 
+  const readiness = await getPublicationReadiness(data);
+
+  if (readiness.activeStudentCount === 0) {
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "error",
+      message: "There are no active students in this class to publish reports for.",
+    });
+  }
+
+  if (readiness.pendingCount > 0) {
+    redirectWithMessage({
+      reportType: data.reportType,
+      sessionId: data.sessionId,
+      classId: data.classId,
+      termId: data.termId,
+      status: "error",
+      message: `Cannot publish reports. ${readiness.pendingCount} active student(s) still have incomplete results.`,
+    });
+  }
   try {
     const existing = await db.orm.public.ReportPublication.where({
       schoolId: data.schoolId,

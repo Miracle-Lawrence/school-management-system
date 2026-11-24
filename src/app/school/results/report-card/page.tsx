@@ -6,6 +6,7 @@ import { db } from "@/prisma/db";
 import { requireRole } from "@/lib/auth/authorization";
 import { getStudentReportCardData } from "@/lib/services/report-card.service";
 import { getReportConfigurations } from "@/lib/services/report-configuration.service";
+import { getActiveGradeScales } from "@/lib/services/grade-scale.service";
 
 import PrintButton from "./print-button";
 
@@ -114,16 +115,15 @@ const classStudents = students
   }
 
   /*
-   * Load the school's active grading scale so the report card displays
-   * the actual configured grading key rather than hard-coded values.
+   * Load only the active grading scales assigned to this report configuration.
    */
-  const gradeScales = await db.orm.public.GradeScale.where((item) =>
-    item.schoolId.eq(schoolId),
-  ).all();
-
-  const activeGradeScales = [...gradeScales]
-    .filter((scale) => scale.isActive)
-    .sort((a, b) => a.displayOrder - b.displayOrder);
+  const activeGradeScales =
+    selectedConfiguration?.gradeScaleSetId != null
+      ? await getActiveGradeScales(
+          schoolId,
+          selectedConfiguration.gradeScaleSetId,
+        )
+      : [];
 
   const school = reportCardData?.school;
   const student = reportCardData?.student;

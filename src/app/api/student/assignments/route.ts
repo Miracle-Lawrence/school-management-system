@@ -6,6 +6,39 @@ import { db } from "@/prisma/db";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+type DateLike =
+  | Date
+  | string
+  | number
+  | { epochMilliseconds: number }
+  | null;
+
+function getEpochMilliseconds(value: DateLike): number | null {
+  if (value === null) return null;
+
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+
+  if (typeof value === "string") {
+    return Date.parse(value);
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  return value.epochMilliseconds;
+}
+
+function toIsoString(value: DateLike): string | null {
+  const milliseconds = getEpochMilliseconds(value);
+
+  return milliseconds === null || !Number.isFinite(milliseconds)
+    ? null
+    : new Date(milliseconds).toISOString();
+}
+
 export async function GET() {
   try {
     const session = await requireApiRole(["STUDENT"]);
@@ -90,9 +123,7 @@ export async function GET() {
       .map((assignment) => {
         const submission = submissionsByAssignment.get(assignment.id) ?? null;
 
-        const deadline = assignment.dueDate
-          ? new Date(assignment.dueDate).getTime()
-          : null;
+        const deadline = getEpochMilliseconds(assignment.dueDate);
 
         const hasBeenSubmitted =
           submission !== null && submission.submittedAt !== null;
@@ -118,30 +149,30 @@ export async function GET() {
           subjectId: assignment.subjectId,
           title: assignment.title,
           instructions: assignment.instructions,
-          dueDate: assignment.dueDate,
+          dueDate: toIsoString(assignment.dueDate),
           maxScore: assignment.maxScore,
-          publishedAt: assignment.publishedAt,
-          createdAt: assignment.createdAt,
+          publishedAt: toIsoString(assignment.publishedAt),
+          createdAt: toIsoString(assignment.createdAt),
           status,
           submission: submission
             ? {
                 id: submission.id,
                 answer: submission.answer,
-                submittedAt: submission.submittedAt,
+                submittedAt: toIsoString(submission.submittedAt),
                 marks: submission.marks,
                 feedback: submission.feedback,
-                gradedAt: submission.gradedAt,
+                gradedAt: toIsoString(submission.gradedAt),
               }
             : null,
         };
       })
       .sort((a, b) => {
         const aDeadline = a.dueDate
-          ? new Date(a.dueDate).getTime()
+          ? Date.parse(a.dueDate)
           : Number.MAX_SAFE_INTEGER;
 
         const bDeadline = b.dueDate
-          ? new Date(b.dueDate).getTime()
+          ? Date.parse(b.dueDate)
           : Number.MAX_SAFE_INTEGER;
 
         return aDeadline - bDeadline;
