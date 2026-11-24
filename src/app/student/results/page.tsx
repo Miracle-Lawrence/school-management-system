@@ -9,7 +9,7 @@ const reportTypes = [
 ] as const;
 
 function formatScore(value: number | null | undefined) {
-  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "�";
+  return typeof value === "number" ? value.toFixed(1).replace(/\.0$/, "") : "—";
 }
 
 export default async function StudentResultsPage() {
@@ -176,8 +176,7 @@ export default async function StudentResultsPage() {
             }
 
             return (
-              <StudentContentReadObserver
-                contentType="RESULT"
+              <StudentContentReadObserver key={section.id}contentType="RESULT"
                 contentId={section.id}
               >
                 <section
@@ -214,13 +213,13 @@ export default async function StudentResultsPage() {
                     <div className="rounded-lg bg-emerald-50 p-4">
                       <p className="text-xs text-slate-500">Grade</p>
                       <p className="mt-2 text-xl font-bold text-emerald-900">
-                        {section.overallResult.grade || "�"}
+                        {section.overallResult.grade || "—"}
                       </p>
                     </div>
                     <div className="rounded-lg bg-amber-50 p-4">
                       <p className="text-xs text-slate-500">Class Position</p>
                       <p className="mt-2 text-xl font-bold text-amber-900">
-                        {section.overallResult.position ?? "�"}
+                        {section.overallResult.position ?? "—"}
                       </p>
                     </div>
                   </div>
@@ -252,11 +251,11 @@ export default async function StudentResultsPage() {
                             </td>
                             <td className="px-5 py-4">
                               <span className="rounded-md bg-blue-50 px-2 py-1 font-semibold text-blue-700">
-                                {result.grade || "�"}
+                                {result.grade || "—"}
                               </span>
                             </td>
                             <td className="px-5 py-4 text-slate-600">
-                              {result.remark || "�"}
+                              {result.remark || "—"}
                             </td>
                           </tr>
                         ))}

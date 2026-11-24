@@ -340,11 +340,11 @@ export default async function PlatformSettingsPage({
                   required
                   className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 >
-                  <option value="NGN">NGN â€” Nigerian Naira</option>
-                  <option value="USD">USD â€” US Dollar</option>
-                  <option value="GBP">GBP â€” British Pound</option>
-                  <option value="EUR">EUR â€” Euro</option>
-                  <option value="CAD">CAD â€” Canadian Dollar</option>
+                  <option value="NGN">NGN — Nigerian Naira</option>
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="GBP">GBP — British Pound</option>
+                  <option value="EUR">EUR — Euro</option>
+                  <option value="CAD">CAD — Canadian Dollar</option>
                 </select>
               </label>
 
@@ -357,9 +357,9 @@ export default async function PlatformSettingsPage({
                   className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
                 >
                   <option value="Africa/Lagos">
-                    Africa/Lagos â€” West Africa
+                    Africa/Lagos — West Africa
                   </option>
-                  <option value="UTC">UTC â€” Coordinated Universal Time</option>
+                  <option value="UTC">UTC — Coordinated Universal Time</option>
                   <option value="Europe/London">Europe/London</option>
                   <option value="America/New_York">America/New_York</option>
                 </select>

@@ -1,29 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-
-const navigation = [
-  ["Dashboard", "/school/dashboard"],
-  ["Students", "/school/students"],
-  ["Teachers", "/school/teachers"],
-  ["Parents", "/school/parents"],
-  ["Classes", "/school/classes"],
-  ["Subjects", "/school/subjects"],
-  ["Assessments", "/school/assessments"],
-  ["Question Banks", "/school/cbt/question-banks"],
-  ["Academic Sessions", "/school/academic-sessions"],
-  ["Fee Categories", "/school/fee-categories"],
-
-  ["Communication Centre", "/school/notifications"],
-
-  ["Fee Structures", "/school/fee-structures"],
-  ["Fee Collection Dashboard", "/school/fee-payments"],
-  ["Student Fee Invoicing", "/school/student-invoices"],
-  ["Report Settings", "/school/report-settings"],
-  ["Results", "/school/results"],
-  ["Settings", "/school/settings"],
-] as const;
+import SchoolNavigationMenu from "./school-navigation-menu";
 
 type SchoolMobileNavigationProps = {
   schoolName: string;
@@ -94,7 +72,6 @@ export default function SchoolMobileNavigation({
                   <h1 className="truncate text-lg font-bold tracking-tight">
                     {schoolName}
                   </h1>
-
                   <p className="mt-0.5 text-xs text-slate-400">
                     School Administration
                   </p>
@@ -102,22 +79,8 @@ export default function SchoolMobileNavigation({
               </div>
             </div>
 
-            <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-              {navigation.map(([label, href], index) => (
-                <div key={href}>
-                  {index === navigation.length - 1 && (
-                    <div className="my-4 border-t border-slate-800" />
-                  )}
-
-                  <Link
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-                  >
-                    {label}
-                  </Link>
-                </div>
-              ))}
+            <nav className="flex-1 overflow-y-auto px-3 py-5">
+              <SchoolNavigationMenu onNavigate={() => setOpen(false)} />
             </nav>
 
             <div className="shrink-0 border-t border-slate-800 p-4">

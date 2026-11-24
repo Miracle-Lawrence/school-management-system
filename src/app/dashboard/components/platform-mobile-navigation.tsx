@@ -3,39 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import EnquiryNavLink from "@/app/dashboard/components/enquiry-nav-link";
-
-const navigation = [
-  {
-    label: "Overview",
-    items: [
-      { name: "Dashboard", href: "/dashboard" },
-    ],
-  },
-  {
-    label: "School Management",
-    items: [
-      { name: "Schools", href: "/dashboard/schools" },
-      { name: "Users", href: "/dashboard/users" },
-    ],
-  },
-  {
-    label: "Billing & Subscriptions",
-    items: [
-      { name: "Subscription Plans", href: "/dashboard/subscriptions" },
-      { name: "School Subscriptions", href: "/dashboard/subscriptions/schools" },
-      { name: "Payment Records", href: "/dashboard/subscriptions/payments" },
-      { name: "Billing Rates", href: "/dashboard/billing/rates" },
-      { name: "Invoices", href: "/dashboard/billing/invoices" },
-      { name: "Payments", href: "/dashboard/billing/payments" },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { name: "Settings", href: "/dashboard/settings" },
-    ],
-  },
-];
+import PlatformNavigationMenu from "@/app/dashboard/components/platform-navigation-menu";
 
 type PlatformMobileNavigationProps = {
   name: string;
@@ -118,34 +86,20 @@ export default function PlatformMobileNavigation({
 
             <nav
               aria-label="Mobile platform navigation"
-              className="flex-1 space-y-7 overflow-y-auto px-4 py-6"
+              className="flex-1 overflow-y-auto px-4 py-6"
             >
-              {navigation.map((section) => (
-                <div key={section.label}>
-                  <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                    {section.label}
-                  </p>
+              <PlatformNavigationMenu onNavigate={() => setIsOpen(false)} />
 
-                  <div className="space-y-1">
-                    {section.items.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center rounded-lg px-3 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-                          <div>
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              <div className="mt-4">
+                <p className="mb-2 px-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
                   Communications
                 </p>
-                <EnquiryNavLink mobile onNavigate={() => setIsOpen(false)} />
-              </div></nav>
+                <EnquiryNavLink
+                  mobile
+                  onNavigate={() => setIsOpen(false)}
+                />
+              </div>
+            </nav>
 
             <div className="border-t border-white/10 p-4">
               <div className="mb-4 flex min-w-0 items-center gap-3 rounded-xl bg-white/5 p-3">

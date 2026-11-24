@@ -6,15 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import ParentMobileNavigation from "./parent-mobile-navigation";
-import ParentNotificationBadge from "./ParentNotificationBadge";
-
-const navigation = [
-  ["Dashboard", "/parent/dashboard"],
-  ["Finance & Payments", "/parent/finance"],
-  ["Academic Reports", "/parent/reports"],
-  ["Notifications", "/parent/notifications"],
-  
-] as const;
+import ParentNavigationMenu from "./parent-navigation-menu";
 
 type ParentPortalShellProps = {
   children: ReactNode;
@@ -80,29 +72,9 @@ export default function ParentPortalShell({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-          {navigation.map(([label, href]) => {
-            const active = isActive(href);
-
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-                  active
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                }`}
-              >
-                <span className="flex w-full items-center gap-2">
-                <span>{label}</span>
-                {href === "/parent/notifications" && <ParentNotificationBadge />}
-              </span>
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex-1 overflow-y-auto px-3 py-5">
+          <ParentNavigationMenu />
+        </div>
 
         {/* Logged-in Parent */}
         <div className="border-t border-slate-800 p-4">

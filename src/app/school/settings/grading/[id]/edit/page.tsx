@@ -104,7 +104,7 @@ export default async function EditGradeScalePage({
           href={gradingPageUrl}
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          â† Back to Grading Scales
+          ← Back to Grading Scales
         </Link>
 
         <h1 className="mt-3 text-2xl font-bold text-gray-900">Edit Grade</h1>
@@ -251,7 +251,7 @@ export default async function EditGradeScalePage({
           <span>
             <span className="font-medium">Active</span>
             <span className="ml-1 text-gray-500">
-              â€” use this grade when calculating results
+              — use this grade when calculating results
             </span>
           </span>
         </label>

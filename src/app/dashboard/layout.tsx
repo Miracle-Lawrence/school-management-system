@@ -3,6 +3,7 @@ import { signOut } from "@/auth";
 import { requireRole } from "@/lib/auth/authorization";
 import PlatformMobileNavigation from "@/app/dashboard/components/platform-mobile-navigation";
 import EnquiryNavLink from "@/app/dashboard/components/enquiry-nav-link";
+import PlatformNavigationMenu from "@/app/dashboard/components/platform-navigation-menu";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,79 +11,6 @@ async function signOutPlatform() {
   "use server";
   await signOut({ redirectTo: "/login" });
 }
-const navigation = [
-  {
-    label: "Overview",
-    items: [
-      {
-        name: "Dashboard",
-        href: "/dashboard",
-        icon: "◫",
-      },
-    ],
-  },
-  {
-    label: "School Management",
-    items: [
-      {
-        name: "Schools",
-        href: "/dashboard/schools",
-        icon: "▤",
-      },
-      {
-        name: "Users",
-        href: "/dashboard/users",
-        icon: "♙",
-      },
-    ],
-  },
-  {
-    label: "Billing & Subscriptions",
-    items: [
-      {
-        name: "Subscription Plans",
-        href: "/dashboard/subscriptions",
-        icon: "◇",
-      },
-      {
-        name: "School Subscriptions",
-        href: "/dashboard/subscriptions/schools",
-        icon: "▦",
-      },
-      {
-        name: "Payment Records",
-        href: "/dashboard/subscriptions/payments",
-        icon: "₦",
-      },
-      {
-        name: "Billing Rates",
-        href: "/dashboard/billing/rates",
-        icon: "?",
-      },
-      {
-        name: "Invoices",
-        href: "/dashboard/billing/invoices",
-        icon: "?",
-      },
-      {
-        name: "Payments",
-        href: "/dashboard/billing/payments",
-        icon: "?",
-      },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      {
-        name: "Settings",
-        href: "/dashboard/settings",
-        icon: "⚙",
-      },
-    ],
-  },
-];
-
 export default async function DashboardLayout({
   children,
 }: Readonly<{
@@ -124,44 +52,17 @@ export default async function DashboardLayout({
 
           <nav
             aria-label="Platform navigation"
-            className="flex-1 space-y-7 overflow-y-auto px-4 pb-6"
+            className="flex-1 overflow-y-auto px-4 pb-6"
           >
-            {navigation.map((section) => (
-              <div key={section.label}>
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                  {section.label}
-                </p>
+            <PlatformNavigationMenu />
 
-                <div className="space-y-1">
-                  {section.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white/5 text-base text-slate-400 transition-colors group-hover:bg-blue-500/20 group-hover:text-blue-300"
-                      >
-                        {item.icon}
-                      </span>
-
-                      <span>{item.name}</span>
-
-                      <span className="ml-auto text-slate-600 opacity-0 transition-opacity group-hover:opacity-100">
-                        →
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-                      <div>
-              <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <div className="mt-4">
+              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
                 Communications
               </p>
               <EnquiryNavLink />
-            </div></nav>
+            </div>
+          </nav>
 
           <div className="border-t border-white/10 p-4">
             <div className="mb-4 flex min-w-0 items-center gap-3 rounded-xl bg-white/5 p-3">

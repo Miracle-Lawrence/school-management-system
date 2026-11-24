@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -131,7 +131,7 @@ export default async function GradingSetsPage() {
           href="/school/settings"
           className="text-sm font-medium text-blue-600 hover:text-blue-700"
         >
-          â† School Settings
+          ← School Settings
         </Link>
 
         <p className="mt-4 text-sm font-semibold text-blue-600">

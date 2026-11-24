@@ -71,7 +71,7 @@ export default async function ParentChangePasswordPage() {
       <header>
         <h1 className="text-2xl font-bold">Set your new password</h1>
         <p className="mt-2 text-sm text-slate-600">
-          For your accountâ€™s security, create a new password before continuing.
+          For your account’s security, create a new password before continuing.
           Use at least 8 characters.
         </p>
       </header>

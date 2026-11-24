@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -104,7 +104,7 @@ export default async function ParentDetailsPage({ params }: ParentPageProps) {
           href="/school/parents"
           className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
         >
-          â† Back to Parents
+          ← Back to Parents
         </Link>
       </div>
 
@@ -267,7 +267,7 @@ export default async function ParentDetailsPage({ params }: ParentPageProps) {
         <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 transition hover:bg-slate-50 sm:px-8">
           Edit Parent Information
           <p className="mt-1 text-sm font-normal text-slate-600">
-            Update the parent's name and contact details.
+            Update the parent&apos;s name and contact details.
           </p>
         </summary>
 

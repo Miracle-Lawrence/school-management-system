@@ -2,30 +2,13 @@
 
 import { signOut } from "next-auth/react";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+
 import type { ReactNode } from "react";
 
 import StudentMobileNavigation from "./student-mobile-navigation";
-import StudentNotificationBadge from "./StudentNotificationBadge";
-import {
-  StudentContentUnreadBadge,
-  StudentContentUnreadProvider,
-} from "./StudentContentUnreadBadges";
-
-const navigation = [
-  { label: "Dashboard", href: "/student/dashboard", icon: "⌂" },
-  { label: "My Profile", href: "/student/profile", icon: "◉" },
-  { label: "My Class & Subjects", href: "/student/subjects", icon: "▤" },
-  { label: "Assignments", href: "/student/assignments", icon: "✎" },
-  { label: "Online Exams", href: "/student/cbt", icon: "CBT" },
-  { label: "Class Notes", href: "/student/class-notes", icon: "▤" },
-  { label: "My Results", href: "/student/results", icon: "▥" },
-  { label: "Attendance", href: "/student/attendance", icon: "✓" },
-  { label: "Announcements", href: "/student/announcements", icon: "◈" },
-  { label: "Notifications", href: "/student/notifications", icon: "♧" },
-  { label: "Settings", href: "/student/settings", icon: "⚙" },
-] as const;
+import StudentNavigationMenu from "./student-navigation-menu";
+import { StudentContentUnreadProvider } from "./StudentContentUnreadBadges";
 
 type StudentPortalShellProps = {
   children: ReactNode;
@@ -47,12 +30,6 @@ export default function StudentPortalShell({
   async function handleSignOut() {
     await signOut({ redirect: false });
     window.location.assign("/login");
-  }
-
-  const pathname = usePathname();
-
-  function isActive(href: string) {
-    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   return (
@@ -84,45 +61,9 @@ export default function StudentPortalShell({
           </div>
         </div>
 
-        <nav
-          aria-label="Student navigation"
-          className="flex-1 space-y-1 overflow-y-auto px-3 py-5"
-        >
-          {navigation.map(({ label, href, icon }) => {
-            const active = isActive(href);
-
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  active
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`}
-              >
-                <span aria-hidden="true" className="w-5 text-center text-base">
-                  {icon}
-                </span>
-                <span>{label}</span>
-                  {href === "/student/class-notes" && (
-                    <StudentContentUnreadBadge type="classNotes" />
-                  )}
-                  {href === "/student/assignments" && (
-                    <span className="ml-auto flex items-center gap-1.5">
-                      <StudentContentUnreadBadge type="assignments" />
-                      <StudentContentUnreadBadge type="gradedAssignments" />
-                    </span>
-                  )}
-                  {href === "/student/results" && (
-                    <StudentContentUnreadBadge type="results" />
-                  )}
-                {href === "/student/notifications" && <StudentNotificationBadge />}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex-1 overflow-y-auto px-3 py-5">
+          <StudentNavigationMenu />
+        </div>
 
         <div className="border-t border-slate-800 p-4">
           <div className="mb-4 rounded-lg bg-slate-800/70 p-3">

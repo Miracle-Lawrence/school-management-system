@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import SchoolMobileNavigation from "./school-mobile-navigation";
+import SchoolNavigationMenu from "./school-navigation-menu";
 
 type SchoolPortalShellProps = {
   children: ReactNode;
@@ -45,7 +46,7 @@ export default function SchoolPortalShell({
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Desktop Sidebar */}
-      <aside className="hidden w-64 flex-col bg-slate-900 text-white md:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-64 flex-col bg-slate-900 text-white md:flex">
         {/* School Branding */}
         <div className="border-b border-slate-800 px-6 py-6">
           <div className="flex items-center gap-3">
@@ -74,129 +75,9 @@ export default function SchoolPortalShell({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 px-3 py-5">
-          <Link
-            href="/school/dashboard"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Dashboard
-          </Link>
-
-          <Link
-            href="/school/students"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Students
-          </Link>
-
-          <Link
-            href="/school/teachers"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Teachers
-          </Link>
-
-          <Link
-            href="/school/parents"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Parents
-          </Link>
-
-          <Link
-            href="/school/classes"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Classes
-          </Link>
-
-          <Link
-            href="/school/subjects"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Subjects
-          </Link>
-
-          <Link
-            href="/school/assessments"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Assessments
-          </Link>
-
-            <Link
-              href="/school/cbt/question-banks"
-              className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-            >
-              Question Banks
-            </Link>
-
-          <Link
-            href="/school/academic-sessions"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Academic Sessions
-          </Link>
-
-          <Link
-            href="/school/fee-categories"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Fee Categories
-          </Link>
-
-          <Link
-            href="/school/notifications"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Communication Centre
-          </Link>
-
-          <Link
-            href="/school/fee-structures"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Fee Structures
-          </Link>
-
-          <Link
-            href="/school/student-invoices"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Student Fee Invoicing
-          </Link>
-
-          <Link
-            href="/school/fee-payments"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Fee Collection Dashboard
-          </Link>
-
-          <Link
-            href="/school/report-settings"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Report Settings
-          </Link>
-
-          <Link
-            href="/school/results"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Results
-          </Link>
-
-          <div className="my-4 border-t border-slate-800" />
-
-          <Link
-            href="/school/settings"
-            className="block rounded-lg px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-white"
-          >
-            Settings
-          </Link>
-        </nav>
-
+        <div className="flex-1 overflow-y-auto px-3 py-5">
+          <SchoolNavigationMenu />
+        </div>
         {/* User Section */}
         <div className="border-t border-slate-800 p-4">
           <div className="mb-4 rounded-lg bg-slate-800/70 p-3">
@@ -223,7 +104,7 @@ export default function SchoolPortalShell({
       </aside>
 
       {/* Main Content */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col md:ml-64">
         {/* Top Header */}
         <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm sm:px-6">
           <div className="flex items-center gap-3">

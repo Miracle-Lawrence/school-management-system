@@ -1,18 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import ParentNotificationBadge from "./ParentNotificationBadge";
-import { usePathname } from "next/navigation";
+
+
+
+import ParentNavigationMenu from "./parent-navigation-menu";
 import { useState } from "react";
-
-
-const navigation = [
-  ["Dashboard", "/parent/dashboard"],
-  ["Finance & Payments", "/parent/finance"],
-    ["Academic Reports", "/parent/reports"],
-  ["Notifications", "/parent/notifications"],
-  
-] as const;
 
 
 type ParentMobileNavigationProps = {
@@ -27,8 +19,6 @@ export default function ParentMobileNavigation({
   onSignOut,
 }: ParentMobileNavigationProps) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-
   return (
     <>
       <button
@@ -90,33 +80,12 @@ export default function ParentMobileNavigation({
               </div>
             </div>
 
-            <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-              {navigation.map(([label, href]) => {
-                const active =
-                  pathname === href ||
-                  (href === "/parent/finance" &&
-                    pathname.startsWith("/parent/finance/"));
-
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                    className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-                      active
-                        ? "bg-blue-600 text-white"
-                        : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                    }`}
-                  >
-                    <span className="flex w-full items-center gap-2">
-                    <span>{label}</span>
-                    {href === "/parent/notifications" && <ParentNotificationBadge compact />}
-                  </span>
-                  </Link>
-                );
-              })}
-            </nav>
+            <div className="flex-1 overflow-y-auto px-3 py-5">
+              <ParentNavigationMenu
+                compact
+                onNavigate={() => setOpen(false)}
+              />
+            </div>
 
             <div className="shrink-0 border-t border-slate-800 p-4">
               <button

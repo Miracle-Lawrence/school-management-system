@@ -180,7 +180,7 @@ export default async function TeacherAssessmentDetailsPage({
         href="/teacher/assessments"
         className="inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-900"
       >
-        â† Back to assessments
+        ← Back to assessments
       </Link>
 
       <section className="rounded-2xl bg-gradient-to-r from-slate-950 via-blue-950 to-indigo-900 p-6 text-white sm:p-8">
@@ -193,7 +193,7 @@ export default async function TeacherAssessmentDetailsPage({
         </h1>
 
         <p className="mt-2 text-blue-100">
-          {schoolClass.name} Â· {subject.name}
+          {schoolClass.name} · {subject.name}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3 text-sm">

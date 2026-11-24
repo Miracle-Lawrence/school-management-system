@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { signOut } from "next-auth/react";
 
@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import TeacherNotificationBadge from "./TeacherNotificationBadge";
+import TeacherNavigationMenu from "./teacher-navigation-menu";
 
 type TeacherPortalShellProps = {
   children: ReactNode;
@@ -16,30 +17,6 @@ type TeacherPortalShellProps = {
   userEmail: string;
   userRole: string;
 };
-
-const navigation = [
-  { label: "Dashboard", href: "/teacher/dashboard" },
-  { label: "My Classes", href: "/teacher/classes" },
-  { label: "Attendance", href: "/teacher/attendance" },
-  { label: "Assessments", href: "/teacher/assessments" },
-  { label: "Question Banks", href: "/teacher/cbt/question-banks" },
-
-  { label: "My Profile", href: "/teacher/profile" },
-  { label: "Assignments", href: "/teacher/assignments" },
-  { label: "Assignment Grading", href: "/teacher/assignments/grading" },
-  { label: "Class Notes", href: "/teacher/class-notes" },
-  {
-    label: "Gradebook",
-    href: "/teacher/gradebook",
-  },
-  {
-    label: "Subject Results",
-    href: "/teacher/subject-results",
-  },
-  { label: "Report Comments", href: "/teacher/report-comments" },
-  { label: "Psychomotor Assessments", href: "/teacher/psychomotor" },
-  { label: "Notifications", href: "/teacher/notifications" },
-];
 
 export default function TeacherPortalShell({
   children,
@@ -95,22 +72,9 @@ export default function TeacherPortalShell({
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-5">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={navigationLinkClass(item.href)}
-            >
-              <span className="flex items-center">
-  {item.label}
-  {item.href === "/teacher/notifications" ? (
-    <TeacherNotificationBadge compact />
-  ) : null}
-</span>
-            </Link>
-          ))}
-        </nav>
+        <div className="flex-1 overflow-y-auto px-3 py-5">
+          <TeacherNavigationMenu />
+        </div>
 
         <div className="border-t border-slate-800 p-4">
           <div className="mb-4 rounded-lg bg-slate-800/70 p-3">
@@ -149,9 +113,9 @@ export default function TeacherPortalShell({
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm md:hidden"
             >
               {mobileMenuOpen ? (
-                <span className="text-xl">Ãƒâ€”</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-6 w-6"><path d="M18 6 6 18M6 6l12 12" /></svg>
               ) : (
-                <span className="text-xl">Ã¢ËœÂ°</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-6 w-6"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
               )}
             </button>
 
@@ -200,23 +164,9 @@ export default function TeacherPortalShell({
                 <p className="mt-1 text-xs text-slate-400">Teacher Portal</p>
               </div>
 
-              <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={navigationLinkClass(item.href)}
-                  >
-                    <span className="flex items-center">
-  {item.label}
-  {item.href === "/teacher/notifications" ? (
-    <TeacherNotificationBadge compact />
-  ) : null}
-</span>
-                  </Link>
-                ))}
-              </nav>
+              <div className="flex-1 overflow-y-auto px-3 py-5">
+                <TeacherNavigationMenu onNavigate={() => setMobileMenuOpen(false)} />
+              </div>
 
               <div className="border-t border-slate-800 p-4">
                 <p className="truncate text-sm font-semibold">

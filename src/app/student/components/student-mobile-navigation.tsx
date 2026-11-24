@@ -1,24 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import StudentNotificationBadge from "./StudentNotificationBadge";
-import { StudentContentUnreadBadge } from "./StudentContentUnreadBadges";
 
-const navigation = [
-  ["Dashboard", "/student/dashboard"],
-  ["My Profile", "/student/profile"],
-  ["My Class & Subjects", "/student/subjects"],
-  ["Assignments", "/student/assignments"],
-  ["Online Exams", "/student/cbt"],
-  ["Class Notes", "/student/class-notes"],
-  ["My Results", "/student/results"],
-  ["Attendance", "/student/attendance"],
-  ["Announcements", "/student/announcements"],
-  ["Notifications", "/student/notifications"],
-  ["Settings", "/student/settings"],
-] as const;
+
+import { useState } from "react";
+import StudentNavigationMenu from "./student-navigation-menu";
+
+
 
 type StudentMobileNavigationProps = {
   schoolName: string;
@@ -32,9 +19,7 @@ export default function StudentMobileNavigation({
   onSignOut,
 }: StudentMobileNavigationProps) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-
-  return (
+return (
     <>
       <button
         type="button"
@@ -94,48 +79,12 @@ export default function StudentMobileNavigation({
               </div>
             </div>
 
-            <nav
-              aria-label="Student mobile navigation"
-              className="flex-1 space-y-1 overflow-y-auto px-3 py-5"
-            >
-              {navigation.map(([label, href]) => {
-                const active =
-                  pathname === href || pathname.startsWith(`${href}/`);
-
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                    className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-                      active
-                        ? "bg-blue-600 text-white"
-                        : "text-slate-200 hover:bg-slate-800 hover:text-white"
-                    }`}
-                  >
-                    <span className="flex items-center justify-between gap-3">
-                      <span>{label}</span>
-              {href === "/student/class-notes" && (
-                <StudentContentUnreadBadge type="classNotes" compact />
-              )}
-              {href === "/student/assignments" && (
-                <span className="ml-auto flex items-center gap-1.5">
-                  <StudentContentUnreadBadge type="assignments" compact />
-                  <StudentContentUnreadBadge type="gradedAssignments" compact />
-                </span>
-              )}
-              {href === "/student/results" && (
-                <StudentContentUnreadBadge type="results" compact />
-              )}
-                      {href === "/student/notifications" && (
-                        <StudentNotificationBadge compact />
-                      )}
-                    </span>
-                  </Link>
-                );
-              })}
-            </nav>
+            <div className="flex-1 overflow-y-auto px-3 py-5">
+              <StudentNavigationMenu
+                compact
+                onNavigate={() => setOpen(false)}
+              />
+            </div>
 
             <div className="shrink-0 border-t border-slate-800 p-4">
               <button

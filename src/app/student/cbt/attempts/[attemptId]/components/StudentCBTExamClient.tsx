@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type CBTImage = {
@@ -177,6 +178,8 @@ export default function StudentCBTExamClient({
   }, [attemptId]);
 
   useEffect(() => {
+    // Initial async fetch; state updates occur after the request resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadAttempt();
   }, [loadAttempt]);
 
@@ -362,12 +365,12 @@ export default function StudentCBTExamClient({
     return (
       <div className="space-y-4 rounded-xl border border-red-200 bg-red-50 p-6">
         <p className="text-sm text-red-700">{error}</p>
-        <a
+        <Link
           href="/student/cbt"
           className="inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
         >
           Return to examinations
-        </a>
+        </Link>
       </div>
     );
   }
@@ -387,12 +390,12 @@ export default function StudentCBTExamClient({
         <p className="mt-1 text-sm text-slate-500">
           Your result will be available when it is released by your school.
         </p>
-        <a
+        <Link
           href="/student/cbt"
           className="mt-6 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
         >
           Return to examinations
-        </a>
+        </Link>
       </div>
     );
   }
@@ -403,12 +406,12 @@ export default function StudentCBTExamClient({
         <p className="text-sm text-slate-600">
           No examination questions were found.
         </p>
-        <a
+        <Link
           href="/student/cbt"
           className="mt-4 inline-flex text-sm font-semibold text-blue-600"
         >
           Return to examinations
-        </a>
+        </Link>
       </div>
     );
   }
@@ -522,7 +525,7 @@ export default function StudentCBTExamClient({
                 Question {currentIndex + 1} of {attempt.questions.length}
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                {question.type.replaceAll("_", " ")} ï¿½ {question.marks} marks
+                {question.type.replaceAll("_", " ")} · {question.marks} marks
               </p>
             </div>
 

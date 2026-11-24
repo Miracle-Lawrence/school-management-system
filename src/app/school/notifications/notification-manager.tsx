@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -127,6 +127,8 @@ const [cancellingId, setCancellingId] = useState<number | null>(null);
   }, []);
 
   useEffect(() => {
+    // Initial async fetch; state updates occur after the request resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadNotifications();
   }, [loadNotifications]);
 
@@ -370,7 +372,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                 />
 
                 <p className="text-xs text-muted-foreground">
-                  The time is interpreted in your browser's local timezone.
+                  The time is interpreted in your browser&apos;s local timezone.
                 </p>
               </div>
             )}
@@ -406,7 +408,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
             {category === "FEE_REMINDER"
               ? "Fee reminders are restricted to eligible parent accounts."
               : `This notification targets eligible ${audience === "PARENTS" ? "parent" : audience === "STUDENTS" ? "student" : audience === "TEACHERS" ? "teacher" : "parent, student, and teacher"} accounts linked to your school.`}{" "}
-            Do not include an individual student's private fee balance or other confidential information in a school-wide message.
+            Do not include an individual student&apos;s private fee balance or other confidential information in a school-wide message.
           </div>
 
           <button
@@ -534,7 +536,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                       {notification.status === "SCHEDULED"
                         ? `Scheduled for ${formatDate(notification.scheduledAt)}`
                         : notification.status === "CANCELLED"
-                          ? `Cancelled Ã‚Â· ${formatDate(notification.createdAt)}`
+                          ? `Cancelled · ${formatDate(notification.createdAt)}`
                           : formatDate(
                               notification.sentAt ?? notification.createdAt,
                             )}

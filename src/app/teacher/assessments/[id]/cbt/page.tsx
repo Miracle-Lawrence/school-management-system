@@ -115,7 +115,7 @@ export default async function TeacherCBTPage({
         </h1>
 
         <p className="mt-2 text-blue-100">
-          {schoolClass.name} Â· {subject.name}
+          {schoolClass.name} · {subject.name}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3 text-sm">
